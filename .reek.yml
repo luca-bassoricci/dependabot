@@ -1,0 +1,27 @@
+---
+detectors:
+  IrresponsibleModule:
+    enabled: false
+
+  NestedIterators:
+    ignore_iterators:
+      - yield_self
+      - tap
+
+  TooManyMethods:
+    max_methods: 20
+
+  TooManyStatements:
+    max_statements: 10
+    exclude:
+      - initialize
+
+  DuplicateMethodCall:
+    allow_calls:
+      - "map"
+
+  UtilityFunction:
+    public_methods_only: true
+
+exclude_paths:
+  - bin
