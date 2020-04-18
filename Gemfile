@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-ruby "2.6.5"
+ruby "~> 2.6"
 
 gem "jbuilder", "~> 2.7"
 gem "puma", "~> 4.1"

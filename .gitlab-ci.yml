@@ -1,0 +1,41 @@
+.ruby_runner: &ruby_runner
+  image: andrcuns/ruby:latest
+  variables:
+    BUNDLE_PATH: vendor/bundle
+    BUNDLE_FROZEN: "true"
+    BUNDLE_SUPPRESS_INSTALL_USING_MESSAGES: "true"
+    BUNDLE_WITHOUT: development
+  cache:
+    key:
+      files:
+        - Gemfile.lock
+    paths:
+      - vendor/bundle
+    policy: pull
+  only:
+    - merge_request
+    - master
+
+stages:
+  - build
+  - test
+
+cache_gems:
+  extends: .ruby_runner
+  stage: build
+  script:
+    - bundle install
+  cache:
+    policy: pull-push
+
+rubocop:
+  extends: .ruby_runner
+  stage: test
+  script:
+    - bundle exec rubocop --parallel --color
+
+reek:
+  extends: .ruby_runner
+  stage: test
+  script:
+    - bundle exec reek --color --progress
