@@ -2,6 +2,7 @@
 
 require "simplecov"
 require "simplecov-console"
+require "simplecov-cobertura"
 
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
@@ -22,9 +23,14 @@ end
 
 return unless ENV["COVERAGE"]
 
-SimpleCov::Formatter::Console.output_style = "block" if ENV["CI"]
+formatters = [SimpleCov::Formatter::Console]
+formatters << SimpleCov::Formatter::HTMLFormatter if ENV["COV_HTML_REPORT"]
+if ENV["CI"]
+  SimpleCov::Formatter::Console.output_style = "block"
+  formatters << SimpleCov::Formatter::CoberturaFormatter
+end
 
 SimpleCov.start("rails") do
   enable_coverage :branch
-  formatter ENV["COV_HTML_REPORT"] ? SimpleCov::Formatter::HTMLFormatter : SimpleCov::Formatter::Console
+  formatter SimpleCov::Formatter::MultiFormatter.new(formatters)
 end

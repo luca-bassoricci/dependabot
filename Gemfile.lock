@@ -331,6 +331,8 @@ GEM
       rspec-mocks (~> 3.9)
       rspec-support (~> 3.9)
     rspec-support (3.9.2)
+    rspec_junit_formatter (0.4.1)
+      rspec-core (>= 2, < 4, != 2.12.0)
     rubocop (0.82.0)
       jaro_winkler (~> 1.5.1)
       parallel (~> 1.10)
@@ -349,6 +351,8 @@ GEM
     simplecov (0.18.5)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
+    simplecov-cobertura (1.3.1)
+      simplecov (~> 0.8)
     simplecov-console (0.7.2)
       ansi
       simplecov
@@ -423,8 +427,10 @@ DEPENDENCIES
   reek (~> 6.0)
   rspec (~> 3.9)
   rspec-rails (~> 4.0.0)
+  rspec_junit_formatter (~> 0.4.1)
   rubocop (~> 0.82.0)
   simplecov (~> 0.18.5)
+  simplecov-cobertura (~> 1.3.1)
   simplecov-console (~> 0.7.2)
   solargraph (~> 0.39.8)
   spring (~> 2.1.0)
