@@ -4,6 +4,10 @@ AllCops:
     - vendor/**/*
     - node_modules/**/*
 
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*
+
 Layout/LineLength:
   Enabled: true
   Max: 120
@@ -16,6 +20,10 @@ Lint/RaiseException:
 
 Lint/StructNewOverride:
   Enabled: true
+
+Metrics/MethodLength:
+  Enabled: true
+  Max: 15
 
 Style/Documentation:
   Enabled: false

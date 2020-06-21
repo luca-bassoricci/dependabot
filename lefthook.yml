@@ -1,7 +1,7 @@
 pre-commit:
   commands:
     rubocop:
-      glob: "*.{rb,rake,ru}|Gemfile"
+      glob: "*.{rb,rake,ru}"
       run: bundle exec rubocop {staged_files}
     reek:
       glob: "*.{rb,rake,ru}"
