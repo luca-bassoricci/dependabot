@@ -17,12 +17,11 @@
     - master
 
 stages:
-  - build
   - test
 
 cache_gems:
   extends: .ruby_runner
-  stage: build
+  stage: .pre
   script:
     - bundle install
   cache:
@@ -39,3 +38,13 @@ reek:
   stage: test
   script:
     - bundle exec reek --color --progress
+
+rspec:
+  extends: .ruby_runner
+  stage: test
+  variables:
+    COVERAGE: "true"
+    NO_COLOR: "1"
+  script:
+    - bundle exec rspec
+  coverage: /COVERAGE:\s+(\d+.\d+)\%/

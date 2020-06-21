@@ -1,0 +1,12 @@
+{
+  "file_name": "Gemfile",
+  "file_path": "Gemfile",
+  "size": 205,
+  "encoding": "base64",
+  "content_sha256": "f4724c1108657e966c680cf0c240d8e1ca7146e7e88e4430be36efd878c19d8c",
+  "ref": "8f6d40d1c64b54711eac49619a3a39d6207d60cb",
+  "blob_id": "4597e9e960c611099827906ca432f4a43a8cad0c",
+  "commit_id": "8f6d40d1c64b54711eac49619a3a39d6207d60cb",
+  "last_commit_id": "8f6d40d1c64b54711eac49619a3a39d6207d60cb",
+  "content": "IyBmcm96ZW5fc3RyaW5nX2xpdGVyYWw6IHRydWUKCnNvdXJjZSAiaHR0cHM6Ly9ydWJ5Z2Vtcy5vcmciCgpydWJ5ICJ+PiAyLjYiCgpnZW0gImNvbmZpZyIsICJ+PiAyLjEuMCIKCmdlbSAiYm9vdHNuYXAiLCAiPj0gMS40LjIiLCByZXF1aXJlOiBmYWxzZQoKZ3JvdXAgOmRldmVsb3BtZW50LCA6dGVzdCBkbwogIGdlbSAicHJ5IiwgIn4+IDAuMTMuMSIKZW5kCg=="
+}
