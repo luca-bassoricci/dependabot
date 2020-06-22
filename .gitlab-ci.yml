@@ -46,7 +46,7 @@ rspec:
     COVERAGE: "true"
     NO_COLOR: "1"
   script:
-    - bundle exec rspec --format RspecJunitFormatter --out tmp/rspec.xml
+    - bundle exec rspec --format documentation --format RspecJunitFormatter --out tmp/rspec.xml
   coverage: /COVERAGE:\s+(\d+.\d+)\%/
   artifacts:
     reports:
