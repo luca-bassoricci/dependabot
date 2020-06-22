@@ -3,7 +3,7 @@
 require "webmock/rspec"
 
 RSpec.shared_context("webmock") do
-  let(:source) { DependabotSource.call("1") }
+  let(:source) { DependabotServices::DependabotSource.call("1") }
   let(:repo) { "#{source.api_endpoint}/projects/#{source.repo}/repository" }
   let(:rubygems) { "https://rubygems.org/api/v1" }
 
@@ -23,10 +23,6 @@ RSpec.shared_context("webmock") do
       .to_return(status: 200, body: body("rubygems", "config.json"))
     stub_request(:get, "https://index.rubygems.org/versions")
       .to_return(status: 200, body: body("rubygems", "versions"))
-    stub_request(:get, "https://index.rubygems.org/api/v1/dependencies")
-      .to_return(status: 200, body: "")
-    stub_request(:get, %r{https://index.rubygems.org/api/v1/dependencies\?gems})
-      .to_return(status: 200, body: body("rubygems", "dependencies"))
   end
 
   def body(type, file)
