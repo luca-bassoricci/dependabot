@@ -11,7 +11,7 @@ class Credentials < ApplicationService
 
   def github_credentials
     token = Settings.github_access_token
-    return unless token
+    raise StandardError, "Missing environment variable SETTINGS__GITHUB_ACCESS_TOKEN" unless token
 
     {
       "type" => "git_source",
@@ -23,7 +23,7 @@ class Credentials < ApplicationService
 
   def gitlab_credentials
     token = Settings.gitlab_access_token
-    raise StandardError, "Missing environment variable SETTINGS_GITLAB_ACCESS_TOKEN" unless token
+    raise StandardError, "Missing environment variable SETTINGS__GITLAB_ACCESS_TOKEN" unless token
 
     {
       "type" => "git_source",

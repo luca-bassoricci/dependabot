@@ -3,45 +3,54 @@
 describe "File handlers" do
   include_context "webmock"
 
+  let(:package_manager) { "bundler" }
+  let(:fetcher) { DependabotServices::FileFetcher.call(source: source, package_manager: package_manager) }
+  let(:dependency) do
+    Dependabot::Dependency.new(
+      name: "config",
+      package_manager: package_manager,
+      version: "2.1.0",
+      requirements: [requirement: "~> 2.1.0", groups: [:default], source: nil, file: "Gemfile"]
+    )
+  end
+
   before do
     stub_gitlab
   end
 
   context DependabotServices::FileFetcher do
     it "returns file fetcher" do
-      expect(DependabotServices::FileFetcher.call(source)).to be_an_instance_of(Dependabot::Bundler::FileFetcher)
+      expect(fetcher).to be_an_instance_of(Dependabot::Bundler::FileFetcher)
     end
   end
 
   context DependabotServices::FileParser do
     it "returns file parser" do
-      files = DependabotServices::FileFetcher.call(source).files
-
-      expect(DependabotServices::FileParser.call(dependency_files: files, source: source)).to be_an_instance_of(
-        Dependabot::Bundler::FileParser
+      actual_deps = DependabotServices::FileParser.call(
+        dependency_files: fetcher.files,
+        source: source,
+        package_manager: package_manager
       )
+      expect(actual_deps).to include(dependency)
     end
   end
 
   context DependabotServices::FileUpdater do
-    let(:files) { DependabotServices::FileFetcher.call(source).files }
-    let(:dep) do
-      DependabotServices::FileParser.call(dependency_files: files, source: source).parse.select(&:top_level?).first
-    end
+    let(:files) { fetcher.files }
 
     it "returns file updater" do
-      requirement = dep.requirements.first
+      requirement = dependency.requirements.first
       updated_dep = Dependabot::Dependency.new(
-        name: dep.name,
-        package_manager: dep.package_manager,
+        name: dependency.name,
+        package_manager: dependency.package_manager,
         previous_requirements: [requirement],
-        previous_version: dep.version,
+        previous_version: dependency.version,
         version: "2.2.1",
         requirements: [requirement.merge({ requirement: "~> 2.2.1" })]
       )
-      expect(DependabotServices::FileUpdater.call(dependencies: [updated_dep], dependency_files: files)).to(
-        be_an_instance_of(Dependabot::Bundler::FileUpdater)
-      )
+      expect_any_instance_of(Dependabot::Bundler::FileUpdater).to receive(:updated_dependency_files)
+
+      DependabotServices::FileUpdater.call(dependencies: [updated_dep], dependency_files: fetcher.files)
     end
   end
 end

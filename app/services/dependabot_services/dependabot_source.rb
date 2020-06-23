@@ -2,12 +2,15 @@
 
 module DependabotServices
   class DependabotSource < ApplicationService
-    # Get dependabot source
-    # @param [String] repo
-    # @param [String] directory
-    # @param [String] branch
-    # @return [Dependabot::Source]
-    def call(repo, directory = ".", branch = "master")
+    attr_reader :repo, :directory, :branch
+
+    def initialize(repo:, directory: ".", branch: "master")
+      @repo = repo
+      @directory = directory
+      @branch = branch
+    end
+
+    def call
       Dependabot::Source.new(
         provider: "gitlab",
         hostname: Settings.gitlab_hostname,

@@ -3,7 +3,7 @@
 require "webmock/rspec"
 
 RSpec.shared_context("webmock") do
-  let(:source) { DependabotServices::DependabotSource.call("1") }
+  let(:source) { DependabotServices::DependabotSource.call(repo: "1") }
   let(:repo) { "#{source.api_endpoint}/projects/#{source.repo}/repository" }
   let(:rubygems) { "https://rubygems.org/api/v1" }
 
