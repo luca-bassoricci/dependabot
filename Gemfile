@@ -5,7 +5,7 @@ source "https://rubygems.org"
 ruby "~> 2.6"
 
 gem "config", "~> 2.2"
-gem "dependabot-omnibus", "~> 0.117.7"
+gem "dependabot-omnibus", "~> 0.118.4"
 gem "jbuilder", "~> 2.7"
 gem "puma", "~> 4.1"
 gem "rails", "~> 6.0.2", ">= 6.0.2.2"
