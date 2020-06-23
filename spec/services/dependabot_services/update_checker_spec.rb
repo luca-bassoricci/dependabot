@@ -1,64 +1,82 @@
 # frozen_string_literal: true
 
-describe "Update check" do
+describe DependabotServices::UpdateChecker do
   include_context "webmock"
 
-  context DependabotServices::UpdateChecker do
-    before do
-      stub_gitlab
-    end
+  let(:checker) { double("checker") }
 
-    let(:files) { DependabotServices::FileFetcher.call(source).files }
-    let(:dep) do
-      DependabotServices::FileParser.call(dependency_files: files, source: source).parse.select(&:top_level?).first
-    end
-
-    it "returns update checker" do
-      expect(DependabotServices::UpdateChecker.call(dependency: dep, dependency_files: files)).to be_an_instance_of(
-        Dependabot::Bundler::UpdateChecker
-      )
-    end
+  before do
+    stub_gitlab
+    allow(Dependabot::UpdateCheckers).to receive_message_chain("for_package_manager.new").and_return(checker)
   end
 
-  context DependabotServices::RequirementChecker do
-    let(:checker) { double("checker") }
-    let(:requirement_checker) { DependabotServices::RequirementChecker.call(checker) }
+  let(:package_manager) { "bundler" }
+  let(:files) { DependabotServices::FileFetcher.call(source: source, package_manager: package_manager).files }
+  let(:dep) do
+    DependabotServices::FileParser.call(
+      dependency_files: files,
+      source: source,
+      package_manager: package_manager
+    ).select(&:top_level?).first
+  end
 
-    it "returns update not possible when requirements can't be unlocked" do
-      allow(checker).to receive(:requirements_unlocked_or_can_be?).and_return(true)
-      allow(checker).to receive(:can_update?).with(requirements_to_unlock: :own).and_return(false)
-      allow(checker).to receive(:can_update?).with(requirements_to_unlock: :all).and_return(false)
+  it "returns if dependency up to date" do
+    allow(checker).to receive(:up_to_date?).and_return(true)
 
-      expect(requirement_checker).to eq(:update_not_possible)
-    end
+    expect(checker).not_to receive(:updated_dependencies)
 
-    it "returns update not possible when requirements can be unlocked" do
-      allow(checker).to receive(:requirements_unlocked_or_can_be?).and_return(false)
-      allow(checker).to receive(:can_update?).with(requirements_to_unlock: :none).and_return(false)
+    DependabotServices::UpdateChecker.call(dependency: dep, dependency_files: files)
+  end
 
-      expect(requirement_checker).to eq(:update_not_possible)
-    end
+  it "returns if update not possible with requirements unlocked" do
+    allow(checker).to receive(:up_to_date?).and_return(false)
+    allow(checker).to receive(:requirements_unlocked_or_can_be?).and_return(true)
+    allow(checker).to receive(:can_update?).with(requirements_to_unlock: :own).and_return(false)
+    allow(checker).to receive(:can_update?).with(requirements_to_unlock: :all).and_return(false)
 
-    it "returns none requirements to unlock" do
-      allow(checker).to receive(:requirements_unlocked_or_can_be?).and_return(false)
-      allow(checker).to receive(:can_update?).with(requirements_to_unlock: :none).and_return(true)
+    expect(checker).not_to receive(:updated_dependencies)
 
-      expect(requirement_checker).to eq(:none)
-    end
+    DependabotServices::UpdateChecker.call(dependency: dep, dependency_files: files)
+  end
 
-    it "returns own requirements to unlock" do
-      allow(checker).to receive(:requirements_unlocked_or_can_be?).and_return(true)
-      allow(checker).to receive(:can_update?).with(requirements_to_unlock: :own).and_return(true)
+  it "returns if update not possible with requirements locked" do
+    allow(checker).to receive(:up_to_date?).and_return(false)
+    allow(checker).to receive(:requirements_unlocked_or_can_be?).and_return(false)
+    allow(checker).to receive(:can_update?).with(requirements_to_unlock: :none).and_return(false)
 
-      expect(requirement_checker).to eq(:own)
-    end
+    expect(checker).not_to receive(:updated_dependencies)
 
-    it "returns all requirements to unlock" do
-      allow(checker).to receive(:requirements_unlocked_or_can_be?).and_return(true)
-      allow(checker).to receive(:can_update?).with(requirements_to_unlock: :own).and_return(false)
-      allow(checker).to receive(:can_update?).with(requirements_to_unlock: :all).and_return(true)
+    DependabotServices::UpdateChecker.call(dependency: dep, dependency_files: files)
+  end
 
-      expect(requirement_checker).to eq(:all)
-    end
+  it "calls with requirements to unlock :none" do
+    allow(checker).to receive(:up_to_date?).and_return(false)
+    allow(checker).to receive(:requirements_unlocked_or_can_be?).and_return(false)
+    allow(checker).to receive(:can_update?).with(requirements_to_unlock: :none).and_return(true)
+
+    expect(checker).to receive(:updated_dependencies).with(requirements_to_unlock: :none)
+
+    DependabotServices::UpdateChecker.call(dependency: dep, dependency_files: files)
+  end
+
+  it "calls with requirements to unlock :own" do
+    allow(checker).to receive(:up_to_date?).and_return(false)
+    allow(checker).to receive(:requirements_unlocked_or_can_be?).and_return(true)
+    allow(checker).to receive(:can_update?).with(requirements_to_unlock: :own).and_return(true)
+
+    expect(checker).to receive(:updated_dependencies).with(requirements_to_unlock: :own)
+
+    DependabotServices::UpdateChecker.call(dependency: dep, dependency_files: files)
+  end
+
+  it "calls with requirements to unlock :all" do
+    allow(checker).to receive(:up_to_date?).and_return(false)
+    allow(checker).to receive(:requirements_unlocked_or_can_be?).and_return(true)
+    allow(checker).to receive(:can_update?).with(requirements_to_unlock: :own).and_return(false)
+    allow(checker).to receive(:can_update?).with(requirements_to_unlock: :all).and_return(true)
+
+    expect(checker).to receive(:updated_dependencies).with(requirements_to_unlock: :all)
+
+    DependabotServices::UpdateChecker.call(dependency: dep, dependency_files: files)
   end
 end

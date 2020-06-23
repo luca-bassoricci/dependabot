@@ -2,17 +2,43 @@
 
 module DependabotServices
   class UpdateChecker < ApplicationService
-    # Get update checker
+    attr_reader :dependency, :dependency_files
+
     # @param [Dependabot::Dependency] dependency
     # @param [Array<Dependabot::DependencyFile>] dependency_files
-    # @param [String] package_manager <description>
+    def initialize(dependency:, dependency_files:)
+      @dependency = dependency
+      @dependency_files = dependency_files
+    end
+
+    # Get update checker
+    # @return [Array<Dependabot::Dependency>]
+    def call
+      return if checker.up_to_date? || requirements_to_unlock == :update_not_possible
+
+      checker.updated_dependencies(requirements_to_unlock: requirements_to_unlock)
+    end
+
+    private
+
     # @return [Dependabot::UpdateChecker]
-    def call(dependency:, dependency_files:)
-      Dependabot::UpdateCheckers.for_package_manager(dependency.package_manager).new(
+    def checker
+      @checker ||= Dependabot::UpdateCheckers.for_package_manager(dependency.package_manager).new(
         dependency: dependency,
         dependency_files: dependency_files,
         credentials: Credentials.call
       )
+    end
+
+    # @return [Symbol]
+    def requirements_to_unlock
+      unless checker.requirements_unlocked_or_can_be?
+        return checker.can_update?(requirements_to_unlock: :none) ? :none : :update_not_possible
+      end
+      return :own if checker.can_update?(requirements_to_unlock: :own)
+      return :all if checker.can_update?(requirements_to_unlock: :all)
+
+      :update_not_possible
     end
   end
 end

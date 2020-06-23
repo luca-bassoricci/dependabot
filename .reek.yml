@@ -21,6 +21,9 @@ detectors:
 
   DuplicateMethodCall:
     max_calls: 2
+  
+  TooManyInstanceVariables:
+    max_instance_variables: 6
 
 exclude_paths:
   - bin
