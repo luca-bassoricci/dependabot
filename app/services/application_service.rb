@@ -5,5 +5,5 @@ class ApplicationService
     new(*args).call
   end
 
-  delegate :logger, to: :Logger
+  delegate :logger, to: :Rails
 end
