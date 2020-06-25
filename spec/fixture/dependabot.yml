@@ -1,0 +1,30 @@
+version: 2
+updates:
+  - package-ecosystem: bundler
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: sunday
+      time: "02:00"
+    commit-message:
+      prefix: "dep"
+      prefix-development: "bundler-dev"
+      include: "scope"
+    milestone: 4
+    allow:
+      - dependency-name: rails
+        dependency-type: production
+    ignore:
+      - dependency-name: config
+        versions: ["2"]
+    reviewers:
+      - andrcuns
+    assignees:
+      - andrcuns
+    open-pull-requests-limit: 10
+    labels:
+      - dependency
+    pull-request-branch-name:
+      separator: "-"
+    target-branch: "develop"
+    versioning-strategy: auto
