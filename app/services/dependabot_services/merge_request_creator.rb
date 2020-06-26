@@ -2,18 +2,22 @@
 
 module DependabotServices
   class MergeRequestCreator < ApplicationService
-    attr_reader :source, :fetcher, :dependency, :assignees
+    MR_OPTIONS = %i[
+      custom_labels
+      commit_message_options
+      branch_name_separator
+      branch_name_prefix
+      milestone
+    ].freeze
 
-    # @param [Dependabot::Source] source
-    # @param [String] base_commit
+    # @param [Dependabot::FileFetchers::Base] fetcher
     # @param [Dependabot::Dependency] dependency
-    # @param [Array<Dependabot::DependencyFile>] files
+    # @param [Hash] opts
     # @param [Array<Number>] assignees
-    def initialize(source:, fetcher:, dependency:, assignees: [nil])
-      @source = source
-      @dependency = dependency
+    def initialize(fetcher:, dependency:, **opts)
       @fetcher = fetcher
-      @assignees = assignees
+      @dependency = dependency
+      @options = opts
     end
 
     # Create merge request
@@ -21,17 +25,39 @@ module DependabotServices
       return unless updated_dependencies
 
       Dependabot::PullRequestCreator.new(
-        source: source,
+        source: fetcher.source,
         base_commit: fetcher.commit,
         dependencies: updated_dependencies,
         files: updated_files,
         credentials: Credentials.call,
-        assignees: assignees,
-        label_language: true
+        **mr_opts
       ).create
     end
 
     private
+
+    attr_reader :fetcher, :dependency, :options
+
+    def assignees
+      return unless options[:assignees]
+
+      Gitlab::UserFinder.call(options[:assignees])
+    end
+
+    def reviewers
+      return unless options[:reviewers]
+
+      Gitlab::UserFinder.call(options[:reviewers])
+    end
+
+    def mr_opts
+      {
+        assignees: assignees,
+        reviewers: { approvers: reviewers },
+        label_language: true,
+        **options.select { |key, _value| MR_OPTIONS.include?(key) }
+      }
+    end
 
     # @return [Array<Dependabot::Dependency>]
     def updated_dependencies

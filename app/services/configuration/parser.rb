@@ -10,15 +10,13 @@ module Configuration
     end
 
     def call
-      yml[:updates].map do |package_manager|
-        {
-          package_manager[:"package-ecosystem"] => {
-            **options(package_manager),
-            **branch_options(package_manager),
-            **commit_message_options(package_manager),
-            cron: Schedule.call(package_manager[:schedule])
-          }.compact
-        }
+      yml[:updates].each_with_object({}) do |package_manager, hash|
+        hash[package_manager[:"package-ecosystem"]] = {
+          **options(package_manager),
+          **branch_options(package_manager),
+          **commit_message_options(package_manager),
+          cron: Schedule.call(package_manager[:schedule])
+        }.compact
       end
     end
 
