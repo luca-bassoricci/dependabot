@@ -3,7 +3,7 @@
 describe Configuration do
   context Configuration::Parser do
     let(:expected_config) do
-      [{
+      {
         "bundler" => {
           directory: "/",
           branch: "develop",
@@ -19,7 +19,7 @@ describe Configuration do
             include_scope: "scope"
           }
         }
-      }]
+      }
     end
 
     it "returns parsed configuration" do

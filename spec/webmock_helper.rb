@@ -3,26 +3,19 @@
 require "webmock/rspec"
 
 RSpec.shared_context("webmock") do
-  let(:source) { DependabotServices::DependabotSource.call(repo: "1") }
-  let(:repo) { "#{source.api_endpoint}/projects/#{source.repo}/repository" }
-  let(:rubygems) { "https://rubygems.org/api/v1" }
+  let(:repo_url) { "https://#{Settings.gitlab_hostname}/api/v4/projects/test-repo/repository" }
 
   def stub_gitlab # rubocop:disable Metrics/AbcSize
-    stub_request(:get, "#{repo}/branches/#{source.branch}")
+    stub_request(:get, "#{repo_url}/branches/master")
       .to_return(status: 200, body: body("gitlab", "project.json"))
-    stub_request(:get, %r{#{repo}/tree})
+    stub_request(:get, %r{#{repo_url}/tree})
       .to_return(status: 200, body: body("gitlab", "files.json"))
-    stub_request(:get, %r{#{repo}/files/Gemfile\?})
+    stub_request(:get, %r{#{repo_url}/files/Gemfile\?})
       .to_return(status: 200, body: body("gitlab", "gemfile.json"))
-    stub_request(:get, %r{#{repo}/files/Gemfile.lock})
+    stub_request(:get, %r{#{repo_url}/files/Gemfile.lock})
       .to_return(status: 200, body: body("gitlab", "gemfile.lock.json"))
-  end
-
-  def stub_rubygems
-    stub_request(:get, "#{rubygems}/versions/config.json")
-      .to_return(status: 200, body: body("rubygems", "config.json"))
-    stub_request(:get, "https://index.rubygems.org/versions")
-      .to_return(status: 200, body: body("rubygems", "versions"))
+    stub_request(:get, "#{source.api_endpoint}/users?search=andrcuns")
+      .to_return(status: 200, body: body("gitlab", "user.json"))
   end
 
   def body(type, file)

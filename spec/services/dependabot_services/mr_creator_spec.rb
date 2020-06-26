@@ -2,26 +2,9 @@
 
 describe DependabotServices::MergeRequestCreator do
   include_context "webmock"
+  include_context "dependabot"
 
-  let(:package_manager) { "bundler" }
-  let(:fetcher) { DependabotServices::FileFetcher.call(source: source, package_manager: package_manager) }
-  let(:dep) do
-    DependabotServices::FileParser
-      .call(dependency_files: fetcher.files, source: source, package_manager: package_manager)
-      .select(&:top_level?).first
-  end
-  let(:updated_dependencies) do
-    requirement = dep.requirements.first
-    updated_dep = Dependabot::Dependency.new(
-      name: dep.name,
-      package_manager: dep.package_manager,
-      previous_requirements: [requirement],
-      previous_version: dep.version,
-      version: "2.2.1",
-      requirements: [requirement.merge({ requirement: "~> 2.2.1" })]
-    )
-    [updated_dep]
-  end
+  let(:pr_creator) { double("PullRequestCreator") }
   let(:updated_files) do
     [
       Dependabot::DependencyFile.new(
@@ -36,21 +19,53 @@ describe DependabotServices::MergeRequestCreator do
       )
     ]
   end
+  let(:config) do
+    {
+      milestone: 4,
+      custom_labels: ["dependency"],
+      branch_name_separator: "-",
+      assignees: ["andrcuns"],
+      reviewers: ["andrcuns"],
+      commit_message_options: {
+        prefix: "dep",
+        prefix_development: "bundler-dev",
+        include_scope: "scope"
+      }
+    }
+  end
 
   before do
     stub_gitlab
-
-    allow(DependabotServices::UpdateChecker).to receive(:call).and_return(updated_dependencies)
-    allow(DependabotServices::FileUpdater).to receive(:call).and_return(updated_files)
   end
 
   it "creates merge request" do
-    expect_any_instance_of(Dependabot::PullRequestCreator).to receive(:create).and_return("mr")
+    expect(DependabotServices::UpdateChecker).to receive(:call)
+      .with(dependency: dependency, dependency_files: fetcher.files)
+      .and_return(updated_dependencies)
+    expect(DependabotServices::FileUpdater).to receive(:call)
+      .with(dependencies: updated_dependencies, dependency_files: fetcher.files)
+      .and_return(updated_files)
+    expect(Dependabot::PullRequestCreator).to receive(:new)
+      .with(
+        source: fetcher.source,
+        base_commit: fetcher.commit,
+        dependencies: updated_dependencies,
+        files: updated_files,
+        credentials: Credentials.call,
+        label_language: true,
+        **config,
+        assignees: [10],
+        reviewers: { approvers: [10] }
+      )
+      .and_return(pr_creator)
+    expect(pr_creator).to receive(:create).and_return("mr")
 
     mr = DependabotServices::MergeRequestCreator.call(
-      source: source,
       fetcher: fetcher,
-      dependency: dep
+      dependency: dependency,
+      directory: "/",
+      branch: "develop",
+      **config
     )
 
     expect(mr).to eq("mr")
