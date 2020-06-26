@@ -1,0 +1,17 @@
+**
+
+!app/
+!bin/
+!config/
+!lib/
+
+!config.ru
+!Gemfile
+!Gemfile.lock
+!Rakefile
+
+!tmp/
+tmp/*
+!log/
+log/*
+
