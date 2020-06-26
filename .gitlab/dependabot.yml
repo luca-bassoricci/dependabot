@@ -1,0 +1,20 @@
+version: 2
+updates:
+  - package-ecosystem: bundler
+    directory: "/"
+    schedule:
+      interval: daily
+      time: "1:00"
+    commit-message:
+      include: scope
+    assignees:
+      - andrcuns
+  - package-ecosystem: docker
+    directory: "/"
+    schedule:
+      interval: daily
+      time: "2:00"
+    commit-message:
+      include: scope
+    assignees:
+      - andrcuns
