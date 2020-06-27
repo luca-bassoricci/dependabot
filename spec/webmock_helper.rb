@@ -5,7 +5,7 @@ require "webmock/rspec"
 RSpec.shared_context("webmock") do
   let(:repo_url) { "https://#{Settings.gitlab_hostname}/api/v4/projects/test-repo/repository" }
 
-  def stub_gitlab # rubocop:disable Metrics/AbcSize
+  def stub_gitlab
     stub_request(:get, "#{repo_url}/branches/master")
       .to_return(status: 200, body: body("gitlab", "project.json"))
     stub_request(:get, %r{#{repo_url}/tree})

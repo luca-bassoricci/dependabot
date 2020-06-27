@@ -1,8 +1,12 @@
 AllCops:
+  NewCops: disable
   Exclude:
     - bin/**/*
     - vendor/**/*
     - node_modules/**/*
+
+Metrics/AbcSize:
+  Enabled: false
 
 Metrics/BlockLength:
   Exclude:

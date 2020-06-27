@@ -5,6 +5,7 @@ describe DependabotServices::MergeRequestCreator do
   include_context "dependabot"
 
   let(:pr_creator) { double("PullRequestCreator") }
+  let(:mr) { OpenStruct.new(web_url: "mr-url") }
   let(:updated_files) do
     [
       Dependabot::DependencyFile.new(
@@ -58,9 +59,9 @@ describe DependabotServices::MergeRequestCreator do
         reviewers: { approvers: [10] }
       )
       .and_return(pr_creator)
-    expect(pr_creator).to receive(:create).and_return("mr")
+    expect(pr_creator).to receive(:create).and_return(mr)
 
-    mr = DependabotServices::MergeRequestCreator.call(
+    actual_mr = DependabotServices::MergeRequestCreator.call(
       fetcher: fetcher,
       dependency: dependency,
       directory: "/",
@@ -68,6 +69,6 @@ describe DependabotServices::MergeRequestCreator do
       **config
     )
 
-    expect(mr).to eq("mr")
+    expect(actual_mr).to eq(mr)
   end
 end
