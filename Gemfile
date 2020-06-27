@@ -30,7 +30,7 @@ group :development, :test do
 end
 
 group :development do
-  gem "lefthook", "~> 0.7.1"
+  gem "lefthook", "~> 0.7.2"
   gem "solargraph", "~> 0.39.8"
   gem "spring", "~> 2.1.0"
   gem "web-console", ">= 3.3.0"
