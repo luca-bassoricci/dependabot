@@ -20,7 +20,7 @@ group :development, :test do
   gem "pry", "~> 0.13.1"
   gem "reek", "~> 6.0"
   gem "rspec", "~> 3.9"
-  gem "rspec-rails", "~> 4.0.0"
+  gem "rspec-rails", "~> 4.0.1"
   gem "rspec_junit_formatter", "~> 0.4.1"
   gem "rubocop", "~> 0.86.0"
   gem "simplecov", "~> 0.18.5"
