@@ -24,7 +24,7 @@ module DependabotServices
     def call
       return unless updated_dependencies
 
-      Dependabot::PullRequestCreator.new(
+      mr = Dependabot::PullRequestCreator.new(
         source: fetcher.source,
         base_commit: fetcher.commit,
         dependencies: updated_dependencies,
@@ -32,6 +32,9 @@ module DependabotServices
         credentials: Credentials.call,
         **mr_opts
       ).create
+
+      logger.info { "Created merge request #{mr.web_url}" }
+      mr
     end
 
     private
