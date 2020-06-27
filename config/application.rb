@@ -21,13 +21,16 @@ require "action_view/railtie"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+require_relative "log_formatter"
+
 module DependabotGitlab
   class Application < Rails::Application
     config.load_defaults 6.0
     config.active_job.queue_adapter = :sidekiq
 
     config.logger = Logger.new(STDOUT)
-    config.logger.datetime_format = "%Y-%m-%d %H:%M:%S"
+    config.logger.formatter = ::SimpleLogFormatter.new
+    config.logger.datetime_format = DATETIME_FORMAT
     config.log_level = ENV["LOG_LEVEL"]&.to_sym || :info
   end
 end
