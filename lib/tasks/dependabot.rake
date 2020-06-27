@@ -23,4 +23,9 @@ namespace :dependabot do
       )
     end
   end
+
+  desc "list scheduled dependency update jobs"
+  task(list: :environment) do
+    Sidekiq::Cron::Job.all.each { |job| puts "name => #{job.name}, cron => #{job.cron}" }
+  end
 end
