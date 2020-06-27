@@ -1,17 +1,6 @@
 version: "3.8"
 
 services:
-  dependabot:
-    build: .
-    image: dependabot-gitlab
-    depends_on:
-      - redis
-    environment:
-      REDIS_URL: redis://redis:6379
-      RAILS_ENV:
-      SENTRY_DSN:
-      SETTINGS__GITHUB_ACCESS_TOKEN:
-      SETTINGS__GITLAB_ACCESS_TOKEN:
   redis:
     image: redis:6.0.5-alpine
     ports:
