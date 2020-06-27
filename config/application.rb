@@ -25,5 +25,9 @@ module DependabotGitlab
   class Application < Rails::Application
     config.load_defaults 6.0
     config.active_job.queue_adapter = :sidekiq
+
+    config.logger = Logger.new(STDOUT)
+    config.logger.datetime_format = "%Y-%m-%d %H:%M:%S"
+    config.log_level = ENV["LOG_LEVEL"]&.to_sym || :info
   end
 end
