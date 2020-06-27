@@ -11,7 +11,7 @@ describe Configuration do
           assignees: ["andrcuns"],
           reviewers: ["andrcuns"],
           custom_labels: ["dependency"],
-          cron: "00 02 * * sun",
+          cron: "00 02 * * sun Europe/Riga",
           branch_name_separator: "-",
           commit_message_options: {
             prefix: "dep",
@@ -29,11 +29,11 @@ describe Configuration do
 
   context Configuration::Schedule do
     it "parses daily schedule configuration" do
-      expect(Configuration::Schedule.call(interval: "daily", day: "sunday", time: "2:00")).to eq("00 2 * * *")
+      expect(Configuration::Schedule.call(interval: "daily", day: "sunday", time: "2:00")).to eq("00 2 * * * UTC")
     end
 
     it "parses monthly schedule configuration" do
-      expect(Configuration::Schedule.call(interval: "monthly", day: "sunday", time: "2:00")).to eq("00 2 1 * *")
+      expect(Configuration::Schedule.call(interval: "monthly", day: "sunday", time: "2:00")).to eq("00 2 1 * * UTC")
     end
   end
 end

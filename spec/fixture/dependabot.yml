@@ -6,6 +6,7 @@ updates:
       interval: weekly
       day: sunday
       time: "02:00"
+      timezone: Europe/Riga
     commit-message:
       prefix: "dep"
       prefix-development: "bundler-dev"
