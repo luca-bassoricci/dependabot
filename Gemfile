@@ -12,7 +12,7 @@ gem "rails", "~> 6.0.3"
 gem "sentry-raven", "~> 3.0", require: false
 gem "sidekiq", "~> 6.0.7"
 gem "sidekiq-cron", "~> 1.2"
-gem "webpacker", "~> 4.0"
+gem "webpacker", "~> 5.1"
 
 gem "bootsnap", ">= 1.4.2", require: false
 
