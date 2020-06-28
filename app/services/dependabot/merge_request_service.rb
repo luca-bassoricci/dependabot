@@ -76,7 +76,8 @@ module Dependabot
         fetcher.source.repo,
         source_branch: source_branch,
         target_branch: fetcher.source.branch,
-        state: "opened"
+        state: "opened",
+        with_merge_status_recheck: true
       )&.first
     end
 
