@@ -7,7 +7,7 @@ class DependencyUpdater < ApplicationService
 
   def call
     dependencies.each do |dependency|
-      DependabotServices::MergeRequestCreator.call(
+      Dependabot::MergeRequestCreator.call(
         fetcher: fetcher,
         dependency: dependency,
         **config
@@ -24,9 +24,9 @@ class DependencyUpdater < ApplicationService
   end
 
   def fetcher
-    @fetcher ||= DependabotServices::FileFetcher.call(
+    @fetcher ||= Dependabot::FileFetcher.call(
       package_manager: package_manager,
-      source: DependabotServices::DependabotSource.call(
+      source: Dependabot::DependabotSource.call(
         repo: repo,
         branch: config[:branch],
         directory: config[:directory]
@@ -35,7 +35,7 @@ class DependencyUpdater < ApplicationService
   end
 
   def dependencies
-    @dependencies ||= DependabotServices::DependencyFetcher.call(
+    @dependencies ||= Dependabot::DependencyFetcher.call(
       source: fetcher.source,
       dependency_files: fetcher.files,
       package_manager: package_manager

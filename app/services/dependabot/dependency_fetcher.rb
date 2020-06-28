@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module DependabotServices
+module Dependabot
   class DependencyFetcher < ApplicationService
     # @param [Hash] params
     # @option params [Dependabot::Source] :source

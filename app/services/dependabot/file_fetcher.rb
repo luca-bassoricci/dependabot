@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module DependabotServices
+module Dependabot
   class FileFetcher < ApplicationService
     attr_reader :source, :package_manager
 

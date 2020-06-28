@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe DependabotServices::UpdateChecker do
+describe Dependabot::UpdateChecker do
   include_context "webmock"
   include_context "dependabot"
 
@@ -16,7 +16,7 @@ describe DependabotServices::UpdateChecker do
 
     expect(checker).not_to receive(:updated_dependencies)
 
-    expect(DependabotServices::UpdateChecker.call(dependency: dependency, dependency_files: fetcher.files)).to be_nil
+    expect(Dependabot::UpdateChecker.call(dependency: dependency, dependency_files: fetcher.files)).to be_nil
   end
 
   it "returns if update not possible with requirements unlocked" do
@@ -27,7 +27,7 @@ describe DependabotServices::UpdateChecker do
 
     expect(checker).not_to receive(:updated_dependencies)
 
-    expect(DependabotServices::UpdateChecker.call(dependency: dependency, dependency_files: fetcher.files)).to be_nil
+    expect(Dependabot::UpdateChecker.call(dependency: dependency, dependency_files: fetcher.files)).to be_nil
   end
 
   it "returns if update not possible with requirements locked" do
@@ -37,7 +37,7 @@ describe DependabotServices::UpdateChecker do
 
     expect(checker).not_to receive(:updated_dependencies)
 
-    expect(DependabotServices::UpdateChecker.call(dependency: dependency, dependency_files: fetcher.files)).to be_nil
+    expect(Dependabot::UpdateChecker.call(dependency: dependency, dependency_files: fetcher.files)).to be_nil
   end
 
   it "calls with requirements to unlock :none" do
@@ -49,7 +49,7 @@ describe DependabotServices::UpdateChecker do
       .with(requirements_to_unlock: :none)
       .and_return(updated_dependencies)
 
-    expect(DependabotServices::UpdateChecker.call(dependency: dependency, dependency_files: fetcher.files)).to eq(
+    expect(Dependabot::UpdateChecker.call(dependency: dependency, dependency_files: fetcher.files)).to eq(
       updated_dependencies
     )
   end
@@ -63,7 +63,7 @@ describe DependabotServices::UpdateChecker do
       .with(requirements_to_unlock: :own)
       .and_return(updated_dependencies)
 
-    expect(DependabotServices::UpdateChecker.call(dependency: dependency, dependency_files: fetcher.files)).to eq(
+    expect(Dependabot::UpdateChecker.call(dependency: dependency, dependency_files: fetcher.files)).to eq(
       updated_dependencies
     )
   end
@@ -78,7 +78,7 @@ describe DependabotServices::UpdateChecker do
       .with(requirements_to_unlock: :all)
       .and_return(updated_dependencies)
 
-    expect(DependabotServices::UpdateChecker.call(dependency: dependency, dependency_files: fetcher.files)).to eq(
+    expect(Dependabot::UpdateChecker.call(dependency: dependency, dependency_files: fetcher.files)).to eq(
       updated_dependencies
     )
   end

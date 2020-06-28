@@ -11,13 +11,13 @@ describe DependencyUpdater do
   end
 
   it "runs dependency update for repository" do
-    expect(DependabotServices::DependabotSource).to receive(:call)
+    expect(Dependabot::DependabotSource).to receive(:call)
       .with(repo: repo, branch: "master", directory: "/")
       .and_return(source)
-    expect(DependabotServices::FileFetcher).to receive(:call)
+    expect(Dependabot::FileFetcher).to receive(:call)
       .with(source: source, package_manager: package_manager)
       .and_return(fetcher)
-    expect(DependabotServices::DependencyFetcher).to receive(:call)
+    expect(Dependabot::DependencyFetcher).to receive(:call)
       .with(source: source, dependency_files: fetcher.files, package_manager: package_manager)
       .and_return([dependency])
     expect(Gitlab::ConfigFetcher).to receive(:call)
@@ -26,7 +26,7 @@ describe DependencyUpdater do
     expect(Configuration::Parser).to receive(:call)
       .with(raw_config)
       .and_return(dependabot_config)
-    expect(DependabotServices::MergeRequestCreator).to receive(:call)
+    expect(Dependabot::MergeRequestCreator).to receive(:call)
       .once
       .with(fetcher: fetcher, dependency: dependency, **dependabot_config[package_manager])
 

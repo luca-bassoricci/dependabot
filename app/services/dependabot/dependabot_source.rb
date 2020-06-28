@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module DependabotServices
+module Dependabot
   class DependabotSource < ApplicationService
     attr_reader :repo, :directory, :branch
 
