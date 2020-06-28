@@ -2,7 +2,7 @@
 
 describe Dependabot::DependabotSource do
   it "returns source" do
-    src = Dependabot::DependabotSource.call(repo: "test-repo")
+    src = Dependabot::DependabotSource.call(repo: "test-repo", directory: "/", branch: "master")
 
     actual = [src.provider, src.hostname, src.api_endpoint, src.repo, src.directory, src.branch]
     expected = %w[gitlab gitlab.com https://gitlab.com/api/v4 test-repo / master]

@@ -13,6 +13,7 @@ describe Configuration do
           custom_labels: ["dependency"],
           cron: "00 02 * * sun Europe/Riga",
           branch_name_separator: "-",
+          branch_name_prefix: "dependabot",
           commit_message_options: {
             prefix: "dep",
             prefix_development: "bundler-dev",

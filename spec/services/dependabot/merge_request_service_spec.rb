@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
-describe Dependabot::MergeRequestCreator do
+describe Dependabot::MergeRequestService do
   include_context "webmock"
   include_context "dependabot"
 
   let(:pr_creator) { double("PullRequestCreator") }
+  let(:pr_updater) { double("PullRequestUpdater") }
   let(:mr) { OpenStruct.new(web_url: "mr-url") }
   let(:updated_files) do
     [
@@ -37,15 +38,19 @@ describe Dependabot::MergeRequestCreator do
 
   before do
     stub_gitlab
-  end
 
-  it "creates merge request" do
     expect(Dependabot::UpdateChecker).to receive(:call)
       .with(dependency: dependency, dependency_files: fetcher.files)
       .and_return(updated_dependencies)
     expect(Dependabot::FileUpdater).to receive(:call)
       .with(dependencies: updated_dependencies, dependency_files: fetcher.files)
       .and_return(updated_files)
+  end
+
+  it "creates merge request" do
+    stub_request(:get, %r{#{repo_url}/merge_requests})
+      .to_return(status: 200, body: [].to_json)
+
     expect(Dependabot::PullRequestCreator).to receive(:new)
       .with(
         source: fetcher.source,
@@ -59,16 +64,39 @@ describe Dependabot::MergeRequestCreator do
         reviewers: { approvers: [10] }
       )
       .and_return(pr_creator)
-    expect(pr_creator).to receive(:create).and_return(mr)
+    expect(pr_creator).to receive(:create)
 
-    actual_mr = Dependabot::MergeRequestCreator.call(
+    Dependabot::MergeRequestService.call(
       fetcher: fetcher,
       dependency: dependency,
       directory: "/",
       branch: "develop",
       **config
     )
+  end
 
-    expect(actual_mr).to eq(mr)
+  it "rebases merge request" do
+    stub_request(:get, %r{#{repo_url}/merge_requests})
+      .to_return(status: 200, body: [{ iid: 1, sha: "5f92cc4d9939", has_conflicts: true }].to_json)
+
+    expect(Dependabot::PullRequestUpdater).to receive(:new)
+      .with(
+        source: fetcher.source,
+        base_commit: fetcher.commit,
+        old_commit: "5f92cc4d9939",
+        files: updated_files,
+        credentials: Credentials.call,
+        pull_request_number: 1
+      )
+      .and_return(pr_updater)
+    expect(pr_updater).to receive(:update)
+
+    Dependabot::MergeRequestService.call(
+      fetcher: fetcher,
+      dependency: dependency,
+      directory: "/",
+      branch: "develop",
+      **config
+    )
   end
 end

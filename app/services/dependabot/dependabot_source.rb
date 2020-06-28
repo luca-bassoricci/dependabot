@@ -4,7 +4,7 @@ module Dependabot
   class DependabotSource < ApplicationService
     attr_reader :repo, :directory, :branch
 
-    def initialize(repo:, directory: "/", branch: "master")
+    def initialize(repo:, directory:, branch:)
       @repo = repo
       @directory = directory
       @branch = branch

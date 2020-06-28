@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
+require "dependabot/pull_request_updater"
+
 module Dependabot
-  class MergeRequestCreator < ApplicationService
+  class MergeRequestService < ApplicationService
     MR_OPTIONS = %i[
       custom_labels
       commit_message_options
@@ -24,6 +26,16 @@ module Dependabot
     def call
       return unless updated_dependencies
 
+      return update_mr if mr
+
+      create_mr
+    end
+
+    private
+
+    attr_reader :fetcher, :dependency, :options
+
+    def create_mr
       mr = Dependabot::PullRequestCreator.new(
         source: fetcher.source,
         base_commit: fetcher.commit,
@@ -32,14 +44,41 @@ module Dependabot
         credentials: Credentials.call,
         **mr_opts
       ).create
-
-      logger.info { "Created merge request #{mr.web_url}" } if mr
-      mr
+      logger.info { "Created mr #{mr.web_url}" } if mr
     end
 
-    private
+    def update_mr
+      return logger.info { "Merge request #{mr.reference} doesn't require rebasing" } unless mr.has_conflicts
 
-    attr_reader :fetcher, :dependency, :options
+      logger.info { "Rebasing merge request #{mr.reference}" }
+      Dependabot::PullRequestUpdater.new(
+        source: fetcher.source,
+        base_commit: fetcher.commit,
+        old_commit: mr.sha,
+        files: updated_files,
+        credentials: Credentials.call,
+        pull_request_number: mr.iid
+      ).update
+    end
+
+    def source_branch
+      @source_branch ||= Dependabot::PullRequestCreator::BranchNamer.new(
+        dependencies: updated_dependencies,
+        files: updated_files,
+        target_branch: fetcher.source.branch,
+        separator: mr_opts[:branch_name_separator],
+        prefix: mr_opts[:branch_name_prefix]
+      ).new_branch_name
+    end
+
+    def mr
+      @mr ||= gitlab.merge_requests(
+        fetcher.source.repo,
+        source_branch: source_branch,
+        target_branch: fetcher.source.branch,
+        state: "opened"
+      )&.first
+    end
 
     def assignees
       return unless options[:assignees]
