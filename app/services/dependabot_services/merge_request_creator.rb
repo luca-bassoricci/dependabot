@@ -33,7 +33,7 @@ module DependabotServices
         **mr_opts
       ).create
 
-      logger.info { "Created merge request #{mr.web_url}" }
+      logger.info { "Created merge request #{mr.web_url}" } if mr
       mr
     end
 
