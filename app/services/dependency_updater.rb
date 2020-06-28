@@ -7,7 +7,7 @@ class DependencyUpdater < ApplicationService
 
   def call
     dependencies.each do |dependency|
-      Dependabot::MergeRequestCreator.call(
+      Dependabot::MergeRequestService.call(
         fetcher: fetcher,
         dependency: dependency,
         **config

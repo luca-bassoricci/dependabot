@@ -31,7 +31,8 @@ module Configuration
     def branch_options(opts)
       {
         branch: opts[:"target-branch"],
-        branch_name_separator: opts.dig(:"pull-request-branch-name", :separator) || "-"
+        branch_name_separator: opts.dig(:"pull-request-branch-name", :separator) || "-",
+        branch_name_prefix: opts.dig(:"pull-request-branch-name", :prefix) || "dependabot"
       }
     end
 

@@ -26,7 +26,7 @@ describe DependencyUpdater do
     expect(Configuration::Parser).to receive(:call)
       .with(raw_config)
       .and_return(dependabot_config)
-    expect(Dependabot::MergeRequestCreator).to receive(:call)
+    expect(Dependabot::MergeRequestService).to receive(:call)
       .once
       .with(fetcher: fetcher, dependency: dependency, **dependabot_config[package_manager])
 

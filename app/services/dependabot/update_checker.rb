@@ -14,14 +14,34 @@ module Dependabot
     # Get update checker
     # @return [Array<Dependabot::Dependency>]
     def call
-      logger.info { "Checking if #{dependency.name} #{dependency.version} needs updating" }
-      return checker.updated_dependencies(requirements_to_unlock: requirements_to_unlock) unless update_impossible?
+      logger.info { "Checking if #{name} needs updating" }
+      return log_up_to_date if checker.up_to_date?
 
-      log_no_update_reason
+      logger.info { "Latest version is #{checker.latest_version}" }
+      return updated_dependencies unless requirements_to_unlock == :update_not_possible
+
+      logger.info { "No update possible for #{name}" }
       nil
     end
 
     private
+
+    # :nocov:
+    # @return [String]
+    def name
+      @name ||= "#{dependency.name} #{dependency.version}"
+    end
+
+    # @return [nil]
+    def log_up_to_date
+      logger.info { "No update needed for #{dependency.name} #{dependency.version}" }
+      nil
+    end
+
+    # @return [Array<Dependabot::Dependency>]
+    def updated_dependencies
+      @updated_dependencies ||= checker.updated_dependencies(requirements_to_unlock: requirements_to_unlock)
+    end
 
     # @return [Dependabot::UpdateChecker]
     def checker
@@ -43,19 +63,6 @@ module Dependabot
 
         :update_not_possible
       end
-    end
-
-    # @return [Boolean]
-    def update_impossible?
-      checker.up_to_date? || requirements_to_unlock == :update_not_possible
-    end
-
-    # @return [void]
-    def log_no_update_reason
-      return logger.info { "Latest version is #{dependency.version}" } if checker.up_to_date?
-
-      logger.info { "Requirements to unlock #{requirements_to_unlock}" }
-      logger.info { "No update possible for #{dependency.name} #{dependency.version}" }
     end
   end
 end
