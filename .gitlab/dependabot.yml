@@ -18,3 +18,13 @@ updates:
       include: scope
     assignees:
       - andrcuns
+  - package-ecosystem: npm_and_yarn
+    directory: "/"
+    schedule:
+      interval: daily
+      time: "3:00"
+    commit-message:
+      include: scope
+    assignees:
+      - andrcuns
+    
