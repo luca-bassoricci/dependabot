@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module DependabotServices
+module Dependabot
   class FileParser < ApplicationService
     attr_reader :dependency_files, :source, :package_manager
 

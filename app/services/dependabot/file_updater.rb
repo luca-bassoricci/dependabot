@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module DependabotServices
+module Dependabot
   class FileUpdater < ApplicationService
     attr_reader :dependencies, :dependency_files
 

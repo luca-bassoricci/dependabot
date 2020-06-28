@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module DependabotServices
+module Dependabot
   class MergeRequestCreator < ApplicationService
     MR_OPTIONS = %i[
       custom_labels
@@ -64,7 +64,7 @@ module DependabotServices
 
     # @return [Array<Dependabot::Dependency>]
     def updated_dependencies
-      @updated_dependencies ||= DependabotServices::UpdateChecker.call(
+      @updated_dependencies ||= Dependabot::UpdateChecker.call(
         dependency: dependency,
         dependency_files: fetcher.files
       )
@@ -72,7 +72,7 @@ module DependabotServices
 
     # @return [Array<Dependabot::DependencyFile>]
     def updated_files
-      @updated_files ||= DependabotServices::FileUpdater.call(
+      @updated_files ||= Dependabot::FileUpdater.call(
         dependencies: updated_dependencies,
         dependency_files: fetcher.files
       )
