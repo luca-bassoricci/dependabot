@@ -66,13 +66,10 @@ docker:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: "/certs"
     DOCKER_BUILDKIT: "1"
-    HEROKU_REGISTRY: registry.heroku.com
     IMAGE: docker.io/andrcuns/dependabot-gitlab
     RELEASE: $IMAGE:$CI_COMMIT_SHORT_SHA
     LATEST: $IMAGE:latest
-    HEROKU: $HEROKU_REGISTRY/dependabot-gitlab/web
   before_script:
-    - docker login -u _ -p $HEROKU_API_KEY $HEROKU_REGISTRY
     - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
   script: |
     docker build \
@@ -80,17 +77,7 @@ docker:
       --cache-from $LATEST \
       --tag $RELEASE \
       --tag $LATEST \
-      --tag $HEROKU \
       .
-    docker push $HEROKU
     docker push $LATEST
-  only:
-    - master
-
-release:
-  image: finalgene/heroku-cli:7.42
-  stage: release
-  script:
-    - heroku container:release web -a dependabot-gitlab
   only:
     - master

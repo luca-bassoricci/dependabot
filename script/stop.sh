@@ -1,3 +1,5 @@
 #!/bin/bash
 
-docker-compose -f docker-compose.yml -f docker-compose-$1.yml down
+[ "$1" == "prod" ] && env="prod" || env="test"
+
+docker-compose -f docker-compose.yml -f docker-compose-$env.yml down

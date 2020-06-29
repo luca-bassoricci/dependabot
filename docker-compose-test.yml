@@ -1,8 +1,11 @@
 version: "3.8"
 
 services:
-  dependabot:
-    build: .
+  web:
+    build:
+      context: .
+      cache_from:
+        - andrcuns/dependabot-gitlab
     image: dependabot-gitlab:local
     depends_on:
       - redis
@@ -13,3 +16,18 @@ services:
       SETTINGS__GITLAB_ACCESS_TOKEN:
     ports:
       - 3000:3000
+    command: rails server
+  worker:
+    build:
+      context: .
+      cache_from:
+        - andrcuns/dependabot-gitlab
+    image: dependabot-gitlab:local
+    depends_on:
+      - redis
+    environment:
+      REDIS_URL: redis://redis:6379
+      RAILS_ENV: test
+      SETTINGS__GITHUB_ACCESS_TOKEN:
+      SETTINGS__GITLAB_ACCESS_TOKEN:
+    command: sidekiq
