@@ -81,3 +81,13 @@ docker:
     docker push $LATEST
   only:
     - master
+
+deploy:
+  image: finalgene/heroku-cli:7.42
+  stage: release
+  before_script:
+    - heroku git:remote -a dependabot-gitlab
+  script:
+    - git push heroku master
+  only:
+    - master
