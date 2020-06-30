@@ -70,7 +70,7 @@ rspec:
       cobertura: coverage/coverage.xml
       junit: tmp/rspec.xml
 
-docker:
+release:
   image: docker:19.03.12
   stage: release
   services:
@@ -101,6 +101,8 @@ deploy:
   stage: deploy
   before_script:
     - apk add git
+    - git fetch origin master && git checkout master
+    - echo $NETRC > /root/.netrc
     - heroku git:remote -a dependabot-gitlab
   script:
     - git push heroku master
