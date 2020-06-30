@@ -1,0 +1,9 @@
+build:
+  docker:
+    web: Dockerfile
+run:
+  web: bundle exec rails server
+  worker:
+    command:
+      - bundle exec sidekiq
+    image: web
