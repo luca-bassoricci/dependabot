@@ -1,3 +1,18 @@
+.release_changes: &release_changes
+  refs:
+    - master
+  changes:
+    - app/**/*
+    - bin/**/*
+    - config/**/*
+    - lib/**/*
+    - public/**/*
+    - config.ru
+    - Gemfile
+    - Gemfile.lock
+    - Rakefile
+    - .gitlab-ci.yml
+
 .ruby_runner: &ruby_runner
   image: andrcuns/ruby:2.6.6-buster-10.3
   variables:
@@ -18,8 +33,8 @@
 
 stages:
   - test
-  - build
   - release
+  - deploy
 
 cache_gems:
   extends: .ruby_runner
@@ -57,7 +72,7 @@ rspec:
 
 docker:
   image: docker:19.03.12
-  stage: build
+  stage: release
   services:
     - docker:19.03.12-dind
   tags:
@@ -79,15 +94,14 @@ docker:
       --tag $LATEST \
       .
     docker push $LATEST
-  only:
-    - master
+  only: *release_changes
 
 deploy:
   image: finalgene/heroku-cli:7.42
-  stage: release
+  stage: deploy
   before_script:
+    - apk add git
     - heroku git:remote -a dependabot-gitlab
   script:
     - git push heroku master
-  only:
-    - master
+  only: *release_changes
