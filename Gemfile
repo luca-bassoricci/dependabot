@@ -10,7 +10,7 @@ gem "jbuilder", "~> 2.7"
 gem "puma", "~> 4.3"
 gem "rails", "~> 6.0.3"
 gem "sentry-raven", "~> 3.0", require: false
-gem "sidekiq", "~> 6.0.7"
+gem "sidekiq", "~> 6.1.0"
 gem "sidekiq-cron", "~> 1.2"
 gem "webpacker", "~> 5.1"
 
