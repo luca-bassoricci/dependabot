@@ -1,0 +1,87 @@
+{
+  "object_kind": "push",
+  "event_name": "push",
+  "before": "6dbc28857da05ff417dd4341ff8d4f4ea2d74677",
+  "after": "d20492c42c324ade7358812ef75b99dcf43a4458",
+  "ref": "refs/heads/master",
+  "checkout_sha": "d20492c42c324ade7358812ef75b99dcf43a4458",
+  "message": null,
+  "user_id": 2601285,
+  "user_name": "Andrejs",
+  "user_username": "andrcuns",
+  "user_email": "",
+  "user_avatar": "https://secure.gravatar.com/avatar/8823caebdd4ba1fdfcce9b650a9a9937?s=80&d=identicon",
+  "project_id": 17993652,
+  "project": {
+    "id": 17993652,
+    "name": "dependabot-gitlab",
+    "description": "WIP: Dependabot dependency updates with gitlab integration",
+    "web_url": "https://gitlab.com/andrcuns/dependabot-gitlab",
+    "avatar_url": "https://gitlab.com/uploads/-/system/project/avatar/17993652/27347476.png",
+    "git_ssh_url": "git@gitlab.com:andrcuns/dependabot-gitlab.git",
+    "git_http_url": "https://gitlab.com/andrcuns/dependabot-gitlab.git",
+    "namespace": "Andrejs",
+    "visibility_level": 20,
+    "path_with_namespace": "andrcuns/dependabot-gitlab",
+    "default_branch": "master",
+    "ci_config_path": null,
+    "homepage": "https://gitlab.com/andrcuns/dependabot-gitlab",
+    "url": "git@gitlab.com:andrcuns/dependabot-gitlab.git",
+    "ssh_url": "git@gitlab.com:andrcuns/dependabot-gitlab.git",
+    "http_url": "https://gitlab.com/andrcuns/dependabot-gitlab.git"
+  },
+  "commits": [
+    {
+      "id": "5102196f44b05c173ceac6a4d58673f741947b04",
+      "message": "Bump web-console from 4.0.3 to 4.0.4\n\nBumps [web-console](https://github.com/rails/web-console) from 4.0.3 to 4.0.4.\n- [Release notes](https://github.com/rails/web-console/releases)\n- [Changelog](https://github.com/rails/web-console/blob/master/CHANGELOG.markdown)\n- [Commits](https://github.com/rails/web-console/compare/v4.0.3...v4.0.4)",
+      "title": "Bump web-console from 4.0.3 to 4.0.4",
+      "timestamp": "2020-07-20T00:59:52+00:00",
+      "url": "https://gitlab.com/andrcuns/dependabot-gitlab/-/commit/5102196f44b05c173ceac6a4d58673f741947b04",
+      "author": {
+        "name": "Andrejs",
+        "email": "andrejs.cunskis@gmail.com"
+      },
+      "added": [
+
+      ],
+      "modified": [
+        "Gemfile.lock"
+      ],
+      "removed": [
+
+      ]
+    },
+    {
+      "id": "d20492c42c324ade7358812ef75b99dcf43a4458",
+      "message": "Merge branch 'dependabot-bundler-web-console-4.0.4' into 'master'\n\nBump web-console from 4.0.3 to 4.0.4\n\nSee merge request andrcuns/dependabot-gitlab!51",
+      "title": "Merge branch 'dependabot-bundler-web-console-4.0.4' into 'master'",
+      "timestamp": "2020-07-27T20:01:44+00:00",
+      "url": "https://gitlab.com/andrcuns/dependabot-gitlab/-/commit/d20492c42c324ade7358812ef75b99dcf43a4458",
+      "author": {
+        "name": "Andrejs",
+        "email": "andrejs.cunskis@gmail.com"
+      },
+      "added": [
+
+      ],
+      "modified": [
+        "Gemfile.lock"
+      ],
+      "removed": [
+
+      ]
+    }
+  ],
+  "total_commits_count": 2,
+  "push_options": {
+  },
+  "repository": {
+    "name": "dependabot-gitlab",
+    "url": "git@gitlab.com:andrcuns/dependabot-gitlab.git",
+    "description": "WIP: Dependabot dependency updates with gitlab integration",
+    "homepage": "https://gitlab.com/andrcuns/dependabot-gitlab",
+    "git_http_url": "https://gitlab.com/andrcuns/dependabot-gitlab.git",
+    "git_ssh_url": "git@gitlab.com:andrcuns/dependabot-gitlab.git",
+    "visibility_level": 20
+  }
+}

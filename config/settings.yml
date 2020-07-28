@@ -1,1 +1,3 @@
+config_filename: .gitlab/dependabot.yml
+
 gitlab_hostname: gitlab.com

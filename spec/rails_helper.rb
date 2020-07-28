@@ -5,6 +5,7 @@ ENV["RAILS_ENV"] ||= "test"
 require_relative "spec_helper"
 require_relative "webmock_helper"
 require_relative "dependabot_helper"
+require_relative "api_helper"
 require_relative "../config/environment"
 
 abort("The Rails environment is running in production mode!") if Rails.env.production?
@@ -21,4 +22,8 @@ RSpec.configure do |config|
 
   # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!
+end
+
+RSpec::Sidekiq.configure do |config|
+  config.warn_when_jobs_not_processed_by_sidekiq = false
 end
