@@ -18,10 +18,12 @@ gem "bootsnap", ">= 1.4.2", require: false
 
 group :development, :test do
   gem "pry", "~> 0.13.1"
+  gem "rack-test", "~> 1.1"
   gem "reek", "~> 6.0"
   gem "rspec", "~> 3.9"
   gem "rspec_junit_formatter", "~> 0.4.1"
   gem "rspec-rails", "~> 4.0.1"
+  gem "rspec-sidekiq", "~> 3.1"
   gem "rubocop", "~> 0.88.0"
   gem "simplecov", "~> 0.18.5"
   gem "simplecov-cobertura", "~> 1.3.1"
