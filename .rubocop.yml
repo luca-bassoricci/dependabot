@@ -47,3 +47,10 @@ Style/HashTransformValues:
 Style/StringLiterals:
   Enabled: true
   EnforcedStyle: double_quotes
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+  EnforcedStyle: always
+  SupportedStyles:
+    - always
+  Safe: true

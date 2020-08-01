@@ -22,10 +22,10 @@ describe Scheduler::DependencyUpdateScheduler do
       )
       .and_return(job)
     expect(job).to receive(:valid?).and_return(true)
-    expect(job).to receive(:save)
-    expect(job).to receive(:enque!)
+    expect(job).to receive(:save).and_return(true)
+    expect(job).to receive(:enque!).and_return(true)
 
-    Scheduler::DependencyUpdateScheduler.call(repo)
+    expect(Scheduler::DependencyUpdateScheduler.call(repo)).to eq([job])
   end
 
   it "logs error of invalid job" do
@@ -33,6 +33,6 @@ describe Scheduler::DependencyUpdateScheduler do
     expect(job).to receive(:valid?).and_return(false)
     expect_any_instance_of(Logger).to receive(:error)
 
-    Scheduler::DependencyUpdateScheduler.call(repo)
+    expect(Scheduler::DependencyUpdateScheduler.call(repo)).to eq([job])
   end
 end
