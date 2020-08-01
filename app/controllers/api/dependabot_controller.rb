@@ -3,7 +3,7 @@
 module Api
   class DependabotController < ApplicationController
     def create
-      __send__(params[:event_name])
+      json_response(__send__(params[:event_name]))
     end
 
     private

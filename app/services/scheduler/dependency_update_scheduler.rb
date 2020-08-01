@@ -7,7 +7,7 @@ module Scheduler
     end
 
     def call
-      config.each do |package_manager, opts|
+      config.map do |package_manager, opts|
         job = Sidekiq::Cron::Job.new(
           name: "#{repo}:#{package_manager}",
           cron: opts[:cron],
@@ -30,12 +30,7 @@ module Scheduler
     end
 
     def run(job)
-      if job.valid?
-        job.save
-        job.enque!
-      else
-        logger.error { job.errors }
-      end
+      job.tap { |jb| jb.valid? ? jb.save && jb.enque! : logger.error { job.errors } }
     end
   end
 end
