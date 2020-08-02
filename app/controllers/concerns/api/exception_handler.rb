@@ -6,7 +6,8 @@ module Api
 
     included do
       rescue_from StandardError do |e|
-        json_response({ message: e.message }, 500)
+        Raven.capture_exception(e)
+        json_response({ status: 500, error: e.message }, 500)
       end
     end
   end

@@ -23,11 +23,26 @@ describe Api::DependabotController do
   end
 
   it "handles error" do
-    expect(Webhooks::PushEventHandler).to receive(:call).and_raise(StandardError.new("Unexpected"))
+    error = StandardError.new("Unexpected")
+    expect(Webhooks::PushEventHandler).to receive(:call).and_raise(error)
+    expect(Raven).to receive(:capture_exception).with(error)
 
     post_json("/api/dependabot", "spec/fixture/api/webhooks/push.json")
 
     expect(last_response.status).to eq(500)
-    expect(JSON.parse(last_response.body, symbolize_names: true)).to eq(message: "Unexpected")
+    expect(JSON.parse(last_response.body, symbolize_names: true)).to eq(
+      status: 500,
+      error: "Unexpected"
+    )
+  end
+
+  it "handles unsupported hook type" do
+    post_json("/api/dependabot", "spec/fixture/api/webhooks/tag_push.json")
+
+    expect(last_response.status).to eq(400)
+    expect(JSON.parse(last_response.body, symbolize_names: true)).to eq(
+      status: 400,
+      error: "Unsupported or missing parameter 'object_kind'"
+    )
   end
 end
