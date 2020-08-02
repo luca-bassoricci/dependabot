@@ -1,5 +1,14 @@
 FROM dependabot/dependabot-core:0.118.7
 
+ARG VERSION
+ARG COMMIT_SHA
+ARG PROJECT_URL
+
+LABEL maintainer="andrejs.cunskis@gmail.com" \
+      version=$VERSION \
+      vcs-ref=$COMMIT_SHA \
+      vcs-url=$PROJECT_URL
+
 ENV BUNDLE_PATH=vendor/bundle \
   BUNDLE_WITHOUT="development:test"
 
