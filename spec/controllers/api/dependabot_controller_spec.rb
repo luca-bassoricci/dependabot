@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 describe Api::DependabotController do
-  include_context "api"
+  include_context "rack_test"
 
   it "handles successfull run" do
     expect(Webhooks::PushEventHandler).to receive(:call).and_return(
       [
         OpenStruct.new(
           name: "dependabot:bundler",
-          cron: "0 0 0 0 0",
+          cron: "5 4 * * *",
           class: "DependencyUpdateJob",
           args: { repo: "dependabot", package_manager: "bundler" },
           active_job: true,

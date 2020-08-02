@@ -2,7 +2,7 @@
 
 require "rack/test"
 
-RSpec.shared_context("api") do
+RSpec.shared_context("rack_test") do
   include Rack::Test::Methods
 
   def app
