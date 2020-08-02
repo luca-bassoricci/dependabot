@@ -11,13 +11,13 @@
 
 ### Deployment
 
-Application is released as a [docker images](https://hub.docker.com/r/andrcuns/dependabot-gitlab). It is assumed there is possibility to
+Application is released as a [docker image](https://hub.docker.com/r/andrcuns/dependabot-gitlab). It is assumed there is possibility to
 deploy the app as docker containers in order for it to start updating repository dependencies.\
 Simple example deployment can be seen in [docker-compose-prod.yml](docker-compose-prod.yml). App will consist of minimum 2 containers, one
 running web server and another running sidekiq process. Simple production like deployment using `docker-compose` can be done with following command:
 
 ```bash
-docker-compose -f docker-compose.yml -f docker-compose-prod.yml
+docker-compose -f docker-compose.yml -f docker-compose-prod.yml up
 ```
 
 In order for gitlab to pick up repository configuration, a [webhook](https://docs.gitlab.com/ee/user/project/integrations/webhooks.html) with url
@@ -28,7 +28,7 @@ branch.
 
 Application requires few environment variables to work.
 
-* `SETTINGS__GITLAB_HOSTNAME` - hostname of gitlab instance, ex: `gitlab.com`
+* `SETTINGS__GITLAB_HOSTNAME` - hostname of gitlab instance, ex: `gitlab.com` by default
 * `SETTINGS__GITLAB_ACCESS_TOKEN` - [gitlab](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html) personal access token with api scope
 * `SETTINGS__GITHUB_ACCESS_TOKEN` - [github](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) personal access token with repository read scope
 * `SETTINGS__GITLAB_AUTH_TOKEN` - optional gitlab webhook token which can be configured under webhook settings in gitlab, if not present,
@@ -37,13 +37,14 @@ token set in gitlab webhook configuration will be ignored
 ### Configuration file
 
 Application will automatically read dependabot configuration file placed in `.gitlab/dependabot.yml`. Configuration file options are described
-in [dependabot](https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates) documentation.
+in [dependabot](https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates) documentation. Example file
+which manages this project's dependencies can be seen [.gitlab/dependabot.yml](.gitlab/dependabot.yml)
 
 ### Rake tasks
 
-Additional rake tasks exist for manual interacting with dependency updates.
+Additional rake tasks exist for manual interaction with dependency updates and configuration.
 
-* `dependabot:register[repo]` - manually register repository where `repo` is repository name with namespace, ex: `andrcuns/dependabot-gitlab`
+* `dependabot:register[repo]` - manually register repository where `repo` is repository name with namespace, ex: `andrcuns/dependabot-gitlab`, repository must have dependabot config file
 * `dependabot:update[repo,package_manager]` - trigger dependency update where `repo` is repository full name and `package_manager` is `package_ecosystem` parameter like `bundler`
 
 ### Job list
