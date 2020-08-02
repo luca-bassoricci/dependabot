@@ -45,4 +45,14 @@ describe Api::DependabotController do
       error: "Unsupported or missing parameter 'object_kind'"
     )
   end
+
+  it "returns unauthorized error" do
+    post_json("/api/dependabot", "spec/fixture/api/webhooks/push.json", "invalid_token")
+
+    expect(last_response.status).to eq(401)
+    expect(JSON.parse(last_response.body, symbolize_names: true)).to eq(
+      status: 401,
+      error: "Invalid gitlab authentication token"
+    )
+  end
 end
