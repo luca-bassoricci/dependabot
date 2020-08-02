@@ -16,7 +16,7 @@ describe Scheduler::DependencyUpdateScheduler do
         name: "#{repo}:bundler",
         cron: "00 02 * * sun Europe/Riga",
         class: "DependencyUpdateJob",
-        args: { repo: repo, package_manager: "bundler" },
+        args: { "repo" => repo, "package_manager" => "bundler" },
         active_job: true,
         description: "Update bundler dependencies for #{repo} in /"
       )

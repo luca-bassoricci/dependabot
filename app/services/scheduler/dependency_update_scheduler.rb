@@ -12,7 +12,7 @@ module Scheduler
           name: "#{repo}:#{package_manager}",
           cron: opts[:cron],
           class: "DependencyUpdateJob",
-          args: { repo: repo, package_manager: package_manager },
+          args: { "repo" => repo, "package_manager" => package_manager },
           active_job: true,
           description: "Update #{package_manager} dependencies for #{repo} in #{opts[:directory]}"
         )
