@@ -8,9 +8,10 @@ require_relative "dependabot_helper"
 require_relative "rack_test_helper"
 require_relative "../config/environment"
 
-abort("The Rails environment is running in production mode!") if Rails.env.production?
-
+require "rspec-sidekiq"
 require "rspec/rails"
+
+abort("The Rails environment is running in production mode!") if Rails.env.production?
 
 RSpec.configure do |config|
   # Remove this line to enable support for ActiveRecord
