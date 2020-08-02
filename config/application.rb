@@ -28,9 +28,9 @@ module DependabotGitlab
     config.load_defaults 6.0
     config.active_job.queue_adapter = :sidekiq
 
-    config.logger = Logger.new(STDOUT)
-    config.logger.formatter = ::SimpleLogFormatter.new
-    config.logger.datetime_format = DATETIME_FORMAT
-    config.log_level = ENV["LOG_LEVEL"]&.to_sym || :info
+    logger = Logger.new(STDOUT)
+    logger.formatter = ::SimpleLogFormatter.new
+    logger.datetime_format = DATETIME_FORMAT
+    config.logger = ActiveSupport::TaggedLogging.new(logger)
   end
 end
