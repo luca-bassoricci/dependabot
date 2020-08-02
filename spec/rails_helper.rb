@@ -5,7 +5,7 @@ ENV["RAILS_ENV"] ||= "test"
 require_relative "spec_helper"
 require_relative "webmock_helper"
 require_relative "dependabot_helper"
-require_relative "api_helper"
+require_relative "rack_test_helper"
 require_relative "../config/environment"
 
 abort("The Rails environment is running in production mode!") if Rails.env.production?
