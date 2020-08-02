@@ -77,7 +77,6 @@ GEM
       aws-eventstream (~> 1, >= 1.0.2)
     backport (1.1.2)
     benchmark (0.1.0)
-    bindex (0.8.1)
     bootsnap (1.4.7)
       msgpack (~> 1.0)
     builder (3.2.4)
@@ -418,11 +417,6 @@ GEM
       unf_ext
     unf_ext (0.0.7.7)
     unicode-display_width (1.7.0)
-    web-console (4.0.4)
-      actionview (>= 6.0.0)
-      activemodel (>= 6.0.0)
-      bindex (>= 0.4.0)
-      railties (>= 6.0.0)
     webmock (3.8.3)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
@@ -465,7 +459,6 @@ DEPENDENCIES
   simplecov-console (~> 0.7.2)
   solargraph (~> 0.39.12)
   spring (~> 2.1.0)
-  web-console (>= 3.3.0)
   webmock (~> 3.8)
   webpacker (~> 5.1)
 
