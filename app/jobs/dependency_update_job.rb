@@ -2,6 +2,7 @@
 
 class DependencyUpdateJob < ApplicationJob
   queue_as :default
+  sidekiq_options retry: 2
 
   # Perform dependency updates and merge request creation
   # @param [Hash] args
