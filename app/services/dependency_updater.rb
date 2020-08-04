@@ -20,7 +20,7 @@ class DependencyUpdater < ApplicationService
   attr_reader :repo, :package_manager
 
   def config
-    @config ||= Configuration::Parser.call(Gitlab::ConfigFetcher.call(repo))[package_manager]
+    @config ||= Dependabot::Config.call(repo)[package_manager]
   end
 
   def fetcher
