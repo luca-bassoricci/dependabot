@@ -26,7 +26,7 @@ module Scheduler
     attr_reader :repo
 
     def config
-      @config ||= Configuration::Parser.call(Gitlab::ConfigFetcher.call(repo))
+      @config ||= Dependabot::Config.call(repo, update_cache: true)
     end
 
     def run(job)
