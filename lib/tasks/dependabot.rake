@@ -8,6 +8,6 @@ namespace :dependabot do
 
   desc "add dependency updates for repository"
   task(:register, [:repo] => :environment) do |_task, args|
-    DependencyUpdateScheduler.call(args[:repo])
+    Scheduler::DependencyUpdateScheduler.call(args[:repo])
   end
 end

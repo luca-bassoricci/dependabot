@@ -111,4 +111,7 @@ deploy:
     - heroku git:remote -a dependabot-gitlab
   script:
     - git push heroku master
+  environment:
+    name: heroku
+    url: https://dependabot-gitlab.herokuapp.com/
   only: *release_changes
