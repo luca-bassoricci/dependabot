@@ -6,7 +6,6 @@ ruby "~> 2.6"
 
 gem "config", "~> 2.2"
 gem "dependabot-omnibus", "~> 0.118.12"
-gem "jbuilder", "~> 2.7"
 gem "puma", "~> 4.3"
 gem "rails", "~> 6.0.3"
 gem "sentry-raven", "~> 3.0", require: false
