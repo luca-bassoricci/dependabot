@@ -1,18 +1,14 @@
 ---
 include:
-  - "**/*.rb"
-  - Rakefile
-  - Gemfile
-exclude:
-  - spec/**/*
-  - vendor/**/*
-  - ".bundle/**/*"
+  - app/**/*.rb
 require:
   - dependabot/omnibus
 domains: []
 reporters:
   - rubocop
   - require_not_found
+  - typecheck
+  - update_errors
 plugins: []
 require_paths: []
 max_files: 5000
