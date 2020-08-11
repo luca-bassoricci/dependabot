@@ -4,7 +4,7 @@ updates:
     directory: "/"
     schedule:
       interval: daily
-      time: "1:00"
+      time: "19:00"
     commit-message:
       include: scope
     assignees:
@@ -13,16 +13,7 @@ updates:
     directory: "/"
     schedule:
       interval: daily
-      time: "1:10"
-    commit-message:
-      include: scope
-    assignees:
-      - andrcuns
-  - package-ecosystem: npm_and_yarn
-    directory: "/"
-    schedule:
-      interval: daily
-      time: "1:15"
+      time: "19:10"
     commit-message:
       include: scope
     assignees:
