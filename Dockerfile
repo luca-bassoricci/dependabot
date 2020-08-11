@@ -1,4 +1,4 @@
-FROM dependabot/dependabot-core:0.118.7
+FROM dependabot/dependabot-core:0.118.12
 
 ARG VERSION
 ARG COMMIT_SHA
