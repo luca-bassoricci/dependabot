@@ -1,6 +1,7 @@
 ---
 include:
   - app/**/*.rb
+  - .definitions.rb
 require:
   - dependabot/omnibus
 domains: []
