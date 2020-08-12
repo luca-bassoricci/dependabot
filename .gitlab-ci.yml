@@ -15,7 +15,13 @@ cache_gems:
   script:
     - bundle install
   cache:
-    policy: pull-push
+    policy: push
+  only:
+    refs:
+      - merge_request
+      - master
+    changes:
+      - Gemfile.lock
 
 # ======================================================================================================================
 # Test Stage
@@ -25,12 +31,20 @@ rubocop:
   stage: test
   script:
     - bundle exec rubocop --parallel --color
+  only:
+    - merge_request
+    - master
+    - tags
 
 reek:
   extends: .ruby_runner
   stage: test
   script:
     - bundle exec reek --color --progress
+  only:
+    - merge_request
+    - master
+    - tags
 
 rspec:
   extends: .ruby_runner
@@ -45,6 +59,10 @@ rspec:
     reports:
       cobertura: coverage/coverage.xml
       junit: tmp/rspec.xml
+  only:
+    - merge_request
+    - master
+    - tags
 
 # ======================================================================================================================
 # Release Stage

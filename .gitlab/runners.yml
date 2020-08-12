@@ -12,9 +12,6 @@
     paths:
       - vendor/bundle
     policy: pull
-  only:
-    - merge_request
-    - master
 
 .docker_runner:
   image: docker:19.03.13-beta2
