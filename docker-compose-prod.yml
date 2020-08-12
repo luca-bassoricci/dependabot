@@ -11,10 +11,10 @@ services:
       SENTRY_DSN:
       SETTINGS__GITHUB_ACCESS_TOKEN:
       SETTINGS__GITLAB_ACCESS_TOKEN:
-      SECRET_KEY_BASE:
     ports:
       - 3000:3000
     command: rails server
+
   worker:
     image: andrcuns/dependabot-gitlab:latest
     depends_on:

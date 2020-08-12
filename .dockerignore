@@ -5,6 +5,7 @@
 !lib/
 !public/
 
+!bin/rails
 !config.ru
 !Gemfile
 !Gemfile.lock
@@ -14,4 +15,3 @@
 tmp/*
 !log/
 log/*
-

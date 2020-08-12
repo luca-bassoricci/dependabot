@@ -8,4 +8,7 @@ else
   detached=""
 fi
 
-docker-compose -f docker-compose.yml -f docker-compose-$env.yml up --force-recreate --build $detached $2
+ymls="-f docker-compose.yml -f docker-compose-$env.yml"
+
+docker-compose $ymls pull
+docker-compose $ymls up --force-recreate $detached $2
