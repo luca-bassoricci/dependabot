@@ -1,0 +1,32 @@
+.ruby_runner:
+  image: andrcuns/ruby:2.6.6-buster-10.5
+  variables:
+    BUNDLE_PATH: vendor/bundle
+    BUNDLE_FROZEN: "true"
+    BUNDLE_SUPPRESS_INSTALL_USING_MESSAGES: "true"
+    BUNDLE_WITHOUT: development
+  cache:
+    key:
+      files:
+        - Gemfile.lock
+    paths:
+      - vendor/bundle
+    policy: pull
+  only:
+    - merge_request
+    - master
+
+.docker_runner:
+  image: docker:19.03.13-beta2
+  services:
+    - docker:19.03.13-beta2-dind
+  tags:
+    - docker
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: /certs
+    DOCKER_BUILDKIT: 1
+    IMAGE: docker.io/andrcuns/dependabot-gitlab
+    LATEST: $IMAGE:latest
+  before_script:
+    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD

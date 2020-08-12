@@ -1,42 +1,14 @@
-.release_changes: &release_changes
-  refs:
-    - master
-  changes:
-    - app/**/*
-    - bin/**/*
-    - config/**/*
-    - lib/**/*
-    - public/**/*
-    - config.ru
-    - Gemfile
-    - Gemfile.lock
-    - Rakefile
-    - .gitlab-ci.yml
-    - Dockerfile
-
-.ruby_runner: &ruby_runner
-  image: andrcuns/ruby:2.6.6-buster-10.3
-  variables:
-    BUNDLE_PATH: vendor/bundle
-    BUNDLE_FROZEN: "true"
-    BUNDLE_SUPPRESS_INSTALL_USING_MESSAGES: "true"
-    BUNDLE_WITHOUT: development
-  cache:
-    key:
-      files:
-        - Gemfile.lock
-    paths:
-      - vendor/bundle
-    policy: pull
-  only:
-    - merge_request
-    - master
+include:
+  - local: .gitlab/runners.yml
 
 stages:
   - test
-  - release
+  - build
   - deploy
 
+# ======================================================================================================================
+# Pre Stage
+# ======================================================================================================================
 cache_gems:
   extends: .ruby_runner
   stage: .pre
@@ -45,6 +17,9 @@ cache_gems:
   cache:
     policy: pull-push
 
+# ======================================================================================================================
+# Test Stage
+# ======================================================================================================================
 rubocop:
   extends: .ruby_runner
   stage: test
@@ -71,36 +46,50 @@ rspec:
       cobertura: coverage/coverage.xml
       junit: tmp/rspec.xml
 
-release:
-  image: docker:19.03.12
-  stage: release
-  services:
-    - docker:19.03.12-dind
-  tags:
-    - docker
-  variables:
-    DOCKER_DRIVER: overlay2
-    DOCKER_TLS_CERTDIR: "/certs"
-    DOCKER_BUILDKIT: "1"
-    IMAGE: docker.io/andrcuns/dependabot-gitlab
-    RELEASE: $IMAGE:$CI_COMMIT_SHORT_SHA
-    LATEST: $IMAGE:latest
-  before_script:
-    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
-  script: |
+# ======================================================================================================================
+# Release Stage
+# ======================================================================================================================
+.build_docker_image: &build_docker_image
+  - |
     docker build \
       --build-arg BUILDKIT_INLINE_CACHE=1 \
-      --build-arg VERSION=$CI_COMMIT_SHORT_SHA \
+      --build-arg VERSION=$VERSION \
       --build-arg COMMIT_SHA=$CI_COMMIT_SHORT_SHA \
-      --build-arg PROJECT_URL=CI_PROJECT_URL \
+      --build-arg PROJECT_URL=$CI_PROJECT_URL \
       --cache-from $LATEST \
-      --tag $RELEASE \
+      --tag $IMAGE:$VERSION \
       --tag $LATEST \
       .
-    docker push $LATEST
-    docker push $RELEASE
-  only: *release_changes
 
+build:
+  extends: .docker_runner
+  stage: build
+  variables:
+    VERSION: $CI_COMMIT_SHORT_SHA
+  script:
+    - *build_docker_image
+  only:
+    refs:
+      - master
+      - merge_requests
+    changes:
+      - Dockerfile
+
+release:
+  extends: .docker_runner
+  stage: build
+  variables:
+    VERSION: $CI_COMMIT_TAG
+  script:
+    - *build_docker_image
+    - docker push $LATEST
+    - docker push $IMAGE:$VERSION
+  only:
+    - tags
+
+# ======================================================================================================================
+# Deploy Stage
+# ======================================================================================================================
 deploy:
   image: finalgene/heroku-cli:7.42
   stage: deploy
@@ -114,4 +103,16 @@ deploy:
   environment:
     name: heroku
     url: https://dependabot-gitlab.herokuapp.com/
-  only: *release_changes
+  only:
+    refs:
+      - master
+    changes:
+      - app/**/*
+      - config/**/*
+      - lib/**/*
+      - public/**/*
+      - config.ru
+      - Gemfile
+      - Gemfile.lock
+      - Rakefile
+      - Dockerfile
