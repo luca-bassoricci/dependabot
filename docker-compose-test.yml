@@ -2,11 +2,8 @@ version: "3.8"
 
 services:
   web:
-    build:
-      context: .
-      cache_from:
-        - andrcuns/dependabot-gitlab
-    image: dependabot-gitlab:local
+    build: .
+    image: dependabot-gitlab:web
     depends_on:
       - redis
     environment:
@@ -17,12 +14,10 @@ services:
     ports:
       - 3000:3000
     command: rails server
+
   worker:
-    build:
-      context: .
-      cache_from:
-        - andrcuns/dependabot-gitlab
-    image: dependabot-gitlab:local
+    build: .
+    image: dependabot-gitlab:worker
     depends_on:
       - redis
     environment:
