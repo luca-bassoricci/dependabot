@@ -69,6 +69,7 @@ rspec:
 # ======================================================================================================================
 .build_docker_image: &build_docker_image
   - |
+    docker pull "$LATEST"
     docker build \
       --build-arg BUILDKIT_INLINE_CACHE=1 \
       --build-arg VERSION="$VERSION" \
