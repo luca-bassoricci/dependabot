@@ -12,6 +12,7 @@ module Dependabot
     end
 
     # Get update checker
+    #
     # @return [Array<Dependabot::Dependency>]
     def call
       logger.info { "Checking if #{name} needs updating" }
@@ -26,23 +27,30 @@ module Dependabot
 
     private
 
-    # :nocov:
+    # Full dependency name
+    #
     # @return [String]
     def name
       @name ||= "#{dependency.name} #{dependency.version}"
     end
 
+    # Print up to date message
+    #
     # @return [nil]
     def log_up_to_date
       logger.info { "No update needed for #{dependency.name} #{dependency.version}" }
       nil
     end
 
+    # Get updated dependencies
+    #
     # @return [Array<Dependabot::Dependency>]
     def updated_dependencies
       @updated_dependencies ||= checker.updated_dependencies(requirements_to_unlock: requirements_to_unlock)
     end
 
+    # Get update checker
+    #
     # @return [Dependabot::UpdateChecker]
     def checker
       @checker ||= Dependabot::UpdateCheckers.for_package_manager(dependency.package_manager).new(
@@ -52,6 +60,8 @@ module Dependabot
       )
     end
 
+    # Get requirements to unlock
+    #
     # @return [Symbol]
     def requirements_to_unlock
       @requirements_to_unlock ||= begin

@@ -12,6 +12,8 @@ module Dependabot
       @package_manager = package_manager
     end
 
+    # Get FileFetcher
+    #
     # @return [Dependabot::FileFetcher]
     def call
       Dependabot::FileFetchers.for_package_manager(package_manager).new(

@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 module ApplicationHelper
+  # Get gitlab client
+  #
+  # @return [Gitlab::Client]
   def gitlab
     Gitlab.client(
       endpoint: "https://#{Settings.gitlab_hostname}/api/v4",

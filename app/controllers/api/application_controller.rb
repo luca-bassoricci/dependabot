@@ -9,6 +9,9 @@ module Api
 
     private
 
+    # Authenticate request against gitlab token
+    #
+    # @return [void]
     def authenticate
       Settings.gitlab_auth_token.tap do |gitlab_auth_token|
         gitlab_token = request.headers["X-Gitlab-Token"] || ""

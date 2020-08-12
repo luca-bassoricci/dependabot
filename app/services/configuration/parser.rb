@@ -9,6 +9,9 @@ module Configuration
       @config = config
     end
 
+    # Parse dependabot configuration
+    #
+    # @return [Hash<Symbol, Object>]
     def call
       yml[:updates].each_with_object({}) do |package_manager, hash|
         hash[package_manager[:"package-ecosystem"]] = {
@@ -22,12 +25,20 @@ module Configuration
 
     private
 
+    # @return [String] dependabot configuration file
     attr_reader :config
 
+    # Parsed dependabot yml config
+    #
+    # @return [Hash<Symbol, Object>]
     def yml
       @yml ||= YAML.safe_load(config, symbolize_names: true)
     end
 
+    # Branch related options
+    #
+    # @param [Hash<Symbol, Object>] opts
+    # @return [Hash<Symbol, Object>]
     def branch_options(opts)
       {
         branch: opts[:"target-branch"],
@@ -36,6 +47,10 @@ module Configuration
       }
     end
 
+    # General options
+    #
+    # @param [Hash<Symbol, Object>] opts
+    # @return [Hash<Symbol, Object>]
     def options(opts)
       {
         directory: opts[:directory],
@@ -46,6 +61,10 @@ module Configuration
       }
     end
 
+    # Commit message related options
+    #
+    # @param [Hash<Symbol, Object>] opts
+    # @return [Hash<Symbol, Object>]
     def commit_message_options(opts)
       message_options = opts[:"commit-message"]
       return {} unless message_options

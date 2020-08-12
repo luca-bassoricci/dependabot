@@ -2,6 +2,7 @@
 
 class Credentials < ApplicationService
   # Get credentials
+  #
   # @return [Array<Hash>]
   def call
     [github_credentials, gitlab_credentials]
@@ -9,6 +10,9 @@ class Credentials < ApplicationService
 
   private
 
+  # Get github credentials
+  #
+  # @return [Hash]
   def github_credentials
     @github_credentials ||= begin
       token = Settings.github_access_token
@@ -23,6 +27,9 @@ class Credentials < ApplicationService
     end
   end
 
+  # Get gitlab credentials
+  #
+  # @return [Hash]
   def gitlab_credentials
     @gitlab_credentials ||= begin
       token = Settings.gitlab_access_token

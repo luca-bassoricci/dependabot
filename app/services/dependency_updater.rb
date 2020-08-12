@@ -1,10 +1,14 @@
 # frozen_string_literal: true
 
 class DependencyUpdater < ApplicationService
+  # @param [Hash<String, Object>] args
   def initialize(args)
     @repo, @package_manager = args.values_at("repo", "package_manager")
   end
 
+  # Create or update mr's for dependencies
+  #
+  # @return [void]
   def call
     dependencies.each do |dependency|
       Dependabot::MergeRequestService.call(
@@ -19,10 +23,16 @@ class DependencyUpdater < ApplicationService
 
   attr_reader :repo, :package_manager
 
+  # Dependabot config
+  #
+  # @return [Hash]
   def config
     @config ||= Dependabot::Config.call(repo)[package_manager]
   end
 
+  # Get file fetcher
+  #
+  # @return [Dependabot::FileFetcher]
   def fetcher
     @fetcher ||= Dependabot::FileFetcher.call(
       package_manager: package_manager,
@@ -34,6 +44,9 @@ class DependencyUpdater < ApplicationService
     )
   end
 
+  # Get dependencies
+  #
+  # @return [Array<Dependabot::Dependency>]
   def dependencies
     @dependencies ||= Dependabot::DependencyFetcher.call(
       source: fetcher.source,

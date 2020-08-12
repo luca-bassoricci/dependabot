@@ -15,6 +15,9 @@ module Dependabot
       @params = params
     end
 
+    # Get dependency list
+    #
+    # @return [Array<Dependabot::Dependency>]
     def call
       dependencies
     end
@@ -24,6 +27,7 @@ module Dependabot
     attr_reader :params
 
     # Dependency list
+    #
     # @return [Array<Dependabot::Dependency>]
     def dependencies
       @dependencies ||= FileParser.call(**params).select(&:top_level?)

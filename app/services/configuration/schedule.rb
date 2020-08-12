@@ -3,9 +3,15 @@
 require "date"
 
 module Configuration
+  # Parse dependabot schedule data and create cron string
+  #
   class Schedule < ApplicationService
     INTERVALS = %w[daily weekly monthly].freeze
 
+    # @param [String] interval
+    # @param [String] day
+    # @param [String] time
+    # @param [String] timezone
     def initialize(interval:, day: nil, time: nil, timezone: nil)
       @interval = INTERVALS.include?(interval) ? interval : "daily"
       @day = Date::DAYNAMES.map(&:downcase).include?(day) ? day[0..2] : "mon"
@@ -13,6 +19,9 @@ module Configuration
       @timezone = TZInfo::Timezone.all_identifiers.include?(timezone) ? timezone : Time.zone.name
     end
 
+    # Parse schedule data and return cron string
+    #
+    # @return [String]
     def call
       cron_time = time.split(":").yield_self { |arr| "#{arr[1]} #{arr[0]}" }
       return "#{cron_time} * * #{day} #{timezone}" if interval == "weekly"

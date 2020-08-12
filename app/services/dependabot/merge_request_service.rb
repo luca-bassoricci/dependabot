@@ -22,7 +22,9 @@ module Dependabot
       @options = opts
     end
 
-    # Create merge request
+    # Create or update MR
+    #
+    # @return [void]
     def call
       return unless updated_dependencies
 
@@ -35,6 +37,9 @@ module Dependabot
 
     attr_reader :fetcher, :dependency, :options
 
+    # Create mr
+    #
+    # @return [void]
     def create_mr
       mr = Dependabot::PullRequestCreator.new(
         source: fetcher.source,
@@ -47,6 +52,9 @@ module Dependabot
       logger.info { "Created mr #{mr.web_url}" } if mr
     end
 
+    # Rebase existing mr if it has conflicts
+    #
+    # @return [void]
     def update_mr
       return logger.info { "Merge request #{mr.reference} doesn't require rebasing" } unless mr.has_conflicts
 
@@ -61,6 +69,9 @@ module Dependabot
       ).update
     end
 
+    # Get source branch name
+    #
+    # @return [String]
     def source_branch
       @source_branch ||= Dependabot::PullRequestCreator::BranchNamer.new(
         dependencies: updated_dependencies,
@@ -71,6 +82,11 @@ module Dependabot
       ).new_branch_name
     end
 
+    # Get existing mr
+    #
+    # @return [Gitlab::ObjectifiedHash] if mr exists
+    #
+    # @return [nil] if merge request doesn't exist
     def mr
       @mr ||= gitlab.merge_requests(
         fetcher.source.repo,
@@ -81,18 +97,27 @@ module Dependabot
       )&.first
     end
 
+    # Get assignee ids
+    #
+    # @return [Array<Number>]
     def assignees
       return unless options[:assignees]
 
       Gitlab::UserFinder.call(options[:assignees])
     end
 
+    # Get reviewer ids
+    #
+    # @return [Array<Number>]
     def reviewers
       return unless options[:reviewers]
 
       Gitlab::UserFinder.call(options[:reviewers])
     end
 
+    # MR options
+    #
+    # @return [Hash]
     def mr_opts
       {
         assignees: assignees,
@@ -102,6 +127,8 @@ module Dependabot
       }
     end
 
+    # Array of updated dependencies
+    #
     # @return [Array<Dependabot::Dependency>]
     def updated_dependencies
       @updated_dependencies ||= Dependabot::UpdateChecker.call(
@@ -110,6 +137,8 @@ module Dependabot
       )
     end
 
+    # List of updated files
+    #
     # @return [Array<Dependabot::DependencyFile>]
     def updated_files
       @updated_files ||= Dependabot::FileUpdater.call(
