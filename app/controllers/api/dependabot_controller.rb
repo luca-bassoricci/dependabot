@@ -2,6 +2,9 @@
 
 module Api
   class DependabotController < ApplicationController
+    # Post request handler
+    #
+    # @return [void]
     def create
       params[:object_kind].tap do |hook|
         respond_to?(hook, true) ? json_response(__send__(hook)) : bad_request
@@ -10,6 +13,9 @@ module Api
 
     private
 
+    # Handle bad request
+    #
+    # @return [void]
     def bad_request
       json_response({ status: 400, error: "Unsupported or missing parameter 'object_kind'" }, 400)
     end

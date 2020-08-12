@@ -36,4 +36,5 @@ group :development do
   gem "lefthook", "~> 0.7.2", require: false
   gem "solargraph", "~> 0.39.13", require: false
   gem "spring", "~> 2.1.0"
+  gem "yard", "~> 0.9.25"
 end

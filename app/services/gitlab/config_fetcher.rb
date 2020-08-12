@@ -2,10 +2,14 @@
 
 module Gitlab
   class ConfigFetcher < ApplicationService
+    # @param [String] repo
     def initialize(repo)
       @repo = repo
     end
 
+    # Get dependabot.yml file contents
+    #
+    # @return [String]
     def call
       default_branch = gitlab.project(@repo).default_branch
 

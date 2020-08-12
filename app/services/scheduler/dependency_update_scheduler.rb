@@ -2,10 +2,14 @@
 
 module Scheduler
   class DependencyUpdateScheduler < ApplicationService
+    # @param [String] repo
     def initialize(repo)
       @repo = repo
     end
 
+    # Create cron job and run it
+    #
+    # @return [Array<Sidekiq::Cron::Job>]
     def call
       config.map do |package_manager, opts|
         job = Sidekiq::Cron::Job.new(
@@ -25,10 +29,17 @@ module Scheduler
 
     attr_reader :repo
 
+    # Dependabot configuration
+    #
+    # @return [Hash]
     def config
       @config ||= Dependabot::Config.call(repo, update_cache: true)
     end
 
+    # Save and run a job or print error message
+    #
+    # @param [Sidekiq::Cron::Job] job
+    # @return [Sidekiq::Cron::Job]
     def run(job)
       job.tap { |jb| jb.valid? ? jb.save && jb.enque! : logger.error { job.errors } }
     end

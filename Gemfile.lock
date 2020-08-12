@@ -449,6 +449,7 @@ DEPENDENCIES
   solargraph (~> 0.39.13)
   spring (~> 2.1.0)
   webmock (~> 3.8)
+  yard (~> 0.9.25)
 
 RUBY VERSION
    ruby 2.6.5p114

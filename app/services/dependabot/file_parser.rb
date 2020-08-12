@@ -14,6 +14,7 @@ module Dependabot
     end
 
     # Get parsed dependencies from files
+    #
     # @return [Array<Dependabot::Dependency>]
     def call
       Dependabot::FileParsers.for_package_manager(package_manager).new(

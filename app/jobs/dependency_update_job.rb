@@ -5,6 +5,7 @@ class DependencyUpdateJob < ApplicationJob
   sidekiq_options retry: 2
 
   # Perform dependency updates and merge request creation
+  #
   # @param [Hash] args
   # @return [void]
   def perform(args)

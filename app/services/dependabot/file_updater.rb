@@ -12,6 +12,7 @@ module Dependabot
     end
 
     # Get update checker
+    #
     # @return [Array<Dependabot::DependencyFile>]
     def call
       Dependabot::FileUpdaters.for_package_manager(dependencies.first.package_manager).new(
