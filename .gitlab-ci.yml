@@ -100,8 +100,8 @@ release:
     VERSION: $CI_COMMIT_TAG
   script:
     - *build_docker_image
-    - docker push $LATEST
     - docker push $IMAGE:$VERSION
+    - docker push $LATEST
   only:
     - tags
 
