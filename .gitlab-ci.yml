@@ -93,6 +93,8 @@ build:
     changes:
       - Dockerfile
       - .dockerignore
+      - .gitlab-ci.yml
+      - .gitlab/runners.yml
 
 release:
   extends: .docker_runner

@@ -23,7 +23,7 @@
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: /certs
     DOCKER_BUILDKIT: 1
-    IMAGE: docker.io/andrcuns/dependabot-gitlab
+    IMAGE: andrcuns/dependabot-gitlab
     LATEST: $IMAGE:latest
   before_script:
     - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
