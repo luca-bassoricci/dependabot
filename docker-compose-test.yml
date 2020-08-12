@@ -3,7 +3,6 @@ version: "3.8"
 services:
   web:
     build: .
-    image: dependabot-gitlab:web
     depends_on:
       - redis
     environment:
@@ -17,7 +16,6 @@ services:
 
   worker:
     build: .
-    image: dependabot-gitlab:worker
     depends_on:
       - redis
     environment:
