@@ -92,6 +92,7 @@ build:
       - merge_requests
     changes:
       - Dockerfile
+      - .dockerignore
 
 release:
   extends: .docker_runner
