@@ -71,12 +71,12 @@ rspec:
   - |
     docker build \
       --build-arg BUILDKIT_INLINE_CACHE=1 \
-      --build-arg VERSION=$VERSION \
-      --build-arg COMMIT_SHA=$CI_COMMIT_SHORT_SHA \
-      --build-arg PROJECT_URL=$CI_PROJECT_URL \
-      --cache-from $LATEST \
-      --tag $IMAGE:$VERSION \
-      --tag $LATEST \
+      --build-arg VERSION="$VERSION" \
+      --build-arg COMMIT_SHA="$CI_COMMIT_SHORT_SHA" \
+      --build-arg PROJECT_URL="$CI_PROJECT_URL" \
+      --cache-from="$LATEST" \
+      --tag "$IMAGE":"$VERSION" \
+      --tag "$LATEST" \
       .
 
 build:
