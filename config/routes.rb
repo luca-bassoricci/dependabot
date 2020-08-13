@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   mount Sidekiq::Web => "/sidekiq"
 
   namespace :api, defaults: { format: :json } do
-    resources :dependabot, only: [:create]
+    resources :hooks, only: [:create]
+    resources :project, only: [:create]
   end
 end

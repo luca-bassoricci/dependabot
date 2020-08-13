@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Api::DependabotController do
+describe Api::HooksController do
   include_context "rack_test"
 
   it "handles successfull run" do
@@ -17,7 +17,7 @@ describe Api::DependabotController do
       ]
     )
 
-    post_json("/api/dependabot", "spec/fixture/api/webhooks/push.json")
+    post_json("/api/hooks", "spec/fixture/api/webhooks/push.json")
 
     expect(last_response.status).to eq(200)
   end
@@ -27,7 +27,7 @@ describe Api::DependabotController do
     expect(Webhooks::PushEventHandler).to receive(:call).and_raise(error)
     expect(Raven).to receive(:capture_exception).with(error)
 
-    post_json("/api/dependabot", "spec/fixture/api/webhooks/push.json")
+    post_json("/api/hooks", "spec/fixture/api/webhooks/push.json")
 
     expect(last_response.status).to eq(500)
     expect(JSON.parse(last_response.body, symbolize_names: true)).to eq(
@@ -37,7 +37,7 @@ describe Api::DependabotController do
   end
 
   it "handles unsupported hook type" do
-    post_json("/api/dependabot", "spec/fixture/api/webhooks/tag_push.json")
+    post_json("/api/hooks", "spec/fixture/api/webhooks/tag_push.json")
 
     expect(last_response.status).to eq(400)
     expect(JSON.parse(last_response.body, symbolize_names: true)).to eq(
@@ -47,7 +47,7 @@ describe Api::DependabotController do
   end
 
   it "returns unauthorized error" do
-    post_json("/api/dependabot", "spec/fixture/api/webhooks/push.json", "invalid_token")
+    post_json("/api/hooks", "spec/fixture/api/webhooks/push.json", "invalid_token")
 
     expect(last_response.status).to eq(401)
     expect(JSON.parse(last_response.body, symbolize_names: true)).to eq(
