@@ -1,15 +1,13 @@
 # dependabot-gitlab
 
-[![pipeline status](https://gitlab.com/andrcuns/dependabot-gitlab/badges/master/pipeline.svg)](https://gitlab.com/andrcuns/dependabot-gitlab/-/commits/master)
-[![coverage report](https://gitlab.com/andrcuns/dependabot-gitlab/badges/master/coverage.svg)](https://gitlab.com/andrcuns/dependabot-gitlab/-/commits/master)
+[![pipeline status](https://gitlab.com/dependabot-gitlab/dependabot/badges/master/pipeline.svg)](https://gitlab.com/dependabot-gitlab/dependabot/-/commits/master)
+[![coverage report](https://gitlab.com/dependabot-gitlab/dependabot/badges/master/coverage.svg)](https://gitlab.com/dependabot-gitlab/dependabot/-/commits/master)
 [![Docker Image Version (latest by date)](https://img.shields.io/docker/v/andrcuns/dependabot-gitlab?sort=semver)](https://hub.docker.com/r/andrcuns/dependabot-gitlab)
 [![Docker Pulls](https://img.shields.io/docker/pulls/andrcuns/dependabot-gitlab)](https://hub.docker.com/r/andrcuns/dependabot-gitlab)
 
 *dependabot-gitlab* is rails application providing automated dependency updates based on [dependabot-core](https://github.com/dependabot/dependabot-core)
 
-## Usage
-
-### Deployment
+## Deployment
 
 Application is released as a [docker image](https://hub.docker.com/r/andrcuns/dependabot-gitlab). It is assumed there is possibility to
 deploy the app as docker containers in order for it to start updating repository dependencies.\
@@ -19,10 +17,6 @@ running web server and another running sidekiq process. Simple production like d
 ```bash
 docker-compose -f docker-compose.yml -f docker-compose-prod.yml up
 ```
-
-In order for gitlab to pick up repository configuration, a [webhook](https://docs.gitlab.com/ee/user/project/integrations/webhooks.html) with url
-`http://{dependabot_host}/api/dependabot` and optional secret token needs to be created for repository with trigger for `push` events in the default repository
-branch.
 
 ### Environment configuration
 
@@ -34,18 +28,28 @@ Application requires few environment variables to work.
 * `SETTINGS__GITLAB_AUTH_TOKEN` - optional gitlab webhook token which can be configured under webhook settings in gitlab, if not present,
 token set in gitlab webhook configuration will be ignored
 
-### Configuration file
+## Configuration
 
-Application will automatically read dependabot configuration file placed in `.gitlab/dependabot.yml`. Configuration file options are described
-in [dependabot](https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates) documentation. Example file
-which manages this project's dependencies can be seen [.gitlab/dependabot.yml](.gitlab/dependabot.yml)
+### Gitlab configuration
 
-### Rake tasks
+In order for gitlab to pick up repository configuration, a [webhook](https://docs.gitlab.com/ee/user/project/integrations/webhooks.html) with url
+`http://{dependabot_host}/api/hooks` and optional secret token needs to be created for repository with trigger for `push` events in the default repository
+branch.
+
+### Dependabot Configuration file
+
+Application will automatically read dependabot configuration file placed in `.gitlab/dependabot.yml` when it is created or updated and add cron jobs. Configuration file options are described in [dependabot](https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates) documentation. Example file which manages this project's dependencies can be seen [.gitlab/dependabot.yml](.gitlab/dependabot.yml)
+
+### Adding project manually
+
+Endpoint `api/project` can receive POST request with json `{"project":"dependabot-gitlab/dependabot"}` to add project manually. Project must have a valid dependabot configuration file.
+
+## Rake tasks
 
 Additional rake tasks exist for manual interaction with dependency updates and configuration.
 
-* `dependabot:register[repo]` - manually register repository where `repo` is repository name with namespace, ex: `andrcuns/dependabot-gitlab`, repository must have dependabot config file
-* `dependabot:update[repo,package_manager]` - trigger dependency update where `repo` is repository full name and `package_manager` is `package_ecosystem` parameter like `bundler`
+* `dependabot:register[project]` - manually register repository where `project` is repository name with namespace, ex: `dependabot-gitlab/dependabot`, repository must have valid dependabot config file
+* `dependabot:update[project,package_manager]` - trigger dependency update where `project` is repository full name and `package_manager` is `package_ecosystem` parameter like `bundler`
 
 ### Job list
 

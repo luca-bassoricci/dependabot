@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Api
-  class DependabotController < ApplicationController
+  class HooksController < ApplicationController
     # Post request handler
     #
     # @return [void]
