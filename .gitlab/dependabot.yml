@@ -5,6 +5,7 @@ updates:
     schedule:
       interval: daily
       time: "19:00"
+      timezone: Europe/Riga
     commit-message:
       include: scope
     assignees:
@@ -14,6 +15,7 @@ updates:
     schedule:
       interval: daily
       time: "19:10"
+      timezone: Europe/Riga
     commit-message:
       include: scope
     assignees:
