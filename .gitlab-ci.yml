@@ -2,9 +2,15 @@ include:
   - local: .gitlab/runners.yml
 
 stages:
+  - lint
   - test
-  - build
+  - release
   - deploy
+
+variables:
+  CI_DOCKER_IMAGE: registry.gitlab.com/dependabot-gitlab/dependabot
+  CURRENT_CI_IMAGE: $CI_DOCKER_IMAGE:$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
+  LATEST_CI_IMAGE: $CI_DOCKER_IMAGE:$CI_COMMIT_REF_SLUG-latest
 
 # ======================================================================================================================
 # Pre Stage
@@ -23,12 +29,30 @@ cache_gems:
     changes:
       - Gemfile.lock
 
+build:
+  stage: .pre
+  extends: .buildkit_runner
+  script: |
+    buildctl-daemonless.sh build \
+      --frontend=dockerfile.v0 \
+      --local context=. \
+      --local dockerfile=. \
+      --opt build-arg:COMMIT_SHA=$CI_COMMIT_SHA \
+      --opt build-arg:PROJECT_URL=$CI_PROJECT_URL \
+      --export-cache type=inline \
+      --import-cache type=registry,ref=$LATEST_CI_IMAGE \
+      --output type=image,\"name=$CURRENT_CI_IMAGE,$LATEST_CI_IMAGE\",push=true
+  only:
+    - merge_request
+    - master
+    - tags
+
 # ======================================================================================================================
-# Test Stage
+# Lint stage
 # ======================================================================================================================
 rubocop:
   extends: .ruby_runner
-  stage: test
+  stage: lint
   script:
     - bundle exec rubocop --parallel --color
   only:
@@ -38,7 +62,7 @@ rubocop:
 
 reek:
   extends: .ruby_runner
-  stage: test
+  stage: lint
   script:
     - bundle exec reek --color --progress
   only:
@@ -46,7 +70,10 @@ reek:
     - master
     - tags
 
-rspec:
+# ======================================================================================================================
+# Test Stage
+# ======================================================================================================================
+unit_tests:
   extends: .ruby_runner
   stage: test
   variables:
@@ -67,45 +94,18 @@ rspec:
 # ======================================================================================================================
 # Release Stage
 # ======================================================================================================================
-.build_docker_image: &build_docker_image
-  - |
-    docker pull "$LATEST"
-    docker build \
-      --build-arg BUILDKIT_INLINE_CACHE=1 \
-      --build-arg VERSION="$VERSION" \
-      --build-arg COMMIT_SHA="$CI_COMMIT_SHORT_SHA" \
-      --build-arg PROJECT_URL="$CI_PROJECT_URL" \
-      --cache-from="$LATEST" \
-      --tag "$IMAGE":"$VERSION" \
-      --tag "$LATEST" \
-      .
-
-build:
-  extends: .docker_runner
-  stage: build
-  variables:
-    VERSION: $CI_COMMIT_SHORT_SHA
-  script:
-    - *build_docker_image
-  only:
-    refs:
-      - master
-      - merge_requests
-    changes:
-      - Dockerfile
-      - .dockerignore
-      - .gitlab-ci.yml
-      - .gitlab/runners.yml
-
 release:
   extends: .docker_runner
-  stage: build
+  stage: release
   variables:
-    VERSION: $CI_COMMIT_TAG
+    RELEASE_IMAGE: docker.io/andrcuns/dependabot-gitlab
+    RELEASE_VERSION: $RELEASE_IMAGE:$CI_COMMIT_TAG
+    LATEST_VERSION: $RELEASE_IMAGE:latest
   script:
-    - *build_docker_image
-    - docker push $IMAGE:$VERSION
-    - docker push $LATEST
+    - docker pull $CURRENT_CI_IMAGE
+    - docker tag $CURRENT_CI_IMAGE $RELEASE_VERSION
+    - docker tag $CURRENT_CI_IMAGE $LATEST_VERSION
+    - docker push $RELEASE_VERSION && docker push $LATEST_VERSION
   only:
     - tags
 
@@ -113,13 +113,8 @@ release:
 # Deploy Stage
 # ======================================================================================================================
 deploy:
-  image: finalgene/heroku-cli:7.42
+  extends: .heroku_runner
   stage: deploy
-  before_script:
-    - apk add git
-    - git fetch origin master && git checkout master
-    - echo $NETRC > /root/.netrc
-    - heroku git:remote -a dependabot-gitlab
   script:
     - git push heroku master
   environment:
@@ -133,8 +128,10 @@ deploy:
       - config/**/*
       - lib/**/*
       - public/**/*
+      - bin/rails
       - config.ru
       - Gemfile
       - Gemfile.lock
       - Rakefile
       - Dockerfile
+      - .dockerignore

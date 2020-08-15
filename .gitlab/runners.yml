@@ -14,16 +14,41 @@
     policy: pull
 
 .docker_runner:
-  image: docker:19.03.13-beta2
+  image: docker:19.03.12
   services:
-    - docker:19.03.13-beta2-dind
+    - docker:19.03.12-dind
   tags:
     - docker
   variables:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: /certs
     DOCKER_BUILDKIT: 1
-    IMAGE: andrcuns/dependabot-gitlab
-    LATEST: $IMAGE:latest
   before_script:
     - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+
+.buildkit_runner:
+  image:
+    name: moby/buildkit:v0.7.2
+    entrypoint: ["sh", "-c"]
+  tags:
+    - docker
+  before_script:
+    - mkdir -p /root/.docker
+    - |
+      cat <<- EOF > /root/.docker/config.json
+      {
+        "auths": {
+          "registry.gitlab.com": {
+            "auth": "$(echo -n $CI_REGISTRY_USER:$CI_REGISTRY_PASSWORD | base64)"
+          }    
+        }
+      }
+      EOF
+
+.heroku_runner:
+  image: finalgene/heroku-cli:7.42
+  before_script:
+    - apk add git
+    - git fetch origin master && git checkout master
+    - echo $NETRC > /root/.netrc
+    - heroku git:remote -a dependabot-gitlab
