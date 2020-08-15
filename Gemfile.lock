@@ -79,6 +79,7 @@ GEM
     benchmark (0.1.0)
     bootsnap (1.4.8)
       msgpack (~> 1.0)
+    brakeman (4.9.0)
     builder (3.2.4)
     citrus (3.0.2)
     coderay (1.1.2)
@@ -427,6 +428,7 @@ PLATFORMS
 
 DEPENDENCIES
   bootsnap (>= 1.4.2)
+  brakeman (~> 4.9)
   config (~> 2.2)
   dependabot-omnibus (~> 0.118.12)
   lefthook (~> 0.7.2)
