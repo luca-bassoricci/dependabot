@@ -2,7 +2,7 @@ include:
   - local: .gitlab/runners.yml
 
 stages:
-  - lint
+  - static analysis
   - test
   - release
   - deploy
@@ -21,7 +21,7 @@ cache_gems:
   script:
     - bundle install
   cache:
-    policy: push
+    policy: pull-push
   only:
     refs:
       - merge_request
@@ -48,11 +48,11 @@ build:
     - tags
 
 # ======================================================================================================================
-# Lint stage
+# Static analysis stage
 # ======================================================================================================================
 rubocop:
   extends: .ruby_runner
-  stage: lint
+  stage: static analysis
   script:
     - bundle exec rubocop --parallel --color
   only:
@@ -62,9 +62,19 @@ rubocop:
 
 reek:
   extends: .ruby_runner
-  stage: lint
+  stage: static analysis
   script:
     - bundle exec reek --color --progress
+  only:
+    - merge_request
+    - master
+    - tags
+
+brakeman:
+  extends: .ruby_runner
+  stage: static analysis
+  script:
+    - bundle exec brakeman --color
   only:
     - merge_request
     - master
