@@ -27,7 +27,7 @@ group :test do
   gem "rspec", "~> 3.9"
   gem "rspec_junit_formatter", "~> 0.4.1"
   gem "rspec-sidekiq", "~> 3.1", require: false
-  gem "simplecov", "~> 0.18.5"
+  gem "simplecov", "~> 0.19.0"
   gem "simplecov-cobertura", "~> 1.3.1"
   gem "simplecov-console", "~> 0.7.2"
   gem "webmock", "~> 3.8"
