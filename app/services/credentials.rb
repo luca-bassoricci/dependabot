@@ -1,22 +1,25 @@
 # frozen_string_literal: true
 
-class Credentials < ApplicationService
-  # Get credentials
-  #
-  # @return [Array<Hash>]
-  def call
-    [github_credentials, gitlab_credentials]
-  end
+class Credentials
+  class << self
+    # Get credentials
+    #
+    # @return [Array<Hash>]
+    def fetch
+      @credentials ||= [github_credentials, gitlab_credentials].compact # rubocop:disable Naming/MemoizedInstanceVariableName
+    end
 
-  private
+    private
 
-  # Get github credentials
-  #
-  # @return [Hash]
-  def github_credentials
-    @github_credentials ||= begin
+    # Get github credentials
+    #
+    # @return [Hash]
+    def github_credentials
       token = Settings.github_access_token
-      raise StandardError, "Missing environment variable SETTINGS__GITHUB_ACCESS_TOKEN" unless token
+      unless token
+        Rails.logger.warn { "Missing github_access_token. Dependency updates may fail if api rate limit is exceeded." }
+        return
+      end
 
       {
         "type" => "git_source",
@@ -25,21 +28,16 @@ class Credentials < ApplicationService
         "password" => token
       }
     end
-  end
 
-  # Get gitlab credentials
-  #
-  # @return [Hash]
-  def gitlab_credentials
-    @gitlab_credentials ||= begin
-      token = Settings.gitlab_access_token
-      raise StandardError, "Missing environment variable SETTINGS__GITLAB_ACCESS_TOKEN" unless token
-
+    # Get gitlab credentials
+    #
+    # @return [Hash]
+    def gitlab_credentials
       {
         "type" => "git_source",
-        "host" => Settings.gitlab_hostname,
+        "host" => URI(Settings.gitlab_url).host,
         "username" => "x-access-token",
-        "password" => token
+        "password" => Settings.gitlab_access_token
       }
     end
   end

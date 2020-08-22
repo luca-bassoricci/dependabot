@@ -46,7 +46,7 @@ module Dependabot
         base_commit: fetcher.commit,
         dependencies: updated_dependencies,
         files: updated_files,
-        credentials: Credentials.call,
+        credentials: Credentials.fetch,
         **mr_opts
       ).create
       logger.info { "Created mr #{mr.web_url}" } if mr
@@ -64,7 +64,7 @@ module Dependabot
         base_commit: fetcher.commit,
         old_commit: mr.sha,
         files: updated_files,
-        credentials: Credentials.call,
+        credentials: Credentials.fetch,
         pull_request_number: mr.iid
       ).update
     end
@@ -101,18 +101,22 @@ module Dependabot
     #
     # @return [Array<Number>]
     def assignees
-      return unless options[:assignees]
+      @assignees ||= begin
+        return unless options[:assignees]
 
-      Gitlab::UserFinder.call(options[:assignees])
+        Gitlab::UserFinder.call(options[:assignees])
+      end
     end
 
     # Get reviewer ids
     #
     # @return [Array<Number>]
     def reviewers
-      return unless options[:reviewers]
+      @reviewers ||= begin
+        return unless options[:reviewers]
 
-      Gitlab::UserFinder.call(options[:reviewers])
+        Gitlab::UserFinder.call(options[:reviewers])
+      end
     end
 
     # MR options

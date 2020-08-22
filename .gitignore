@@ -1,8 +1,6 @@
 # Ignore bundler config.
 /.bundle
 
-/public/assets
-
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 
@@ -15,3 +13,6 @@ coverage
 # Ignore yard docs
 .yardoc
 doc
+
+# Ignore integration/e2e test artifacts
+git.store

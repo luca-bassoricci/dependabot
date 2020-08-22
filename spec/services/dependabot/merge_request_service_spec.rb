@@ -57,7 +57,7 @@ describe Dependabot::MergeRequestService do
         base_commit: fetcher.commit,
         dependencies: updated_dependencies,
         files: updated_files,
-        credentials: Credentials.call,
+        credentials: Credentials.fetch,
         label_language: true,
         **config,
         assignees: [10],
@@ -85,7 +85,7 @@ describe Dependabot::MergeRequestService do
         base_commit: fetcher.commit,
         old_commit: "5f92cc4d9939",
         files: updated_files,
-        credentials: Credentials.call,
+        credentials: Credentials.fetch,
         pull_request_number: 1
       )
       .and_return(pr_updater)
