@@ -2,13 +2,13 @@
 
 RSpec.shared_context("dependabot") do
   let(:package_manager) { "bundler" }
-  let(:raw_config) { File.read("spec/fixture/dependabot.yml") }
+  let(:raw_config) { File.read("spec/gitlab_mock/responses/gitlab/dependabot.yml") }
 
   let(:source) do
     Dependabot::Source.new(
       provider: "gitlab",
-      hostname: Settings.gitlab_hostname,
-      api_endpoint: "https://#{Settings.gitlab_hostname}/api/v4",
+      hostname: URI(Settings.gitlab_url),
+      api_endpoint: "#{Settings.gitlab_url}/api/v4",
       repo: "test-repo",
       directory: "/",
       branch: "master"
@@ -18,7 +18,7 @@ RSpec.shared_context("dependabot") do
   let(:fetcher) do
     Dependabot::FileFetchers.for_package_manager(package_manager).new(
       source: source,
-      credentials: Credentials.call
+      credentials: Credentials.fetch
     )
   end
 

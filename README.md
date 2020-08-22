@@ -22,7 +22,7 @@ docker-compose -f docker-compose.yml -f docker-compose-prod.yml up
 
 Application requires few environment variables to work.
 
-* `SETTINGS__GITLAB_HOSTNAME` - hostname of gitlab instance, ex: `gitlab.com` by default
+* `SETTINGS__GITLAB_URL` - url of gitlab instance, ex: `https://gitlab.com` by default
 * `SETTINGS__GITLAB_ACCESS_TOKEN` - [gitlab](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html) personal access token with api scope
 * `SETTINGS__GITHUB_ACCESS_TOKEN` - [github](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) personal access token with repository read scope
 * `SETTINGS__GITLAB_AUTH_TOKEN` - optional gitlab webhook token which can be configured under webhook settings in gitlab, if not present,

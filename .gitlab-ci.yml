@@ -8,9 +8,12 @@ stages:
   - deploy
 
 variables:
-  CI_DOCKER_IMAGE: registry.gitlab.com/dependabot-gitlab/dependabot
-  CURRENT_CI_IMAGE: $CI_DOCKER_IMAGE:$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
-  LATEST_CI_IMAGE: $CI_DOCKER_IMAGE:$CI_COMMIT_REF_SLUG-latest
+  APP_DOCKER_IMAGE: registry.gitlab.com/dependabot-gitlab/dependabot
+  CURRENT_APP_IMAGE: $APP_DOCKER_IMAGE:$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
+  LATEST_APP_IMAGE: $APP_DOCKER_IMAGE:$CI_COMMIT_REF_SLUG-latest
+  GITLAB_MOCK_DOCKER_IMAGE: registry.gitlab.com/dependabot-gitlab/dependabot/gitlab-mock
+  CURRENT_GITLAB_MOCK_IMAGE: $GITLAB_MOCK_DOCKER_IMAGE:$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
+  LATEST_GITLAB_MOCK_IMAGE: $GITLAB_MOCK_DOCKER_IMAGE:$CI_COMMIT_REF_SLUG-latest
 
 # ======================================================================================================================
 # Pre Stage
@@ -29,7 +32,7 @@ cache_gems:
     changes:
       - Gemfile.lock
 
-build:
+build_app:
   stage: .pre
   extends: .buildkit_runner
   script: |
@@ -40,8 +43,24 @@ build:
       --opt build-arg:COMMIT_SHA=$CI_COMMIT_SHA \
       --opt build-arg:PROJECT_URL=$CI_PROJECT_URL \
       --export-cache type=inline \
-      --import-cache type=registry,ref=$LATEST_CI_IMAGE \
-      --output type=image,\"name=$CURRENT_CI_IMAGE,$LATEST_CI_IMAGE\",push=true
+      --import-cache type=registry,ref=$LATEST_APP_IMAGE \
+      --output type=image,\"name=$CURRENT_APP_IMAGE,$LATEST_APP_IMAGE\",push=true
+  only:
+    - merge_request
+    - master
+    - tags
+
+build_mock:
+  stage: .pre
+  extends: .buildkit_runner
+  script: |
+    buildctl-daemonless.sh build \
+      --frontend=dockerfile.v0 \
+      --local context=spec/gitlab_mock \
+      --local dockerfile=spec/gitlab_mock \
+      --export-cache type=inline \
+      --import-cache type=registry,ref=$LATEST_GITLAB_MOCK_IMAGE \
+      --output type=image,\"name=$CURRENT_GITLAB_MOCK_IMAGE,$LATEST_GITLAB_MOCK_IMAGE\",push=true
   only:
     - merge_request
     - master
@@ -101,6 +120,27 @@ unit_tests:
     - master
     - tags
 
+e2e_test:
+  image:
+    name: $CURRENT_APP_IMAGE
+    entrypoint: [""]
+  stage: test
+  services:
+    - name: $CURRENT_GITLAB_MOCK_IMAGE
+      alias: gitlab
+  variables:
+    SETTINGS__GITLAB_ACCESS_TOKEN: e2e-test
+    SETTINGS__GITLAB_URL: http://gitlab:4567
+    RAILS_ENV: production
+    GIT_STRATEGY: none
+  script:
+    - cd /home/dependabot
+    - bundle exec rake 'dependabot:update[test-repo,bundler]'
+  only:
+    - merge_request
+    - master
+    - tags
+
 # ======================================================================================================================
 # Release Stage
 # ======================================================================================================================
@@ -112,9 +152,9 @@ release:
     RELEASE_VERSION: $RELEASE_IMAGE:$CI_COMMIT_TAG
     LATEST_VERSION: $RELEASE_IMAGE:latest
   script:
-    - docker pull $CURRENT_CI_IMAGE
-    - docker tag $CURRENT_CI_IMAGE $RELEASE_VERSION
-    - docker tag $CURRENT_CI_IMAGE $LATEST_VERSION
+    - docker pull $CURRENT_APP_IMAGE
+    - docker tag $CURRENT_APP_IMAGE $RELEASE_VERSION
+    - docker tag $CURRENT_APP_IMAGE $LATEST_VERSION
     - docker push $RELEASE_VERSION && docker push $LATEST_VERSION
   only:
     - tags

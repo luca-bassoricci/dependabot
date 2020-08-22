@@ -2,7 +2,7 @@
 
 describe Credentials do
   it "returns credentials" do
-    expect(Credentials.call).to eq(
+    expect(Credentials.fetch).to eq(
       [
         {
           "type" => "git_source",
@@ -12,7 +12,7 @@ describe Credentials do
         },
         {
           "type" => "git_source",
-          "host" => "gitlab.com",
+          "host" => URI(Settings.gitlab_url).host,
           "username" => "x-access-token",
           "password" => Settings.gitlab_access_token
         }

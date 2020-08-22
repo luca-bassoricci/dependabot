@@ -27,5 +27,4 @@ updates:
       - dependency
     pull-request-branch-name:
       separator: "-"
-    target-branch: "develop"
     versioning-strategy: auto

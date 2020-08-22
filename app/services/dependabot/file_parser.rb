@@ -20,7 +20,7 @@ module Dependabot
       Dependabot::FileParsers.for_package_manager(package_manager).new(
         dependency_files: dependency_files,
         source: source,
-        credentials: Credentials.call
+        credentials: Credentials.fetch
       ).parse
     end
   end

@@ -7,4 +7,8 @@ Config.setup do |config|
   config.env_separator = "__"
   config.env_converter = :downcase
   config.env_parse_values = true
+
+  config.schema do
+    required(:gitlab_access_token).filled
+  end
 end

@@ -6,7 +6,6 @@ describe Configuration do
       {
         "bundler" => {
           directory: "/",
-          branch: "develop",
           milestone: 4,
           assignees: ["andrcuns"],
           reviewers: ["andrcuns"],
@@ -24,7 +23,9 @@ describe Configuration do
     end
 
     it "returns parsed configuration" do
-      expect(Configuration::Parser.call(File.read("spec/fixture/dependabot.yml"))).to eq(expected_config)
+      expect(Configuration::Parser.call(File.read("spec/gitlab_mock/responses/gitlab/dependabot.yml"))).to eq(
+        expected_config
+      )
     end
   end
 

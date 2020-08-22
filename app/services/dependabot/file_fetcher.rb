@@ -18,7 +18,7 @@ module Dependabot
     def call
       Dependabot::FileFetchers.for_package_manager(package_manager).new(
         source: source,
-        credentials: Credentials.call
+        credentials: Credentials.fetch
       )
     end
   end

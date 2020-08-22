@@ -56,7 +56,7 @@ module Dependabot
       @checker ||= Dependabot::UpdateCheckers.for_package_manager(dependency.package_manager).new(
         dependency: dependency,
         dependency_files: dependency_files,
-        credentials: Credentials.call
+        credentials: Credentials.fetch
       )
     end
 
