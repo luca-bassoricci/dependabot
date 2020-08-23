@@ -41,7 +41,16 @@ module Scheduler
     # @param [Sidekiq::Cron::Job] job
     # @return [Sidekiq::Cron::Job]
     def run(job)
-      job.tap { |jb| jb.valid? ? jb.save && jb.enque! : logger.error { job.errors } }
+      job.valid? ? enque(job) : logger.error { job.errors }
+      job
+    end
+
+    # Save and enque job
+    #
+    # @param [Sidekiq::Cron::Job] job
+    # @return [Sidekiq::Cron::Job]
+    def enque(job)
+      job.save && job.enque!
     end
   end
 end

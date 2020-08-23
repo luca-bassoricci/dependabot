@@ -5,4 +5,4 @@ pre-commit:
       run: bundle exec rubocop {staged_files}
     reek:
       glob: "*.{rb,rake,ru}"
-      run: bundle exec reek --force-exclusion {staged_files}
+      run: bundle exec reek --force-exclusion --single-line --sort-by smelliness {staged_files}

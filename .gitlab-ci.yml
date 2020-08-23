@@ -83,7 +83,7 @@ reek:
   extends: .ruby_runner
   stage: static analysis
   script:
-    - bundle exec reek --color --progress
+    - bundle exec reek --color --progress --force-exclusion --sort-by smelliness .
   only:
     - merge_request
     - master
