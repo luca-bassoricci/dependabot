@@ -1,8 +1,9 @@
-# Ignore bundler config.
-/.bundle
+# Ignore bundler
+.bundle
+vendor/bundle
 
 # Ignore master key for decrypting credentials and more.
-/config/master.key
+config/master.key
 
 # Ignore local settings
 config/settings.local.yml

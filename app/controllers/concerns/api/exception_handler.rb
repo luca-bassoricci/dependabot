@@ -5,9 +5,9 @@ module Api
     extend ActiveSupport::Concern
 
     included do
-      rescue_from StandardError do |e|
-        Raven.capture_exception(e)
-        json_response({ status: 500, error: e.message }, 500)
+      rescue_from StandardError do |error|
+        Raven.capture_exception(error)
+        json_response({ status: 500, error: error.message }, 500)
       end
     end
   end

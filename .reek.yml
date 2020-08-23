@@ -26,8 +26,16 @@ detectors:
   
   TooManyInstanceVariables:
     max_instance_variables: 6
+  
+  ManualDispatch:
+    exclude:
+      - HooksController#create
+  
+  BooleanParameter:
+    exclude:
+      - Config
 
 exclude_paths:
   - bin
   - node_modules
-  - vendor/**/*
+  - vendor/bundle

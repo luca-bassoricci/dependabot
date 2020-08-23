@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Webhooks
+  # :reek:InstanceVariableAssumption
   class PushEventHandler < ApplicationService
     # @param [ActionController::Parameters] params
     def initialize(params)
@@ -32,9 +33,7 @@ module Webhooks
     #
     # @return [Boolean]
     def modified_config?
-      return @modified_config if defined?(@modified_files)
-
-      @updated_config = params[:commits].any? do |commit|
+      params[:commits].any? do |commit|
         commit.values_at(:added, :modified).flatten.include?(Settings.config_filename)
       end
     end
@@ -53,6 +52,7 @@ module Webhooks
     # Delete dependency update jobs
     #
     # @return [void]
+    # :reek:FeatureEnvy
     def delete_schedules
       Sidekiq::Cron::Job.all.each { |job| job.destroy if job.name.include?(repo) }
     end
