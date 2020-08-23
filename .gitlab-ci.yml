@@ -1,3 +1,8 @@
+.only: &all
+    - merge_request
+    - master
+    - tags
+
 include:
   - local: .gitlab/runners.yml
 
@@ -9,11 +14,9 @@ stages:
 
 variables:
   APP_DOCKER_IMAGE: registry.gitlab.com/dependabot-gitlab/dependabot
-  CURRENT_APP_IMAGE: $APP_DOCKER_IMAGE:$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
-  LATEST_APP_IMAGE: $APP_DOCKER_IMAGE:$CI_COMMIT_REF_SLUG-latest
   GITLAB_MOCK_DOCKER_IMAGE: registry.gitlab.com/dependabot-gitlab/dependabot/gitlab-mock
-  CURRENT_GITLAB_MOCK_IMAGE: $GITLAB_MOCK_DOCKER_IMAGE:$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
-  LATEST_GITLAB_MOCK_IMAGE: $GITLAB_MOCK_DOCKER_IMAGE:$CI_COMMIT_REF_SLUG-latest
+  CURRENT_TAG: $CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
+  LATEST_TAG: $CI_COMMIT_REF_SLUG-latest
 
 # ======================================================================================================================
 # Pre Stage
@@ -32,7 +35,7 @@ cache_gems:
     changes:
       - Gemfile.lock
 
-build_app:
+build_app_image:
   stage: .pre
   extends: .buildkit_runner
   script: |
@@ -43,14 +46,11 @@ build_app:
       --opt build-arg:COMMIT_SHA=$CI_COMMIT_SHA \
       --opt build-arg:PROJECT_URL=$CI_PROJECT_URL \
       --export-cache type=inline \
-      --import-cache type=registry,ref=$LATEST_APP_IMAGE \
-      --output type=image,\"name=$CURRENT_APP_IMAGE,$LATEST_APP_IMAGE\",push=true
-  only:
-    - merge_request
-    - master
-    - tags
+      --import-cache type=registry,ref=$APP_DOCKER_IMAGE:$LATEST_TAG \
+      --output type=image,\"name=$APP_DOCKER_IMAGE:$CURRENT_TAG,$APP_DOCKER_IMAGE:$LATEST_TAG\",push=true
+  only: *all
 
-build_mock:
+build_mock_image:
   stage: .pre
   extends: .buildkit_runner
   script: |
@@ -59,12 +59,9 @@ build_mock:
       --local context=spec/gitlab_mock \
       --local dockerfile=spec/gitlab_mock \
       --export-cache type=inline \
-      --import-cache type=registry,ref=$LATEST_GITLAB_MOCK_IMAGE \
-      --output type=image,\"name=$CURRENT_GITLAB_MOCK_IMAGE,$LATEST_GITLAB_MOCK_IMAGE\",push=true
-  only:
-    - merge_request
-    - master
-    - tags
+      --import-cache type=registry,ref=$GITLAB_MOCK_DOCKER_IMAGE:$LATEST_TAG \
+      --output type=image,\"name=$GITLAB_MOCK_DOCKER_IMAGE:$CURRENT_TAG,$GITLAB_MOCK_DOCKER_IMAGE:$LATEST_TAG\",push=true
+  only: *all
 
 # ======================================================================================================================
 # Static analysis stage
@@ -74,30 +71,28 @@ rubocop:
   stage: static analysis
   script:
     - bundle exec rubocop --parallel --color
-  only:
-    - merge_request
-    - master
-    - tags
+  only: *all
 
 reek:
   extends: .ruby_runner
   stage: static analysis
   script:
     - bundle exec reek --color --progress --force-exclusion --sort-by smelliness .
-  only:
-    - merge_request
-    - master
-    - tags
+  only: *all
 
 brakeman:
   extends: .ruby_runner
   stage: static analysis
   script:
     - bundle exec brakeman --color
-  only:
-    - merge_request
-    - master
-    - tags
+  only: *all
+
+bundle_audit:
+  extends: .ruby_runner
+  stage: static analysis
+  script:
+    - bundle exec bundle-audit check --update
+  only: *all
 
 # ======================================================================================================================
 # Test Stage
@@ -115,18 +110,15 @@ unit_tests:
     reports:
       cobertura: coverage/coverage.xml
       junit: tmp/rspec.xml
-  only:
-    - merge_request
-    - master
-    - tags
+  only: *all
 
 e2e_test:
   image:
-    name: $CURRENT_APP_IMAGE
+    name: $APP_DOCKER_IMAGE:$CURRENT_TAG
     entrypoint: [""]
   stage: test
   services:
-    - name: $CURRENT_GITLAB_MOCK_IMAGE
+    - name: $GITLAB_MOCK_DOCKER_IMAGE:$CURRENT_TAG
       alias: gitlab
   variables:
     SETTINGS__GITLAB_ACCESS_TOKEN: e2e-test
@@ -136,10 +128,7 @@ e2e_test:
   script:
     - cd /home/dependabot
     - bundle exec rake 'dependabot:update[test-repo,bundler]'
-  only:
-    - merge_request
-    - master
-    - tags
+  only: *all
 
 # ======================================================================================================================
 # Release Stage
@@ -152,9 +141,9 @@ release:
     RELEASE_VERSION: $RELEASE_IMAGE:$CI_COMMIT_TAG
     LATEST_VERSION: $RELEASE_IMAGE:latest
   script:
-    - docker pull $CURRENT_APP_IMAGE
-    - docker tag $CURRENT_APP_IMAGE $RELEASE_VERSION
-    - docker tag $CURRENT_APP_IMAGE $LATEST_VERSION
+    - docker pull $APP_DOCKER_IMAGE:$CURRENT_TAG
+    - docker tag $APP_DOCKER_IMAGE:$CURRENT_TAG $RELEASE_VERSION
+    - docker tag $APP_DOCKER_IMAGE:$CURRENT_TAG $LATEST_VERSION
     - docker push $RELEASE_VERSION && docker push $LATEST_VERSION
   only:
     - tags

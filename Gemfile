@@ -16,9 +16,9 @@ gem "sidekiq-cron", "~> 1.2"
 gem "bootsnap", ">= 1.4.2", require: false
 
 group :development, :test do
+  gem "bundle-audit", "~> 0.1.0", require: false
   gem "pry", "~> 0.13.1"
   gem "reek", "~> 6.0", require: false
-  gem "rspec-rails", "~> 4.0.1"
   gem "rubocop", "~> 0.89.1", require: false
   gem "rubocop-performance", "~> 1.7.1", require: false
   gem "rubocop-rails", "~> 2.7", require: false
@@ -29,6 +29,7 @@ group :test do
   gem "rack-test", "~> 1.1"
   gem "rspec", "~> 3.9"
   gem "rspec_junit_formatter", "~> 0.4.1"
+  gem "rspec-rails", "~> 4.0.1"
   gem "rspec-sidekiq", "~> 3.1", require: false
   gem "simplecov", "~> 0.19.0"
   gem "simplecov-cobertura", "~> 1.4.0"
