@@ -15,7 +15,6 @@ module Dependabot
     # @param [Dependabot::FileFetchers::Base] fetcher
     # @param [Dependabot::Dependency] dependency
     # @param [Hash] opts
-    # @param [Array<Number>] assignees
     def initialize(fetcher:, dependency:, **opts)
       @fetcher = fetcher
       @dependency = dependency
@@ -26,7 +25,7 @@ module Dependabot
     #
     # @return [void]
     def call
-      return unless updated_dependencies
+      return if updated_dependencies.empty?
 
       return update_mr if mr
 
@@ -41,15 +40,14 @@ module Dependabot
     #
     # @return [void]
     def create_mr
-      mr = Dependabot::PullRequestCreator.new(
+      Dependabot::PullRequestCreator.new(
         source: fetcher.source,
         base_commit: fetcher.commit,
         dependencies: updated_dependencies,
         files: updated_files,
         credentials: Credentials.fetch,
         **mr_opts
-      ).create
-      logger.info { "Created mr #{mr.web_url}" } if mr
+      ).create.tap { |mr| logger.info { "Created mr #{mr.web_url}" } if mr }
     end
 
     # Rebase existing mr if it has conflicts
@@ -137,7 +135,8 @@ module Dependabot
     def updated_dependencies
       @updated_dependencies ||= Dependabot::UpdateChecker.call(
         dependency: dependency,
-        dependency_files: fetcher.files
+        dependency_files: fetcher.files,
+        ignore: options[:ignore]
       )
     end
 
@@ -147,7 +146,8 @@ module Dependabot
     def updated_files
       @updated_files ||= Dependabot::FileUpdater.call(
         dependencies: updated_dependencies,
-        dependency_files: fetcher.files
+        dependency_files: fetcher.files,
+        package_manager: dependency.package_manager
       )
     end
   end

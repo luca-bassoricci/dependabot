@@ -18,6 +18,7 @@ module Configuration
           **options(package_manager),
           **branch_options(package_manager),
           **commit_message_options(package_manager),
+          **filter_options(package_manager),
           cron: Schedule.call(package_manager[:schedule])
         }.compact
       end
@@ -76,6 +77,32 @@ module Configuration
           include_scope: message_options[:include]
         }.compact
       }
+    end
+
+    # Specific package allow or ignore options
+    #
+    # @param [Hash<Symbol, Object>] opts
+    # @return [Hash<Symbol, Array>]
+    def filter_options(opts)
+      {
+        # Allow all direct dependencies if not explicitly defined
+        allow: transform_filter_options(opts[:allow]) || [{ dependency_type: "direct" }],
+        ignore: transform_filter_options(opts[:ignore]) || []
+      }
+    end
+
+    # Transform key names
+    #
+    # @param [<Type>] opts
+    # @return [<Type>] <description>
+    def transform_filter_options(opts)
+      opts&.map do |opt|
+        {
+          dependency_name: opt[:"dependency-name"],
+          dependency_type: opt[:"dependency-type"],
+          versions: opt[:versions]
+        }.compact
+      end
     end
   end
 end

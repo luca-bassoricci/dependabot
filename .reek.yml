@@ -7,9 +7,11 @@ detectors:
     enabled: false
 
   NestedIterators:
+    max_allowed_nesting: 2
     ignore_iterators:
       - yield_self
       - tap
+      - lambda
 
   TooManyMethods:
     max_methods: 20
