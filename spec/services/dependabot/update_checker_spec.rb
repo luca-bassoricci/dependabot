@@ -6,80 +6,102 @@ describe Dependabot::UpdateChecker do
 
   let(:checker) { double("checker") }
 
+  subject { described_class.call(dependency: dependency, dependency_files: fetcher.files, ignore: ignore_conf) }
+
   before do
     stub_gitlab
-    allow(Dependabot::UpdateCheckers).to receive_message_chain("for_package_manager.new").and_return(checker)
+    allow(Dependabot::Bundler::UpdateChecker).to receive(:new) { checker }
+    allow(checker).to receive(:up_to_date?) { up_to_date }
+    allow(checker).to receive(:requirements_unlocked_or_can_be?) { unlocked_or_can_be }
+    allow(checker).to receive(:can_update?).with(requirements_to_unlock: :own) { can_update_own_unlock }
+    allow(checker).to receive(:can_update?).with(requirements_to_unlock: :all) { can_update_all_unlock }
+    allow(checker).to receive(:can_update?).with(requirements_to_unlock: :none) { can_update_none_unlock }
+    allow(checker).to receive(:updated_dependencies) { updated_dependencies }
   end
 
-  it "returns if dependency up to date" do
-    allow(checker).to receive(:up_to_date?).and_return(true)
+  context "updated dependencies" do
+    let(:up_to_date) { true }
+    let(:unlocked_or_can_be) { true }
+    let(:can_update_own_unlock) { true }
+    let(:can_update_all_unlock) { true }
+    let(:can_update_none_unlock) { true }
 
-    expect(checker).not_to receive(:updated_dependencies)
+    context "array" do
+      let(:up_to_date) { true }
 
-    expect(Dependabot::UpdateChecker.call(dependency: dependency, dependency_files: fetcher.files)).to be_nil
-  end
+      it "is empty when dependency up to date" do
+        expect(subject).to eq([])
+      end
+    end
 
-  it "returns if update not possible with requirements unlocked" do
-    allow(checker).to receive(:up_to_date?).and_return(false)
-    allow(checker).to receive(:requirements_unlocked_or_can_be?).and_return(true)
-    allow(checker).to receive(:can_update?).with(requirements_to_unlock: :own).and_return(false)
-    allow(checker).to receive(:can_update?).with(requirements_to_unlock: :all).and_return(false)
+    context "array" do
+      let(:up_to_date) { false }
+      let(:unlocked_or_can_be) { true }
+      let(:can_update_own_unlock) { false }
+      let(:can_update_all_unlock) { false }
 
-    expect(checker).not_to receive(:updated_dependencies)
+      it "is empty when update not possible with requirements unlocked" do
+        expect(subject).to eq([])
+      end
+    end
 
-    expect(Dependabot::UpdateChecker.call(dependency: dependency, dependency_files: fetcher.files)).to be_nil
-  end
+    context "array" do
+      let(:up_to_date) { false }
+      let(:unlocked_or_can_be) { false }
+      let(:can_update_none_unlock) { false }
 
-  it "returns if update not possible with requirements locked" do
-    allow(checker).to receive(:up_to_date?).and_return(false)
-    allow(checker).to receive(:requirements_unlocked_or_can_be?).and_return(false)
-    allow(checker).to receive(:can_update?).with(requirements_to_unlock: :none).and_return(false)
+      it "is empty when update not possible with requirements locked" do
+        expect(subject).to eq([])
+      end
+    end
 
-    expect(checker).not_to receive(:updated_dependencies)
+    context "array" do
+      let(:up_to_date) { false }
+      let(:unlocked_or_can_be) { false }
+      let(:can_update_none_unlock) { true }
+      let(:ignore_conf) { [{ dependency_name: "config", versions: ["~> 2"] }] }
 
-    expect(Dependabot::UpdateChecker.call(dependency: dependency, dependency_files: fetcher.files)).to be_nil
-  end
+      before do
+        allow(checker).to receive(:latest_version) { Gem::Version.new("2.2.0") }
+      end
 
-  it "calls with requirements to unlock :none" do
-    allow(checker).to receive(:up_to_date?).and_return(false)
-    allow(checker).to receive(:requirements_unlocked_or_can_be?).and_return(false)
-    allow(checker).to receive(:can_update?).with(requirements_to_unlock: :none).and_return(true)
+      it "is empty when dependency is ignored" do
+        expect(subject).to eq([])
+      end
+    end
 
-    expect(checker).to receive(:updated_dependencies)
-      .with(requirements_to_unlock: :none)
-      .and_return(updated_dependencies)
+    context "array" do
+      let(:up_to_date) { false }
+      let(:unlocked_or_can_be) { false }
+      let(:can_update_none_unlock) { true }
 
-    expect(Dependabot::UpdateChecker.call(dependency: dependency, dependency_files: fetcher.files)).to eq(
-      updated_dependencies
-    )
-  end
+      it "contains updated dependencies when no requirements to unlock" do
+        expect(subject).to eq(updated_dependencies)
+        expect(checker).to have_received(:updated_dependencies).with(requirements_to_unlock: :none)
+      end
+    end
 
-  it "calls with requirements to unlock :own" do
-    allow(checker).to receive(:up_to_date?).and_return(false)
-    allow(checker).to receive(:requirements_unlocked_or_can_be?).and_return(true)
-    allow(checker).to receive(:can_update?).with(requirements_to_unlock: :own).and_return(true)
+    context "array" do
+      let(:up_to_date) { false }
+      let(:unlocked_or_can_be) { true }
+      let(:can_update_own_unlock) { true }
 
-    expect(checker).to receive(:updated_dependencies)
-      .with(requirements_to_unlock: :own)
-      .and_return(updated_dependencies)
+      it "contains updated dependencies when own requirements to unlock" do
+        expect(subject).to eq(updated_dependencies)
+        expect(checker).to have_received(:updated_dependencies).with(requirements_to_unlock: :own)
+      end
+    end
 
-    expect(Dependabot::UpdateChecker.call(dependency: dependency, dependency_files: fetcher.files)).to eq(
-      updated_dependencies
-    )
-  end
+    context "array" do
+      let(:up_to_date) { false }
+      let(:unlocked_or_can_be) { true }
+      let(:can_update_own_unlock) { false }
+      let(:can_update_all_unlock) { true }
 
-  it "calls with requirements to unlock :all" do
-    allow(checker).to receive(:up_to_date?).and_return(false)
-    allow(checker).to receive(:requirements_unlocked_or_can_be?).and_return(true)
-    allow(checker).to receive(:can_update?).with(requirements_to_unlock: :own).and_return(false)
-    allow(checker).to receive(:can_update?).with(requirements_to_unlock: :all).and_return(true)
-
-    expect(checker).to receive(:updated_dependencies)
-      .with(requirements_to_unlock: :all)
-      .and_return(updated_dependencies)
-
-    expect(Dependabot::UpdateChecker.call(dependency: dependency, dependency_files: fetcher.files)).to eq(
-      updated_dependencies
-    )
+      it "contains updated dependencies when all requirements to unlock" do
+        expect(subject).to eq(updated_dependencies)
+        expect(checker).to have_received(:updated_dependencies).with(requirements_to_unlock: :all)
+      end
+    end
   end
 end

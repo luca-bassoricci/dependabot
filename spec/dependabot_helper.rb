@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
+# Common objects and constants used in most specs
 RSpec.shared_context("dependabot") do
+  let(:repo) { "test-repo" }
   let(:package_manager) { "bundler" }
   let(:raw_config) { File.read("spec/gitlab_mock/responses/gitlab/dependabot.yml") }
+  let(:allow_conf) { [{ dependency_type: "direct" }] }
+  let(:ignore_conf) { [{ dependency_name: "rspec", versions: ["3.x", "4.x"] }] }
 
   let(:source) do
     Dependabot::Source.new(
@@ -44,22 +48,25 @@ RSpec.shared_context("dependabot") do
     [updated_dep]
   end
 
+  # Parsed version of spec/gitlab_mock/responses/gitlab/dependabot.yml
   let(:dependabot_config) do
     {
       "bundler" => {
         directory: "/",
-        branch: "master",
-        cron: "00 02 * * sun",
         milestone: 4,
-        custom_labels: ["dependency"],
-        branch_name_separator: "-",
         assignees: ["andrcuns"],
         reviewers: ["andrcuns"],
+        custom_labels: ["dependency"],
+        cron: "00 02 * * sun Europe/Riga",
+        branch_name_separator: "-",
+        branch_name_prefix: "dependabot",
         commit_message_options: {
           prefix: "dep",
           prefix_development: "bundler-dev",
           include_scope: "scope"
-        }
+        },
+        allow: allow_conf,
+        ignore: ignore_conf
       }
     }
   end

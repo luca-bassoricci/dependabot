@@ -17,7 +17,9 @@ describe Configuration do
             prefix: "dep",
             prefix_development: "bundler-dev",
             include_scope: "scope"
-          }
+          },
+          allow: [{ dependency_type: "direct" }],
+          ignore: [{ dependency_name: "rspec", versions: ["3.x", "4.x"] }]
         }
       }
     end

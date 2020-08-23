@@ -4,8 +4,8 @@ describe Dependabot::MergeRequestService do
   include_context "webmock"
   include_context "dependabot"
 
-  let(:pr_creator) { double("PullRequestCreator") }
-  let(:pr_updater) { double("PullRequestUpdater") }
+  let(:pr_creator) { double("PullRequestCreator", create: "mr") }
+  let(:pr_updater) { double("PullRequestUpdater", update: "mr") }
   let(:mr) { OpenStruct.new(web_url: "mr-url") }
   let(:updated_files) do
     [
@@ -21,13 +21,14 @@ describe Dependabot::MergeRequestService do
       )
     ]
   end
-  let(:config) do
+  let(:mr_params) do
     {
       milestone: 4,
       custom_labels: ["dependency"],
       branch_name_separator: "-",
       assignees: ["andrcuns"],
       reviewers: ["andrcuns"],
+      branch_name_prefix: "dependabot",
       commit_message_options: {
         prefix: "dep",
         prefix_development: "bundler-dev",
@@ -36,51 +37,54 @@ describe Dependabot::MergeRequestService do
     }
   end
 
+  subject do
+    Dependabot::MergeRequestService.call(
+      fetcher: fetcher,
+      dependency: dependency,
+      **dependabot_config[package_manager]
+    )
+  end
+
   before do
     stub_gitlab
 
-    expect(Dependabot::UpdateChecker).to receive(:call)
-      .with(dependency: dependency, dependency_files: fetcher.files)
+    stub_request(:get, %r{#{repo_url}/merge_requests}).to_return(mr_get_return)
+
+    allow(Dependabot::UpdateChecker).to receive(:call)
+      .with(dependency: dependency, dependency_files: fetcher.files, ignore: ignore_conf)
       .and_return(updated_dependencies)
-    expect(Dependabot::FileUpdater).to receive(:call)
-      .with(dependencies: updated_dependencies, dependency_files: fetcher.files)
+    allow(Dependabot::FileUpdater).to receive(:call)
+      .with(dependencies: updated_dependencies, dependency_files: fetcher.files, package_manager: package_manager)
       .and_return(updated_files)
+
+    allow(Dependabot::PullRequestCreator).to receive(:new) { pr_creator }
+    allow(Dependabot::PullRequestUpdater).to receive(:new) { pr_updater }
   end
 
-  it "creates merge request" do
-    stub_request(:get, %r{#{repo_url}/merge_requests})
-      .to_return(status: 200, body: [].to_json)
+  context "merge request" do
+    let(:mr_get_return) { { status: 200, body: [].to_json } }
 
-    expect(Dependabot::PullRequestCreator).to receive(:new)
-      .with(
+    it "is created" do
+      expect(subject).to eq("mr")
+      expect(Dependabot::PullRequestCreator).to have_received(:new).with(
         source: fetcher.source,
         base_commit: fetcher.commit,
         dependencies: updated_dependencies,
         files: updated_files,
         credentials: Credentials.fetch,
         label_language: true,
-        **config,
+        **mr_params,
         assignees: [10],
         reviewers: { approvers: [10] }
       )
-      .and_return(pr_creator)
-    expect(pr_creator).to receive(:create)
-
-    Dependabot::MergeRequestService.call(
-      fetcher: fetcher,
-      dependency: dependency,
-      directory: "/",
-      branch: "develop",
-      **config
-    )
+    end
   end
 
-  it "rebases merge request" do
-    stub_request(:get, %r{#{repo_url}/merge_requests})
-      .to_return(status: 200, body: [{ iid: 1, sha: "5f92cc4d9939", has_conflicts: true }].to_json)
-
-    expect(Dependabot::PullRequestUpdater).to receive(:new)
-      .with(
+  context "merge request" do
+    let(:mr_get_return) { { status: 200, body: [{ iid: 1, sha: "5f92cc4d9939", has_conflicts: true }].to_json } }
+    it "is updated" do
+      expect(subject).to eq("mr")
+      expect(Dependabot::PullRequestUpdater).to have_received(:new).with(
         source: fetcher.source,
         base_commit: fetcher.commit,
         old_commit: "5f92cc4d9939",
@@ -88,15 +92,6 @@ describe Dependabot::MergeRequestService do
         credentials: Credentials.fetch,
         pull_request_number: 1
       )
-      .and_return(pr_updater)
-    expect(pr_updater).to receive(:update)
-
-    Dependabot::MergeRequestService.call(
-      fetcher: fetcher,
-      dependency: dependency,
-      directory: "/",
-      branch: "develop",
-      **config
-    )
+    end
   end
 end

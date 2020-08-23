@@ -8,6 +8,7 @@ gem "config", "~> 2.2"
 gem "dependabot-omnibus", "~> 0.118.16"
 gem "puma", "~> 4.3"
 gem "rails", "~> 6.0.3"
+gem "semantic_range", "~> 2.3"
 gem "sentry-raven", "~> 3.0", require: false
 gem "sidekiq", "~> 6.1.1"
 gem "sidekiq-cron", "~> 1.2"

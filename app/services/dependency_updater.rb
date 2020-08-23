@@ -51,7 +51,9 @@ class DependencyUpdater < ApplicationService
     @dependencies ||= Dependabot::DependencyFetcher.call(
       source: fetcher.source,
       dependency_files: fetcher.files,
-      package_manager: package_manager
+      package_manager: package_manager,
+      allow: config[:allow],
+      ignore: config[:ignore]
     )
   end
 end

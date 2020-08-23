@@ -2,13 +2,14 @@
 
 module Dependabot
   class UpdateChecker < ApplicationService
-    attr_reader :dependency, :dependency_files
-
     # @param [Dependabot::Dependency] dependency
     # @param [Array<Dependabot::DependencyFile>] dependency_files
-    def initialize(dependency:, dependency_files:)
+    # @param [Array<Hash>] ignore
+    def initialize(dependency:, dependency_files:, ignore:)
       @dependency = dependency
       @dependency_files = dependency_files
+      # Ignore entries with only name defined already removed at an earlier stage
+      @ignore = ignore.select { |entry| entry[:versions] }
     end
 
     # Get update checker
@@ -16,16 +17,18 @@ module Dependabot
     # @return [Array<Dependabot::Dependency>]
     def call
       logger.info { "Checking if #{name} needs updating" }
-      return log_up_to_date if checker.up_to_date?
+      return up_to_date if checker.up_to_date?
 
-      logger.info { "Latest version is #{checker.latest_version}" }
-      return updated_dependencies unless requirements_to_unlock == :update_not_possible
+      logger.info { "Latest version for #{dependency.name} is #{checker.latest_version}" }
+      return ignored if matches_ignore?
+      return update_impossible if requirements_to_unlock == :update_not_possible
 
-      logger.info { "No update possible for #{name}" }
-      nil
+      updated_dependencies
     end
 
     private
+
+    attr_reader :dependency, :dependency_files, :ignore
 
     # Full dependency name
     #
@@ -36,13 +39,29 @@ module Dependabot
 
     # Print up to date message
     #
-    # @return [nil]
-    def log_up_to_date
-      logger.info { "No update needed for #{dependency.name} #{dependency.version}" }
-      nil
+    # @return [Array]
+    def up_to_date
+      logger.info { "No update needed for #{name}" }
+      []
     end
 
-    # Get updated dependencies
+    # Print skip due to ignore rules message
+    #
+    # @return [Array]
+    def ignored
+      logger.info { "Skipping #{dependency.name} update to #{checker.latest_version} due to ignore rules" }
+      []
+    end
+
+    # Print update impossible message
+    #
+    # @return [Array]
+    def update_impossible
+      logger.info { "Update impossible for #{name}" }
+      []
+    end
+
+    # Get filtered updated dependencies
     #
     # @return [Array<Dependabot::Dependency>]
     def updated_dependencies
@@ -72,6 +91,17 @@ module Dependabot
         return :all if checker.can_update?(requirements_to_unlock: :all)
 
         :update_not_possible
+      end
+    end
+
+    # Check if dependency matches ignore pattern
+    #
+    # @return [Boolean]
+    def matches_ignore?
+      ignore.any? do |entry|
+        dependency.name.match?(entry[:dependency_name]) && entry[:versions].any? do |ver|
+          SemanticRange.satisfies(checker.latest_version.to_s, ver)
+        end
       end
     end
   end

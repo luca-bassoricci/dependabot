@@ -12,12 +12,9 @@ updates:
       prefix-development: "bundler-dev"
       include: "scope"
     milestone: 4
-    allow:
-      - dependency-name: rails
-        dependency-type: production
     ignore:
-      - dependency-name: config
-        versions: ["2"]
+      - dependency-name: rspec
+        versions: ["3.x", "4.x"]
     reviewers:
       - andrcuns
     assignees:
