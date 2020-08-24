@@ -5,7 +5,9 @@
 [![Docker Image Version (latest by date)](https://img.shields.io/docker/v/andrcuns/dependabot-gitlab?sort=semver)](https://hub.docker.com/r/andrcuns/dependabot-gitlab)
 [![Docker Pulls](https://img.shields.io/docker/pulls/andrcuns/dependabot-gitlab)](https://hub.docker.com/r/andrcuns/dependabot-gitlab)
 
-*dependabot-gitlab* is rails application providing automated dependency updates based on [dependabot-core](https://github.com/dependabot/dependabot-core)
+Application providing automated dependency updates based on [dependabot-core](https://github.com/dependabot/dependabot-core)
+
+**The project is still considered to be in alpha stage so settings and setup might change**
 
 ## Deployment
 
