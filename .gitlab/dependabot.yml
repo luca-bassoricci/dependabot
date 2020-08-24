@@ -10,6 +10,8 @@ updates:
       include: scope
     assignees:
       - andrcuns
+    allow:
+      - dependency-type: all
   - package-ecosystem: docker
     directory: "/"
     schedule:
