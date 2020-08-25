@@ -46,6 +46,7 @@ build_app_image:
       --opt build-arg:COMMIT_SHA=$CI_COMMIT_SHA \
       --opt build-arg:PROJECT_URL=$CI_PROJECT_URL \
       --export-cache type=inline \
+      --import-cache type=registry,ref=$APP_DOCKER_IMAGE:master-latest \
       --import-cache type=registry,ref=$APP_DOCKER_IMAGE:$LATEST_TAG \
       --output type=image,\"name=$APP_DOCKER_IMAGE:$CURRENT_TAG,$APP_DOCKER_IMAGE:$LATEST_TAG\",push=true
   only: *all
@@ -59,6 +60,7 @@ build_mock_image:
       --local context=spec/gitlab_mock \
       --local dockerfile=spec/gitlab_mock \
       --export-cache type=inline \
+      --import-cache type=registry,ref=$GITLAB_MOCK_DOCKER_IMAGE:master-latest \
       --import-cache type=registry,ref=$GITLAB_MOCK_DOCKER_IMAGE:$LATEST_TAG \
       --output type=image,\"name=$GITLAB_MOCK_DOCKER_IMAGE:$CURRENT_TAG,$GITLAB_MOCK_DOCKER_IMAGE:$LATEST_TAG\",push=true
   only: *all
