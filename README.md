@@ -40,7 +40,25 @@ branch.
 
 ### Dependabot Configuration file
 
-Application will automatically read dependabot configuration file placed in `.gitlab/dependabot.yml` when it is created or updated and add cron jobs. Configuration file options are described in [dependabot](https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates) documentation. Example file which manages this project's dependencies can be seen [.gitlab/dependabot.yml](.gitlab/dependabot.yml)
+Repository must contain [.gitlab/dependabot.yml](https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates)
+configuration for dependabot updates to work.\
+
+All of the options function same way as in original documentation. In addition it is possible to define following `allow` options:
+
+Multiple global allow opts will be combined. Following option will result in updating only direct production dependencies:
+
+```yml
+allow:
+  - dependency-type: direct
+  - dependency-type: production
+```
+
+It is also possible to enable security updates only via:
+
+```yml
+allow:
+  - dependency-type: security
+```
 
 ### Adding project manually
 
