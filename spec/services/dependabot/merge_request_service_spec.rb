@@ -51,7 +51,7 @@ describe Dependabot::MergeRequestService do
     stub_request(:get, %r{#{repo_url}/merge_requests}).to_return(mr_get_return)
 
     allow(Dependabot::UpdateChecker).to receive(:call)
-      .with(dependency: dependency, dependency_files: fetcher.files, ignore: ignore_conf)
+      .with(dependency: dependency, dependency_files: fetcher.files, allow: allow_conf, ignore: ignore_conf)
       .and_return(updated_dependencies)
     allow(Dependabot::FileUpdater).to receive(:call)
       .with(dependencies: updated_dependencies, dependency_files: fetcher.files, package_manager: package_manager)
