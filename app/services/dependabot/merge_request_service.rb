@@ -136,6 +136,7 @@ module Dependabot
       @updated_dependencies ||= Dependabot::UpdateChecker.call(
         dependency: dependency,
         dependency_files: fetcher.files,
+        allow: options[:allow],
         ignore: options[:ignore]
       )
     end

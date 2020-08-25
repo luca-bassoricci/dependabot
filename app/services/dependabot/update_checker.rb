@@ -2,25 +2,37 @@
 
 module Dependabot
   class UpdateChecker < ApplicationService
+    # @return [Hash<String, Proc>] handlers for type allow rules
+    TYPE_HANDLERS = {
+      "all" => proc { true },
+      "direct" => proc { |dep| dep.top_level? },
+      "indirect" => proc { |dep| !dep.top_level? },
+      "production" => proc { |dep| dep.production? },
+      "development" => proc { |dep| !dep.production? },
+      "security" => proc { |_, checker| checker.vulnerable? }
+    }.freeze
+
     # @param [Dependabot::Dependency] dependency
     # @param [Array<Dependabot::DependencyFile>] dependency_files
+    # @param [Array<Hash>] allow
     # @param [Array<Hash>] ignore
-    def initialize(dependency:, dependency_files:, ignore:)
+    def initialize(dependency:, dependency_files:, allow:, ignore:)
       @dependency = dependency
       @dependency_files = dependency_files
-      # Ignore entries with only name defined already removed at an earlier stage
-      @ignore = ignore.select { |entry| entry[:versions] }
+      @allow = allow
+      @ignore = ignore
     end
 
     # Get update checker
     #
     # @return [Array<Dependabot::Dependency>]
     def call
+      return skipped if !allowed? || ignored?
+
       logger.info { "Checking if #{name} needs updating" }
       return up_to_date if checker.up_to_date?
 
       logger.info { "Latest version for #{dependency.name} is #{checker.latest_version}" }
-      return ignored if matches_ignore?
       return update_impossible if requirements_to_unlock == :update_not_possible
 
       updated_dependencies
@@ -28,7 +40,7 @@ module Dependabot
 
     private
 
-    attr_reader :dependency, :dependency_files, :ignore
+    attr_reader :dependency, :dependency_files, :allow, :ignore
 
     # Full dependency name
     #
@@ -37,19 +49,19 @@ module Dependabot
       @name ||= "#{dependency.name} #{dependency.version}"
     end
 
+    # Print skipped message
+    #
+    # @return [Array]
+    def skipped
+      logger.debug { "Skipping #{name} due to allow/ignore rules" }
+      []
+    end
+
     # Print up to date message
     #
     # @return [Array]
     def up_to_date
       logger.info { "No update needed for #{name}" }
-      []
-    end
-
-    # Print skip due to ignore rules message
-    #
-    # @return [Array]
-    def ignored
-      logger.info { "Skipping #{dependency.name} update to #{checker.latest_version} due to ignore rules" }
       []
     end
 
@@ -94,14 +106,62 @@ module Dependabot
       end
     end
 
-    # Check if dependency matches ignore pattern
+    # Global allow rules
+    #
+    # @return [Array<Hash>]
+    def global_rules
+      @global_rules ||= allow.select { |entry| !entry[:dependency_name] && entry[:dependency_type] }
+    end
+
+    # Dependency specific allow rules
+    #
+    # @return [Array<Hash>]
+    def dependency_rules
+      @dependency_rules ||= allow.select { |entry| entry[:dependency_name] }
+    end
+
+    # Check if dependency matches allowed rules
     #
     # @return [Boolean]
-    def matches_ignore?
-      ignore.any? do |entry|
-        dependency.name.match?(entry[:dependency_name]) && entry[:versions].any? do |ver|
-          SemanticRange.satisfies(checker.latest_version.to_s, ver)
-        end
+    def allowed?
+      return checker.vulnerable? || global_rules.all? { |rule| matches_type?(rule) } if dependency_rules.empty?
+
+      dependency_rules.any? { |rule| matches_name?(rule) && matches_type?(rule) }
+    end
+
+    # Check if dependency matches ignore rules
+    #
+    # @return [Boolean]
+    def ignored?
+      ignore.any? { |rule| matches_name?(rule) && matches_versions?(rule[:versions]) }
+    end
+
+    # Matches defined dependency name
+    #
+    # @param [Hash<Symbol, String>] rule
+    # @return [Boolean]
+    def matches_name?(rule)
+      dependency.name.match?("^#{rule[:dependency_name]}$")
+    end
+
+    # Matches defined dependency type
+    #
+    # @param [Hash<Symbol, String>] rule
+    # @return [Boolean]
+    def matches_type?(rule)
+      type = rule.fetch(:dependency_type, "direct")
+      TYPE_HANDLERS[type].call(dependency, checker)
+    end
+
+    # Matches defined dependency version or range
+    #
+    # @param [Array] versions
+    # @return [Boolean]
+    def matches_versions?(versions)
+      return true unless versions
+
+      versions.any? do |version|
+        SemanticRange.satisfies(checker.latest_version.to_s, version)
       end
     end
   end
