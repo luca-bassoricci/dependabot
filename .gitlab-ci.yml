@@ -4,7 +4,7 @@
     - tags
 
 include:
-  - local: .gitlab/runners.yml
+  - local: .gitlab/ci/runners.gitlab-ci.yml
 
 stages:
   - static analysis

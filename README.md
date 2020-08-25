@@ -1,3 +1,5 @@
+![dependabot](logo.png)
+
 # dependabot-gitlab
 
 [![pipeline status](https://gitlab.com/dependabot-gitlab/dependabot/badges/master/pipeline.svg)](https://gitlab.com/dependabot-gitlab/dependabot/-/commits/master)
