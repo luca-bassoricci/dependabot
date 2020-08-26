@@ -13,11 +13,13 @@ module Dependabot
     ].freeze
 
     # @param [Dependabot::FileFetchers::Base] fetcher
-    # @param [Dependabot::Dependency] dependency
+    # @param [Array<Dependabot::Dependency>] updated_dependencies
+    # @param [Array<Dependabot::DependencyFile>] updated_files
     # @param [Hash] opts
-    def initialize(fetcher:, dependency:, **opts)
+    def initialize(fetcher:, updated_dependencies:, updated_files:, **opts)
       @fetcher = fetcher
-      @dependency = dependency
+      @updated_dependencies = updated_dependencies
+      @updated_files = updated_files
       @options = opts
     end
 
@@ -25,8 +27,6 @@ module Dependabot
     #
     # @return [void]
     def call
-      return if updated_dependencies.empty?
-
       return update_mr if mr
 
       create_mr
@@ -34,7 +34,7 @@ module Dependabot
 
     private
 
-    attr_reader :fetcher, :dependency, :options
+    attr_reader :fetcher, :updated_dependencies, :updated_files, :options
 
     # Create mr
     #
@@ -47,7 +47,9 @@ module Dependabot
         files: updated_files,
         credentials: Credentials.fetch,
         **mr_opts
-      ).create.tap { |mr| logger.info { "Created mr #{mr.web_url}" } if mr }
+      ).create.tap { |mr| logger.info { "Created mr #{mr.web_url}" } }
+    rescue Octokit::TooManyRequests
+      logger.error { "Github API rate limit exceeded! See: https://developer.github.com/v3/#rate-limiting" }
     end
 
     # Rebase existing mr if it has conflicts
@@ -127,29 +129,6 @@ module Dependabot
         label_language: true,
         **options.select { |key, _value| MR_OPTIONS.include?(key) }
       }
-    end
-
-    # Array of updated dependencies
-    #
-    # @return [Array<Dependabot::Dependency>]
-    def updated_dependencies
-      @updated_dependencies ||= Dependabot::UpdateChecker.call(
-        dependency: dependency,
-        dependency_files: fetcher.files,
-        allow: options[:allow],
-        ignore: options[:ignore]
-      )
-    end
-
-    # List of updated files
-    #
-    # @return [Array<Dependabot::DependencyFile>]
-    def updated_files
-      @updated_files ||= Dependabot::FileUpdater.call(
-        dependencies: updated_dependencies,
-        dependency_files: fetcher.files,
-        package_manager: dependency.package_manager
-      )
     end
   end
 end

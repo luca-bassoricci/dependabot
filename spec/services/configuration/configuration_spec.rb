@@ -13,6 +13,7 @@ describe Configuration do
           cron: "00 02 * * sun Europe/Riga",
           branch_name_separator: "-",
           branch_name_prefix: "dependabot",
+          open_merge_requests_limit: 10,
           commit_message_options: {
             prefix: "dep",
             prefix_development: "bundler-dev",

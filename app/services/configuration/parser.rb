@@ -58,7 +58,8 @@ module Configuration
         milestone: opts[:milestone],
         assignees: opts[:assignees],
         reviewers: opts[:reviewers],
-        custom_labels: opts[:labels]
+        custom_labels: opts[:labels],
+        open_merge_requests_limit: opts[:"open-pull-requests-limit"] || 5
       }
     end
 

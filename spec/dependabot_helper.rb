@@ -48,6 +48,21 @@ RSpec.shared_context("dependabot") do
     [updated_dep]
   end
 
+  let(:updated_files) do
+    [
+      Dependabot::DependencyFile.new(
+        name: "Gemfile",
+        directory: "./",
+        content: ""
+      ),
+      Dependabot::DependencyFile.new(
+        name: "Gemfile.lock",
+        directory: "./",
+        content: ""
+      )
+    ]
+  end
+
   # Parsed version of spec/gitlab_mock/responses/gitlab/dependabot.yml
   let(:dependabot_config) do
     {
@@ -57,6 +72,7 @@ RSpec.shared_context("dependabot") do
         assignees: ["andrcuns"],
         reviewers: ["andrcuns"],
         custom_labels: ["dependency"],
+        open_merge_requests_limit: 10,
         cron: "00 02 * * sun Europe/Riga",
         branch_name_separator: "-",
         branch_name_prefix: "dependabot",
