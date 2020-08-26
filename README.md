@@ -43,7 +43,7 @@ branch.
 ### Dependabot Configuration file
 
 Repository must contain [.gitlab/dependabot.yml](https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates)
-configuration for dependabot updates to work.\
+configuration for dependabot updates to work.
 
 Most of the options function same way as in original documentation. In addition it is possible to define following `allow` options:
 
@@ -55,16 +55,8 @@ allow:
   - dependency-type: production
 ```
 
-It is also possible to enable only security updates:
-
-```yml
-allow:
-  - dependency-type: security
-```
-
 Currently not implemented options:
 
-* [open-pull-requests-limit](https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates#open-pull-requests-limit)
 * [versioning-strategy](https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates#versioning-strategy)
 * [rebase-strategy](https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates#rebase-strategy)
 
