@@ -5,6 +5,7 @@ describe Dependabot::UpdateChecker do
   include_context "dependabot"
 
   let(:checker) { double("checker") }
+  let(:latest_version) { "2.2.1" }
   let(:vulnerable) { false }
   let(:up_to_date) { false }
   let(:unlocked_or_can_be) { true }
@@ -30,120 +31,131 @@ describe Dependabot::UpdateChecker do
     allow(checker).to receive(:can_update?).with(requirements_to_unlock: :own) { can_update_own_unlock }
     allow(checker).to receive(:can_update?).with(requirements_to_unlock: :all) { can_update_all_unlock }
     allow(checker).to receive(:can_update?).with(requirements_to_unlock: :none) { can_update_none_unlock }
-    allow(checker).to receive(:updated_dependencies) { updated_dependencies }
+    allow(checker).to receive(:latest_version) { Gem::Version.new(latest_version) }
   end
 
-  context "returns empty array" do
-    context do
+  context "returns empty" do
+    context "array" do
       let(:up_to_date) { true }
 
       it "when dependency up to date" do
-        expect(subject).to eq([])
+        expect(subject).to be_nil
       end
     end
 
-    context do
+    context "array" do
       let(:can_update_own_unlock) { false }
       let(:can_update_all_unlock) { false }
 
       it "when update not possible with requirements unlocked" do
-        expect(subject).to eq([])
+        expect(subject).to be_nil
       end
     end
 
-    context do
+    context "array" do
       let(:unlocked_or_can_be) { false }
       let(:can_update_none_unlock) { false }
 
       it "when update not possible with requirements locked" do
-        expect(subject).to eq([])
+        expect(subject).to be_nil
       end
     end
 
-    context do
+    context "array" do
       let(:allow_conf) { [{ dependency_type: "development" }] }
 
       it "when only development dependencies are allowed" do
-        expect(subject).to eq([])
+        expect(subject).to be_nil
       end
     end
 
-    context do
+    context "array" do
       let(:allow_conf) { [{ dependency_type: "indirect" }] }
 
       it "when only indirect dependencies are allowed" do
-        expect(subject).to eq([])
+        expect(subject).to be_nil
       end
     end
 
-    context do
+    context "array" do
       let(:allow_conf) { [{ dependency_type: "security" }] }
 
       it "when only security updates are allowed" do
-        expect(subject).to eq([])
+        expect(subject).to be_nil
       end
     end
 
-    context do
+    context "array" do
       let(:allow_conf) { [{ dependency_name: "rspec" }] }
 
       it "when only explicitly allowed dependencies don't match" do
-        expect(subject).to eq([])
+        expect(subject).to be_nil
       end
     end
 
-    context do
+    context "array" do
       let(:ignore_conf) { [{ dependency_name: "config", versions: ["~> 2"] }] }
 
-      before do
-        allow(checker).to receive(:latest_version) { Gem::Version.new("2.2.0") }
-      end
-
       it "when dependency is ignored" do
-        expect(subject).to eq([])
+        expect(subject).to be_nil
       end
     end
   end
 
-  context "returns updated dependencies" do
-    context do
+  context "returns updated" do
+    let(:updated_deps) do
+      {
+        name: "#{dependency.name} #{dependency.version} => #{latest_version}",
+        dependencies: updated_dependencies,
+        vulnerable: checker.vulnerable?,
+        security_advisories: checker.security_advisories
+      }
+    end
+
+    before do
+      allow(checker).to receive(:latest_version) { latest_version }
+      allow(checker).to receive(:security_advisories) { [] }
+      allow(checker).to receive(:updated_dependencies) { updated_dependencies }
+    end
+
+    context "dependencies" do
       let(:unlocked_or_can_be) { false }
 
       it "when no requirements to unlock" do
-        expect(subject).to eq(updated_dependencies)
+        expect(subject).to eq(updated_deps)
         expect(checker).to have_received(:updated_dependencies).with(requirements_to_unlock: :none)
       end
     end
 
-    context do
+    context "dependencies" do
       it "when own requirements to unlock" do
-        expect(subject).to eq(updated_dependencies)
+        expect(subject).to eq(updated_deps)
         expect(checker).to have_received(:updated_dependencies).with(requirements_to_unlock: :own)
       end
     end
 
-    context do
+    context "dependencies" do
       let(:can_update_own_unlock) { false }
 
       it "when all requirements to unlock" do
-        expect(subject).to eq(updated_dependencies)
+        expect(subject).to eq(updated_deps)
         expect(checker).to have_received(:updated_dependencies).with(requirements_to_unlock: :all)
       end
     end
 
-    context do
+    context "dependencies" do
       let(:allow_conf) { [{ dependency_type: "production" }] }
 
       it "when only production dependencies are allowed" do
-        expect(subject).to eq(updated_dependencies)
+        expect(subject).to eq(updated_deps)
       end
     end
 
-    context do
+    context "dependencies" do
       let(:allow_conf) { [{ dependency_name: "config" }] }
 
       it "when only explicitly allowed dependencies match" do
-        expect(subject).to eq(updated_dependencies)
+        expect(subject).to eq(updated_deps)
       end
     end
   end

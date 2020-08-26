@@ -29,10 +29,8 @@ module Dependabot
     def call
       return skipped if !allowed? || ignored?
 
-      logger.info { "Checking if #{name} needs updating" }
+      logger.info { "Fetching info for #{name}" }
       return up_to_date if checker.up_to_date?
-
-      logger.info { "Latest version for #{dependency.name} is #{checker.latest_version}" }
       return update_impossible if requirements_to_unlock == :update_not_possible
 
       updated_dependencies
@@ -54,30 +52,35 @@ module Dependabot
     # @return [Array]
     def skipped
       logger.debug { "Skipping #{name} due to allow/ignore rules" }
-      []
+      nil
     end
 
     # Print up to date message
     #
     # @return [Array]
     def up_to_date
-      logger.info { "No update needed for #{name}" }
-      []
+      logger.info { "#{name} is up to date" }
+      nil
     end
 
     # Print update impossible message
     #
     # @return [Array]
     def update_impossible
-      logger.info { "Update impossible for #{name}" }
-      []
+      logger.info { "Update for #{name} is impossible" }
+      nil
     end
 
     # Get filtered updated dependencies
     #
     # @return [Array<Dependabot::Dependency>]
     def updated_dependencies
-      @updated_dependencies ||= checker.updated_dependencies(requirements_to_unlock: requirements_to_unlock)
+      {
+        name: "#{name} => #{checker.latest_version}",
+        dependencies: checker.updated_dependencies(requirements_to_unlock: requirements_to_unlock),
+        vulnerable: checker.vulnerable?,
+        security_advisories: checker.security_advisories
+      }
     end
 
     # Get update checker
