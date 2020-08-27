@@ -65,8 +65,9 @@ RSpec.shared_context("dependabot") do
 
   # Parsed version of spec/gitlab_mock/responses/gitlab/dependabot.yml
   let(:dependabot_config) do
-    {
-      "bundler" => {
+    [
+      {
+        package_manager: "bundler",
         directory: "/",
         milestone: 4,
         assignees: ["andrcuns"],
@@ -84,6 +85,6 @@ RSpec.shared_context("dependabot") do
         allow: allow_conf,
         ignore: ignore_conf
       }
-    }
+    ]
   end
 end

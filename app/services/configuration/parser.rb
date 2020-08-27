@@ -11,15 +11,15 @@ module Configuration
 
     # Parse dependabot configuration
     #
-    # @return [Hash<Symbol, Object>]
+    # @return [Array<Hash>]
     def call
-      yml[:updates].each_with_object({}) do |package_manager, hash|
-        hash[package_manager[:"package-ecosystem"]] = {
-          **options(package_manager),
-          **branch_options(package_manager),
-          **commit_message_options(package_manager),
-          **filter_options(package_manager),
-          cron: Schedule.call(package_manager[:schedule])
+      yml[:updates].map do |configuration|
+        {
+          **general_options(configuration),
+          **branch_options(configuration),
+          **commit_message_options(configuration),
+          **filter_options(configuration),
+          cron: Schedule.call(configuration[:schedule])
         }.compact
       end
     end
@@ -52,8 +52,9 @@ module Configuration
     #
     # @param [Hash<Symbol, Object>] opts
     # @return [Hash<Symbol, Object>]
-    def options(opts)
+    def general_options(opts)
       {
+        package_manager: opts[:"package-ecosystem"],
         directory: opts[:directory],
         milestone: opts[:milestone],
         assignees: opts[:assignees],

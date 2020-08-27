@@ -3,8 +3,9 @@
 describe Configuration do
   context Configuration::Parser do
     let(:expected_config) do
-      {
-        "bundler" => {
+      [
+        {
+          package_manager: "bundler",
           directory: "/",
           milestone: 4,
           assignees: ["andrcuns"],
@@ -22,7 +23,7 @@ describe Configuration do
           allow: [{ dependency_type: "direct" }],
           ignore: [{ dependency_name: "rspec", versions: ["3.x", "4.x"] }]
         }
-      }
+      ]
     end
 
     it "returns parsed configuration" do

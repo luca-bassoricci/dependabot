@@ -28,7 +28,7 @@ describe Dependabot::MergeRequestService do
       fetcher: fetcher,
       updated_dependencies: updated_dependencies,
       updated_files: updated_files,
-      **dependabot_config[package_manager]
+      **dependabot_config.first
     )
   end
 

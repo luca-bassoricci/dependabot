@@ -5,34 +5,38 @@ describe Scheduler::DependencyUpdateScheduler do
 
   let(:job) { double("job") }
   let(:repo) { "dependabot-gitlab" }
+  let(:package_manager) { "bundler" }
+  let(:directory) { "/" }
+
+  subject { described_class }
 
   before do
     allow(Gitlab::ConfigFetcher).to receive(:call).with(repo).and_return(raw_config)
-  end
-
-  it "saves and runs job" do
-    expect(Sidekiq::Cron::Job).to receive(:new)
+    allow(Sidekiq::Cron::Job).to receive(:new)
       .with(
         name: "#{repo}:bundler",
         cron: "00 02 * * sun Europe/Riga",
         class: "DependencyUpdateJob",
-        args: { "repo" => repo, "package_manager" => "bundler" },
+        args: { "repo" => repo, "package_manager" => package_manager, "directory" => directory },
         active_job: true,
-        description: "Update bundler dependencies for #{repo} in /"
+        description: "Update bundler dependencies for #{repo} in #{directory}"
       )
       .and_return(job)
-    expect(job).to receive(:valid?).and_return(true)
-    expect(job).to receive(:save).and_return(true)
-    expect(job).to receive(:enque!).and_return(true)
+    allow(Rails.logger).to receive(:error)
+  end
 
-    expect(Scheduler::DependencyUpdateScheduler.call(repo)).to eq([job])
+  it "saves and runs job" do
+    allow(job).to receive(:valid?).and_return(true)
+    allow(job).to receive(:save).and_return(true)
+    allow(job).to receive(:enque!).and_return(true)
+
+    expect(subject.call(repo)).to eq([job])
   end
 
   it "logs error of invalid job" do
-    expect(Sidekiq::Cron::Job).to receive(:new).and_return(job)
-    expect(job).to receive(:valid?).and_return(false)
-    expect_any_instance_of(Logger).to receive(:error)
+    allow(job).to receive(:valid?).and_return(false)
 
-    expect(Scheduler::DependencyUpdateScheduler.call(repo)).to eq([job])
+    expect(subject.call(repo)).to eq([job])
+    expect(Rails.logger).to have_received(:error)
   end
 end
