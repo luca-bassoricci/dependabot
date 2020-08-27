@@ -129,7 +129,7 @@ e2e_test:
     GIT_STRATEGY: none
   script:
     - cd /home/dependabot
-    - bundle exec rake 'dependabot:update[test-repo,bundler]'
+    - bundle exec rake 'dependabot:update[test-repo,bundler,/]'
   only: *all
 
 # ======================================================================================================================

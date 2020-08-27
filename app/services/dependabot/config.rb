@@ -13,7 +13,7 @@ module Dependabot
     #
     # @return [Hash<Symbol, Object>]
     def call
-      Rails.cache.fetch("#{repo}-config", expires_in: 24.hours, force: update_cache) do
+      Rails.cache.fetch("#{repo}-config", expires_in: 12.hours, force: update_cache) do
         Configuration::Parser.call(Gitlab::ConfigFetcher.call(repo))
       end
     end

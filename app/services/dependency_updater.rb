@@ -3,7 +3,7 @@
 class DependencyUpdater < ApplicationService
   # @param [Hash<String, Object>] args
   def initialize(args)
-    @repo, @package_manager = args.values_at("repo", "package_manager")
+    @repo, @package_manager, @directory = args.values_at("repo", "package_manager", "directory")
   end
 
   # Create or update mr's for dependencies
@@ -16,13 +16,13 @@ class DependencyUpdater < ApplicationService
 
   private
 
-  attr_reader :repo, :package_manager
+  attr_reader :repo, :package_manager, :directory
 
   # Dependabot config
   #
   # @return [Hash]
   def config
-    @config ||= Dependabot::Config.call(repo)[package_manager]
+    @config ||= Dependabot::Config.call(repo).find { |conf| conf[:directory] == directory }
   end
 
   # Get file fetcher
