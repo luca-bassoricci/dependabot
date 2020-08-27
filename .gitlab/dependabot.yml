@@ -11,7 +11,7 @@ updates:
     assignees:
       - andrcuns
     allow:
-      - dependency-type: all
+      - dependency-type: direct
   - package-ecosystem: docker
     directory: "/"
     schedule:
