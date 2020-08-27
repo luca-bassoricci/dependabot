@@ -11,12 +11,19 @@ Application providing automated dependency updates based on [dependabot-core](ht
 
 **The project is still considered to be in alpha stage so settings and setup might change**
 
-## Deployment
+## Docker image variants
 
-Application is released as a [docker image](https://hub.docker.com/r/andrcuns/dependabot-gitlab). It is assumed there is possibility to
-deploy the app as docker containers in order for it to start updating repository dependencies.\
-Simple example deployment can be seen in [docker-compose-prod.yml](docker-compose-prod.yml). App will consist of minimum 2 containers, one
-running web server and another running sidekiq process. Simple production like deployment using `docker-compose` can be done with following command:
+* Release version - docker.io/andrcuns/dependabot-gitlab:latest
+* Latest master - registry.gitlab.com/dependabot-gitlab/dependabot:master-latest
+
+## Running Standalone
+
+It is possible to use app in "standalone" mode without the need to deploy. Project [dependabot-standalone](https://gitlab.com/dependabot-gitlab/dependabot-standalone) contains pipeline configuration to run dependency updates via scheduled gitlab pipelines
+
+## Running Deployed
+
+Simple example deployment can be seen in [docker-compose-prod.yml](docker-compose-prod.yml). Deployment consists of 3 containers - web server, sidekiq
+worker and redis. Simple production like deployment using `docker-compose` can be done with following command:
 
 ```bash
 docker-compose -f docker-compose.yml -f docker-compose-prod.yml up
@@ -69,7 +76,7 @@ Endpoint `api/project` can receive POST request with json `{"project":"dependabo
 Additional rake tasks exist for manual interaction with dependency updates and configuration.
 
 * `dependabot:register[project]` - manually register repository where `project` is repository name with namespace, ex: `dependabot-gitlab/dependabot`, repository must have valid dependabot config file
-* `dependabot:update[project,package_manager]` - trigger dependency update where `project` is repository full name and `package_manager` is `package_ecosystem` parameter like `bundler`
+* `dependabot:update[project,package_manager,directory]` - trigger dependency update where `project` is repository full name and `package_manager` is `package_ecosystem` parameter like `bundler` and directory is path where dependency files are stored, usually `/`
 
 ### Job list
 
@@ -82,4 +89,4 @@ Index page of application, like `http://localhost:3000/` will display a table wi
 * Make change and make sure tests pass with `bundle exec rspec`
 * Submit merge request
 
-Running up locally will require running redis instance. Redis in docker container can be started with `docker-compose up`
+Running app locally will require running redis instance. Redis in docker container can be started with `docker-compose up`
