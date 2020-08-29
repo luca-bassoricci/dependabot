@@ -27,7 +27,7 @@ module Dependabot
     #
     # @return [void]
     def call
-      return update_mr if mr
+      return update_mr if rebase? && mr
 
       create_mr
     end
@@ -129,6 +129,13 @@ module Dependabot
         label_language: true,
         **options.select { |key, _value| MR_OPTIONS.include?(key) }
       }
+    end
+
+    # Automatically rebase MR
+    #
+    # @return [Boolean]
+    def rebase?
+      options[:rebase_strategy] == "auto"
     end
   end
 end

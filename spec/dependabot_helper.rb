@@ -83,7 +83,8 @@ RSpec.shared_context("dependabot") do
           include_scope: "scope"
         },
         allow: allow_conf,
-        ignore: ignore_conf
+        ignore: ignore_conf,
+        rebase_strategy: "auto"
       }
     ]
   end
