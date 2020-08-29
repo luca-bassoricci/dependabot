@@ -21,7 +21,8 @@ describe Configuration do
             include_scope: "scope"
           },
           allow: [{ dependency_type: "direct" }],
-          ignore: [{ dependency_name: "rspec", versions: ["3.x", "4.x"] }]
+          ignore: [{ dependency_name: "rspec", versions: ["3.x", "4.x"] }],
+          rebase_strategy: "auto"
         }
       ]
     end

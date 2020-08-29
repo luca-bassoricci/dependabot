@@ -25,3 +25,4 @@ updates:
     pull-request-branch-name:
       separator: "-"
     versioning-strategy: auto
+    rebase-strategy: auto

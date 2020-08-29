@@ -52,9 +52,11 @@ branch.
 Repository must contain [.gitlab/dependabot.yml](https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates)
 configuration for dependabot updates to work.
 
-Most of the options function same way as in original documentation. In addition it is possible to define following `allow` options:
+Most of the options function same way as in original documentation.
 
-Multiple global allow opts will be combined. Following option will result in updating only direct production dependencies:
+#### allow
+
+Multiple global allow options will be combined. Following options will result in updating only direct production dependencies:
 
 ```yml
 allow:
@@ -62,10 +64,14 @@ allow:
   - dependency-type: production
 ```
 
+#### rebase-strategy
+
+Because gitlab doesn't emit webhook when repository can no longer be merged due to conflict, this option will only have any
+effect when scheduled jobs run. The rebase will not happen as soon as repository got conflicts.
+
 Currently not implemented options:
 
 * [versioning-strategy](https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates#versioning-strategy)
-* [rebase-strategy](https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates#rebase-strategy)
 
 ### Adding project manually
 
