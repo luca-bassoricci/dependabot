@@ -57,4 +57,3 @@ Style/FrozenStringLiteralComment:
   EnforcedStyle: always
   SupportedStyles:
     - always
-  Safe: true
