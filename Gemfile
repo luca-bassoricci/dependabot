@@ -19,7 +19,7 @@ group :development, :test do
   gem "bundle-audit", "~> 0.1.0", require: false
   gem "pry", "~> 0.13.1"
   gem "reek", "~> 6.0", require: false
-  gem "rubocop", "~> 0.89.1", require: false
+  gem "rubocop", "~> 0.90.0", require: false
   gem "rubocop-performance", "~> 1.7.1", require: false
   gem "rubocop-rails", "~> 2.7", require: false
 end
