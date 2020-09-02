@@ -1,0 +1,25 @@
+version: "3.8"
+
+x-environment: &environment_variables
+  environment:
+    REDIS_URL: redis://redis:6379
+    RAILS_ENV: development
+    SETTINGS__GITHUB_ACCESS_TOKEN:
+    SETTINGS__GITLAB_ACCESS_TOKEN:
+
+services:
+  web:
+    build: .
+    depends_on:
+      - redis
+    <<: *environment_variables
+    ports:
+      - 3000:3000
+    command: rails server
+
+  worker:
+    build: .
+    depends_on:
+      - redis
+    <<: *environment_variables
+    command: sidekiq
