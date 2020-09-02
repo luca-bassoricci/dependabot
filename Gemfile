@@ -5,7 +5,7 @@ source "https://rubygems.org"
 ruby "~> 2.6"
 
 gem "config", "~> 2.2"
-gem "dependabot-omnibus", "~> 0.119.1"
+gem "dependabot-omnibus", "~> 0.119.2"
 gem "puma", "~> 4.3"
 gem "rails", "~> 6.0.3"
 gem "semantic_range", "~> 2.3"
