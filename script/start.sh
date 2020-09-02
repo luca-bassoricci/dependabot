@@ -4,7 +4,7 @@ if [ "$1" == "prod" ]; then
   env="prod"
   detached="-d"
 else
-  env="test"
+  env="dev"
   detached=""
 fi
 

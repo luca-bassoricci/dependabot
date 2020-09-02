@@ -1,16 +1,19 @@
 version: "3.8"
 
+x-environment: &environment_variables
+  REDIS_URL: redis://redis:6379
+  RAILS_ENV: production
+  SENTRY_DSN:
+  SETTINGS__GITHUB_ACCESS_TOKEN:
+  SETTINGS__GITLAB_ACCESS_TOKEN:
+
 services:
   web:
     image: andrcuns/dependabot-gitlab:latest
     depends_on:
       - redis
     environment:
-      REDIS_URL: redis://redis:6379
-      RAILS_ENV: production
-      SENTRY_DSN:
-      SETTINGS__GITHUB_ACCESS_TOKEN:
-      SETTINGS__GITLAB_ACCESS_TOKEN:
+      <<: *environment_variables
       RAILS_SERVE_STATIC_FILES: "true"
       SECRET_KEY_BASE: "key"
     ports:
@@ -22,9 +25,5 @@ services:
     depends_on:
       - redis
     environment:
-      REDIS_URL: redis://redis:6379
-      RAILS_ENV: production
-      SENTRY_DSN:
-      SETTINGS__GITHUB_ACCESS_TOKEN:
-      SETTINGS__GITLAB_ACCESS_TOKEN:
+      <<: *environment_variables
     command: sidekiq
