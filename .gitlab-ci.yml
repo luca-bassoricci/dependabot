@@ -1,7 +1,7 @@
 .only: &all
-    - merge_request
-    - master
-    - tags
+  - merge_request
+  - master
+  - tags
 
 include:
   - local: .gitlab/ci/runners.gitlab-ci.yml
@@ -25,15 +25,12 @@ cache_gems:
   extends: .ruby_runner
   stage: .pre
   script:
-    - bundle install
+    - echo "Populated gem cache"
   cache:
     policy: pull-push
   only:
-    refs:
-      - merge_request
-      - master
-    changes:
-      - Gemfile.lock
+    - merge_request
+    - master
 
 build_app_image:
   stage: .pre
