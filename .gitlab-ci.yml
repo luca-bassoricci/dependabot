@@ -137,15 +137,18 @@ release:
   stage: release
   variables:
     RELEASE_IMAGE: docker.io/andrcuns/dependabot-gitlab
-    RELEASE_VERSION: $RELEASE_IMAGE:$CI_COMMIT_TAG
     LATEST_VERSION: $RELEASE_IMAGE:latest
   script:
-    - docker pull $APP_DOCKER_IMAGE:$CURRENT_TAG
-    - docker tag $APP_DOCKER_IMAGE:$CURRENT_TAG $RELEASE_VERSION
-    - docker tag $APP_DOCKER_IMAGE:$CURRENT_TAG $LATEST_VERSION
-    - docker push $RELEASE_VERSION && docker push $LATEST_VERSION
+    - |
+      apk -qq update && apk -qq add grep
+      export RELEASE_VERSION=$(echo $CI_COMMIT_TAG | grep -oP 'v\K[0-9.]+')
+    - |
+      docker pull $APP_DOCKER_IMAGE:$CURRENT_TAG
+      docker tag $APP_DOCKER_IMAGE:$CURRENT_TAG $RELEASE_VERSION
+      docker tag $APP_DOCKER_IMAGE:$CURRENT_TAG $LATEST_VERSION
+      docker push $RELEASE_VERSION && docker push $LATEST_VERSION
   only:
-    - tags
+    - /^v[0-9.]+$/
 
 # ======================================================================================================================
 # Deploy Stage
