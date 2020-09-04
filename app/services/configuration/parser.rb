@@ -61,7 +61,7 @@ module Configuration
         reviewers: opts[:reviewers],
         custom_labels: opts[:labels],
         open_merge_requests_limit: opts[:"open-pull-requests-limit"] || 5,
-        rebase_strategy: opts[:"rebase-strategy"]
+        rebase_strategy: opts[:"rebase-strategy"] || "auto"
       }
     end
 

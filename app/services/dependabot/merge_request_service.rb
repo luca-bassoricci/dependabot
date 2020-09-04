@@ -40,14 +40,17 @@ module Dependabot
     #
     # @return [void]
     def create_mr
-      Dependabot::PullRequestCreator.new(
+      mr = Dependabot::PullRequestCreator.new(
         source: fetcher.source,
         base_commit: fetcher.commit,
         dependencies: updated_dependencies,
         files: updated_files,
         credentials: Credentials.fetch,
         **mr_opts
-      ).create.tap { |mr| logger.info { "Created mr #{mr.web_url}" } }
+      ).create
+
+      logger.info { "Created mr #{mr.web_url}" } if mr
+      mr
     rescue Octokit::TooManyRequests
       logger.error { "Github API rate limit exceeded! See: https://developer.github.com/v3/#rate-limiting" }
     end
