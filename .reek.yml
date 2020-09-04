@@ -36,6 +36,11 @@ detectors:
   BooleanParameter:
     exclude:
       - Config
+  
+  UncommunicativeVariableName:
+    accept:
+      - _
+      - e
 
 exclude_paths:
   - bin
