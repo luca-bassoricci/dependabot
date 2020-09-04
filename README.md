@@ -35,9 +35,16 @@ Application requires few environment variables to work.
 
 * `SETTINGS__GITLAB_URL` - url of gitlab instance, ex: `https://gitlab.com` by default
 * `SETTINGS__GITLAB_ACCESS_TOKEN` - [gitlab](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html) personal access token with api scope
-* `SETTINGS__GITHUB_ACCESS_TOKEN` - [github](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) personal access token with repository read scope
+* `SETTINGS__GITHUB_ACCESS_TOKEN` - [github](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) personal access token with repository read scope, without it you can run into rate limits when fetching changelog and release notes for all dependencies which code comes from github
 * `SETTINGS__GITLAB_AUTH_TOKEN` - optional gitlab webhook token which can be configured under webhook settings in gitlab, if not present,
 token set in gitlab webhook configuration will be ignored
+
+#### Private maven repository
+
+If dependapot needs to resolve dependencies from a private maven repository you can configure it here
+* `SETTINGS__CREDENTIALS_MAVEN_REPOSITORY_URL` - base url of the repository
+* `SETTINGS__CREDENTIALS_MAVEN_REPOSITORY_USERNAME` - user with read access
+* `SETTINGS__CREDENTIALS_MAVEN_REPOSITORY_PASSWORD` - password for the user
 
 ## Configuration
 
