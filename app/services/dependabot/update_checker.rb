@@ -23,7 +23,7 @@ module Dependabot
       @ignore = ignore
     end
 
-    # Get update checker
+    # Get updated dependencies
     #
     # @return [Array<Dependabot::Dependency>]
     def call
@@ -34,6 +34,9 @@ module Dependabot
       return update_impossible if requirements_to_unlock == :update_not_possible
 
       updated_dependencies
+    rescue e
+      log_error(e)
+      nil
     end
 
     private
@@ -49,7 +52,7 @@ module Dependabot
 
     # Print skipped message
     #
-    # @return [Array]
+    # @return [nil]
     def skipped
       logger.debug { "Skipping #{name} due to allow/ignore rules" }
       nil
@@ -57,7 +60,7 @@ module Dependabot
 
     # Print up to date message
     #
-    # @return [Array]
+    # @return [nil]
     def up_to_date
       logger.info { "#{name} is up to date" }
       nil
@@ -65,7 +68,7 @@ module Dependabot
 
     # Print update impossible message
     #
-    # @return [Array]
+    # @return [nil]
     def update_impossible
       logger.info { "Update for #{name} is impossible" }
       nil
