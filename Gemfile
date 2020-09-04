@@ -20,7 +20,7 @@ group :development, :test do
   gem "pry", "~> 0.13.1"
   gem "reek", "~> 6.0", require: false
   gem "rubocop", "~> 0.90.0", require: false
-  gem "rubocop-performance", "~> 1.7.1", require: false
+  gem "rubocop-performance", "~> 1.8.0", require: false
   gem "rubocop-rails", "~> 2.7", require: false
 end
 
