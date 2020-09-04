@@ -21,7 +21,7 @@ group :development, :test do
   gem "reek", "~> 6.0", require: false
   gem "rubocop", "~> 0.90.0", require: false
   gem "rubocop-performance", "~> 1.8.0", require: false
-  gem "rubocop-rails", "~> 2.7", require: false
+  gem "rubocop-rails", "~> 2.8", require: false
 end
 
 group :test do
