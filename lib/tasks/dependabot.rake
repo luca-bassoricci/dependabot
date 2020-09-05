@@ -2,10 +2,10 @@
 
 namespace :dependabot do
   desc "update project dependencies"
-  task(:update, %i[project package_manager directory] => :environment) do |_task, args|
+  task(:update, %i[project package_ecosystem directory] => :environment) do |_task, args|
     DependencyUpdateJob.perform_now(
       "repo" => args[:project],
-      "package_manager" => args[:package_manager],
+      "package_ecosystem" => args[:package_ecosystem],
       "directory" => args[:directory]
     )
   end

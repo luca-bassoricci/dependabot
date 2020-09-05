@@ -56,7 +56,7 @@ describe DependencyUpdater do
   end
 
   it "runs dependency update for repository" do
-    subject.call({ "repo" => repo, "package_manager" => package_manager, "directory" => "/" })
+    subject.call({ "repo" => repo, "package_ecosystem" => package_manager, "directory" => "/" })
 
     expect(Dependabot::MergeRequestService).to have_received(:call).with(
       updated_dependencies: updated_config[:dependencies],

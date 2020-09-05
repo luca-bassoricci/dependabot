@@ -68,6 +68,7 @@ RSpec.shared_context("dependabot") do
     [
       {
         package_manager: "bundler",
+        package_ecosystem: "bundler",
         directory: "/",
         milestone: 4,
         assignees: ["andrcuns"],
