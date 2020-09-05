@@ -14,10 +14,10 @@ describe Scheduler::DependencyUpdateScheduler do
     allow(Gitlab::ConfigFetcher).to receive(:call).with(repo).and_return(raw_config)
     allow(Sidekiq::Cron::Job).to receive(:new)
       .with(
-        name: "#{repo}:bundler",
+        name: "#{repo}:bundler:#{directory}",
         cron: "00 02 * * sun Europe/Riga",
         class: "DependencyUpdateJob",
-        args: { "repo" => repo, "package_manager" => package_manager, "directory" => directory },
+        args: { "repo" => repo, "package_ecosystem" => package_manager, "directory" => directory },
         active_job: true,
         description: "Update bundler dependencies for #{repo} in #{directory}"
       )
