@@ -7,7 +7,7 @@ module Api
     # @return [void]
     def create
       params[:object_kind].tap do |hook|
-        respond_to?(hook, true) ? json_response(__send__(hook)) : bad_request
+        respond_to?(hook || "", true) ? json_response(__send__(hook)) : bad_request
       end
     end
 
