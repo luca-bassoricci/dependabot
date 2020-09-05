@@ -147,7 +147,7 @@ module Dependabot
     # @param [Hash<Symbol, String>] rule
     # @return [Boolean]
     def matches_name?(rule)
-      dependency.name.match?("^#{rule[:dependency_name]}$")
+      dependency.name.match?((rule[:dependency_name]))
     end
 
     # Matches defined dependency type
