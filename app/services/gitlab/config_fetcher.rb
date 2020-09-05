@@ -11,14 +11,16 @@ module Gitlab
     #
     # @return [String]
     def call
-      default_branch = gitlab.project(@repo)&.default_branch
+      default_branch = gitlab.project(repo)&.default_branch
 
       raise("Failed to fetch default branch for #{repo}") unless default_branch
 
       logger.info { "Fetching configuration for #{repo} from #{default_branch}" }
-      gitlab.file_contents(@repo, ".gitlab/dependabot.yml", default_branch).tap do |config|
+      gitlab.file_contents(repo, ".gitlab/dependabot.yml", default_branch).tap do |config|
         raise("Failed to fetch configuration for #{repo}") unless config
       end
+    rescue Error::NotFound
+      raise(Dependabot::ConfigNotFound, ".gitlab/dependabot.yml not present in #{repo}")
     end
 
     private
