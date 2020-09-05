@@ -42,6 +42,7 @@ token set in gitlab webhook configuration will be ignored
 #### Private maven repository
 
 If dependapot needs to resolve dependencies from a private maven repository you can configure it here
+
 * `SETTINGS__CREDENTIALS_MAVEN_REPOSITORY_URL` - base url of the repository
 * `SETTINGS__CREDENTIALS_MAVEN_REPOSITORY_USERNAME` - user with read access
 * `SETTINGS__CREDENTIALS_MAVEN_REPOSITORY_PASSWORD` - password for the user
@@ -61,7 +62,7 @@ configuration for dependabot updates to work.
 
 Most of the options function same way as in original documentation.
 
-#### allow
+#### allow/ignore
 
 Multiple global allow options will be combined. Following options will result in updating only direct production dependencies:
 
@@ -69,6 +70,13 @@ Multiple global allow options will be combined. Following options will result in
 allow:
   - dependency-type: direct
   - dependency-type: production
+```
+
+`dependency-name` accepts regex expression for matching name in allow and ignore configuration
+
+```yml
+allow:
+  - dependency-name: "^react\w+"
 ```
 
 #### rebase-strategy
