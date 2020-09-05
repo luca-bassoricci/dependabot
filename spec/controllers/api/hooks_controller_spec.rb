@@ -3,8 +3,8 @@
 describe Api::HooksController do
   include_context "rack_test"
 
-  it "handles successfull run" do
-    expect(Webhooks::PushEventHandler).to receive(:call).and_return(
+  context "handles" do
+    let(:jobs) do
       [
         OpenStruct.new(
           name: "dependabot:bundler",
@@ -15,44 +15,56 @@ describe Api::HooksController do
           description: "test"
         )
       ]
-    )
+    end
 
-    post_json("/api/hooks", "spec/fixture/api/webhooks/push.json")
+    before do
+      allow(Webhooks::PushEventHandler).to receive(:call) { jobs }
+    end
 
-    expect(last_response.status).to eq(200)
+    it "valid request" do
+      post_json("/api/hooks", "spec/fixture/api/webhooks/push.json")
+
+      expect(last_response.status).to eq(200)
+    end
   end
 
-  it "handles error" do
-    error = StandardError.new("Unexpected")
-    expect(Webhooks::PushEventHandler).to receive(:call).and_raise(error)
-    expect(Raven).to receive(:capture_exception).with(error)
+  context "handles" do
+    let(:error) { StandardError.new("Unexpected") }
 
-    post_json("/api/hooks", "spec/fixture/api/webhooks/push.json")
+    before do
+      allow(Webhooks::PushEventHandler).to receive(:call).and_raise(error)
+      allow(Raven).to receive(:capture_exception)
+    end
 
-    expect(last_response.status).to eq(500)
-    expect(JSON.parse(last_response.body, symbolize_names: true)).to eq(
-      status: 500,
-      error: "Unexpected"
-    )
-  end
+    it "system error" do
+      post_json("/api/hooks", "spec/fixture/api/webhooks/push.json")
 
-  it "handles unsupported hook type" do
-    post_json("/api/hooks", "spec/fixture/api/webhooks/tag_push.json")
+      expect(Raven).to have_received(:capture_exception).with(error)
+      expect(last_response.status).to eq(500)
+      expect(JSON.parse(last_response.body, symbolize_names: true)).to eq(
+        status: 500,
+        error: "Unexpected"
+      )
+    end
 
-    expect(last_response.status).to eq(400)
-    expect(JSON.parse(last_response.body, symbolize_names: true)).to eq(
-      status: 400,
-      error: "Unsupported or missing parameter 'object_kind'"
-    )
-  end
+    it "invalid request" do
+      post_json("/api/hooks", { "funky" => "object" })
 
-  it "returns unauthorized error" do
-    post_json("/api/hooks", "spec/fixture/api/webhooks/push.json", "invalid_token")
+      expect(last_response.status).to eq(400)
+      expect(JSON.parse(last_response.body, symbolize_names: true)).to eq(
+        status: 400,
+        error: "Unsupported or missing parameter 'object_kind'"
+      )
+    end
 
-    expect(last_response.status).to eq(401)
-    expect(JSON.parse(last_response.body, symbolize_names: true)).to eq(
-      status: 401,
-      error: "Invalid gitlab authentication token"
-    )
+    it "unauthorized request" do
+      post_json("/api/hooks", "spec/fixture/api/webhooks/push.json", "invalid_token")
+
+      expect(last_response.status).to eq(401)
+      expect(JSON.parse(last_response.body, symbolize_names: true)).to eq(
+        status: 401,
+        error: "Invalid gitlab authentication token"
+      )
+    end
   end
 end
