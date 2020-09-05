@@ -3,7 +3,7 @@
 class DependencyUpdater < ApplicationService
   # @param [Hash<String, Object>] args
   def initialize(args)
-    @repo, @package_manager, @directory = args.values_at("repo", "package_manager", "directory")
+    @repo, @package_ecosystem, @directory = args.values_at("repo", "package_ecosystem", "directory")
   end
 
   # Create or update mr's for dependencies
@@ -16,13 +16,27 @@ class DependencyUpdater < ApplicationService
 
   private
 
-  attr_reader :repo, :package_manager, :directory
+  attr_reader :repo, :package_ecosystem, :directory
 
   # Dependabot config
   #
   # @return [Hash]
   def config
-    @config ||= Dependabot::Config.call(repo).find { |conf| conf[:directory] == directory }
+    @config ||= begin
+      config_entry = Dependabot::Config.call(repo).find do |conf|
+        conf[:package_ecosystem] == package_ecosystem && conf[:directory] == directory
+      end
+      raise("Configuration missing entry with package-ecosystem: #{package_ecosystem}") unless config_entry
+
+      config_entry
+    end
+  end
+
+  # Package manager name
+  #
+  # @return [String]
+  def package_manager
+    @package_manager ||= config[:package_manager]
   end
 
   # Get file fetcher

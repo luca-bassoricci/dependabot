@@ -4,6 +4,13 @@ require "yaml"
 
 module Configuration
   class Parser < ApplicationService
+    PACKAGE_ECOSYSTEM_MAPPING = {
+      "npm" => "npm_and_yarn",
+      "gomod" => "go_modules",
+      "gitsubmodule" => "submodules",
+      "mix" => "hex"
+    }.freeze
+
     # @param [String] config dependabot.yml configuration file
     def initialize(config)
       @config = config
@@ -53,8 +60,13 @@ module Configuration
     # @param [Hash<Symbol, Object>] opts
     # @return [Hash<Symbol, Object>]
     def general_options(opts)
+      package_ecosystem = opts[:"package-ecosystem"]
+
       {
-        package_manager: opts[:"package-ecosystem"],
+        # github native implementation modifies some of the names in the config file
+        # https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates#package-ecosystem
+        package_manager: PACKAGE_ECOSYSTEM_MAPPING.fetch(package_ecosystem, package_ecosystem),
+        package_ecosystem: package_ecosystem,
         directory: opts[:directory],
         milestone: opts[:milestone],
         assignees: opts[:assignees],
