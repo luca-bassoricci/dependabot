@@ -3,7 +3,7 @@
 describe DependencyUpdateJob do
   include ActiveJob::TestHelper
 
-  let(:args) { { "repo" => "test-repo", "package_manager" => "bundler" } }
+  let(:args) { { "repo" => "test-repo", "package_ecosystem" => "bundler" } }
 
   subject(:job) { described_class }
 

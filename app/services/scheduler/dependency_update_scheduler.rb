@@ -12,14 +12,16 @@ module Scheduler
     # @return [Array<Sidekiq::Cron::Job>]
     def call
       config.map do |opts|
-        package_manager = opts[:package_manager]
+        package_ecosystem = opts[:package_ecosystem]
+        directory = opts[:directory]
+
         job = Sidekiq::Cron::Job.new(
-          name: "#{repo}:#{package_manager}",
+          name: "#{repo}:#{package_ecosystem}:#{directory}",
           cron: opts[:cron],
           class: "DependencyUpdateJob",
-          args: { "repo" => repo, "package_manager" => package_manager, "directory" => opts[:directory] },
+          args: { "repo" => repo, "package_ecosystem" => package_ecosystem, "directory" => directory },
           active_job: true,
-          description: "Update #{package_manager} dependencies for #{repo} in #{opts[:directory]}"
+          description: "Update #{package_ecosystem} dependencies for #{repo} in #{directory}"
         )
 
         run(job)
