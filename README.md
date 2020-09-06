@@ -29,6 +29,8 @@ worker and redis. Simple production like deployment using `docker-compose` can b
 docker-compose -f docker-compose.yml -f docker-compose-prod.yml up
 ```
 
+## Configuration
+
 ### Environment configuration
 
 Application requires few environment variables to work.
@@ -39,16 +41,35 @@ Application requires few environment variables to work.
 * `SETTINGS__GITLAB_AUTH_TOKEN` - optional gitlab webhook token which can be configured under webhook settings in gitlab, if not present,
 token set in gitlab webhook configuration will be ignored
 
-#### Private maven repositories
+### Private registry credentials
 
-If dependapot needs to resolve dependencies from private maven repositories you can configure each repository with 3 environment variables.
+For dependabot to be able to resolve dependencies from private registries, credentials must be provided. Credentials are configured via
+environment variables with following naming pattern:
+
+* `SETTINGS__CREDENTIALS__{REGISTRY_TYPE}__{REGISTRY_NAME}__{REGISTRY_SPECIFIC_PARAM}`, where:
+  * `REGISTRY_TYPE` - `MAVEN,DOCKER,NPM`
+  * `REGISTRY_NAME` - some unique name identifying registry
+  * `REGISTRY_SPECIFIC_PARAM` - parameters, like url, username, password depending on registry type
+
+Please note the mandatory double underscores `__`\
+Multiple registries of the same type can be configured at the same time
+
+#### Maven repositories
 
 * `SETTINGS__CREDENTIALS__MAVEN__{REPOSITORY_NAME}__URL` - base url of the repository
 * `SETTINGS__CREDENTIALS__MAVEN__{REPOSITORY_NAME}__USERNAME` - user with read access
 * `SETTINGS__CREDENTIALS__MAVEN__{REPOSITORY_NAME}__PASSWORD` - password for the user
-Please note the mandatory double underscores `__`.
 
-## Configuration
+#### Docker registries
+
+* `SETTINGS__CREDENTIALS__DOCKER__{REGISTRY_NAME}__REGISTRY` - registry hostname like `registry.hub.docker.com`
+* `SETTINGS__CREDENTIALS__DOCKER__{REGISTRY_NAME}__USERNAME` - user with read access
+* `SETTINGS__CREDENTIALS__DOCKER__{REGISTRY_NAME}__PASSWORD` - password for the user
+
+#### Npm registries
+
+* `SETTINGS__CREDENTIALS__NPM__{REGISTRY_NAME}__REGISTRY` - registry url
+* `SETTINGS__CREDENTIALS__NPM__{REGISTRY_NAME}__TOKEN` - authentication token
 
 ### Gitlab configuration
 
@@ -85,13 +106,18 @@ allow:
 Because gitlab doesn't emit webhook when repository can no longer be merged due to conflict, this option will only have any
 effect when scheduled jobs run. The rebase will not happen as soon as repository got conflicts.
 
-Currently not implemented options:
+#### not implemented options
 
 * [versioning-strategy](https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates#versioning-strategy)
 
+## Adding update jobs
+
+If gitlab webhook is configured, update jobs are created automatically once dependabot.yml configuration file is pushed to the repository's default branch. Configuration is
+also updated when dependabot.yml file is changed in default branch. Jobs are removed is dependabot.yml file is deleted from repository.
+
 ### Adding project manually
 
-Endpoint `api/project` can receive POST request with json `{"project":"dependabot-gitlab/dependabot"}` to add project manually. Project must have a valid dependabot configuration file.
+Endpoint `api/project` can receive POST request with json `{"project":"dependabot-gitlab/dependabot"}` to add update jobs for project manually. Project must have a valid dependabot configuration file.
 
 ## Rake tasks
 
@@ -100,9 +126,9 @@ Additional rake tasks exist for manual interaction with dependency updates and c
 * `dependabot:register[project]` - manually register repository where `project` is repository name with namespace, ex: `dependabot-gitlab/dependabot`, repository must have valid dependabot config file
 * `dependabot:update[project,package_manager,directory]` - trigger dependency update where `project` is repository full name and `package_manager` is `package_ecosystem` parameter like `bundler` and directory is path where dependency files are stored, usually `/`
 
-### Job list
+## Job list
 
-Index page of application, like `http://localhost:3000/` will display a table with jobs currently registered in the system
+Index page of application, like `http://localhost:3000/` will display a table with jobs currently configured to run dependency updates
 
 ## Development
 

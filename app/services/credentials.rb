@@ -17,7 +17,9 @@ class Credentials
     [
       github_credentials,
       gitlab_credentials,
-      maven_credentials
+      maven_credentials,
+      docker_credentials,
+      npm_registry
     ].flatten.compact
   end
 
@@ -56,7 +58,6 @@ class Credentials
   # Get maven repository credentials
   #
   # @return [Hash]
-  # :reek:FeatureEnvy
   def maven_credentials
     Settings.dig(:credentials, :maven)&.map do |_, repository|
       if [repository.url, repository.username, repository.password].any?(&:nil?)
@@ -69,6 +70,43 @@ class Credentials
         "url" => repository.url,
         "username" => repository.username,
         "password" => repository.password
+      }
+    end
+  end
+
+  # Get docker registry credentials
+  #
+  # @return [Hash]
+  def docker_credentials
+    Settings.dig(:credentials, :docker)&.map do |_, registry|
+      if [registry.registry, registry.username, registry.password].any?(&:nil?)
+        logger.warn { "Got partially configured docker_reguistry credentials" }
+        next
+      end
+
+      {
+        "type" => "docker_registry",
+        "registry" => registry.registry,
+        "username" => registry.username,
+        "password" => registry.password
+      }
+    end
+  end
+
+  # Get npm registry credentials
+  #
+  # @return [Hash]
+  def npm_registry
+    Settings.dig(:credentials, :npm)&.map do |_, registry|
+      if [registry.registry, registry.token].any?(&:nil?)
+        logger.warn { "Got partially configured docker_reguistry credentials" }
+        next
+      end
+
+      {
+        "type" => "npm_registry",
+        "registry" => registry.registry,
+        "token" => registry.token
       }
     end
   end

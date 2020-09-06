@@ -5,6 +5,9 @@ detectors:
   
   UtilityFunction:
     enabled: false
+  
+  FeatureEnvy:
+    enabled: false
 
   NestedIterators:
     max_allowed_nesting: 2
