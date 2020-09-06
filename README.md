@@ -3,6 +3,7 @@
 # dependabot-gitlab
 
 [![pipeline status](https://gitlab.com/dependabot-gitlab/dependabot/badges/master/pipeline.svg)](https://gitlab.com/dependabot-gitlab/dependabot/-/commits/master)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/8d62ce5bf40c46bea3981e821c91178e)](https://www.codacy.com/gl/dependabot-gitlab/dependabot?utm_source=gitlab.com&amp;utm_medium=referral&amp;utm_content=dependabot-gitlab/dependabot&amp;utm_campaign=Badge_Grade)
 [![coverage report](https://gitlab.com/dependabot-gitlab/dependabot/badges/master/coverage.svg)](https://gitlab.com/dependabot-gitlab/dependabot/-/commits/master)
 [![Docker Image Version (latest by date)](https://img.shields.io/docker/v/andrcuns/dependabot-gitlab?sort=semver)](https://hub.docker.com/r/andrcuns/dependabot-gitlab)
 [![Docker Pulls](https://img.shields.io/docker/pulls/andrcuns/dependabot-gitlab)](https://hub.docker.com/r/andrcuns/dependabot-gitlab)
