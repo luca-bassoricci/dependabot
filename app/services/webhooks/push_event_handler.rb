@@ -52,7 +52,6 @@ module Webhooks
     # Delete dependency update jobs
     #
     # @return [void]
-    # :reek:FeatureEnvy
     def delete_schedules
       Sidekiq::Cron::Job.all.each { |job| job.destroy if job.name.include?(repo) }
     end

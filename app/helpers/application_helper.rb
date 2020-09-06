@@ -15,7 +15,6 @@ module ApplicationHelper
   #
   # @param [StndardError] error
   # @return [void]
-  # :reek:FeatureEnvy
   def log_error(error)
     Rails.logger.error { "#{error.message}\n#{error.backtrace&.join('\n')}" }
   end
