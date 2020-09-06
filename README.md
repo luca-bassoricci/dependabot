@@ -39,13 +39,14 @@ Application requires few environment variables to work.
 * `SETTINGS__GITLAB_AUTH_TOKEN` - optional gitlab webhook token which can be configured under webhook settings in gitlab, if not present,
 token set in gitlab webhook configuration will be ignored
 
-#### Private maven repository
+#### Private maven repositories
 
-If dependapot needs to resolve dependencies from a private maven repository you can configure it here
+If dependapot needs to resolve dependencies from private maven repositories you can configure each repository with 3 environment variables.
 
-* `SETTINGS__CREDENTIALS_MAVEN_REPOSITORY_URL` - base url of the repository
-* `SETTINGS__CREDENTIALS_MAVEN_REPOSITORY_USERNAME` - user with read access
-* `SETTINGS__CREDENTIALS_MAVEN_REPOSITORY_PASSWORD` - password for the user
+* `SETTINGS__CREDENTIALS__MAVEN__{REPOSITORY_NAME}__URL` - base url of the repository
+* `SETTINGS__CREDENTIALS__MAVEN__{REPOSITORY_NAME}__USERNAME` - user with read access
+* `SETTINGS__CREDENTIALS__MAVEN__{REPOSITORY_NAME}__PASSWORD` - password for the user
+Please note the mandatory double underscores `__`.
 
 ## Configuration
 

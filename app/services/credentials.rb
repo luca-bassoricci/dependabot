@@ -18,7 +18,7 @@ class Credentials
       github_credentials,
       gitlab_credentials,
       maven_credentials
-    ].compact
+    ].flatten.compact
   end
 
   private
@@ -56,23 +56,20 @@ class Credentials
   # Get maven repository credentials
   #
   # @return [Hash]
+  # :reek:FeatureEnvy
   def maven_credentials
-    url = Settings.credentials_maven_repository_url
-    username = Settings.credentials_maven_repository_username
-    password = Settings.credentials_maven_repository_password
+    Settings.dig(:credentials, :maven)&.map do |_, repository|
+      if [repository.url, repository.username, repository.password].any?(&:nil?)
+        logger.warn { "Got partially configured maven_repository credentials" }
+        next
+      end
 
-    return if [url, username, password].compact.empty?
-
-    if [url, username, password].any?(&:nil?)
-      logger.warn { "Got partially configured maven_repository credentials" }
-      return
+      {
+        "type" => "maven_repository",
+        "url" => repository.url,
+        "username" => repository.username,
+        "password" => repository.password
+      }
     end
-
-    {
-      "type" => "maven_repository",
-      "url" => url,
-      "username" => username,
-      "password" => password
-    }
   end
 end
