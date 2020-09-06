@@ -13,6 +13,7 @@
         - Gemfile.lock
     paths:
       - vendor/bundle
+      - codacy-coverage-reporter-$CODACY_VERSION
     policy: pull
 
 .docker_runner:

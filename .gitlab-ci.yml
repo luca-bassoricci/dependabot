@@ -17,15 +17,16 @@ variables:
   GITLAB_MOCK_DOCKER_IMAGE: $CI_REGISTRY_IMAGE/gitlab-mock
   CURRENT_TAG: $CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
   LATEST_TAG: $CI_COMMIT_REF_SLUG-latest
+  CODACY_VERSION: "11.2.3"
 
 # ======================================================================================================================
 # Pre Stage
 # ======================================================================================================================
-cache_gems:
+cache_dependencies:
   extends: .ruby_runner
   stage: .pre
   script:
-    - echo "Populated gem cache"
+    - ./script/download-codacy.sh
   cache:
     policy: pull-push
   only:
@@ -104,6 +105,8 @@ unit_tests:
     NO_COLOR: "1"
   script:
     - bundle exec rspec --format documentation --format RspecJunitFormatter --out tmp/rspec.xml
+  after_script:
+    - ./codacy-coverage-reporter-$CODACY_VERSION report -r coverage/coverage.xml
   coverage: /COVERAGE:\s+(\d+.\d+)\%/
   artifacts:
     reports:
