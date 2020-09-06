@@ -2,9 +2,9 @@
 
 describe Credentials do
   let(:github_token) { nil }
-  let(:maven_repo_url) { nil }
-  let(:maven_repo_user) { nil }
-  let(:maven_repo_pass) { nil }
+  let(:maven_url) { nil }
+  let(:maven_username) { nil }
+  let(:maven_password) { nil }
 
   let(:gitlab_creds) do
     {
@@ -24,12 +24,12 @@ describe Credentials do
     }
   end
 
-  let(:maven_repo_creds) do
+  let(:maven_creds) do
     {
       "type" => "maven_repository",
-      "url" => Settings.credentials_maven_repository_url,
-      "username" => Settings.credentials_maven_repository_username,
-      "password" => Settings.credentials_maven_repository_password
+      "url" => Settings.credentials.maven.repository.url,
+      "username" => Settings.credentials.maven.repository.username,
+      "password" => Settings.credentials.maven.repository.password
     }
   end
 
@@ -40,9 +40,15 @@ describe Credentials do
     Settings.add_source!(
       {
         github_access_token: github_token,
-        credentials_maven_repository_url: maven_repo_url,
-        credentials_maven_repository_username: maven_repo_user,
-        credentials_maven_repository_password: maven_repo_pass
+        credentials: {
+          maven: {
+            repository: {
+              url: maven_url,
+              username: maven_username,
+              password: maven_password
+            }
+          }
+        }
       }
     )
     Settings.reload!
@@ -63,12 +69,12 @@ describe Credentials do
   end
 
   context "Credentials returns" do
-    let(:maven_repo_url) { "url" }
-    let(:maven_repo_user) { "username" }
-    let(:maven_repo_pass) { "password" }
+    let(:maven_url) { "url" }
+    let(:maven_username) { "username" }
+    let(:maven_password) { "password" }
 
     it "gitlab and maven creds" do
-      expect(subject).to eq([gitlab_creds, maven_repo_creds])
+      expect(subject).to eq([gitlab_creds, maven_creds])
     end
   end
 end
