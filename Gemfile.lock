@@ -444,6 +444,7 @@ DEPENDENCIES
   bundle-audit (~> 0.1.0)
   config (~> 2.2)
   dependabot-omnibus (~> 0.119.3)
+  dry-validation (~> 1.5)
   lefthook (~> 0.7.2)
   pry (~> 0.13.1)
   puma (~> 4.3)

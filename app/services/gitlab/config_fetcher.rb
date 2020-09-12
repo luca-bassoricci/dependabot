@@ -20,7 +20,7 @@ module Gitlab
         raise("Failed to fetch configuration for #{repo}") unless config
       end
     rescue Error::NotFound
-      raise(Dependabot::ConfigNotFound, ".gitlab/dependabot.yml not present in #{repo}")
+      raise(Error::Dependabot::MissingConfiguration, ".gitlab/dependabot.yml not present in #{repo}")
     end
 
     private
