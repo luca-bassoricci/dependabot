@@ -20,6 +20,8 @@ module Configuration
     #
     # @return [Array<Hash>]
     def call
+      validate_config
+
       yml[:updates].map do |configuration|
         {
           **general_options(configuration),
@@ -35,6 +37,13 @@ module Configuration
 
     # @return [String] dependabot configuration file
     attr_reader :config
+
+    def validate_config
+      result = DependabotConfigContract.new.call(yml)
+      return if result.success?
+
+      Error::Dependabot::InvalidConfiguration.tap { |err| raise(err, err.format(result)) }
+    end
 
     # Parsed dependabot yml config
     #

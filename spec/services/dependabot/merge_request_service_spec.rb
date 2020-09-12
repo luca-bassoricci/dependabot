@@ -9,7 +9,7 @@ describe Dependabot::MergeRequestService do
   let(:mr) { OpenStruct.new(web_url: "mr-url") }
   let(:mr_params) do
     {
-      milestone: 4,
+      milestone: "0.0.1",
       custom_labels: ["dependency"],
       branch_name_separator: "-",
       assignees: ["andrcuns"],

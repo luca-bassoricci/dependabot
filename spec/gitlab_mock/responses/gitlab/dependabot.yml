@@ -11,7 +11,7 @@ updates:
       prefix: "dep"
       prefix-development: "bundler-dev"
       include: "scope"
-    milestone: 4
+    milestone: 0.0.1
     ignore:
       - dependency-name: rspec
         versions: ["3.x", "4.x"]
