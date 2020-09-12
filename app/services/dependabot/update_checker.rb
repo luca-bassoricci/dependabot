@@ -34,7 +34,7 @@ module Dependabot
       return update_impossible if requirements_to_unlock == :update_not_possible
 
       updated_dependencies
-    rescue e
+    rescue StandardError => e
       log_error(e)
       nil
     end
