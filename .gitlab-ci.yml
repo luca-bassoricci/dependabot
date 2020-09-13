@@ -1,7 +1,14 @@
-.only: &all
-  - merge_request
-  - master
-  - tags
+.mr: &mr
+  if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+.master: &master
+  if: '$CI_COMMIT_BRANCH == "master"'
+.release: &release
+  if: '$CI_COMMIT_TAG =~ /^v[0-9.]+$/'
+
+.all: &all
+  - <<: *mr
+  - <<: *master
+  - <<: *release
 
 include:
   - local: .gitlab/ci/runners.gitlab-ci.yml
@@ -29,9 +36,7 @@ cache_dependencies:
     - ./script/download-codacy.sh
   cache:
     policy: pull-push
-  only:
-    - merge_request
-    - master
+  rules: *all
 
 build_app_image:
   stage: .pre
@@ -47,7 +52,7 @@ build_app_image:
       --import-cache type=registry,ref=$APP_DOCKER_IMAGE:master-latest \
       --import-cache type=registry,ref=$APP_DOCKER_IMAGE:$LATEST_TAG \
       --output type=image,\"name=$APP_DOCKER_IMAGE:$CURRENT_TAG,$APP_DOCKER_IMAGE:$LATEST_TAG\",push=true
-  only: *all
+  rules: *all
 
 build_mock_image:
   stage: .pre
@@ -61,7 +66,7 @@ build_mock_image:
       --import-cache type=registry,ref=$GITLAB_MOCK_DOCKER_IMAGE:master-latest \
       --import-cache type=registry,ref=$GITLAB_MOCK_DOCKER_IMAGE:$LATEST_TAG \
       --output type=image,\"name=$GITLAB_MOCK_DOCKER_IMAGE:$CURRENT_TAG,$GITLAB_MOCK_DOCKER_IMAGE:$LATEST_TAG\",push=true
-  only: *all
+  rules: *all
 
 # ======================================================================================================================
 # Static analysis stage
@@ -71,28 +76,28 @@ rubocop:
   stage: static analysis
   script:
     - bundle exec rubocop --parallel --color
-  only: *all
+  rules: *all
 
 reek:
   extends: .ruby_runner
   stage: static analysis
   script:
     - bundle exec reek --color --progress --force-exclusion --sort-by smelliness .
-  only: *all
+  rules: *all
 
 brakeman:
   extends: .ruby_runner
   stage: static analysis
   script:
     - bundle exec brakeman --color
-  only: *all
+  rules: *all
 
 bundle_audit:
   extends: .ruby_runner
   stage: static analysis
   script:
     - bundle exec bundle-audit check --update
-  only: *all
+  rules: *all
 
 # ======================================================================================================================
 # Test Stage
@@ -112,7 +117,7 @@ unit_tests:
     reports:
       cobertura: coverage/coverage.xml
       junit: tmp/rspec.xml
-  only: *all
+  rules: *all
 
 e2e_test:
   image:
@@ -130,7 +135,7 @@ e2e_test:
   script:
     - cd /home/dependabot
     - bundle exec rake 'dependabot:update[test-repo,bundler,/]'
-  only: *all
+  rules: *all
 
 # ======================================================================================================================
 # Release Stage
@@ -149,8 +154,8 @@ release:
       docker tag $APP_DOCKER_IMAGE:$CURRENT_TAG $RELEASE_IMAGE:$RELEASE_VERSION
       docker tag $APP_DOCKER_IMAGE:$CURRENT_TAG $RELEASE_IMAGE:latest
       docker push $RELEASE_IMAGE:$RELEASE_VERSION && docker push $RELEASE_IMAGE:latest
-  only:
-    - /^v[0-9.]+$/
+  rules:
+    - *release
 
 # ======================================================================================================================
 # Deploy Stage
@@ -163,18 +168,5 @@ deploy:
   environment:
     name: heroku
     url: https://dependabot-gitlab.herokuapp.com/
-  only:
-    refs:
-      - master
-    changes:
-      - app/**/*
-      - config/**/*
-      - lib/**/*
-      - public/**/*
-      - bin/rails
-      - config.ru
-      - Gemfile
-      - Gemfile.lock
-      - Rakefile
-      - Dockerfile
-      - .dockerignore
+  rules:
+    - *master
