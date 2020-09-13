@@ -425,7 +425,7 @@ GEM
       unf_ext
     unf_ext (0.0.7.7)
     unicode-display_width (1.7.0)
-    webmock (3.8.3)
+    webmock (3.9.0)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
@@ -467,7 +467,7 @@ DEPENDENCIES
   simplecov-console (~> 0.7.2)
   solargraph (~> 0.39.15)
   spring (~> 2.1.1)
-  webmock (~> 3.8)
+  webmock (~> 3.9)
   yard (~> 0.9.25)
 
 RUBY VERSION
