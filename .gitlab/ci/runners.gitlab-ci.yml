@@ -47,11 +47,3 @@
         }
       }
       EOF
-
-.heroku_runner:
-  image: finalgene/heroku-cli:7.42
-  before_script:
-    - apk add git
-    - git fetch origin master && git checkout master
-    - echo $NETRC > /root/.netrc
-    - heroku git:remote -a dependabot-gitlab
