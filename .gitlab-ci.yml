@@ -156,17 +156,3 @@ release:
       docker push $RELEASE_IMAGE:$RELEASE_VERSION && docker push $RELEASE_IMAGE:latest
   rules:
     - *release
-
-# ======================================================================================================================
-# Deploy Stage
-# ======================================================================================================================
-deploy:
-  extends: .heroku_runner
-  stage: deploy
-  script:
-    - git push heroku master
-  environment:
-    name: heroku
-    url: https://dependabot-gitlab.herokuapp.com/
-  rules:
-    - *master
