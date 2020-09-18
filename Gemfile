@@ -10,7 +10,7 @@ gem "dry-validation", "~> 1.5"
 gem "puma", "~> 5.0"
 gem "rails", "~> 6.0.3"
 gem "semantic_range", "~> 2.3"
-gem "sentry-raven", "~> 3.0", require: false
+gem "sentry-raven", "~> 3.1", require: false
 gem "sidekiq", "~> 6.1.2"
 gem "sidekiq-cron", "~> 1.2"
 
