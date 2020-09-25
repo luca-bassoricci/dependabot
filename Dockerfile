@@ -1,4 +1,4 @@
-FROM dependabot/dependabot-core:0.119.6
+FROM dependabot/dependabot-core:0.120.0
 
 ENV BUNDLE_PATH=vendor/bundle \
   BUNDLE_WITHOUT="development:test"

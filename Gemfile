@@ -5,7 +5,7 @@ source "https://rubygems.org"
 ruby "~> 2.6"
 
 gem "config", "~> 2.2"
-gem "dependabot-omnibus", "~> 0.119.6"
+gem "dependabot-omnibus", "~> 0.120.0"
 gem "dry-validation", "~> 1.5"
 gem "puma", "~> 5.0"
 gem "rails", "~> 6.0.3"
