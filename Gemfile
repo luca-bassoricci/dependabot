@@ -26,7 +26,7 @@ group :development, :test do
 end
 
 group :test do
-  gem "brakeman", "~> 4.9"
+  gem "brakeman", "~> 4.10"
   gem "rack-test", "~> 1.1"
   gem "rspec", "~> 3.9"
   gem "rspec_junit_formatter", "~> 0.4.1"
