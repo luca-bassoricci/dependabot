@@ -33,7 +33,7 @@ group :test do
   gem "rspec-rails", "~> 4.0.1"
   gem "rspec-sidekiq", "~> 3.1", require: false
   gem "simplecov", "~> 0.19.0"
-  gem "simplecov-cobertura", "~> 1.4.0"
+  gem "simplecov-cobertura", "~> 1.4.1"
   gem "simplecov-console", "~> 0.7.2"
   gem "webmock", "~> 3.9"
 end
