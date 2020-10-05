@@ -42,7 +42,7 @@ build_app_image:
   stage: .pre
   extends: .buildkit_runner
   script: |
-    buildctl-daemonless.sh build \
+    buildctl --addr tcp://buildkit-service.gitlab.svc.cluster.local:1234 build \
       --frontend=dockerfile.v0 \
       --local context=. \
       --local dockerfile=. \
@@ -58,7 +58,7 @@ build_mock_image:
   stage: .pre
   extends: .buildkit_runner
   script: |
-    buildctl-daemonless.sh build \
+    buildctl --addr tcp://buildkit-service.gitlab.svc.cluster.local:1234 build \
       --frontend=dockerfile.v0 \
       --local context=spec/gitlab_mock \
       --local dockerfile=spec/gitlab_mock \
