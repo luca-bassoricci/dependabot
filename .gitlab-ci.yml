@@ -128,8 +128,9 @@ e2e_test:
     - name: $GITLAB_MOCK_DOCKER_IMAGE:$CURRENT_TAG
       alias: gitlab
   variables:
-    SETTINGS__GITLAB_ACCESS_TOKEN: e2e-test
     SETTINGS__GITLAB_URL: http://gitlab:4567
+    SETTINGS__GITLAB_ACCESS_TOKEN: e2e-test
+    SETTINGS__GITHUB_ACCESS_TOKEN: $GITHUB_ACCESS_TOKEN
     RAILS_ENV: production
     GIT_STRATEGY: none
   script:
