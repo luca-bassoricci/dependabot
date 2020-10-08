@@ -124,8 +124,6 @@ e2e_test:
     name: $APP_DOCKER_IMAGE:$CURRENT_TAG
     entrypoint: [""]
   stage: test
-  tags:
-    - buildkit # use same runner as for building for faster download
   services:
     - name: $GITLAB_MOCK_DOCKER_IMAGE:$CURRENT_TAG
       alias: gitlab
