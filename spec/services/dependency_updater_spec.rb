@@ -44,7 +44,7 @@ describe DependencyUpdater do
     allow(Gitlab::ConfigFetcher).to receive(:call) { raw_config }
     allow(Dependabot::DependabotSource).to receive(:call) { source }
     allow(Dependabot::FileFetcher).to receive(:call) { fetcher }
-    allow(Dependabot::DependencyFetcher).to receive(:call) { [config, rspec] }
+    allow(Dependabot::FileParser).to receive(:call) { [config, rspec] }
     allow(Dependabot::MergeRequestService).to receive(:call) { "" }
 
     allow(Dependabot::UpdateChecker).to receive(:call).with(dependency: config, **checker_args) { updated_config }
