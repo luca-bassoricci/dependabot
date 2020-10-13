@@ -80,7 +80,7 @@ class Credentials
   def docker_credentials
     Settings.dig(:credentials, :docker)&.map do |_, registry|
       if [registry.registry, registry.username, registry.password].any?(&:nil?)
-        logger.warn { "Got partially configured docker_reguistry credentials" }
+        logger.warn { "Got partially configured docker_registry credentials" }
         next
       end
 
@@ -99,7 +99,7 @@ class Credentials
   def npm_registry
     Settings.dig(:credentials, :npm)&.map do |_, registry|
       if [registry.registry, registry.token].any?(&:nil?)
-        logger.warn { "Got partially configured docker_reguistry credentials" }
+        logger.warn { "Got partially configured npm_registry credentials" }
         next
       end
 
