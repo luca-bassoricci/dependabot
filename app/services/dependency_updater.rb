@@ -93,7 +93,7 @@ class DependencyUpdater < ApplicationService
   #
   # @return [Array<Dependabot::Dependency>]
   def dependencies
-    @dependencies ||= Dependabot::DependencyFetcher.call(
+    @dependencies ||= Dependabot::FileParser.call(
       source: fetcher.source,
       dependency_files: fetcher.files,
       package_manager: package_manager
