@@ -1,15 +1,27 @@
 .mr: &mr
-  if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+  if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_NAMESPACE == "dependabot-gitlab"'
+.mr_forked: &mr_forked
+  if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_NAMESPACE !~ /dependabot-gitlab/'
 .master: &master
   if: '$CI_COMMIT_BRANCH == "master"'
 .release: &release
   if: '$CI_COMMIT_TAG =~ /^v[0-9.]+$/'
 
 .all: &all
-  - <<: *mr
-  - <<: *master
-  - <<: *release
+  - *mr
+  - *mr_forked
+  - *master
+  - *release
 
+.build_image:
+  stage: .pre
+  extends: .buildkit_runner
+  script:
+    - script/build.sh $COMMAND $FILE_PATH $DOCKER_IMAGE
+
+# ======================================================================================================================
+# Global
+# ======================================================================================================================
 include:
   - local: .gitlab/ci/runners.gitlab-ci.yml
 
@@ -40,33 +52,53 @@ cache_dependencies:
 
 build_app_image:
   stage: .pre
-  extends: .buildkit_runner
-  script: |
-    buildctl --addr tcp://buildkit-service.gitlab.svc.cluster.local:1234 build \
-      --frontend=dockerfile.v0 \
-      --local context=. \
-      --local dockerfile=. \
-      --opt build-arg:COMMIT_SHA=$CI_COMMIT_SHA \
-      --opt build-arg:PROJECT_URL=$CI_PROJECT_URL \
-      --export-cache type=inline \
-      --import-cache type=registry,ref=$APP_DOCKER_IMAGE:master-latest \
-      --import-cache type=registry,ref=$APP_DOCKER_IMAGE:$LATEST_TAG \
-      --output type=image,\"name=$APP_DOCKER_IMAGE:$CURRENT_TAG,$APP_DOCKER_IMAGE:$LATEST_TAG\",push=true
-  rules: *all
+  extends: .build_image
+  tags:
+    - internal
+  variables:
+    COMMAND: buildctl
+    FILE_PATH: .
+    DOCKER_IMAGE: $CI_REGISTRY_IMAGE
+  rules:
+    - *mr
+    - *master
+    - *release
+build_app_image_fork:
+  stage: .pre
+  extends: .build_image
+  tags:
+    - docker
+  variables:
+    COMMAND: buildctl-daemonless.sh
+    FILE_PATH: .
+    DOCKER_IMAGE: $CI_REGISTRY_IMAGE
+  rules:
+    - *mr_forked
 
 build_mock_image:
   stage: .pre
-  extends: .buildkit_runner
-  script: |
-    buildctl --addr tcp://buildkit-service.gitlab.svc.cluster.local:1234 build \
-      --frontend=dockerfile.v0 \
-      --local context=spec/gitlab_mock \
-      --local dockerfile=spec/gitlab_mock \
-      --export-cache type=inline \
-      --import-cache type=registry,ref=$GITLAB_MOCK_DOCKER_IMAGE:master-latest \
-      --import-cache type=registry,ref=$GITLAB_MOCK_DOCKER_IMAGE:$LATEST_TAG \
-      --output type=image,\"name=$GITLAB_MOCK_DOCKER_IMAGE:$CURRENT_TAG,$GITLAB_MOCK_DOCKER_IMAGE:$LATEST_TAG\",push=true
-  rules: *all
+  extends: .build_image
+  tags:
+    - internal
+  variables:
+    COMMAND: buildctl
+    FILE_PATH: spec/gitlab_mock
+    DOCKER_IMAGE: $CI_REGISTRY_IMAGE/gitlab-mock
+  rules:
+    - *mr
+    - *master
+    - *release
+build_mock_image_fork:
+  stage: .pre
+  extends: .build_image
+  tags:
+    - docker
+  variables:
+    COMMAND: buildctl-daemonless.sh
+    FILE_PATH: spec/gitlab_mock
+    DOCKER_IMAGE: $CI_REGISTRY_IMAGE/gitlab-mock
+  rules:
+    - *mr_forked
 
 # ======================================================================================================================
 # Static analysis stage

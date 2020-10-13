@@ -1,5 +1,7 @@
 #/bin/bash
 
+# Codacy download script
+
 set -e
 
 EXECUTABLE="codacy-coverage-reporter-${CODACY_VERSION}"
