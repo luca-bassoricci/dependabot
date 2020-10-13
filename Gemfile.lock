@@ -95,8 +95,7 @@ GEM
       deep_merge (~> 1.2, >= 1.2.1)
       dry-validation (~> 1.0, >= 1.0.0)
     connection_pool (2.2.3)
-    crack (0.4.3)
-      safe_yaml (~> 1.0.0)
+    crack (0.4.4)
     crass (1.0.6)
     deep_merge (1.2.1)
     dependabot-bundler (0.122.0)
@@ -367,7 +366,6 @@ GEM
     ruby-enum (0.8.0)
       i18n
     ruby-progressbar (1.10.1)
-    safe_yaml (1.0.5)
     sawyer (0.8.2)
       addressable (>= 2.3.5)
       faraday (> 0.8, < 2.0)
@@ -426,7 +424,7 @@ GEM
       unf_ext
     unf_ext (0.0.7.7)
     unicode-display_width (1.7.0)
-    webmock (3.9.1)
+    webmock (3.9.2)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
