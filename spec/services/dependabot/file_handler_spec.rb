@@ -17,16 +17,24 @@ describe "File handlers" do
   end
 
   context Dependabot::FileParser do
-    subject do
-      described_class.call(
+    let(:parser) { double("parser") }
+    let(:args) do
+      {
         dependency_files: fetcher.files,
-        source: source,
-        package_manager: package_manager
-      )
+        source: source
+      }
     end
 
-    it "returns parsed dependencies" do
-      expect(subject).to include(dependency)
+    before do
+      allow(Dependabot::Bundler::FileParser).to receive(:new) { parser }
+      allow(parser).to receive(:parse)
+    end
+
+    it "parses dependecy files" do
+      described_class.call(package_manager: package_manager, **args)
+
+      expect(Dependabot::Bundler::FileParser).to have_received(:new).with(credentials: Credentials.fetch, **args)
+      expect(parser).to have_received(:parse)
     end
   end
 
