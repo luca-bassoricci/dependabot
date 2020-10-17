@@ -4,6 +4,7 @@ class DependencyUpdater < ApplicationService
   # @param [Hash<String, Object>] args
   def initialize(args)
     @repo, @package_ecosystem, @directory = args.values_at("repo", "package_ecosystem", "directory")
+    @semaphore = Mutex.new # lock dependabot operations in temporary folders
   end
 
   # Create or update mr's for dependencies
@@ -16,7 +17,7 @@ class DependencyUpdater < ApplicationService
 
   private
 
-  attr_reader :repo, :package_ecosystem, :directory
+  attr_reader :repo, :package_ecosystem, :directory, :semaphore
 
   # Dependabot config
   #
@@ -96,7 +97,8 @@ class DependencyUpdater < ApplicationService
     @dependencies ||= Dependabot::FileParser.call(
       source: fetcher.source,
       dependency_files: fetcher.files,
-      package_manager: package_manager
+      package_manager: package_manager,
+      semaphore: semaphore
     )
   end
 
@@ -119,7 +121,8 @@ class DependencyUpdater < ApplicationService
     Dependabot::FileUpdater.call(
       dependencies: updated_dependencies,
       dependency_files: fetcher.files,
-      package_manager: package_manager
+      package_manager: package_manager,
+      semaphore: semaphore
     )
   end
 

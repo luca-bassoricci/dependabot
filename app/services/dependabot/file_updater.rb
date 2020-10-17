@@ -5,25 +5,28 @@ module Dependabot
     # @param [Array<Dependabot::Dependency>] dependencies
     # @param [Array<Dependabot::DependencyFile>] dependency_files
     # @param [String] package_manager
-    def initialize(dependencies:, dependency_files:, package_manager:)
+    def initialize(dependencies:, dependency_files:, package_manager:, semaphore: Mutex.new)
       @dependencies = dependencies
       @dependency_files = dependency_files
       @package_manager = package_manager
+      @semaphore = semaphore
     end
 
     # Get update checker
     #
     # @return [Array<Dependabot::DependencyFile>]
     def call
-      Dependabot::FileUpdaters.for_package_manager(package_manager).new(
-        dependencies: dependencies,
-        dependency_files: dependency_files,
-        credentials: Credentials.fetch
-      ).updated_dependency_files
+      semaphore.synchronize do
+        Dependabot::FileUpdaters.for_package_manager(package_manager).new(
+          dependencies: dependencies,
+          dependency_files: dependency_files,
+          credentials: Credentials.fetch
+        ).updated_dependency_files
+      end
     end
 
     private
 
-    attr_reader :dependencies, :dependency_files, :package_manager
+    attr_reader :dependencies, :dependency_files, :package_manager, :semaphore
   end
 end
