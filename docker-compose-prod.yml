@@ -6,12 +6,16 @@ x-environment: &environment_variables
   SENTRY_DSN:
   SETTINGS__GITHUB_ACCESS_TOKEN:
   SETTINGS__GITLAB_ACCESS_TOKEN:
+x-volumes: &service_volumes
+  volumes:
+    - tmp:/home/dependabot/tmp
 
 services:
   web:
     image: andrcuns/dependabot-gitlab:latest
     depends_on:
       - redis
+    <<: *service_volumes
     environment:
       <<: *environment_variables
       RAILS_SERVE_STATIC_FILES: "true"
@@ -24,6 +28,10 @@ services:
     image: andrcuns/dependabot-gitlab:latest
     depends_on:
       - redis
+    <<: *service_volumes
     environment:
       <<: *environment_variables
     command: sidekiq
+
+volumes:
+  tmp:

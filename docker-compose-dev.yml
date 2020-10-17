@@ -8,18 +8,13 @@ x-environment: &environment_variables
     SETTINGS__GITLAB_ACCESS_TOKEN:
 
 services:
-  web:
+  dependabot:
     build: .
     depends_on:
       - redis
     <<: *environment_variables
     ports:
       - 3000:3000
-    command: rails server -b 0.0.0.0
-
-  worker:
-    build: .
-    depends_on:
-      - redis
-    <<: *environment_variables
-    command: sidekiq
+    entrypoint: ["supervisord"]
+    command: ["-c", "config/supervisor/supervisord.conf"]
+    
