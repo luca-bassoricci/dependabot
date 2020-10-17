@@ -85,7 +85,8 @@ RSpec.shared_context("dependabot") do
         },
         allow: allow_conf,
         ignore: ignore_conf,
-        rebase_strategy: "auto"
+        rebase_strategy: "auto",
+        auto_merge: true
       }
     ]
   end

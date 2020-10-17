@@ -55,6 +55,10 @@ namespace "/api/v4" do
     [200, [[].to_json]]
   end
 
+  put "/projects/:id/merge_requests/:iid/merge" do
+    [200, [[].to_json]]
+  end
+
   # commits
   post "#{repo_url}/repository/commits" do
     [200, [[].to_json]]

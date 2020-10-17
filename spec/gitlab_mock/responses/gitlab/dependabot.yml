@@ -26,3 +26,4 @@ updates:
       separator: "-"
     versioning-strategy: auto
     rebase-strategy: auto
+    auto-merge: true
