@@ -26,8 +26,6 @@ Rails.application.configure do
     }
   else
     config.action_controller.perform_caching = false
-
-    config.cache_store = :redis_cache_store, { url: ENV["REDIS_URL"] }
   end
 
   # Print deprecation notices to the Rails logger.
