@@ -4,9 +4,9 @@ describe Dependabot::MergeRequestService do
   include_context "webmock"
   include_context "dependabot"
 
-  let(:pr_creator) { double("PullRequestCreator", create: "mr") }
-  let(:pr_updater) { double("PullRequestUpdater", update: "mr") }
-  let(:mr) { OpenStruct.new(web_url: "mr-url") }
+  let(:mr) { OpenStruct.new(web_url: "mr-url", project_id: 1, iid: 1, sha: "5f92cc4d9939", has_conflicts: true) }
+  let(:pr_creator) { double("PullRequestCreator", create: mr) }
+  let(:pr_updater) { double("PullRequestUpdater", update: mr) }
   let(:mr_params) do
     {
       milestone: "0.0.1",
@@ -24,7 +24,7 @@ describe Dependabot::MergeRequestService do
   end
 
   subject do
-    Dependabot::MergeRequestService.call(
+    described_class.call(
       fetcher: fetcher,
       updated_dependencies: updated_dependencies,
       updated_files: updated_files,
@@ -39,13 +39,18 @@ describe Dependabot::MergeRequestService do
 
     allow(Dependabot::PullRequestCreator).to receive(:new) { pr_creator }
     allow(Dependabot::PullRequestUpdater).to receive(:new) { pr_updater }
+
+    @accept_stub = stub_request(:put, "#{source.api_endpoint}/projects/#{mr.project_id}/merge_requests/#{mr.iid}/merge")
+                   .with(body: { "merge_when_pipeline_succeeds" => "true" })
+                   .to_return(status: 200, body: "")
   end
 
   context "merge request" do
     let(:mr_get_return) { { status: 200, body: [].to_json } }
 
     it "is created" do
-      expect(subject).to eq("mr")
+      subject
+
       expect(Dependabot::PullRequestCreator).to have_received(:new).with(
         source: fetcher.source,
         base_commit: fetcher.commit,
@@ -57,22 +62,49 @@ describe Dependabot::MergeRequestService do
         assignees: [10],
         reviewers: { approvers: [10] }
       )
+      expect(pr_creator).to have_received(:create)
+    end
+
+    it "is set to merge after creation" do
+      described_class.call(
+        fetcher: fetcher,
+        updated_dependencies: updated_dependencies,
+        updated_files: updated_files,
+        auto_merge: true,
+        **dependabot_config.first
+      )
+
+      expect(@accept_stub).to have_been_requested
     end
   end
 
   context "merge request" do
-    let(:mr_get_return) { { status: 200, body: [{ iid: 1, sha: "5f92cc4d9939", has_conflicts: true }].to_json } }
+    let(:mr_get_return) { { status: 200, body: [mr.to_h].to_json } }
 
     it "is updated" do
-      expect(subject).to eq("mr")
+      subject
+
       expect(Dependabot::PullRequestUpdater).to have_received(:new).with(
         source: fetcher.source,
         base_commit: fetcher.commit,
-        old_commit: "5f92cc4d9939",
+        old_commit: mr.sha,
         files: updated_files,
         credentials: Credentials.fetch,
         pull_request_number: 1
       )
+      expect(pr_updater).to have_received(:update)
+    end
+
+    it "is set to merge after update" do
+      described_class.call(
+        fetcher: fetcher,
+        updated_dependencies: updated_dependencies,
+        updated_files: updated_files,
+        auto_merge: true,
+        **dependabot_config.first
+      )
+
+      expect(@accept_stub).to have_been_requested
     end
   end
 

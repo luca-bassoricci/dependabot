@@ -40,7 +40,7 @@ module Dependabot
     #
     # @return [void]
     def create_mr
-      mr = Dependabot::PullRequestCreator.new(
+      @mr = Dependabot::PullRequestCreator.new(
         source: fetcher.source,
         base_commit: fetcher.commit,
         dependencies: updated_dependencies,
@@ -50,7 +50,7 @@ module Dependabot
       ).create
 
       logger.info { "Created mr #{mr.web_url}" } if mr
-      mr
+      accept_mr if options[:auto_merge]
     rescue Octokit::TooManyRequests
       logger.error { "Github API rate limit exceeded! See: https://developer.github.com/v3/#rate-limiting" }
     end
@@ -59,9 +59,9 @@ module Dependabot
     #
     # @return [void]
     def update_mr
-      return logger.info { "Merge request #{mr.reference} doesn't require rebasing" } unless mr.has_conflicts
+      return logger.info { "Merge request #{mr.references.short} doesn't require rebasing" } unless mr.has_conflicts
 
-      logger.info { "Rebasing merge request #{mr.reference}" }
+      logger.info { "Rebasing merge request #{mr.references.short}" }
       Dependabot::PullRequestUpdater.new(
         source: fetcher.source,
         base_commit: fetcher.commit,
@@ -70,6 +70,22 @@ module Dependabot
         credentials: Credentials.fetch,
         pull_request_number: mr.iid
       ).update
+
+      accept_mr if options[:auto_merge]
+    end
+
+    # Accept merge request and set to merge automatically
+    #
+    # @return [void]
+    def accept_mr
+      logger.info { "Accepting merge request #{mr.references.short}" }
+      gitlab.accept_merge_request(
+        mr.project_id,
+        mr.iid,
+        merge_when_pipeline_succeeds: true
+      )
+    rescue Gitlab::Error::MethodNotAllowed, Gitlab::Error::NotAcceptable => e
+      logger.error { "Failed to accept merge request: #{e.message}" }
     end
 
     # Get source branch name

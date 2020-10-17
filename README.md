@@ -107,6 +107,18 @@ allow:
 Because gitlab doesn't emit webhook when repository can no longer be merged due to conflict, this option will only have any
 effect when scheduled jobs run. The rebase will not happen as soon as repository got conflicts.
 
+#### auto-merge
+
+Automatically accept merge request and set it to merge when pipeline succeeds. In order for this function to work, following criteria must be met:
+
+* pipelines for merge requests must be enabled
+* user must be able to merge
+* merge request doesn't have mandatory approvals
+
+```yml
+auto-merge: true
+```
+
 #### not implemented options
 
 * [versioning-strategy](https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates#versioning-strategy)
