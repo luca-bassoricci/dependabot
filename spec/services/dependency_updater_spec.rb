@@ -27,7 +27,13 @@ describe DependencyUpdater do
   end
 
   let(:checker_args) { { dependency_files: fetcher.files, allow: allow_conf, ignore: ignore_conf } }
-  let(:file_updater_args) { { dependency_files: fetcher.files, package_manager: package_manager } }
+  let(:file_updater_args) do
+    {
+      dependency_files: fetcher.files,
+      package_manager: package_manager,
+      semaphore: kind_of(Mutex)
+    }
+  end
   let(:mr_service_args) do
     {
       fetcher: fetcher,
