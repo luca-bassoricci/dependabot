@@ -1,20 +1,20 @@
 version: "3.8"
 
-x-environment: &environment_variables
-  environment:
-    REDIS_URL: redis://redis:6379
-    RAILS_ENV: development
-    SETTINGS__GITHUB_ACCESS_TOKEN:
-    SETTINGS__GITLAB_ACCESS_TOKEN:
-
 services:
   dependabot:
     build: .
     depends_on:
       - redis
-    <<: *environment_variables
+    environment:
+      REDIS_URL: redis://redis:6379
+      RAILS_ENV: development
+      SETTINGS__GITHUB_ACCESS_TOKEN:
+      SETTINGS__GITLAB_URL: http://gitlab:4567
+      SETTINGS__GITLAB_ACCESS_TOKEN: e2e-test
     ports:
       - 3000:3000
     entrypoint: ["supervisord"]
     command: ["-c", "config/supervisor/supervisord.conf"]
-    
+  
+  gitlab:
+    build: spec/gitlab_mock
