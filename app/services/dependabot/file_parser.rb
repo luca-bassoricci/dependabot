@@ -5,11 +5,10 @@ module Dependabot
     # @param [Array<Dependabot::DependencyFile>] dependency_files
     # @param [Dependabot::Source] source
     # @param [String] package_manager
-    def initialize(dependency_files:, source:, package_manager:, semaphore: Mutex.new)
+    def initialize(dependency_files:, source:, package_manager:)
       @dependency_files = dependency_files
       @source = source
       @package_manager = package_manager
-      @semaphore = semaphore
     end
 
     # Get parsed dependencies from files
