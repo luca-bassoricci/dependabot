@@ -15,13 +15,11 @@ module Dependabot
     #
     # @return [Array<Dependabot::Dependency>]
     def call
-      mutex.synchronize do
-        Dependabot::FileParsers.for_package_manager(package_manager).new(
-          dependency_files: dependency_files,
-          source: source,
-          credentials: Credentials.fetch
-        ).parse
-      end
+      Dependabot::FileParsers.for_package_manager(package_manager).new(
+        dependency_files: dependency_files,
+        source: source,
+        credentials: Credentials.fetch
+      ).parse
     end
 
     private

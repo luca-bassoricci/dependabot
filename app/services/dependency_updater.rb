@@ -10,13 +10,15 @@ class DependencyUpdater < ApplicationService
   #
   # @return [void]
   def call
-    update_security_vulnerabilities
-    update_dependencies
+    Semaphore.synchronize do
+      update_security_vulnerabilities
+      update_dependencies
+    end
   end
 
   private
 
-  attr_reader :repo, :package_ecosystem, :directory, :semaphore
+  attr_reader :repo, :package_ecosystem, :directory
 
   # Dependabot config
   #

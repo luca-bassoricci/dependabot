@@ -15,13 +15,11 @@ module Dependabot
     #
     # @return [Array<Dependabot::DependencyFile>]
     def call
-      mutex.synchronize do
-        Dependabot::FileUpdaters.for_package_manager(package_manager).new(
-          dependencies: dependencies,
-          dependency_files: dependency_files,
-          credentials: Credentials.fetch
-        ).updated_dependency_files
-      end
+      Dependabot::FileUpdaters.for_package_manager(package_manager).new(
+        dependencies: dependencies,
+        dependency_files: dependency_files,
+        credentials: Credentials.fetch
+      ).updated_dependency_files
     end
 
     private
