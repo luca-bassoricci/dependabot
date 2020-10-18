@@ -19,5 +19,12 @@ module ApplicationHelper
     Rails.logger.error { "#{error.message}\n#{error.backtrace&.join('\n')}" }
   end
 
+  # Global mutex to synchronise non thread safe operations
+  #
+  # @return [Mutex]
+  def mutex
+    @mutex ||= Mutex.new
+  end
+
   module_function :gitlab, :log_error
 end

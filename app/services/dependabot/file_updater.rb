@@ -16,7 +16,7 @@ module Dependabot
     #
     # @return [Array<Dependabot::DependencyFile>]
     def call
-      semaphore.synchronize do
+      mutex.synchronize do
         Dependabot::FileUpdaters.for_package_manager(package_manager).new(
           dependencies: dependencies,
           dependency_files: dependency_files,
