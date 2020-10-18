@@ -5,11 +5,10 @@ module Dependabot
     # @param [Array<Dependabot::Dependency>] dependencies
     # @param [Array<Dependabot::DependencyFile>] dependency_files
     # @param [String] package_manager
-    def initialize(dependencies:, dependency_files:, package_manager:, semaphore: Mutex.new)
+    def initialize(dependencies:, dependency_files:, package_manager:)
       @dependencies = dependencies
       @dependency_files = dependency_files
       @package_manager = package_manager
-      @semaphore = semaphore
     end
 
     # Get update checker
