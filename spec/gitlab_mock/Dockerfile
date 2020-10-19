@@ -1,4 +1,4 @@
-FROM andrcuns/ruby:2.6.6-buster-10.5
+FROM andrcuns/ruby:2.6.6-buster-10.6
 
 LABEL maintainer="andrejs.cunskis@gmail.com"
 
