@@ -19,5 +19,12 @@ module ApplicationHelper
     Rails.logger.error { "#{error.message}\n#{error.backtrace&.join('\n')}" }
   end
 
+  # All project cron jobs
+  #
+  # @return [Array<Sidekiq::Cron::Job>]
+  def all_project_jobs(project)
+    Sidekiq::Cron::Job.all.select { |job| job.name.match?(/^#{project}:.*/) }
+  end
+
   module_function :gitlab, :log_error
 end

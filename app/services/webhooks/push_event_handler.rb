@@ -13,20 +13,20 @@ module Webhooks
     # @return [Array<Sidekiq::Cron::Job>] <description>
     def call
       return unless modified_config? || deleted_config?
-      return delete_schedules if deleted_config?
+      return delete_all_jobs if deleted_config?
 
-      ::Scheduler::DependencyUpdateScheduler.call(repo)
+      ::Scheduler::DependencyUpdateScheduler.call(project)
     end
 
     private
 
     attr_reader :params
 
-    # Repository name
+    # Project name
     #
     # @return [String]
-    def repo
-      @repo ||= params.dig(:project, :path_with_namespace)
+    def project
+      @project ||= params.dig(:project, :path_with_namespace)
     end
 
     # Has dependabot config been modified
@@ -52,8 +52,8 @@ module Webhooks
     # Delete dependency update jobs
     #
     # @return [void]
-    def delete_schedules
-      Sidekiq::Cron::Job.all.each { |job| job.destroy if job.name.include?(repo) }
+    def delete_all_jobs
+      all_project_jobs(project).each(&:destroy)
     end
   end
 end

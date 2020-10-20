@@ -3,7 +3,8 @@
 describe Scheduler::DependencyUpdateScheduler do
   include_context "dependabot"
 
-  let(:job) { double("job") }
+  let(:job) { double("job", name: "#{repo}:bundler:#{directory}", save: true, enque!: true) }
+  let(:removed_job) { double("removed_job", name: "#{repo}:docker:/", destroy: true) }
   let(:repo) { "dependabot-gitlab" }
   let(:package_manager) { "bundler" }
   let(:directory) { "/" }
@@ -25,18 +26,34 @@ describe Scheduler::DependencyUpdateScheduler do
     allow(Rails.logger).to receive(:error)
   end
 
-  it "saves and runs job" do
-    allow(job).to receive(:valid?).and_return(true)
-    allow(job).to receive(:save).and_return(true)
-    allow(job).to receive(:enque!).and_return(true)
+  context "unchanged config" do
+    before do
+      allow(Sidekiq::Cron::Job).to receive(:all) { [job] }
+    end
 
-    expect(subject.call(repo)).to eq([job])
+    it "saves and runs job" do
+      allow(job).to receive(:valid?).and_return(true)
+
+      expect(subject.call(repo)).to eq([job])
+    end
+
+    it "logs error of invalid job" do
+      allow(job).to receive(:valid?).and_return(false)
+
+      expect(subject.call(repo)).to eq([job])
+      expect(Rails.logger).to have_received(:error)
+    end
   end
 
-  it "logs error of invalid job" do
-    allow(job).to receive(:valid?).and_return(false)
+  context "changed config" do
+    before do
+      allow(Sidekiq::Cron::Job).to receive(:all) { [job, removed_job] }
+      allow(job).to receive(:valid?).and_return(true)
+    end
 
-    expect(subject.call(repo)).to eq([job])
-    expect(Rails.logger).to have_received(:error)
+    it "removes package ecosystem not present in config" do
+      expect(subject.call(repo)).to eq([job])
+      expect(removed_job).to have_received(:destroy)
+    end
   end
 end
