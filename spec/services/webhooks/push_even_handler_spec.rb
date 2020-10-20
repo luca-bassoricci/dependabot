@@ -25,7 +25,7 @@ describe Webhooks::PushEventHandler do
   it "removes job on configuration delete" do
     allow(Sidekiq::Cron::Job).to receive(:all).and_return([job])
 
-    expect(job).to receive(:name).and_return("#{project}-bundler")
+    expect(job).to receive(:name).and_return("#{project}:bundler:/")
     expect(job).to receive(:destroy)
 
     Webhooks::PushEventHandler.call(push_params(removed: [Settings.config_filename]))
