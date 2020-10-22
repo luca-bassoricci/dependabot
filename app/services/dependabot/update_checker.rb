@@ -78,8 +78,11 @@ module Dependabot
     #
     # @return [Array<Dependabot::Dependency>]
     def updated_dependencies
+      updated_version = "#{name} => #{checker.latest_version}"
+      logger.info { "found version for update: #{updated_version}" }
+
       {
-        name: "#{name} => #{checker.latest_version}",
+        name: updated_version,
         dependencies: checker.updated_dependencies(requirements_to_unlock: requirements_to_unlock),
         vulnerable: checker.vulnerable?,
         security_advisories: checker.security_advisories

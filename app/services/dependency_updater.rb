@@ -10,10 +10,8 @@ class DependencyUpdater < ApplicationService
   #
   # @return [void]
   def call
-    Semaphore.synchronize do
-      update_security_vulnerabilities
-      update_dependencies
-    end
+    update_security_vulnerabilities
+    update_dependencies
   end
 
   private
@@ -95,34 +93,40 @@ class DependencyUpdater < ApplicationService
   #
   # @return [Array<Dependabot::Dependency>]
   def dependencies
-    @dependencies ||= Dependabot::FileParser.call(
-      source: fetcher.source,
-      dependency_files: fetcher.files,
-      package_manager: package_manager
-    )
+    @dependencies ||= Semaphore.synchronize do
+      Dependabot::FileParser.call(
+        source: fetcher.source,
+        dependency_files: fetcher.files,
+        package_manager: package_manager
+      )
+    end
   end
 
   # Array of updated dependencies
   #
   # @return [Array<Dependabot::Dependency>]
   def updated_dependencies(dependency)
-    Dependabot::UpdateChecker.call(
-      dependency: dependency,
-      dependency_files: fetcher.files,
-      allow: config[:allow],
-      ignore: config[:ignore]
-    )
+    Semaphore.synchronize do
+      Dependabot::UpdateChecker.call(
+        dependency: dependency,
+        dependency_files: fetcher.files,
+        allow: config[:allow],
+        ignore: config[:ignore]
+      )
+    end
   end
 
   # Array of updated files
   #
   # @return [Array<Dependabot::DependencyFile>]
   def updated_files(updated_dependencies)
-    Dependabot::FileUpdater.call(
-      dependencies: updated_dependencies,
-      dependency_files: fetcher.files,
-      package_manager: package_manager
-    )
+    Semaphore.synchronize do
+      Dependabot::FileUpdater.call(
+        dependencies: updated_dependencies,
+        dependency_files: fetcher.files,
+        package_manager: package_manager
+      )
+    end
   end
 
   # Create or update merge request
@@ -130,8 +134,8 @@ class DependencyUpdater < ApplicationService
   # @param [Hash] dep
   # @return [Gitlab::ObjectifiedHash]
   def create_mr(dep)
-    logger.info { "Updating #{dep[:name]}" }
     Dependabot::MergeRequestService.call(
+      name: dep[:name],
       fetcher: fetcher,
       updated_dependencies: dep[:dependencies],
       updated_files: updated_files(dep[:dependencies]),
