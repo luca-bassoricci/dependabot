@@ -16,7 +16,8 @@ module Dependabot
     # @param [Array<Dependabot::Dependency>] updated_dependencies
     # @param [Array<Dependabot::DependencyFile>] updated_files
     # @param [Hash] opts
-    def initialize(fetcher:, updated_dependencies:, updated_files:, **opts)
+    def initialize(name:, fetcher:, updated_dependencies:, updated_files:, **opts)
+      @name = name
       @fetcher = fetcher
       @updated_dependencies = updated_dependencies
       @updated_files = updated_files
@@ -27,6 +28,7 @@ module Dependabot
     #
     # @return [void]
     def call
+      logger.info { "Updating #{name}" }
       return update_mr if rebase? && mr
 
       create_mr
@@ -34,7 +36,7 @@ module Dependabot
 
     private
 
-    attr_reader :fetcher, :updated_dependencies, :updated_files, :options
+    attr_reader :name, :fetcher, :updated_dependencies, :updated_files, :options
 
     # Create mr
     #
@@ -49,19 +51,19 @@ module Dependabot
         **mr_opts
       ).create
 
-      logger.info { "Created mr #{mr.web_url}" } if mr
+      logger.info { "created mr #{mr.web_url}" } if mr
       accept_mr if options[:auto_merge]
     rescue Octokit::TooManyRequests
-      logger.error { "Github API rate limit exceeded! See: https://developer.github.com/v3/#rate-limiting" }
+      logger.error { "github API rate limit exceeded! See: https://developer.github.com/v3/#rate-limiting" }
     end
 
     # Rebase existing mr if it has conflicts
     #
     # @return [void]
     def update_mr
-      return logger.info { "Merge request #{mr.references.short} doesn't require rebasing" } unless mr.has_conflicts
+      return logger.info { "merge request #{mr.references.short} doesn't require rebasing" } unless mr.has_conflicts
 
-      logger.info { "Rebasing merge request #{mr.references.short}" }
+      logger.info { "rebasing merge request #{mr.references.short}" }
       Dependabot::PullRequestUpdater.new(
         source: fetcher.source,
         base_commit: fetcher.commit,
@@ -78,14 +80,14 @@ module Dependabot
     #
     # @return [void]
     def accept_mr
-      logger.info { "Accepting merge request #{mr.references.short}" }
+      logger.info { "accepting merge request #{mr.references.short}" }
       gitlab.accept_merge_request(
         mr.project_id,
         mr.iid,
         merge_when_pipeline_succeeds: true
       )
     rescue Gitlab::Error::MethodNotAllowed, Gitlab::Error::NotAcceptable => e
-      logger.error { "Failed to accept merge request: #{e.message}" }
+      logger.error { "failed to accept merge request: #{e.message}" }
     end
 
     # Get source branch name

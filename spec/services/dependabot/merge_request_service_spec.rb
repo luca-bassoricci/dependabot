@@ -4,6 +4,7 @@ describe Dependabot::MergeRequestService do
   include_context "webmock"
   include_context "dependabot"
 
+  let(:updated_dep_name) { "test 0.0.1 => 0.0.2" }
   let(:mr) { OpenStruct.new(web_url: "mr-url", project_id: 1, iid: 1, sha: "5f92cc4d9939", has_conflicts: true) }
   let(:pr_creator) { double("PullRequestCreator", create: mr) }
   let(:pr_updater) { double("PullRequestUpdater", update: mr) }
@@ -25,6 +26,7 @@ describe Dependabot::MergeRequestService do
 
   subject do
     described_class.call(
+      name: updated_dep_name,
       fetcher: fetcher,
       updated_dependencies: updated_dependencies,
       updated_files: updated_files,
@@ -67,6 +69,7 @@ describe Dependabot::MergeRequestService do
 
     it "is set to merge after creation" do
       described_class.call(
+        name: updated_dep_name,
         fetcher: fetcher,
         updated_dependencies: updated_dependencies,
         updated_files: updated_files,
@@ -97,6 +100,7 @@ describe Dependabot::MergeRequestService do
 
     it "is set to merge after update" do
       described_class.call(
+        name: updated_dep_name,
         fetcher: fetcher,
         updated_dependencies: updated_dependencies,
         updated_files: updated_files,

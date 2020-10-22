@@ -59,10 +59,12 @@ describe DependencyUpdater do
     subject.call({ "repo" => repo, "package_ecosystem" => package_manager, "directory" => "/" })
 
     expect(Dependabot::MergeRequestService).to have_received(:call).with(
+      name: updated_config[:name],
       updated_dependencies: updated_config[:dependencies],
       **mr_service_args
     )
     expect(Dependabot::MergeRequestService).to have_received(:call).with(
+      name: updated_rspec[:name],
       updated_dependencies: updated_rspec[:dependencies],
       **mr_service_args
     )
