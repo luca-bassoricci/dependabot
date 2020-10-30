@@ -24,7 +24,8 @@ ENV BUNDLE_PATH=vendor/bundle \
     BUNDLE_WITHOUT="development:test"
 
 RUN useradd --uid 1000 --create-home -s /bin/bash dependabot; \
-    chown -R dependabot:dependabot /opt
+    chown -R dependabot:dependabot /opt; \
+    chown -R dependabot:dependabot /usr/local/.pyenv
 RUN gem install bundler -v ${BUNDLER_VERSION} --no-document
 
 WORKDIR /home/dependabot
