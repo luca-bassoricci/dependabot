@@ -42,8 +42,8 @@ variables:
 # Pre Stage
 # ======================================================================================================================
 cache_dependencies:
-  extends: .ruby_runner
   stage: .pre
+  extends: .ruby_runner
   script:
     - ./script/download-codacy.sh
   cache:
@@ -104,29 +104,29 @@ build_mock_image_fork:
 # Static analysis stage
 # ======================================================================================================================
 rubocop:
-  extends: .ruby_runner
   stage: static analysis
+  extends: .ruby_runner
   script:
     - bundle exec rubocop --parallel --color
   rules: *all
 
 reek:
-  extends: .ruby_runner
   stage: static analysis
+  extends: .ruby_runner
   script:
     - bundle exec reek --color --progress --force-exclusion --sort-by smelliness .
   rules: *all
 
 brakeman:
-  extends: .ruby_runner
   stage: static analysis
+  extends: .ruby_runner
   script:
     - bundle exec brakeman --color
   rules: *all
 
 bundle_audit:
-  extends: .ruby_runner
   stage: static analysis
+  extends: .ruby_runner
   script:
     - bundle exec bundle-audit check --update
   rules: *all
@@ -135,8 +135,8 @@ bundle_audit:
 # Test Stage
 # ======================================================================================================================
 unit_tests:
-  extends: .ruby_runner
   stage: test
+  extends: .ruby_runner
   variables:
     COVERAGE: "true"
     NO_COLOR: "1"
@@ -173,8 +173,10 @@ e2e_test:
 # Release Stage
 # ======================================================================================================================
 release:
-  extends: .docker_runner
   stage: release
+  extends: .release_runner
+  tags:
+    - internal
   variables:
     RELEASE_IMAGE: docker.io/andrcuns/dependabot-gitlab
   script:
