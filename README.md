@@ -23,6 +23,19 @@ It is possible to use app in "standalone" mode without the need to deploy. Proje
 
 ## Running Deployed
 
+### Kubernetes
+
+Preferred way of deployment is via [helm](https://helm.sh/) package manager
+
+```bash
+helm repo add dependabot https://dependabot-gitlab.gitlab.io/chart
+helm install dependabot dependabot/dependabot-gitlab --set credentials.gitlab_access_token=$gitlab_access_token
+```
+
+For all configuration options, refer to [chart repository](https://gitlab.com/dependabot-gitlab/chart)
+
+### Docker Compose
+
 Simple example deployment can be seen in [docker-compose-prod.yml](docker-compose-prod.yml). Deployment consists of 3 containers - web server, sidekiq
 worker and redis. Simple production like deployment using `docker-compose` can be done with following command:
 
