@@ -28,11 +28,11 @@ It is possible to use app in "standalone" mode without the need to deploy. Proje
 Preferred way of deployment is via [helm](https://helm.sh/) package manager
 
 ```bash
-helm repo add dependabot https://dependabot-gitlab.gitlab.io/chart
-helm install dependabot dependabot/dependabot-gitlab --set credentials.gitlab_access_token=$gitlab_access_token
+helm repo add andrcuns https://andrcuns.github.io/charts
+helm install dependabot andrcuns/dependabot-gitlab --set credentials.gitlab_access_token=$gitlab_access_token
 ```
 
-For all configuration options, refer to [chart repository](https://gitlab.com/dependabot-gitlab/chart)
+For all configuration options, refer to [chart repository](https://github.com/andrcuns/charts/blob/master/charts/dependabot-gitlab/README.md)
 
 ### Docker Compose
 
