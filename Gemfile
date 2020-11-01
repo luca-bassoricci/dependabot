@@ -7,6 +7,7 @@ ruby "~> 2.6"
 gem "config", "~> 2.2"
 gem "dependabot-omnibus", "~> 0.124.5"
 gem "dry-validation", "~> 1.5"
+gem "mongoid", "~> 7.1"
 gem "puma", "~> 5.0"
 gem "rails", "~> 6.0.3"
 gem "semantic_range", "~> 2.3"
@@ -42,5 +43,4 @@ group :development do
   gem "lefthook", "~> 0.7.2", require: false
   gem "solargraph", "~> 0.39.17", require: false
   gem "spring", "~> 2.1.1"
-  gem "yard", "~> 0.9.25"
 end

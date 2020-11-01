@@ -22,6 +22,9 @@ module DependabotGitlab
     logger = Logger.new(STDOUT)
     logger.formatter = ::SimpleLogFormatter.new
     logger.datetime_format = DATETIME_FORMAT
-    config.logger = ActiveSupport::TaggedLogging.new(logger)
+
+    tagged_logger = ActiveSupport::TaggedLogging.new(logger)
+    config.logger = tagged_logger
+    config.mongoid.logger = tagged_logger
   end
 end
