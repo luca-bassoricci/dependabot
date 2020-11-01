@@ -11,3 +11,5 @@ end
 Sidekiq.configure_client do |config|
   config.redis = { password: ENV["REDIS_PASSWORD"] } if ENV["REDIS_PASSWORD"]
 end
+
+Redis.exists_returns_integer = true
