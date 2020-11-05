@@ -1,6 +1,6 @@
 ARG BUNDLER_VERSION=2.0.2
 
-FROM dependabot/dependabot-core:0.124.8 AS dependabot
+FROM dependabot/dependabot-core:0.125.1 AS dependabot
 
 FROM dependabot AS development
 
