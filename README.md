@@ -159,7 +159,7 @@ Index page of application, like `http://localhost:3000/` will display a table wi
 ## Development
 
 * Install dependencies with `bundle install`
-* Setup precommit hooks with `bundle exec lefthook install -f`
+* Setup [pre-commit](https://pre-commit.com/) hooks with `pre-commit install`
 * Make change and make sure tests pass with `bundle exec rspec`
 * Submit merge request
 
