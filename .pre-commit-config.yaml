@@ -1,0 +1,18 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.2.0
+    hooks:
+      - id: trailing-whitespace
+  - repo: local
+    hooks:
+      - id: rubocop
+        name: Rubocop
+        entry: bundle exec rubocop
+        language: system
+        types: [ruby]
+        exclude: \.lock
+      - id: reek
+        name: Reek
+        entry: bundle exec reek --force-exclusion --single-line --sort-by smelliness
+        language: system
+        types: [ruby]
