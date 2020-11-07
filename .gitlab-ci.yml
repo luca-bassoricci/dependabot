@@ -54,7 +54,7 @@ build_app_image:
   stage: .pre
   extends: .build_image
   tags:
-    - internal
+    - private
   variables:
     COMMAND: buildctl
     FILE_PATH: .
@@ -79,7 +79,7 @@ build_mock_image:
   stage: .pre
   extends: .build_image
   tags:
-    - internal
+    - private
   variables:
     COMMAND: buildctl
     FILE_PATH: spec/gitlab_mock
