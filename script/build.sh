@@ -5,8 +5,9 @@
 cmd=$1
 path=$2
 image=$3
+addr=$([ "$cmd" == "buildctl" ] && echo "--addr tcp://buildkit-service.gitlab.svc.cluster.local:1234" || echo "")
 
-$cmd $([ "$cmd" == "buildctl" ] && echo "--addr tcp://buildkit-service.gitlab.svc.cluster.local:1234" || echo "") build \
+$cmd $addr build \
   --frontend=dockerfile.v0 \
   --local context="$path" \
   --local dockerfile="$path" \
