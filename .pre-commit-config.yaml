@@ -7,12 +7,19 @@ repos:
     hooks:
       - id: rubocop
         name: Rubocop
-        entry: bundle exec rubocop
         language: system
+        entry: bundle exec rubocop
         types: [ruby]
         exclude: \.lock
       - id: reek
         name: Reek
-        entry: bundle exec reek --force-exclusion --single-line --sort-by smelliness
         language: system
+        entry: bundle exec reek
+        args: [--force-exclusion, --single-line, --sort-by=smelliness]
         types: [ruby]
+      - id: undercover
+        name: Undercover
+        language: script
+        entry: hooks/undercover.sh
+        types: [ruby]
+        files: ^app/
