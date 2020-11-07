@@ -13,7 +13,7 @@
       EOF
 
 .ruby_runner:
-  image: andrcuns/ruby:2.6.6-buster-10.5
+  image: andrcuns/ruby:2.6.6-buster-10.6
   variables:
     BUNDLE_PATH: vendor/bundle
     BUNDLE_FROZEN: "true"
