@@ -17,7 +17,7 @@
   stage: .pre
   extends: .buildkit_runner
   script:
-    - script/build.sh $COMMAND $FILE_PATH $DOCKER_IMAGE
+    - script/build.sh $FILE_PATH $DOCKER_IMAGE
 
 # ======================================================================================================================
 # Global
@@ -56,7 +56,6 @@ build_app_image:
   tags:
     - private
   variables:
-    COMMAND: buildctl
     FILE_PATH: .
     DOCKER_IMAGE: $CI_REGISTRY_IMAGE
   rules:
@@ -69,7 +68,7 @@ build_app_image_fork:
   tags:
     - docker
   variables:
-    COMMAND: buildctl-daemonless.sh
+    FORK: "true"
     FILE_PATH: .
     DOCKER_IMAGE: $CI_REGISTRY_IMAGE
   rules:
@@ -81,7 +80,6 @@ build_mock_image:
   tags:
     - private
   variables:
-    COMMAND: buildctl
     FILE_PATH: spec/gitlab_mock
     DOCKER_IMAGE: $CI_REGISTRY_IMAGE/gitlab-mock
   rules:
@@ -94,7 +92,7 @@ build_mock_image_fork:
   tags:
     - docker
   variables:
-    COMMAND: buildctl-daemonless.sh
+    FORK: "true"
     FILE_PATH: spec/gitlab_mock
     DOCKER_IMAGE: $CI_REGISTRY_IMAGE/gitlab-mock
   rules:
