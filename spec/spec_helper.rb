@@ -3,6 +3,7 @@
 require "simplecov"
 require "simplecov-console"
 require "simplecov-cobertura"
+require "simplecov-lcov"
 
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
@@ -27,7 +28,10 @@ formatters = [SimpleCov::Formatter::Console]
 formatters << SimpleCov::Formatter::HTMLFormatter if ENV["COV_HTML_REPORT"]
 if ENV["CI"]
   SimpleCov::Formatter::Console.output_style = "block"
+  SimpleCov::Formatter::LcovFormatter.config.report_with_single_file = true
+
   formatters << SimpleCov::Formatter::CoberturaFormatter
+  formatters << SimpleCov::Formatter::LcovFormatter
 end
 
 SimpleCov.start("rails") do

@@ -149,6 +149,8 @@ unit_tests:
     reports:
       cobertura: coverage/coverage.xml
       junit: tmp/rspec.xml
+    paths:
+      - coverage/lcov/dependabot.lcov
   rules: *all
 
 e2e_test:

@@ -36,10 +36,12 @@ group :test do
   gem "simplecov", "~> 0.19.1"
   gem "simplecov-cobertura", "~> 1.4.1"
   gem "simplecov-console", "~> 0.7.2"
+  gem "simplecov-lcov", "~> 0.8.0"
   gem "webmock", "~> 3.9"
 end
 
 group :development do
   gem "solargraph", "~> 0.39.17", require: false
-  gem "spring", "~> 2.1.1"
+  gem "spring", "~> 2.1.1", require: false
+  gem "undercover", "~> 0.3.4", require: false
 end
