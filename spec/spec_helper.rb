@@ -26,15 +26,18 @@ return unless ENV["COVERAGE"]
 
 formatters = [SimpleCov::Formatter::Console]
 formatters << SimpleCov::Formatter::HTMLFormatter if ENV["COV_HTML_REPORT"]
+
 if ENV["CI"]
   SimpleCov::Formatter::Console.output_style = "block"
-  SimpleCov::Formatter::LcovFormatter.config.report_with_single_file = true
+  SimpleCov::Formatter::LcovFormatter.config do |conf|
+    conf.report_with_single_file = true
+    conf.output_directory = "coverage"
+  end
 
   formatters << SimpleCov::Formatter::CoberturaFormatter
   formatters << SimpleCov::Formatter::LcovFormatter
 end
 
 SimpleCov.start("rails") do
-  enable_coverage :branch
   formatter SimpleCov::Formatter::MultiFormatter.new(formatters)
 end
