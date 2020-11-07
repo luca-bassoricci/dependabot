@@ -132,7 +132,7 @@ bundle_audit:
 # ======================================================================================================================
 # Test Stage
 # ======================================================================================================================
-unit_tests:
+tests:
   stage: test
   extends: .ruby_runner
   variables:
@@ -148,10 +148,10 @@ unit_tests:
       cobertura: coverage/coverage.xml
       junit: tmp/rspec.xml
     paths:
-      - coverage/lcov/dependabot.lcov
+      - coverage/dependabot.lcov
   rules: *all
 
-e2e_test:
+e2e_tests:
   image:
     name: $APP_DOCKER_IMAGE:$CURRENT_TAG
     entrypoint: [""]
