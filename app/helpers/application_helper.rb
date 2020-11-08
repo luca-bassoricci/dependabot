@@ -26,5 +26,12 @@ module ApplicationHelper
     Sidekiq::Cron::Job.all.select { |job| job.name.match?(/^#{project}:.*/) }
   end
 
+  # Check if standalone flag is present
+  #
+  # @return [Boolean]
+  def standalone?
+    Settings.standalone
+  end
+
   module_function :gitlab, :log_error
 end

@@ -13,7 +13,7 @@ module Webhooks
     # @return [Array<Sidekiq::Cron::Job>] <description>
     def call
       return unless modified_config? || deleted_config?
-      return delete_all_jobs if deleted_config?
+      return clean if deleted_config?
 
       ::Scheduler::DependencyUpdateScheduler.call(project)
     end
@@ -49,10 +49,29 @@ module Webhooks
       end
     end
 
+    # Clean up after removing config
+    #
+    # @return [void]
+    def clean
+      remove_project
+      delete_all_jobs
+    end
+
+    # Delete project
+    #
+    # @return [void]
+    def remove_project
+      logger.info { "Removing project: #{project}" }
+      Project.find_by(name: project).destroy
+    rescue Mongoid::Errors::DocumentNotFound
+      logger.error { "Project #{project} doesn't exist!" }
+    end
+
     # Delete dependency update jobs
     #
     # @return [void]
     def delete_all_jobs
+      logger.info { "Removing all dependency update jobs for project: #{project}" }
       all_project_jobs(project).each(&:destroy)
     end
   end
