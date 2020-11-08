@@ -184,7 +184,7 @@ release:
   stage: release
   extends: .release_runner
   tags:
-    - internal
+    - private
   variables:
     RELEASE_IMAGE: docker.io/andrcuns/dependabot-gitlab
   script:

@@ -1,17 +1,3 @@
-.docker_base:
-  before_script:
-    - mkdir -p /root/.docker
-    - |
-      cat <<- EOF > /root/.docker/config.json
-      {
-        "auths": {
-          "$REGISTRY": {
-            "auth": "$(echo -n $DOCKER_USER:$DOCKER_PASSWORD | base64)"
-          }
-        }
-      }
-      EOF
-
 .ruby_runner:
   image: andrcuns/ruby:2.6.6-buster-10.6
   variables:
@@ -31,7 +17,6 @@
     policy: pull
 
 .release_runner:
-  extends: .docker_base
   image: docker:19.03.12
   services:
     - docker:19.03.12-dind
@@ -40,16 +25,22 @@
     DOCKER_HOST: tcp://localhost:2375
     DOCKER_TLS_CERTDIR: ""
     DOCKER_BUILDKIT: 1
-    REGISTRY: docker.io
-    DOCKER_USER: $DOCKERHUB_USERNAME
-    DOCKER_PASSWORD: $DOCKERHUB_PASSWORD
+  before_script:
+    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
 
 .buildkit_runner:
-  extends: .docker_base
   image:
     name: moby/buildkit:v0.7.2
     entrypoint: [""]
-  variables:
-    REGISTRY: registry.gitlab.com
-    DOCKER_USER: $CI_REGISTRY_USER
-    DOCKER_PASSWORD: $CI_REGISTRY_PASSWORD
+  before_script:
+    - mkdir -p /root/.docker
+    - |
+      cat <<- EOF > /root/.docker/config.json
+      {
+        "auths": {
+          "registry.gitlab.com": {
+            "auth": "$(echo -n $CI_REGISTRY_USER:$CI_REGISTRY_PASSWORD | base64)"
+          }
+        }
+      }
+      EOF
