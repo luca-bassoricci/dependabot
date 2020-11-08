@@ -3,57 +3,83 @@
 describe Scheduler::DependencyUpdateScheduler do
   include_context "dependabot"
 
-  let(:job) { double("job", name: "#{repo}:bundler:#{directory}", save: true, enque!: true) }
-  let(:removed_job) { double("removed_job", name: "#{repo}:docker:/", destroy: true) }
-  let(:repo) { "dependabot-gitlab" }
-  let(:package_manager) { "bundler" }
-  let(:directory) { "/" }
+  let(:config) do
+    [
+      *dependabot_config,
+      {
+        package_manager: "docker",
+        package_ecosystem: "docker",
+        directory: "/",
+        cron: "00 02 * * sun Europe/Riga"
+      }
+    ]
+  end
+  let(:jobs) do
+    config.map do |conf|
+      package_ecosystem = conf[:package_ecosystem]
+      directory = conf[:directory]
+
+      Sidekiq::Cron::Job.new(
+        name: "#{repo}:#{package_ecosystem}:#{directory}",
+        cron: conf[:cron],
+        class: "DependencyUpdateJob",
+        args: { "repo" => repo, "package_ecosystem" => package_ecosystem, "directory" => directory },
+        active_job: true,
+        description: "Update #{package_ecosystem} dependencies for #{repo} in #{directory}"
+      )
+    end
+  end
 
   subject { described_class }
 
   before do
     allow(Gitlab::ConfigFetcher).to receive(:call).with(repo).and_return(raw_config)
-    allow(Sidekiq::Cron::Job).to receive(:new)
-      .with(
-        name: "#{repo}:bundler:#{directory}",
-        cron: "00 02 * * sun Europe/Riga",
-        class: "DependencyUpdateJob",
-        args: { "repo" => repo, "package_ecosystem" => package_manager, "directory" => directory },
-        active_job: true,
-        description: "Update bundler dependencies for #{repo} in #{directory}"
-      )
-      .and_return(job)
+    allow(Configuration::Parser).to receive(:call).with(raw_config).and_return(config)
     allow(Rails.logger).to receive(:error)
   end
 
-  context "unchanged config" do
-    before do
-      allow(Sidekiq::Cron::Job).to receive(:all) { [job] }
-    end
+  context "valid configuration" do
+    it "persists projects and enques jobs" do
+      subject.call(repo)
 
-    it "saves and runs job" do
-      allow(job).to receive(:valid?).and_return(true)
-
-      expect(subject.call(repo)).to eq([job])
-    end
-
-    it "logs error of invalid job" do
-      allow(job).to receive(:valid?).and_return(false)
-
-      expect(subject.call(repo)).to eq([job])
-      expect(Rails.logger).to have_received(:error)
+      aggregate_failures do
+        expect(Project.where(name: repo).count).to eq(1)
+        expect(Sidekiq::Cron::Job.all.count { |job| job.name.include?(repo) }).to eq(2)
+      end
     end
   end
 
-  context "changed config" do
+  context "changed configuration" do
+    let(:modified_config) { config.dup.tap(&:pop) }
+
     before do
-      allow(Sidekiq::Cron::Job).to receive(:all) { [job, removed_job] }
-      allow(job).to receive(:valid?).and_return(true)
+      allow(Configuration::Parser).to receive(:call) { modified_config }
+
+      jobs.each(&:save)
+      Project.create!(name: repo, config: config)
     end
 
-    it "removes package ecosystem not present in config" do
-      expect(subject.call(repo)).to eq([job])
-      expect(removed_job).to have_received(:destroy)
+    it "updates project and removes job" do
+      subject.call(repo)
+
+      aggregate_failures do
+        expect(Sidekiq::Cron::Job.all.count { |job| job.name.include?(repo) }).to eq(1)
+        expect(Project.where(name: repo).first.config.size).to eq(1)
+      end
+    end
+  end
+
+  context "logs job error" do
+    let(:invalid_config) { config.dup.tap { |conf| conf[1].delete(:cron) } }
+
+    before do
+      allow(Configuration::Parser).to receive(:call) { invalid_config }
+    end
+
+    it "on invalid config" do
+      subject.call(repo)
+
+      expect(Rails.logger).to have_received(:error).once
     end
   end
 end

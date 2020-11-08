@@ -28,6 +28,7 @@ end
 
 group :test do
   gem "brakeman", "~> 4.10"
+  gem "faker", "~> 2.14"
   gem "rack-test", "~> 1.1"
   gem "rspec", "~> 3.10"
   gem "rspec_junit_formatter", "~> 0.4.1"

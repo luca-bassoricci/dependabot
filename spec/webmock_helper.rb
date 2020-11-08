@@ -5,7 +5,7 @@ require "webmock/rspec"
 # Stub responses from gitlab which is called by internal dependabot-core classes which
 # are hard to track for purely functional mocking
 RSpec.shared_context("webmock") do
-  let(:repo_url) { "#{Settings.gitlab_url}/api/v4/projects/test-repo" }
+  let(:repo_url) { "#{Settings.gitlab_url}/api/v4/projects/#{repo}" }
 
   def stub_gitlab
     stub_request(:get, %r{#{repo_url}/repository/tree})

@@ -7,10 +7,11 @@ module Scheduler
       @project = project
     end
 
-    # Create cron job and run it
+    # Sync state and create/update jobs
     #
     # @return [Array<Sidekiq::Cron::Job>]
     def call
+      update_project
       sync_jobs
       enque_all_jobs
     end
@@ -23,7 +24,7 @@ module Scheduler
     #
     # @return [Hash]
     def config
-      @config ||= Dependabot::Config.call(project, update_cache: true)
+      @config ||= Configuration::Parser.call(Gitlab::ConfigFetcher.call(project))
     end
 
     # Currently configured project cron jobs
@@ -43,6 +44,15 @@ module Scheduler
           description: "Update #{package_ecosystem} dependencies for #{project} in #{directory}"
         )
       end
+    end
+
+    # Update project
+    #
+    # @return [void]
+    def update_project
+      Project.find_by(name: project).update_attributes!(config: config)
+    rescue Mongoid::Errors::DocumentNotFound
+      Project.create!(name: project, config: config)
     end
 
     # Destroy jobs not present in config anymore

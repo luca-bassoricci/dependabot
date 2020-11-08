@@ -4,7 +4,6 @@ describe Gitlab::ConfigFetcher do
   include_context "dependabot"
 
   let(:gitlab) { double("Gitlab") }
-  let(:repo) { "test-repo" }
   let(:project) { OpenStruct.new(default_branch: "master") }
 
   subject { described_class.call(repo) }

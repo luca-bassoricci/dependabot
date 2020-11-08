@@ -212,6 +212,8 @@ GEM
     et-orbi (1.2.4)
       tzinfo
     excon (0.78.0)
+    faker (2.14.0)
+      i18n (>= 1.6, < 2)
     faraday (1.1.0)
       multipart-post (>= 1.2, < 3)
       ruby2_keywords
@@ -459,6 +461,7 @@ DEPENDENCIES
   config (~> 2.2)
   dependabot-omnibus (~> 0.125.1)
   dry-validation (~> 1.5)
+  faker (~> 2.14)
   mongoid (~> 7.1)
   pry (~> 0.13.1)
   puma (~> 5.0)
