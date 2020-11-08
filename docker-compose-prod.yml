@@ -2,6 +2,7 @@ version: "3.8"
 
 x-environment: &environment_variables
   REDIS_URL: redis://redis:6379
+  MONGODB_URL: mongodb:27017
   RAILS_ENV: production
   SENTRY_DSN:
   SETTINGS__GITHUB_ACCESS_TOKEN:
@@ -31,6 +32,8 @@ services:
     <<: *service_volumes
     environment:
       <<: *environment_variables
+    ports:
+      - 7433:7433
     command: sidekiq
 
 volumes:
