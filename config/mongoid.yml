@@ -1,7 +1,7 @@
 development:
   clients:
     default:
-      database: dependabot_gitlab_development
+      database: <%= "#{ENV['MONGODB_DATABASE'] || 'dependabot_gitlab_development'}" %>
       hosts:
         - <%= ENV['MONGODB_URL'] || 'localhost:27017' %>
   options:
@@ -10,7 +10,7 @@ development:
 test:
   clients:
     default:
-      database: dependabot_gitlab_test
+      database: <%= "#{ENV['MONGODB_DATABASE'] || 'dependabot_gitlab_test'}" %>
       hosts:
         - <%= ENV['MONGODB_URL'] || 'localhost:27017' %>
   options:
@@ -19,8 +19,11 @@ test:
 production:
   clients:
     default:
-      database: dependabot_gitlab
+      database: <%= "#{ENV['MONGODB_DATABASE'] || 'dependabot_gitlab_production'}" %>
       hosts:
         - <%= ENV['MONGODB_URL'] || 'localhost:27017' %>
+      options:
+        user: <%= ENV['MONGDODB_USER'] %>
+        password: <%= ENV['MONGODB_PASSWORD'] %>
   options:
     app_name: DependabotGitlab

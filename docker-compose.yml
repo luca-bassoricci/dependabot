@@ -9,15 +9,15 @@ services:
       - redis-data:/data
     environment:
       ALLOW_EMPTY_PASSWORD: "yes"
-  mongo:
+  mongodb:
     image: bitnami/mongodb:4.4-debian-10
     ports:
       - 27017:27017
     volumes:
-      - mongo-data:/bitnami/mongodb
+      - mongodb-data:/bitnami/mongodb
     environment:
       ALLOW_EMPTY_PASSWORD: "yes"
 
 volumes:
   redis-data:
-  mongo-data:
+  mongodb-data:

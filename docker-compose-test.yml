@@ -7,19 +7,24 @@ services:
       target: development
     depends_on:
       - redis
+      - mongodb
     environment:
+      RAILS_ENV: test
       BUNDLE_SUPPRESS_INSTALL_USING_MESSAGES: "true"
+      BUNDLE_WITHOUT: development
       REDIS_URL: redis://redis:6379
+      MONGODB_URL: mongodb:27017
       SETTINGS__GITLAB_URL: http://gitlab:4567
       SETTINGS__GITLAB_ACCESS_TOKEN: e2e-test
       SETTINGS__GITHUB_ACCESS_TOKEN:
+      DISABLE_SIDEKIQ_ALIVE: "true"
     volumes:
       - gems:/vendor/bundle
       - $PWD:/code
     ports:
       - 3000:3000
     command: script/entrypoint.sh
-  
+
   gitlab:
     build: spec/gitlab_mock
 

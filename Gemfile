@@ -13,6 +13,7 @@ gem "rails", "~> 6.0.3"
 gem "semantic_range", "~> 2.3"
 gem "sentry-raven", "~> 3.1", require: false
 gem "sidekiq", "~> 6.1.2"
+gem "sidekiq_alive", "~> 2.0"
 gem "sidekiq-cron", "~> 1.2"
 
 gem "bootsnap", ">= 1.4.2", require: false
