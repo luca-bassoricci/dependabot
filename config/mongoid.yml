@@ -23,7 +23,7 @@ production:
       hosts:
         - <%= ENV['MONGODB_URL'] || 'localhost:27017' %>
       options:
-        user: <%= ENV['MONGDODB_USER'] %>
+        user: <%= ENV['MONGODB_USER'] %>
         password: <%= ENV['MONGODB_PASSWORD'] %>
   options:
     app_name: DependabotGitlab
