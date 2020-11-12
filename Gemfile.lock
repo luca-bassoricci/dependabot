@@ -398,7 +398,7 @@ GEM
       simplecov-html (~> 0.11)
     simplecov-cobertura (1.4.1)
       simplecov (~> 0.8)
-    simplecov-console (0.7.2)
+    simplecov-console (0.8.0)
       ansi
       simplecov
       terminal-table
@@ -484,7 +484,7 @@ DEPENDENCIES
   sidekiq_alive (~> 2.0)
   simplecov (~> 0.19.1)
   simplecov-cobertura (~> 1.4.1)
-  simplecov-console (~> 0.7.2)
+  simplecov-console (~> 0.8.0)
   simplecov-lcov (~> 0.8.0)
   solargraph (~> 0.39.17)
   spring (~> 2.1.1)
