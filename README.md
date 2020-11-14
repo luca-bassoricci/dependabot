@@ -2,15 +2,9 @@
 
 # dependabot-gitlab
 
-[![pipeline status](https://gitlab.com/dependabot-gitlab/dependabot/badges/master/pipeline.svg)](https://gitlab.com/dependabot-gitlab/dependabot/-/commits/master)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/8d62ce5bf40c46bea3981e821c91178e)](https://www.codacy.com/gl/dependabot-gitlab/dependabot?utm_source=gitlab.com&amp;utm_medium=referral&amp;utm_content=dependabot-gitlab/dependabot&amp;utm_campaign=Badge_Grade)
-[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/8d62ce5bf40c46bea3981e821c91178e)](https://www.codacy.com/gl/dependabot-gitlab/dependabot?utm_source=gitlab.com&utm_medium=referral&utm_content=dependabot-gitlab/dependabot&utm_campaign=Badge_Coverage)
-[![Docker Image Version (latest by date)](https://img.shields.io/docker/v/andrcuns/dependabot-gitlab?sort=semver)](https://hub.docker.com/r/andrcuns/dependabot-gitlab)
-[![Docker Pulls](https://img.shields.io/docker/pulls/andrcuns/dependabot-gitlab)](https://hub.docker.com/r/andrcuns/dependabot-gitlab)
+**The project is still considered to be in alpha stage so settings and setup might change**
 
 Application providing automated dependency updates based on [dependabot-core](https://github.com/dependabot/dependabot-core)
-
-**The project is still considered to be in alpha stage so settings and setup might change**
 
 ## Docker image variants
 
