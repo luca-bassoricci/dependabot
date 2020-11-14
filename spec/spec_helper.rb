@@ -28,7 +28,7 @@ formatters = [SimpleCov::Formatter::Console]
 formatters << SimpleCov::Formatter::HTMLFormatter if ENV["COV_HTML_REPORT"]
 
 if ENV["CI"]
-  SimpleCov::Formatter::Console.output_style = "block"
+  SimpleCov::Formatter::Console.max_rows = 8
   SimpleCov::Formatter::LcovFormatter.config do |conf|
     conf.report_with_single_file = true
     conf.output_directory = "coverage"
