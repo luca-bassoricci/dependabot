@@ -214,3 +214,6 @@ deploy:
     - helmfile apply --suppress-secrets --context 10
   rules:
     - *master
+    - <<: *mr
+      when: manual
+      allow_failure: true

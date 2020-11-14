@@ -1,7 +1,6 @@
 helmDefaults:
   atomic: true
   wait: true
-  verify: true
 
 repositories:
   - name: andrcuns
@@ -16,7 +15,7 @@ releases:
     values:
       - image:
           repository: registry.gitlab.com/dependabot-gitlab/dependabot
-          tag: master-{{ requiredEnv "CI_COMMIT_SHORT_SHA" }}
+          tag: {{ requiredEnv "CURRENT_TAG" }}
         service:
           type: LoadBalancer
           annotations:
