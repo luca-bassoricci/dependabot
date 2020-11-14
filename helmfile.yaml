@@ -1,0 +1,39 @@
+helmDefaults:
+  atomic: true
+  wait: true
+  verify: true
+
+repositories:
+  - name: andrcuns
+    url: https://andrcuns.github.io/charts
+
+releases:
+  - name: dependabot-gitlab
+    namespace: dependabot
+    chart: andrcuns/dependabot-gitlab
+    version: 0.0.16
+    installed: true
+    values:
+      - image:
+          repository: registry.gitlab.com/dependabot-gitlab/dependabot
+          tag: master-{{ requiredEnv "CI_COMMIT_SHORT_SHA" }}
+        service:
+          type: LoadBalancer
+          annotations:
+            dev.inlets.manage: "true"
+        env:
+          sentryDsn: {{ requiredEnv "SENTRY_DSN" }}
+        credentials:
+            gitlab_access_token: {{ requiredEnv "GITLAB_ACCESS_TOKEN" }}
+            github_access_token: {{ requiredEnv "GITHUB_ACCESS_TOKEN" }}
+            gitlab_auth_token: {{ requiredEnv "GITLAB_AUTH_TOKEN" }}
+        redis:
+          usePassword: true
+          password: {{ requiredEnv "REDIS_HELM_PASSWORD" }}
+        mongodb:
+          enabled: true
+          auth:
+            rootPassword: {{ requiredEnv "MONGODB_ROOT_PASSWORD" }}
+            password: {{ requiredEnv "MONGODB_PASSWORD" }}
+            username: dependabot
+            database: dependabot
