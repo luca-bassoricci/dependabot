@@ -28,7 +28,7 @@ releases:
             gitlab_auth_token: {{ requiredEnv "GITLAB_AUTH_TOKEN" }}
         redis:
           usePassword: true
-          password: {{ requiredEnv "REDIS_HELM_PASSWORD" }}
+          password: {{ requiredEnv "REDIS_PASSWORD" }}
         mongodb:
           enabled: true
           auth:

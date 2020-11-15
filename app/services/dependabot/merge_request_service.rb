@@ -17,11 +17,11 @@ module Dependabot
     # @param [Array<Dependabot::Dependency>] updated_dependencies
     # @param [Array<Dependabot::DependencyFile>] updated_files
     # @param [Hash] opts
-    def initialize(name:, fetcher:, updated_dependencies:, updated_files:, **opts)
-      @name = name
+    def initialize(fetcher:, updated_dependencies:, updated_files:, project:, **opts)
       @fetcher = fetcher
       @updated_dependencies = updated_dependencies
       @updated_files = updated_files
+      @project = project
       @options = opts
     end
 
@@ -29,14 +29,16 @@ module Dependabot
     #
     # @return [void]
     def call
-      logger.info { "Updating #{name}" }
+      logger.info { "Updating following dependencies: #{dependencies_for_update}" }
       mr ? update_mr : create_mr
       accept_mr
+
+      mr
     end
 
     private
 
-    attr_reader :name, :fetcher, :updated_dependencies, :updated_files, :options
+    attr_reader :project, :fetcher, :updated_dependencies, :updated_files, :options
 
     # Create mr
     #
@@ -47,6 +49,23 @@ module Dependabot
         updated_dependencies: updated_dependencies,
         updated_files: updated_files,
         mr_options: mr_opts
+      )
+      save unless Settings.standalone
+    end
+
+    # Persist merge request
+    #
+    # @return [void]
+    def save
+      return unless mr
+
+      MergeRequest.create!(
+        project: project,
+        iid: mr.iid,
+        package_manager: options[:package_manager],
+        state: "opened",
+        auto_merge: options[:auto_merge],
+        dependencies: updated_dependencies.map { |dep| "#{dep.name}-#{dep.previous_version}" }.join("/")
       )
     end
 
@@ -138,6 +157,13 @@ module Dependabot
     # @return [Boolean]
     def rebase?
       options[:rebase_strategy] == "auto"
+    end
+
+    # All dependencies to be updated
+    #
+    # @return [String]
+    def dependencies_for_update
+      updated_dependencies.map { |dep| "#{dep.name}-#{dep.version}" }.join("/")
     end
   end
 end

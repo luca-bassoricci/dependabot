@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 ENV["RAILS_ENV"] ||= "test"
+ENV["LOG_LEVEL"] ||= "fatal"
 
 require_relative "spec_helper"
 require_relative "webmock_helper"

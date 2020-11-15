@@ -6,8 +6,8 @@ describe DependencyUpdater do
 
   let(:config) { "config" }
   let(:rspec) { "rspec" }
-  let(:config) { "config" }
-  let(:rspec) { "rspec" }
+
+  let(:project) { Project.new(name: repo) }
 
   let(:updated_config) do
     {
@@ -53,18 +53,20 @@ describe DependencyUpdater do
       .with(dependencies: updated_config[:dependencies], **file_updater_args) { updated_files }
     allow(Dependabot::FileUpdater).to receive(:call)
       .with(dependencies: updated_rspec[:dependencies], **file_updater_args) { updated_files }
+
+    project.save!
   end
 
   it "runs dependency update for repository" do
     subject.call({ "repo" => repo, "package_ecosystem" => package_manager, "directory" => "/" })
 
     expect(Dependabot::MergeRequestService).to have_received(:call).with(
-      name: updated_config[:name],
+      project: project,
       updated_dependencies: updated_config[:dependencies],
       **mr_service_args
     )
     expect(Dependabot::MergeRequestService).to have_received(:call).with(
-      name: updated_rspec[:name],
+      project: project,
       updated_dependencies: updated_rspec[:dependencies],
       **mr_service_args
     )
