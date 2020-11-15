@@ -6,7 +6,7 @@ cov="coverage/dependabot.lcov"
 
 echo "Fetch latest coverage data"
 curl --silent --show-error --fail --location --output "$cov" \
-  https://gitlab.com/dependabot-gitlab/dependabot/-/jobs/artifacts/master/raw/coverage/dependabot.lcov\?job\=tests
+  https://gitlab.com/dependabot-gitlab/dependabot/-/jobs/artifacts/master/raw/coverage/dependabot.lcov\?job\=tests_rspec
 
 echo "Run undercover"
 bundle exec undercover -l "$cov"

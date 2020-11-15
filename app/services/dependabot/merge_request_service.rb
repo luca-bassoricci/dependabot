@@ -3,7 +3,7 @@
 require "dependabot/pull_request_updater"
 
 module Dependabot
-  class MergeRequestService < ApplicationService
+  class MergeRequestService < ApplicationService # rubocop:disable Metrics/ClassLength
     MR_OPTIONS = %i[
       custom_labels
       commit_message_options
@@ -29,7 +29,7 @@ module Dependabot
     #
     # @return [void]
     def call
-      logger.info { "Updating following dependencies: #{dependencies_for_update}" }
+      logger.info { "Updating following dependencies: #{updated_dependencies_name}" }
       mr ? update_mr : create_mr
       accept_mr
 
@@ -50,7 +50,10 @@ module Dependabot
         updated_files: updated_files,
         mr_options: mr_opts
       )
-      save unless Settings.standalone
+      return if Settings.standalone
+
+      save
+      close_superseeded_mrs
     end
 
     # Persist merge request
@@ -65,8 +68,22 @@ module Dependabot
         package_manager: options[:package_manager],
         state: "opened",
         auto_merge: options[:auto_merge],
-        dependencies: updated_dependencies.map { |dep| "#{dep.name}-#{dep.previous_version}" }.join("/")
+        dependencies: current_dependencies_name
       )
+    end
+
+    # Close superseeded merge requests
+    #
+    # @return [void]
+    def close_superseeded_mrs
+      project
+        .merge_requests
+        .where(dependencies: current_dependencies_name)
+        .not(iid: mr.iid).not(state: "closed")
+        .each do |existing_mr|
+          Gitlab::MergeRequestCloser.call(project.name, existing_mr.iid)
+          existing_mr.update_attributes!(state: "closed")
+        end
     end
 
     # Rebase existing mr if it has conflicts
@@ -122,22 +139,14 @@ module Dependabot
     #
     # @return [Array<Number>]
     def assignees
-      @assignees ||= begin
-        return unless options[:assignees]
-
-        Gitlab::UserFinder.call(options[:assignees])
-      end
+      @assignees ||= Gitlab::UserFinder.call(options[:assignees])
     end
 
     # Get reviewer ids
     #
     # @return [Array<Number>]
     def reviewers
-      @reviewers ||= begin
-        return unless options[:reviewers]
-
-        Gitlab::UserFinder.call(options[:reviewers])
-      end
+      @reviewers ||= Gitlab::UserFinder.call(options[:reviewers])
     end
 
     # Merge request options
@@ -159,11 +168,18 @@ module Dependabot
       options[:rebase_strategy] == "auto"
     end
 
-    # All dependencies to be updated
+    # All dependencies to be updated with latest versions
     #
     # @return [String]
-    def dependencies_for_update
-      updated_dependencies.map { |dep| "#{dep.name}-#{dep.version}" }.join("/")
+    def updated_dependencies_name
+      @updated_dependencies_name ||= updated_dependencies.map { |dep| "#{dep.name}-#{dep.version}" }.join("/")
+    end
+
+    # All dependencies being updated with current versions
+    #
+    # @return [String]
+    def current_dependencies_name
+      @current_dependencies_name ||= updated_dependencies.map { |dep| "#{dep.name}-#{dep.previous_version}" }.join("/")
     end
   end
 end
