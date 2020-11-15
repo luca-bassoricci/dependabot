@@ -11,7 +11,7 @@ module Gitlab
     #
     # @return [Array<Number>]
     def call
-      @usernames.map do |user|
+      @usernames&.map do |user|
         Rails.cache.fetch(user, skip_nil: true, expires_in: 7.days) { gitlab.user_search(user).first&.id }
       end
     end

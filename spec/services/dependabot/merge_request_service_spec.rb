@@ -5,23 +5,15 @@ describe Dependabot::MergeRequestService do
 
   let(:project) { Project.new(name: repo, config: dependabot_config) }
   let(:users) { [10] }
+  let(:current_dependencies_name) { updated_dependencies.map { |dep| "#{dep.name}-#{dep.previous_version}" }.join("/") }
+  let(:existing_mr) { mr }
+  let(:mr_db) { create_mr(mr.iid, "opened", current_dependencies_name) }
   let(:mr) do
     OpenStruct.new(
       web_url: "mr-url",
       iid: Faker::Number.unique.number(digits: 10),
       sha: "5f92cc4d9939",
       has_conflicts: true
-    )
-  end
-  let(:existing_mr) { mr }
-  let(:mr_db) do
-    MergeRequest.new(
-      project: project,
-      iid: mr.iid,
-      package_manager: dependabot_config.first[:package_manager],
-      state: "opened",
-      auto_merge: dependabot_config.first[:auto_merge],
-      dependencies: updated_dependencies.map { |dep| "#{dep.name}-#{dep.previous_version}" }.join("/")
     )
   end
   let(:mr_params) do
@@ -40,6 +32,17 @@ describe Dependabot::MergeRequestService do
     }
   end
 
+  def create_mr(iid, state, dependencies)
+    MergeRequest.new(
+      project: project,
+      iid: iid,
+      package_manager: dependabot_config.first[:package_manager],
+      state: state,
+      auto_merge: dependabot_config.first[:auto_merge],
+      dependencies: dependencies
+    )
+  end
+
   subject do
     described_class.call(
       project: project,
@@ -56,11 +59,12 @@ describe Dependabot::MergeRequestService do
     allow(Gitlab::MergeRequestCreator).to receive(:call) { mr }
     allow(Gitlab::MergeRequestUpdater).to receive(:call)
     allow(Gitlab::MergeRequestAcceptor).to receive(:call).with(mr)
+    allow(Gitlab::MergeRequestCloser).to receive(:call)
 
     project.save!
   end
 
-  context "merge request" do
+  context "new merge request" do
     let(:existing_mr) { nil }
 
     it "is created" do
@@ -80,7 +84,7 @@ describe Dependabot::MergeRequestService do
     end
   end
 
-  context "merge request" do
+  context "existing merge request" do
     it "is updated" do
       expect(subject).to eq(mr)
       expect(Gitlab::MergeRequestUpdater).to have_received(:call).with(
@@ -99,6 +103,23 @@ describe Dependabot::MergeRequestService do
     it "is not set to be merged automatically" do
       expect(subject).to eq(mr)
       expect(Gitlab::MergeRequestAcceptor).to_not have_received(:call)
+    end
+  end
+
+  context "superseeded merge requests" do
+    let(:existing_mr) { nil }
+    let(:superseeded_mr) { create_mr(Faker::Number.unique.number(digits: 10), "opened", current_dependencies_name) }
+
+    before do
+      create_mr(Faker::Number.unique.number(digits: 10), "closed", current_dependencies_name).save!
+      create_mr(Faker::Number.unique.number(digits: 10), "opened", "test1").save!
+      superseeded_mr.save!
+    end
+
+    it "are closed" do
+      expect(subject).to eq(mr)
+      expect(Gitlab::MergeRequestCloser).to have_received(:call).with(project.name, superseeded_mr.iid).once
+      expect(superseeded_mr.reload.state).to eq("closed")
     end
   end
 end
