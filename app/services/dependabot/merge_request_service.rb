@@ -12,6 +12,7 @@ module Dependabot
       milestone
     ].freeze
 
+    # @param [String] name Updated dependency name for logging
     # @param [Dependabot::FileFetchers::Base] fetcher
     # @param [Array<Dependabot::Dependency>] updated_dependencies
     # @param [Array<Dependabot::DependencyFile>] updated_files
@@ -29,9 +30,8 @@ module Dependabot
     # @return [void]
     def call
       logger.info { "Updating #{name}" }
-      return update_mr if rebase? && mr
-
-      create_mr
+      mr ? update_mr : create_mr
+      accept_mr
     end
 
     private
@@ -42,52 +42,34 @@ module Dependabot
     #
     # @return [void]
     def create_mr
-      @mr = Dependabot::PullRequestCreator.new(
-        source: fetcher.source,
-        base_commit: fetcher.commit,
-        dependencies: updated_dependencies,
-        files: updated_files,
-        credentials: Credentials.fetch,
-        **mr_opts
-      ).create
-
-      logger.info { "created mr #{mr.web_url}" } if mr
-      accept_mr if options[:auto_merge]
-    rescue Octokit::TooManyRequests
-      logger.error { "github API rate limit exceeded! See: https://developer.github.com/v3/#rate-limiting" }
+      @mr = Gitlab::MergeRequestCreator.call(
+        fetcher: fetcher,
+        updated_dependencies: updated_dependencies,
+        updated_files: updated_files,
+        mr_options: mr_opts
+      )
     end
 
     # Rebase existing mr if it has conflicts
     #
     # @return [void]
     def update_mr
-      return logger.info { "merge request #{mr.references.short} doesn't require rebasing" } unless mr.has_conflicts
+      return unless rebase?
 
-      logger.info { "rebasing merge request #{mr.references.short}" }
-      Dependabot::PullRequestUpdater.new(
-        source: fetcher.source,
-        base_commit: fetcher.commit,
-        old_commit: mr.sha,
-        files: updated_files,
-        credentials: Credentials.fetch,
-        pull_request_number: mr.iid
-      ).update
-
-      accept_mr if options[:auto_merge]
+      Gitlab::MergeRequestUpdater.call(
+        fetcher: fetcher,
+        updated_files: updated_files,
+        merge_request: mr
+      )
     end
 
     # Accept merge request and set to merge automatically
     #
     # @return [void]
     def accept_mr
-      logger.info { "accepting merge request #{mr.references.short}" }
-      gitlab.accept_merge_request(
-        mr.project_id,
-        mr.iid,
-        merge_when_pipeline_succeeds: true
-      )
-    rescue Gitlab::Error::MethodNotAllowed, Gitlab::Error::NotAcceptable => e
-      logger.error { "failed to accept merge request: #{e.message}" }
+      return unless mr && options[:auto_merge]
+
+      Gitlab::MergeRequestAcceptor.call(mr)
     end
 
     # Get source branch name
@@ -109,13 +91,12 @@ module Dependabot
     #
     # @return [nil] if merge request doesn't exist
     def mr
-      @mr ||= gitlab.merge_requests(
-        fetcher.source.repo,
+      @mr ||= Gitlab::MergeRequestFinder.call(
+        project: fetcher.source.repo,
         source_branch: source_branch,
         target_branch: fetcher.source.branch,
-        state: "opened",
-        with_merge_status_recheck: true
-      )&.first
+        state: "opened"
+      )
     end
 
     # Get assignee ids
@@ -140,11 +121,11 @@ module Dependabot
       end
     end
 
-    # MR options
+    # Merge request options
     #
     # @return [Hash]
     def mr_opts
-      {
+      @mr_opts ||= {
         assignees: assignees,
         reviewers: { approvers: reviewers },
         label_language: true,
