@@ -3,7 +3,7 @@
 class DependencyUpdater < ApplicationService
   # @param [Hash<String, Object>] args
   def initialize(args)
-    @repo, @package_ecosystem, @directory = args.values_at("repo", "package_ecosystem", "directory")
+    @project_name, @package_ecosystem, @directory = args.values_at("repo", "package_ecosystem", "directory")
   end
 
   # Create or update mr's for dependencies
@@ -16,14 +16,14 @@ class DependencyUpdater < ApplicationService
 
   private
 
-  attr_reader :repo, :package_ecosystem, :directory
+  attr_reader :project_name, :package_ecosystem, :directory
 
   # Dependabot config
   #
   # @return [Hash]
   def config
     @config ||= begin
-      config_entry = Dependabot::Config.call(repo).find do |conf|
+      config_entry = Dependabot::Config.call(project_name).find do |conf|
         conf[:package_ecosystem] == package_ecosystem && conf[:directory] == directory
       end
       raise("Configuration missing entry with package-ecosystem: #{package_ecosystem}") unless config_entry
@@ -39,6 +39,13 @@ class DependencyUpdater < ApplicationService
     @package_manager ||= config[:package_manager]
   end
 
+  # Persisted project
+  #
+  # @return [Project]
+  def project
+    @project ||= Settings.standalone ? nil : Project.find_by(name: project_name)
+  end
+
   # Get file fetcher
   #
   # @return [Dependabot::FileFetcher]
@@ -46,7 +53,7 @@ class DependencyUpdater < ApplicationService
     @fetcher ||= Dependabot::FileFetcher.call(
       package_manager: package_manager,
       source: Dependabot::DependabotSource.call(
-        repo: repo,
+        repo: project_name,
         branch: config[:branch],
         directory: config[:directory]
       )
@@ -135,7 +142,7 @@ class DependencyUpdater < ApplicationService
   # @return [Gitlab::ObjectifiedHash]
   def create_mr(dep)
     Dependabot::MergeRequestService.call(
-      name: dep[:name],
+      project: project,
       fetcher: fetcher,
       updated_dependencies: dep[:dependencies],
       updated_files: updated_files(dep[:dependencies]),

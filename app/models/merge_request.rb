@@ -3,12 +3,11 @@
 class MergeRequest
   include Mongoid::Document
 
-  field :id, type: Integer
-  field :library, type: String
-  field :version, type: String
-  field :open, type: Boolean
+  field :iid, type: Integer
+  field :package_manager, type: String
+  field :state, type: String
   field :auto_merge, type: Boolean
-  field :has_conflicts, type: Boolean
+  field :dependencies, type: String
 
   belongs_to :project
 end

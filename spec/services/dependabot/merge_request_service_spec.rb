@@ -1,13 +1,29 @@
 # frozen_string_literal: true
 
 describe Dependabot::MergeRequestService do
-  include_context "webmock"
   include_context "dependabot"
 
-  let(:updated_dep_name) { "test 0.0.1 => 0.0.2" }
-  let(:mr) { OpenStruct.new(web_url: "mr-url", project_id: 1, iid: 1, sha: "5f92cc4d9939", has_conflicts: true) }
-  let(:pr_creator) { double("PullRequestCreator", create: mr) }
-  let(:pr_updater) { double("PullRequestUpdater", update: mr) }
+  let(:project) { Project.new(name: repo, config: dependabot_config) }
+  let(:users) { [10] }
+  let(:mr) do
+    OpenStruct.new(
+      web_url: "mr-url",
+      iid: Faker::Number.unique.number(digits: 10),
+      sha: "5f92cc4d9939",
+      has_conflicts: true
+    )
+  end
+  let(:existing_mr) { mr }
+  let(:mr_db) do
+    MergeRequest.new(
+      project: project,
+      iid: mr.iid,
+      package_manager: dependabot_config.first[:package_manager],
+      state: "opened",
+      auto_merge: dependabot_config.first[:auto_merge],
+      dependencies: updated_dependencies.map { |dep| "#{dep.name}-#{dep.previous_version}" }.join("/")
+    )
+  end
   let(:mr_params) do
     {
       milestone: "0.0.1",
@@ -26,7 +42,7 @@ describe Dependabot::MergeRequestService do
 
   subject do
     described_class.call(
-      name: updated_dep_name,
+      project: project,
       fetcher: fetcher,
       updated_dependencies: updated_dependencies,
       updated_files: updated_files,
@@ -35,95 +51,54 @@ describe Dependabot::MergeRequestService do
   end
 
   before do
-    stub_gitlab
+    allow(Gitlab::MergeRequestFinder).to receive(:call) { existing_mr }
+    allow(Gitlab::UserFinder).to receive(:call).with(mr_params[:assignees]) { users }
+    allow(Gitlab::MergeRequestCreator).to receive(:call) { mr }
+    allow(Gitlab::MergeRequestUpdater).to receive(:call)
+    allow(Gitlab::MergeRequestAcceptor).to receive(:call).with(mr)
 
-    stub_request(:get, %r{#{repo_url}/merge_requests}).to_return(mr_get_return)
-
-    allow(Dependabot::PullRequestCreator).to receive(:new) { pr_creator }
-    allow(Dependabot::PullRequestUpdater).to receive(:new) { pr_updater }
-
-    @accept_stub = stub_request(:put, "#{source.api_endpoint}/projects/#{mr.project_id}/merge_requests/#{mr.iid}/merge")
-                   .with(body: { "merge_when_pipeline_succeeds" => "true" })
-                   .to_return(status: 200, body: "")
+    project.save!
   end
 
   context "merge request" do
-    let(:mr_get_return) { { status: 200, body: [].to_json } }
+    let(:existing_mr) { nil }
 
     it "is created" do
-      subject
-
-      expect(Dependabot::PullRequestCreator).to have_received(:new).with(
-        source: fetcher.source,
-        base_commit: fetcher.commit,
-        dependencies: updated_dependencies,
-        files: updated_files,
-        credentials: Credentials.fetch,
-        label_language: true,
-        **mr_params,
-        assignees: [10],
-        reviewers: { approvers: [10] }
-      )
-      expect(pr_creator).to have_received(:create)
-    end
-
-    it "is set to merge after creation" do
-      described_class.call(
-        name: updated_dep_name,
+      expect(subject).to eq(mr)
+      expect(Gitlab::MergeRequestCreator).to have_received(:call).with(
         fetcher: fetcher,
         updated_dependencies: updated_dependencies,
         updated_files: updated_files,
-        auto_merge: true,
-        **dependabot_config.first
+        mr_options: {
+          **mr_params,
+          label_language: true,
+          assignees: users,
+          reviewers: { approvers: users }
+        }
       )
-
-      expect(@accept_stub).to have_been_requested
+      expect(mr_db.dependencies).to eq(MergeRequest.find_by(iid: mr.iid).dependencies)
     end
   end
 
   context "merge request" do
-    let(:mr_get_return) { { status: 200, body: [mr.to_h].to_json } }
-
     it "is updated" do
-      subject
-
-      expect(Dependabot::PullRequestUpdater).to have_received(:new).with(
-        source: fetcher.source,
-        base_commit: fetcher.commit,
-        old_commit: mr.sha,
-        files: updated_files,
-        credentials: Credentials.fetch,
-        pull_request_number: 1
-      )
-      expect(pr_updater).to have_received(:update)
-    end
-
-    it "is set to merge after update" do
-      described_class.call(
-        name: updated_dep_name,
+      expect(subject).to eq(mr)
+      expect(Gitlab::MergeRequestUpdater).to have_received(:call).with(
         fetcher: fetcher,
-        updated_dependencies: updated_dependencies,
         updated_files: updated_files,
-        auto_merge: true,
-        **dependabot_config.first
+        merge_request: mr
       )
-
-      expect(@accept_stub).to have_been_requested
     end
   end
 
   context "merge request" do
-    let(:mr_get_return) { { status: 200, body: [].to_json } }
-
     before do
-      allow(Dependabot::PullRequestCreator).to receive(:new).and_raise(Octokit::TooManyRequests)
-      allow(Rails.logger).to receive(:error)
+      dependabot_config.first[:auto_merge] = false
     end
 
-    it "is not created when github api limit is exceeded" do
-      subject
-
-      expect(Rails.logger).to have_received(:error)
+    it "is not set to be merged automatically" do
+      expect(subject).to eq(mr)
+      expect(Gitlab::MergeRequestAcceptor).to_not have_received(:call)
     end
   end
 end

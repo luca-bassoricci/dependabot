@@ -132,7 +132,7 @@ bundle_audit:
 # ======================================================================================================================
 # Test Stage
 # ======================================================================================================================
-tests:
+tests_rspec:
   stage: test
   extends: .ruby_runner
   services:
@@ -142,9 +142,9 @@ tests:
       alias: mongodb
   variables:
     REDIS_URL: redis://redis:6379
+    REDIS_PASSWORD: $REDIS_PASSWORD
     MONGODB_URL: mongodb:27017
     COVERAGE: "true"
-    ALLOW_EMPTY_PASSWORD: "yes"
   script:
     - bundle exec rspec --format documentation --format RspecJunitFormatter --out tmp/rspec.xml
   after_script:
@@ -156,9 +156,10 @@ tests:
       junit: tmp/rspec.xml
     paths:
       - coverage/dependabot.lcov
+    expire_in: 7 days
   rules: *all
 
-e2e_tests:
+tests_standalone_version:
   image:
     name: $APP_DOCKER_IMAGE:$CURRENT_TAG
     entrypoint: [""]
@@ -169,7 +170,8 @@ e2e_tests:
   variables:
     SETTINGS__GITLAB_URL: http://gitlab:4567
     SETTINGS__GITLAB_ACCESS_TOKEN: e2e-test
-    RAILS_ENV: production
+    SETTINGS__STANDALONE: "true"
+    RAILS_ENV: test
     GIT_STRATEGY: none
   script:
     - cd /home/dependabot
