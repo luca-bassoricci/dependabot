@@ -1,28 +1,18 @@
 # frozen_string_literal: true
 
-require "dependabot/pull_request_updater"
-
 module Dependabot
-  class MergeRequestService < ApplicationService # rubocop:disable Metrics/ClassLength
-    MR_OPTIONS = %i[
-      custom_labels
-      commit_message_options
-      branch_name_separator
-      branch_name_prefix
-      milestone
-    ].freeze
-
+  class MergeRequestService < ApplicationService
     # @param [String] name Updated dependency name for logging
     # @param [Dependabot::FileFetchers::Base] fetcher
     # @param [Array<Dependabot::Dependency>] updated_dependencies
     # @param [Array<Dependabot::DependencyFile>] updated_files
     # @param [Hash] opts
-    def initialize(fetcher:, updated_dependencies:, updated_files:, project:, **opts)
+    def initialize(fetcher:, updated_dependencies:, updated_files:, project:, **config)
       @fetcher = fetcher
       @updated_dependencies = updated_dependencies
       @updated_files = updated_files
       @project = project
-      @options = opts
+      @config = config
     end
 
     # Create or update MR
@@ -38,7 +28,7 @@ module Dependabot
 
     private
 
-    attr_reader :project, :fetcher, :updated_dependencies, :updated_files, :options
+    attr_reader :project, :fetcher, :updated_dependencies, :updated_files, :config
 
     # Create mr
     #
@@ -48,7 +38,7 @@ module Dependabot
         fetcher: fetcher,
         updated_dependencies: updated_dependencies,
         updated_files: updated_files,
-        mr_options: mr_opts
+        config: config
       )
       return if Settings.standalone
 
@@ -65,9 +55,9 @@ module Dependabot
       MergeRequest.create!(
         project: project,
         iid: mr.iid,
-        package_manager: options[:package_manager],
+        package_manager: config[:package_manager],
         state: "opened",
-        auto_merge: options[:auto_merge],
+        auto_merge: config[:auto_merge],
         dependencies: current_dependencies_name
       )
     end
@@ -103,7 +93,7 @@ module Dependabot
     #
     # @return [void]
     def accept_mr
-      return unless mr && options[:auto_merge]
+      return unless mr && config[:auto_merge]
 
       Gitlab::MergeRequestAcceptor.call(mr)
     end
@@ -116,8 +106,8 @@ module Dependabot
         dependencies: updated_dependencies,
         files: updated_files,
         target_branch: fetcher.source.branch,
-        separator: mr_opts[:branch_name_separator],
-        prefix: mr_opts[:branch_name_prefix]
+        separator: config[:branch_name_separator],
+        prefix: config[:branch_name_prefix]
       ).new_branch_name
     end
 
@@ -135,37 +125,11 @@ module Dependabot
       )
     end
 
-    # Get assignee ids
-    #
-    # @return [Array<Number>]
-    def assignees
-      @assignees ||= Gitlab::UserFinder.call(options[:assignees])
-    end
-
-    # Get reviewer ids
-    #
-    # @return [Array<Number>]
-    def reviewers
-      @reviewers ||= Gitlab::UserFinder.call(options[:reviewers])
-    end
-
-    # Merge request options
-    #
-    # @return [Hash]
-    def mr_opts
-      @mr_opts ||= {
-        assignees: assignees,
-        reviewers: { approvers: reviewers },
-        label_language: true,
-        **options.select { |key, _value| MR_OPTIONS.include?(key) }
-      }
-    end
-
     # Automatically rebase MR
     #
     # @return [Boolean]
     def rebase?
-      options[:rebase_strategy] == "auto"
+      config[:rebase_strategy] == "auto"
     end
 
     # All dependencies to be updated with latest versions
