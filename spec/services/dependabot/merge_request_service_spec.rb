@@ -4,7 +4,7 @@ describe Dependabot::MergeRequestService do
   include_context "dependabot"
 
   let(:project) { Project.new(name: repo, config: dependabot_config) }
-  let(:users) { [10] }
+  let(:config) { dependabot_config.first }
   let(:current_dependencies_name) { updated_dependencies.map { |dep| "#{dep.name}-#{dep.previous_version}" }.join("/") }
   let(:existing_mr) { mr }
   let(:mr_db) { create_mr(mr.iid, "opened", current_dependencies_name) }
@@ -16,29 +16,14 @@ describe Dependabot::MergeRequestService do
       has_conflicts: true
     )
   end
-  let(:mr_params) do
-    {
-      milestone: "0.0.1",
-      custom_labels: ["dependency"],
-      branch_name_separator: "-",
-      assignees: ["andrcuns"],
-      reviewers: ["andrcuns"],
-      branch_name_prefix: "dependabot",
-      commit_message_options: {
-        prefix: "dep",
-        prefix_development: "bundler-dev",
-        include_scope: "scope"
-      }
-    }
-  end
 
   def create_mr(iid, state, dependencies)
     MergeRequest.new(
       project: project,
       iid: iid,
-      package_manager: dependabot_config.first[:package_manager],
+      package_manager: config[:package_manager],
       state: state,
-      auto_merge: dependabot_config.first[:auto_merge],
+      auto_merge: config[:auto_merge],
       dependencies: dependencies
     )
   end
@@ -49,17 +34,16 @@ describe Dependabot::MergeRequestService do
       fetcher: fetcher,
       updated_dependencies: updated_dependencies,
       updated_files: updated_files,
-      **dependabot_config.first
+      **config
     )
   end
 
   before do
     allow(Gitlab::MergeRequestFinder).to receive(:call) { existing_mr }
-    allow(Gitlab::UserFinder).to receive(:call).with(mr_params[:assignees]) { users }
     allow(Gitlab::MergeRequestCreator).to receive(:call) { mr }
-    allow(Gitlab::MergeRequestUpdater).to receive(:call)
     allow(Gitlab::MergeRequestAcceptor).to receive(:call).with(mr)
     allow(Gitlab::MergeRequestCloser).to receive(:call)
+    allow(Gitlab::MergeRequestUpdater).to receive(:call)
 
     project.save!
   end
@@ -73,12 +57,7 @@ describe Dependabot::MergeRequestService do
         fetcher: fetcher,
         updated_dependencies: updated_dependencies,
         updated_files: updated_files,
-        mr_options: {
-          **mr_params,
-          label_language: true,
-          assignees: users,
-          reviewers: { approvers: users }
-        }
+        config: dependabot_config.first
       )
       expect(mr_db.dependencies).to eq(MergeRequest.find_by(iid: mr.iid).dependencies)
     end
@@ -91,6 +70,12 @@ describe Dependabot::MergeRequestService do
         fetcher: fetcher,
         updated_files: updated_files,
         merge_request: mr
+      )
+      expect(Gitlab::MergeRequestFinder).to have_received(:call).with(
+        project: repo,
+        source_branch: "dependabot-bundler-.-master-config-2.2.1",
+        target_branch: "master",
+        state: "opened"
       )
     end
   end

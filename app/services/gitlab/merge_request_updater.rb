@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# Explicitly require as it's not found otherwise
+require "dependabot/pull_request_updater"
+
 module Gitlab
   class MergeRequestUpdater < ApplicationService
     # @param [Dependabot::FileFetchers::Base] fetcher
