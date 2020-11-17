@@ -3,6 +3,14 @@
 require "yaml"
 
 module Configuration
+  class InvalidConfigurationError < StandardError
+    def self.format(result)
+      result.errors.group_by(&:path).map do |path, messages|
+        "#{path.drop(1).join('.')}: #{messages.map(&:text).join('; ')}"
+      end.join("\n")
+    end
+  end
+
   class Parser < ApplicationService
     PACKAGE_ECOSYSTEM_MAPPING = {
       "npm" => "npm_and_yarn",
@@ -42,7 +50,7 @@ module Configuration
       result = DependabotConfigContract.new.call(yml)
       return if result.success?
 
-      Error::Dependabot::InvalidConfiguration.tap { |err| raise(err, err.format(result)) }
+      raise(InvalidConfigurationError, InvalidConfigurationError.format(result))
     end
 
     # Parsed dependabot yml config

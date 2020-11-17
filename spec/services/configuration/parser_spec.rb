@@ -35,7 +35,7 @@ describe Configuration::Parser do
 
   it "throws invalid configuration error" do
     expect { subject.call(invalid_config) }.to raise_error(
-      Error::Dependabot::InvalidConfiguration, /#{invalid_config_error}/
+      Configuration::InvalidConfigurationError, /#{invalid_config_error}/
     )
   end
 end

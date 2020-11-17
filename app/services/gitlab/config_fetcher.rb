@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module Gitlab
+  class MissingConfigurationError < StandardError; end
+
   class ConfigFetcher < ApplicationService
     # @param [String] repo
     def initialize(repo)
@@ -20,7 +22,7 @@ module Gitlab
         raise("Failed to fetch configuration for #{repo}") unless config
       end
     rescue Error::NotFound
-      raise(Error::Dependabot::MissingConfiguration, ".gitlab/dependabot.yml not present in #{repo}")
+      raise(MissingConfigurationError, ".gitlab/dependabot.yml not present in #{repo}'s branch #{default_branch}")
     end
 
     private
