@@ -10,7 +10,7 @@ releases:
   - name: dependabot-gitlab
     namespace: dependabot
     chart: andrcuns/dependabot-gitlab
-    version: 0.0.18
+    version: 0.0.19
     installed: true
     values:
       - image:
