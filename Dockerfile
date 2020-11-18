@@ -23,20 +23,15 @@ ARG BUNDLER_VERSION
 ENV BUNDLE_PATH=vendor/bundle \
     BUNDLE_WITHOUT="development:test"
 
-RUN useradd --uid 1000 --create-home -s /bin/bash dependabot; \
-    chown -R dependabot:dependabot /opt; \
-    chown -R dependabot:dependabot /usr/local/.pyenv
 RUN gem install bundler -v ${BUNDLER_VERSION} --no-document
 
-WORKDIR /home/dependabot
-
-USER dependabot
+WORKDIR /dependabot
 
 # Copy gemfile first so cache can be reused
-COPY --chown=1000:1000 Gemfile Gemfile.lock ./
+COPY Gemfile Gemfile.lock ./
 RUN bundle install
 
-COPY --chown=1000:1000 ./ ./
+COPY ./ ./
 
 EXPOSE 3000
 
