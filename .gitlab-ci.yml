@@ -174,7 +174,7 @@ tests_standalone_version:
     RAILS_ENV: test
     GIT_STRATEGY: none
   script:
-    - cd /home/dependabot
+    - cd /dependabot
     - bundle exec rake 'dependabot:update[test-repo,bundler,/]'
   rules: *all
 
