@@ -66,14 +66,14 @@ module Dependabot
     #
     # @return [void]
     def close_superseeded_mrs
-      project
-        .merge_requests
-        .where(dependencies: current_dependencies_name)
-        .not(iid: mr.iid).not(state: "closed")
-        .each do |existing_mr|
-          Gitlab::MergeRequestCloser.call(project.name, existing_mr.iid)
-          existing_mr.update_attributes!(state: "closed")
-        end
+      superseeded_mrs.each do |existing_mr|
+        Gitlab::MergeRequestCloser.call(project.name, existing_mr.iid)
+        Gitlab::MergeRequestCommenter.call(
+          project.name, existing_mr.iid,
+          "This merge request has been superseeded by #{mr.web_url}"
+        )
+        existing_mr.update_attributes!(state: "closed")
+      end
     end
 
     # Rebase existing mr if it has conflicts
@@ -144,6 +144,15 @@ module Dependabot
     # @return [String]
     def current_dependencies_name
       @current_dependencies_name ||= updated_dependencies.map { |dep| "#{dep.name}-#{dep.previous_version}" }.join("/")
+    end
+
+    # List of open superseeded merge requests
+    #
+    # @return [Mongoid::Criteria]
+    def superseeded_mrs
+      @superseeded_mrs ||= project.merge_requests
+                                  .where(dependencies: current_dependencies_name)
+                                  .not(iid: mr.iid).not(state: "closed")
     end
   end
 end

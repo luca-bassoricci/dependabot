@@ -44,6 +44,7 @@ describe Dependabot::MergeRequestService do
     allow(Gitlab::MergeRequestAcceptor).to receive(:call).with(mr)
     allow(Gitlab::MergeRequestCloser).to receive(:call)
     allow(Gitlab::MergeRequestUpdater).to receive(:call)
+    allow(Gitlab::MergeRequestCommenter).to receive(:call)
 
     project.save!
   end
@@ -102,9 +103,16 @@ describe Dependabot::MergeRequestService do
     end
 
     it "are closed" do
-      expect(subject).to eq(mr)
-      expect(Gitlab::MergeRequestCloser).to have_received(:call).with(project.name, superseeded_mr.iid).once
-      expect(superseeded_mr.reload.state).to eq("closed")
+      aggregate_failures do
+        expect(subject).to eq(mr)
+        expect(Gitlab::MergeRequestCloser).to have_received(:call).with(project.name, superseeded_mr.iid).once
+        expect(Gitlab::MergeRequestCommenter).to have_received(:call).with(
+          project.name,
+          superseeded_mr.iid,
+          "This merge request has been superseeded by #{mr.web_url}"
+        ).once
+        expect(superseeded_mr.reload.state).to eq("closed")
+      end
     end
   end
 end
