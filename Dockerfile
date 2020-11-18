@@ -25,7 +25,7 @@ ENV BUNDLE_PATH=vendor/bundle \
 
 RUN gem install bundler -v ${BUNDLER_VERSION} --no-document
 
-WORKDIR /dependabot
+WORKDIR /home/dependabot
 
 # Copy gemfile first so cache can be reused
 COPY Gemfile Gemfile.lock ./
