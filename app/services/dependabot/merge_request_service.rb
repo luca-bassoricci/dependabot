@@ -151,8 +151,8 @@ module Dependabot
     # @return [Mongoid::Criteria]
     def superseeded_mrs
       @superseeded_mrs ||= project.merge_requests
-                                  .where(dependencies: current_dependencies_name)
-                                  .not(iid: mr.iid).not(state: "closed")
+                                  .where(dependencies: current_dependencies_name, state: "opened")
+                                  .not(iid: mr.iid)
     end
   end
 end
