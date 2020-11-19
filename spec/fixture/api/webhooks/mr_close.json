@@ -1,0 +1,12 @@
+{
+  "object_kind": "merge_request",
+  "project": {
+    "path_with_namespace": "dependabot-gitlab/test",
+    "default_branch": "master"
+  },
+  "object_attributes": {
+    "iid": 69,
+    "state": "closed",
+    "action": "close"
+  }
+}

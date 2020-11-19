@@ -20,20 +20,41 @@ module Api
       json_response({ status: 400, error: "Unsupported or missing parameter 'object_kind'" }, 400)
     end
 
-    # Handle push hook trigger
+    # Handle push hook event
+    #
     # @return [void]
     def push
-      Webhooks::PushEventHandler.call(
-        params.permit(
-          project: [
-            :path_with_namespace
-          ],
-          commits: [
-            added: [],
-            modified: [],
-            removed: []
-          ]
-        )
+      args = params.permit(
+        project: [
+          :path_with_namespace
+        ],
+        commits: [
+          added: [],
+          modified: [],
+          removed: []
+        ]
+      )
+      Webhooks::PushEventHandler.call(args.dig(:project, :path_with_namespace), args[:commits])
+    end
+
+    # Handle merge_request hook event
+    #
+    # @return [void]
+    def merge_request
+      args = params.permit(
+        project: [
+          :path_with_namespace
+        ],
+        object_attributes: %i[
+          iid
+          action
+        ]
+      )
+      return unless %w[close merge].include?(args.dig(:object_attributes, :action))
+
+      Webhooks::MergeRequestEventHandler.call(
+        args.dig(:project, :path_with_namespace),
+        args.dig(:object_attributes, :iid)
       )
     end
   end

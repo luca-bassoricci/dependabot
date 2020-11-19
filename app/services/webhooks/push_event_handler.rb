@@ -3,9 +3,11 @@
 module Webhooks
   # :reek:InstanceVariableAssumption
   class PushEventHandler < ApplicationService
-    # @param [ActionController::Parameters] params
-    def initialize(params)
-      @params = params
+    # @param [String] project
+    # @param [Array] commits
+    def initialize(project, commits)
+      @project = project
+      @commits = commits
     end
 
     # Create or delete dependency update jobs
@@ -20,20 +22,13 @@ module Webhooks
 
     private
 
-    attr_reader :params
-
-    # Project name
-    #
-    # @return [String]
-    def project
-      @project ||= params.dig(:project, :path_with_namespace)
-    end
+    attr_reader :project, :commits
 
     # Has dependabot config been modified
     #
     # @return [Boolean]
     def modified_config?
-      params[:commits].any? do |commit|
+      commits.any? do |commit|
         commit.values_at(:added, :modified).flatten.include?(Settings.config_filename)
       end
     end
@@ -44,7 +39,7 @@ module Webhooks
     def deleted_config?
       return @deleted_config if defined?(@deleted_config)
 
-      @deleted_config = params[:commits].any? do |commit|
+      @deleted_config = commits.any? do |commit|
         commit[:removed].include?(Settings.config_filename)
       end
     end

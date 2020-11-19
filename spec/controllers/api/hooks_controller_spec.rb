@@ -3,7 +3,7 @@
 describe Api::HooksController do
   include_context "rack_test"
 
-  context "handles" do
+  context "handles valid" do
     let(:jobs) do
       [
         OpenStruct.new(
@@ -16,15 +16,26 @@ describe Api::HooksController do
         )
       ]
     end
+    let(:merge_request) do
+      MergeRequest.new(iid: 1, package_manager: "bundler", state: "closed", auto_merge: false, dependencies: "test")
+    end
 
     before do
       allow(Webhooks::PushEventHandler).to receive(:call) { jobs }
+      allow(Webhooks::MergeRequestEventHandler).to receive(:call) { merge_request }
     end
 
-    it "valid request" do
+    it "push event" do
       post_json("/api/hooks", "spec/fixture/api/webhooks/push.json")
 
       expect(last_response.status).to eq(200)
+    end
+
+    it "merge request close event" do
+      post_json("/api/hooks", "spec/fixture/api/webhooks/mr_close.json")
+
+      expect(last_response.status).to eq(200)
+      expect(Webhooks::MergeRequestEventHandler).to have_received(:call).with("dependabot-gitlab/test", 69)
     end
   end
 
