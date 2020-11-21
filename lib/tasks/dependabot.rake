@@ -12,6 +12,8 @@ namespace :dependabot do
 
   desc "add dependency updates for repository"
   task(:register, [:project] => :environment) do |_task, args|
-    Scheduler::DependencyUpdateScheduler.call(args[:project])
+    Dependabot::ProjectCreator.call(args[:project]).tap do |project|
+      Scheduler::DependencyUpdateScheduler.call(project)
+    end
   end
 end

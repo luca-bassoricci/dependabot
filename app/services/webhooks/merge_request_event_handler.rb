@@ -12,9 +12,9 @@ module Webhooks
     #
     # @return [void]
     def call
-      return unless mr
+      return unless merge_request
 
-      mr.update_attributes!(state: "closed")
+      merge_request.tap { |mr| mr.update_attributes!(state: "closed") }
     end
 
     private
@@ -24,8 +24,8 @@ module Webhooks
     # Opened merge request
     #
     # @return [MergeRequest]
-    def mr
-      @mr ||= Project.find_by(name: project).merge_requests.where(iid: mr_iid, state: "opened").first
+    def merge_request
+      @merge_request ||= Project.find_by(name: project).merge_requests.where(iid: mr_iid, state: "opened").first
     end
   end
 end

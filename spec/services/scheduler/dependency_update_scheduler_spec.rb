@@ -3,6 +3,7 @@
 describe Scheduler::DependencyUpdateScheduler do
   include_context "dependabot"
 
+  let(:project) { Project.new(name: repo, config: config) }
   let(:config) do
     [
       *dependabot_config,
@@ -33,17 +34,16 @@ describe Scheduler::DependencyUpdateScheduler do
   subject { described_class }
 
   before do
-    allow(Gitlab::ConfigFetcher).to receive(:call).with(repo).and_return(raw_config)
-    allow(Configuration::Parser).to receive(:call).with(raw_config).and_return(config)
     allow(Rails.logger).to receive(:error)
+
+    project.save!
   end
 
   context "valid configuration" do
-    it "persists projects and enques jobs" do
-      subject.call(repo)
+    it "creates and enques jobs" do
+      subject.call(project)
 
       aggregate_failures do
-        expect(Project.where(name: repo).count).to eq(1)
         expect(Sidekiq::Cron::Job.all.count { |job| job.name.include?(repo) }).to eq(2)
       end
     end
@@ -53,18 +53,15 @@ describe Scheduler::DependencyUpdateScheduler do
     let(:modified_config) { config.dup.tap(&:pop) }
 
     before do
-      allow(Configuration::Parser).to receive(:call) { modified_config }
-
       jobs.each(&:save)
-      Project.create!(name: repo, config: config)
+      project.update_attributes!(config: modified_config)
     end
 
-    it "updates project and removes job" do
-      subject.call(repo)
+    it "removes non existing job" do
+      subject.call(project)
 
       aggregate_failures do
         expect(Sidekiq::Cron::Job.all.count { |job| job.name.include?(repo) }).to eq(1)
-        expect(Project.where(name: repo).first.config.size).to eq(1)
       end
     end
   end
@@ -73,11 +70,11 @@ describe Scheduler::DependencyUpdateScheduler do
     let(:invalid_config) { config.dup.tap { |conf| conf[1].delete(:cron) } }
 
     before do
-      allow(Configuration::Parser).to receive(:call) { invalid_config }
+      project.update_attributes!(config: invalid_config)
     end
 
     it "on invalid config" do
-      subject.call(repo)
+      subject.call(project)
 
       expect(Rails.logger).to have_received(:error).once
     end

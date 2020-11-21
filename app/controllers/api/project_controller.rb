@@ -2,13 +2,15 @@
 
 module Api
   class ProjectController < ApplicationController
-    # Manually add jobs for specific project or run updates if it already exists
+    # Add new project or update existing one and schedule jobs
     #
     # @return [void]
     def create
-      json_response(::Scheduler::DependencyUpdateScheduler.call(project))
+      project = Dependabot::ProjectCreator.call(project_name)
+      Scheduler::DependencyUpdateScheduler.call(project_name)
+      json_response(body: project)
     rescue ActionController::ParameterMissing
-      json_response({ status: 400, error: "Missing parameter 'project'" }, 400)
+      json_response(body: { status: 400, error: "Missing parameter 'project'" }, status: 400)
     end
 
     private
@@ -16,7 +18,7 @@ module Api
     # Project name
     #
     # @return [String]
-    def project
+    def project_name
       params.require(:project)
     end
   end

@@ -7,7 +7,7 @@ module Api
     # @return [void]
     def create
       params[:object_kind].tap do |hook|
-        respond_to?(hook || "", true) ? json_response(__send__(hook)) : bad_request
+        respond_to?(hook || "", true) ? json_response(body: __send__(hook)) : bad_request
       end
     end
 
@@ -17,7 +17,7 @@ module Api
     #
     # @return [void]
     def bad_request
-      json_response({ status: 400, error: "Unsupported or missing parameter 'object_kind'" }, 400)
+      json_response(body: { status: 400, error: "Unsupported or missing parameter 'object_kind'" }, status: 400)
     end
 
     # Handle push hook event

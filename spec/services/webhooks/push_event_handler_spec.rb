@@ -4,6 +4,7 @@ describe Webhooks::PushEventHandler do
   include_context "dependabot"
 
   let(:job) { double("job", name: "#{repo}:bundler:/", destroy: true) }
+  let(:project) { Project.new(name: repo, config: dependabot_config) }
 
   def commits(added: [], modified: [], removed: [])
     [{
@@ -18,8 +19,9 @@ describe Webhooks::PushEventHandler do
   before do
     allow(Sidekiq::Cron::Job).to receive(:all)
     allow(Scheduler::DependencyUpdateScheduler).to receive(:call)
+    allow(Dependabot::ProjectCreator).to receive(:call) { project }
 
-    Project.create!(name: repo, config: dependabot_config)
+    project.save!
   end
 
   context "non config changes" do
@@ -29,7 +31,6 @@ describe Webhooks::PushEventHandler do
       aggregate_failures do
         expect(Sidekiq::Cron::Job).not_to have_received(:all)
         expect(Scheduler::DependencyUpdateScheduler).to_not have_received(:call)
-        expect(Project.find_by(name: repo)).to be_truthy
       end
     end
   end
@@ -54,8 +55,8 @@ describe Webhooks::PushEventHandler do
       subject.call(repo, commits(modified: [Settings.config_filename]))
 
       aggregate_failures do
-        expect(Scheduler::DependencyUpdateScheduler).to have_received(:call).with(repo)
-        expect(Project.where(name: repo).first).to_not be_nil
+        expect(Dependabot::ProjectCreator).to have_received(:call).with(repo)
+        expect(Scheduler::DependencyUpdateScheduler).to have_received(:call).with(project)
       end
     end
   end

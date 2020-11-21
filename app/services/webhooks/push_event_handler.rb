@@ -5,24 +5,26 @@ module Webhooks
   class PushEventHandler < ApplicationService
     # @param [String] project
     # @param [Array] commits
-    def initialize(project, commits)
-      @project = project
+    def initialize(project_name, commits)
+      @project_name = project_name
       @commits = commits
     end
 
     # Create or delete dependency update jobs
     #
-    # @return [Array<Sidekiq::Cron::Job>] <description>
+    # @return [Project] <description>
     def call
       return unless modified_config? || deleted_config?
       return clean if deleted_config?
 
-      ::Scheduler::DependencyUpdateScheduler.call(project)
+      Dependabot::ProjectCreator.call(project_name).tap do |project|
+        Scheduler::DependencyUpdateScheduler.call(project)
+      end
     end
 
     private
 
-    attr_reader :project, :commits
+    attr_reader :project_name, :commits
 
     # Has dependabot config been modified
     #
@@ -56,18 +58,18 @@ module Webhooks
     #
     # @return [void]
     def remove_project
-      logger.info { "Removing project: #{project}" }
-      Project.find_by(name: project).destroy
+      logger.info { "Removing project: #{project_name}" }
+      Project.find_by(name: project_name).destroy
     rescue Mongoid::Errors::DocumentNotFound
-      logger.error { "Project #{project} doesn't exist!" }
+      logger.error { "Project #{project_name} doesn't exist!" }
     end
 
     # Delete dependency update jobs
     #
     # @return [void]
     def delete_all_jobs
-      logger.info { "Removing all dependency update jobs for project: #{project}" }
-      all_project_jobs(project).each(&:destroy)
+      logger.info { "Removing all dependency update jobs for project: #{project_name}" }
+      all_project_jobs(project_name).each(&:destroy)
     end
   end
 end
