@@ -1,6 +1,7 @@
 require:
   - rubocop-rails
   - rubocop-performance
+  - rubocop-rspec
 
 AllCops:
   NewCops: disable
@@ -62,3 +63,12 @@ Rails/HasManyOrHasOneDependent:
 
 Rails/ActiveRecordAliases:
   Enabled: false
+
+RSpec/MultipleExpectations:
+  Max: 4
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Max: 15

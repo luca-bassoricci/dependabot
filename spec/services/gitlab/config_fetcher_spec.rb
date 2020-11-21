@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 describe Gitlab::ConfigFetcher do
+  subject(:config_fetcher) { described_class.call(repo) }
+
   include_context "dependabot"
 
-  let(:gitlab) { double("Gitlab") }
+  let(:gitlab) { instance_double("Gitlab::client") }
   let(:project) { OpenStruct.new(default_branch: "master") }
-
-  subject { described_class.call(repo) }
 
   before do
     allow(Gitlab).to receive(:client) { gitlab }
@@ -14,23 +14,23 @@ describe Gitlab::ConfigFetcher do
     allow(gitlab).to receive(:file_contents).with(repo, ".gitlab/dependabot.yml", "master") { raw_config }
   end
 
-  context "fetches config file" do
-    it "and returns contents" do
-      expect(subject).to eq(raw_config)
-    end
+  context "when fetching config file" do
+    it { is_expected.to eq(raw_config) }
   end
 
-  context "handles error" do
-    it "when fetching default branch" do
-      allow(gitlab).to receive(:project).with(repo) { nil }
+  context "when encountering error" do
+    context "when fetching default branch" do
+      before { allow(gitlab).to receive(:project).with(repo).and_return(nil) }
 
-      expect { subject }.to raise_error("Failed to fetch default branch for #{repo}")
+      it { expect { config_fetcher }.to raise_error("Failed to fetch default branch for #{repo}") }
     end
 
-    it "when fetching configuration file" do
-      allow(gitlab).to receive(:file_contents).with(repo, ".gitlab/dependabot.yml", "master") { nil }
+    context "when fetching configuration file" do
+      before do
+        allow(gitlab).to receive(:file_contents).with(repo, ".gitlab/dependabot.yml", "master").and_return(nil)
+      end
 
-      expect { subject }.to raise_error("Failed to fetch configuration for #{repo}")
+      it { expect { config_fetcher }.to raise_error("Failed to fetch configuration for #{repo}") }
     end
   end
 end

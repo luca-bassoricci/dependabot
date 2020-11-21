@@ -10,14 +10,12 @@ describe Gitlab::MergeRequestAcceptor do
     )
   end
 
-  subject { described_class.call(mr) }
-
   before do
     allow(Gitlab::Client).to receive(:new) { gitlab }
   end
 
   it "accepts mr and set to merge" do
-    subject
+    described_class.call(mr)
 
     expect(gitlab).to have_received(:accept_merge_request).with(
       mr.project_id,

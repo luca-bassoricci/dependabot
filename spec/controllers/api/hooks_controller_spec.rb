@@ -3,7 +3,7 @@
 describe Api::HooksController do
   include_context "rack_test"
 
-  context "handles valid" do
+  context "with successful response" do
     let(:project) { Project.new(name: "project") }
     let(:merge_request) do
       MergeRequest.new(
@@ -37,7 +37,7 @@ describe Api::HooksController do
     end
   end
 
-  context "handles" do
+  context "with unsuccessful response" do
     let(:error) { StandardError.new("Unexpected") }
 
     before do

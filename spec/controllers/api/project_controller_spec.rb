@@ -11,7 +11,7 @@ describe Api::ProjectController do
     allow(Scheduler::DependencyUpdateScheduler).to receive(:call).with(project_name)
   end
 
-  it "creates dependency update jobs" do
+  it "creates project and jobs" do
     post_json("/api/project", { project: project_name })
 
     expect(last_response.status).to eq(200)

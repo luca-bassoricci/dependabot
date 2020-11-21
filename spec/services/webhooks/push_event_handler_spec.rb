@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 describe Webhooks::PushEventHandler do
+  subject { described_class }
+
   include_context "dependabot"
 
-  let(:job) { double("job", name: "#{repo}:bundler:/", destroy: true) }
+  let(:job) { instance_double("Sidekiq::Cron::Job", name: "#{repo}:bundler:/", destroy: true) }
   let(:project) { Project.new(name: repo, config: dependabot_config) }
 
   def commits(added: [], modified: [], removed: [])
@@ -14,8 +16,6 @@ describe Webhooks::PushEventHandler do
     }]
   end
 
-  subject { described_class }
-
   before do
     allow(Sidekiq::Cron::Job).to receive(:all)
     allow(Scheduler::DependencyUpdateScheduler).to receive(:call)
@@ -24,24 +24,24 @@ describe Webhooks::PushEventHandler do
     project.save!
   end
 
-  context "non config changes" do
-    it "skip scheduling jobs" do
-      subject.call(repo, commits)
+  context "with non config changes" do
+    it "skips scheduling jobs" do
+      described_class.call(repo, commits)
 
       aggregate_failures do
         expect(Sidekiq::Cron::Job).not_to have_received(:all)
-        expect(Scheduler::DependencyUpdateScheduler).to_not have_received(:call)
+        expect(Scheduler::DependencyUpdateScheduler).not_to have_received(:call)
       end
     end
   end
 
-  context "removed configuration" do
+  context "with removed configuration" do
     before do
       allow(Sidekiq::Cron::Job).to receive(:all).and_return([job])
     end
 
     it "removes project" do
-      subject.call(repo, commits(removed: [Settings.config_filename]))
+      described_class.call(repo, commits(removed: [Settings.config_filename]))
 
       aggregate_failures do
         expect(job).to have_received(:destroy)
@@ -50,9 +50,9 @@ describe Webhooks::PushEventHandler do
     end
   end
 
-  context "config update" do
+  context "with config update" do
     it "triggers dependency update" do
-      subject.call(repo, commits(modified: [Settings.config_filename]))
+      described_class.call(repo, commits(modified: [Settings.config_filename]))
 
       aggregate_failures do
         expect(Dependabot::ProjectCreator).to have_received(:call).with(repo)

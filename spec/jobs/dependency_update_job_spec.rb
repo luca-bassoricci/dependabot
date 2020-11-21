@@ -3,9 +3,9 @@
 describe DependencyUpdateJob do
   include ActiveJob::TestHelper
 
-  let(:args) { { "repo" => "test-repo", "package_ecosystem" => "bundler" } }
-
   subject(:job) { described_class }
+
+  let(:args) { { "repo" => "test-repo", "package_ecosystem" => "bundler" } }
 
   before do
     allow(DependencyUpdater).to receive(:call)

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe Credentials do
+  subject { described_class.fetch }
+
   let(:github_token) { nil }
 
   let(:maven_url) { nil }
@@ -58,8 +60,6 @@ describe Credentials do
     }
   end
 
-  subject { described_class.fetch }
-
   before do
     described_class.instance_variable_set(:@credentials, nil)
 
@@ -93,46 +93,36 @@ describe Credentials do
     Settings.reload!
   end
 
-  context "Gitlab credentials" do
-    it "are configured" do
-      expect(subject).to eq([gitlab_creds])
-    end
+  context "with gitlab credentials" do
+    it { is_expected.to eq([gitlab_creds]) }
   end
 
-  context "Github credentials" do
+  context "with github credentials" do
     let(:github_token) { "token" }
 
-    it "are configured" do
-      expect(subject).to eq([github_creds, gitlab_creds])
-    end
+    it { is_expected.to eq([github_creds, gitlab_creds]) }
   end
 
-  context "Maven credentials" do
+  context "with maven credentials" do
     let(:maven_url) { "url" }
     let(:maven_username) { "username" }
     let(:maven_password) { "password" }
 
-    it "are configured" do
-      expect(subject).to eq([gitlab_creds, maven_creds])
-    end
+    it { is_expected.to eq([gitlab_creds, maven_creds]) }
   end
 
-  context "Docker credentials" do
+  context "with docker credentials" do
     let(:docker_registry) { "dockerhub" }
     let(:docker_username) { "username" }
     let(:docker_password) { "password" }
 
-    it "are configured" do
-      expect(subject).to eq([gitlab_creds, docker_creds])
-    end
+    it { is_expected.to eq([gitlab_creds, docker_creds]) }
   end
 
-  context "Npm credentials" do
+  context "with npm credentials" do
     let(:npm_registry) { "npm-private" }
     let(:npm_token) { "username" }
 
-    it "are configured" do
-      expect(subject).to eq([gitlab_creds, npm_creds])
-    end
+    it { is_expected.to eq([gitlab_creds, npm_creds]) }
   end
 end

@@ -31,17 +31,15 @@ describe Scheduler::DependencyUpdateScheduler do
     end
   end
 
-  subject { described_class }
-
   before do
     allow(Rails.logger).to receive(:error)
 
     project.save!
   end
 
-  context "valid configuration" do
+  context "with valid configuration" do
     it "creates and enques jobs" do
-      subject.call(project)
+      described_class.call(project)
 
       aggregate_failures do
         expect(Sidekiq::Cron::Job.all.count { |job| job.name.include?(repo) }).to eq(2)
@@ -49,7 +47,7 @@ describe Scheduler::DependencyUpdateScheduler do
     end
   end
 
-  context "changed configuration" do
+  context "with changed configuration" do
     let(:modified_config) { config.dup.tap(&:pop) }
 
     before do
@@ -58,7 +56,7 @@ describe Scheduler::DependencyUpdateScheduler do
     end
 
     it "removes non existing job" do
-      subject.call(project)
+      described_class.call(project)
 
       aggregate_failures do
         expect(Sidekiq::Cron::Job.all.count { |job| job.name.include?(repo) }).to eq(1)
@@ -66,15 +64,15 @@ describe Scheduler::DependencyUpdateScheduler do
     end
   end
 
-  context "logs job error" do
+  context "with invalid config" do
     let(:invalid_config) { config.dup.tap { |conf| conf[1].delete(:cron) } }
 
     before do
       project.update_attributes!(config: invalid_config)
     end
 
-    it "on invalid config" do
-      subject.call(project)
+    it "logs job error" do
+      described_class.call(project)
 
       expect(Rails.logger).to have_received(:error).once
     end

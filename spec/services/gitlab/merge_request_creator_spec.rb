@@ -1,6 +1,15 @@
 # frozen_string_literal: true
 
 describe Gitlab::MergeRequestCreator do
+  subject(:mr_creator_return) do
+    described_class.call(
+      fetcher: fetcher,
+      updated_dependencies: updated_dependencies,
+      updated_files: updated_files,
+      config: config
+    )
+  end
+
   include_context "dependabot"
   include_context "webmock"
 
@@ -26,15 +35,6 @@ describe Gitlab::MergeRequestCreator do
     }
   end
 
-  subject do
-    described_class.call(
-      fetcher: fetcher,
-      updated_dependencies: updated_dependencies,
-      updated_files: updated_files,
-      config: config
-    )
-  end
-
   before do
     stub_gitlab
 
@@ -43,7 +43,7 @@ describe Gitlab::MergeRequestCreator do
   end
 
   it "creates merge request" do
-    expect(subject).to eq(mr)
+    expect(mr_creator_return).to eq(mr)
     expect(Dependabot::PullRequestCreator).to have_received(:new).with(
       {
         source: fetcher.source,
