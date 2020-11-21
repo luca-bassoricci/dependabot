@@ -5,23 +5,19 @@ describe Dependabot::ProjectCreator do
 
   let(:project) { Project.new(name: repo, config: []) }
 
-  subject { described_class.call(repo) }
-
   before do
     allow(Gitlab::ConfigFetcher).to receive(:call).with(repo) { raw_config }
   end
 
   it "creates new project" do
-    subject
-
-    expect(Project.find_by(name: repo)).to_not be_nil
+    described_class.call(repo)
+    expect(Project.find_by(name: repo)).not_to be_nil
   end
 
   it "updates existing project" do
     project.save!
 
-    subject
-
+    described_class.call(repo)
     expect(project.reload.symbolized_config).to eq(dependabot_config)
   end
 end

@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe Gitlab::MergeRequestFinder do
+  subject(:mr_finder_return) do
+    described_class.call(project: repo, **search_params)
+  end
+
   include_context "dependabot"
 
   let(:gitlab) { instance_double("Gitlab::Client", merge_requests: [mr]) }
@@ -13,16 +17,12 @@ describe Gitlab::MergeRequestFinder do
     }
   end
 
-  subject do
-    described_class.call(project: repo, **search_params)
-  end
-
   before do
     allow(Gitlab::Client).to receive(:new) { gitlab }
   end
 
   it "returns merge request" do
-    expect(subject).to eq(mr)
+    expect(mr_finder_return).to eq(mr)
     expect(gitlab).to have_received(:merge_requests).with(
       repo,
       with_merge_status_recheck: true,

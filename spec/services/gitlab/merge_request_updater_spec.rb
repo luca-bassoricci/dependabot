@@ -20,15 +20,11 @@ describe Gitlab::MergeRequestUpdater do
     allow(Dependabot::PullRequestUpdater).to receive(:new) { pr_updater }
   end
 
-  subject do
-    described_class.call(fetcher: fetcher, updated_files: updated_files, merge_request: mr)
-  end
-
-  context "merge request with conflicts" do
+  context "when merge request has conflicts" do
     let(:has_conflicts) { true }
 
     it "performs rebase" do
-      subject
+      described_class.call(fetcher: fetcher, updated_files: updated_files, merge_request: mr)
 
       expect(Dependabot::PullRequestUpdater).to have_received(:new).with(
         source: fetcher.source,
@@ -41,13 +37,13 @@ describe Gitlab::MergeRequestUpdater do
     end
   end
 
-  context "merge request with no conflicts" do
+  context "when merge request has no conflicts" do
     let(:has_conflicts) { false }
 
-    it "skip rebase" do
-      subject
+    it "skips rebase" do
+      described_class.call(fetcher: fetcher, updated_files: updated_files, merge_request: mr)
 
-      expect(Dependabot::PullRequestUpdater).to_not have_received(:new)
+      expect(Dependabot::PullRequestUpdater).not_to have_received(:new)
     end
   end
 end

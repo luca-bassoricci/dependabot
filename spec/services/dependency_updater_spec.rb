@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe DependencyUpdater do
+  subject(:dependency_updater) { described_class }
+
   include_context "dependabot"
   include_context "webmock"
 
@@ -36,8 +38,6 @@ describe DependencyUpdater do
     }
   end
 
-  subject { described_class }
-
   before do
     stub_gitlab
 
@@ -45,7 +45,7 @@ describe DependencyUpdater do
     allow(Dependabot::DependabotSource).to receive(:call) { source }
     allow(Dependabot::FileFetcher).to receive(:call) { fetcher }
     allow(Dependabot::FileParser).to receive(:call) { [config, rspec] }
-    allow(Dependabot::MergeRequestService).to receive(:call) { "" }
+    allow(Dependabot::MergeRequestService).to receive(:call).and_return("")
 
     allow(Dependabot::UpdateChecker).to receive(:call).with(dependency: config, **checker_args) { updated_config }
     allow(Dependabot::UpdateChecker).to receive(:call).with(dependency: rspec, **checker_args) { updated_rspec }
@@ -58,7 +58,7 @@ describe DependencyUpdater do
   end
 
   it "runs dependency update for repository" do
-    subject.call({ "repo" => repo, "package_ecosystem" => package_manager, "directory" => "/" })
+    dependency_updater.call({ "repo" => repo, "package_ecosystem" => package_manager, "directory" => "/" })
 
     expect(Dependabot::MergeRequestService).to have_received(:call).with(
       project: project,

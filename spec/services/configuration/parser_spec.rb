@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe Configuration::Parser do
+  subject(:parser) { described_class }
+
   include_context "dependabot"
 
   let(:allow_conf) { [{ dependency_type: "direct" }] }
@@ -27,14 +29,12 @@ describe Configuration::Parser do
     ERR
   end
 
-  subject { described_class }
-
   it "returns parsed configuration" do
-    expect(subject.call(File.read("spec/gitlab_mock/responses/gitlab/dependabot.yml"))).to eq(dependabot_config)
+    expect(parser.call(File.read("spec/gitlab_mock/responses/gitlab/dependabot.yml"))).to eq(dependabot_config)
   end
 
   it "throws invalid configuration error" do
-    expect { subject.call(invalid_config) }.to raise_error(
+    expect { parser.call(invalid_config) }.to raise_error(
       Configuration::InvalidConfigurationError, /#{invalid_config_error}/
     )
   end
