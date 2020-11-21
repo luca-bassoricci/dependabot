@@ -2,16 +2,15 @@
 
 module Scheduler
   class DependencyUpdateScheduler < ApplicationService
-    # @param [String] project
+    # @param [String] project_name
     def initialize(project)
       @project = project
     end
 
-    # Sync state and create/update jobs
+    # Update and enque jobs
     #
     # @return [Array<Sidekiq::Cron::Job>]
     def call
-      update_project
       sync_jobs
       enque_all_jobs
     end
@@ -24,7 +23,14 @@ module Scheduler
     #
     # @return [Hash]
     def config
-      @config ||= Configuration::Parser.call(Gitlab::ConfigFetcher.call(project))
+      @config ||= project.symbolized_config
+    end
+
+    # Project name
+    #
+    # @return [String]
+    def project_name
+      @project_name ||= project.name
     end
 
     # Currently configured project cron jobs
@@ -36,30 +42,21 @@ module Scheduler
         directory = opts[:directory]
 
         Sidekiq::Cron::Job.new(
-          name: "#{project}:#{package_ecosystem}:#{directory}",
+          name: "#{project_name}:#{package_ecosystem}:#{directory}",
           cron: opts[:cron],
           class: "DependencyUpdateJob",
-          args: { "repo" => project, "package_ecosystem" => package_ecosystem, "directory" => directory },
+          args: { "repo" => project_name, "package_ecosystem" => package_ecosystem, "directory" => directory },
           active_job: true,
-          description: "Update #{package_ecosystem} dependencies for #{project} in #{directory}"
+          description: "Update #{package_ecosystem} dependencies for #{project_name} in #{directory}"
         )
       end
-    end
-
-    # Update project
-    #
-    # @return [void]
-    def update_project
-      Project.find_by(name: project).update_attributes!(config: config)
-    rescue Mongoid::Errors::DocumentNotFound
-      Project.create!(name: project, config: config)
     end
 
     # Destroy jobs not present in config anymore
     #
     # @return [void]
     def sync_jobs
-      all_project_jobs(project).reject { |job| project_jobs.any? { |jb| jb.name == job.name } }.each(&:destroy)
+      all_project_jobs(project_name).reject { |job| project_jobs.any? { |jb| jb.name == job.name } }.each(&:destroy)
     end
 
     # Save and enque all jobs

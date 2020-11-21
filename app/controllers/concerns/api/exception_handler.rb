@@ -9,7 +9,7 @@ module Api
         Raven.capture_exception(error)
         ApplicationHelper.log_error(error)
 
-        json_response({ status: 500, error: error.message }, 500)
+        json_response(body: { status: 500, error: error.message }, status: 500)
       end
     end
   end

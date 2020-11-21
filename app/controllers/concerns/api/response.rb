@@ -7,8 +7,9 @@ module Api
     # @param [Object] object
     # @param [Number] status response status
     # @return [void]
-    def json_response(object, status = 200)
-      render(json: object, status: status)
+    def json_response(body:, status: 200)
+      args = body ? { json: body, status: status } : { json: {}, status: 204 }
+      render(**args)
     end
   end
 end

@@ -19,7 +19,7 @@ module Api
       gitlab_token = request.headers.fetch("X-Gitlab-Token", "")
       return if ActiveSupport::SecurityUtils.secure_compare(gitlab_token, gitlab_auth_token)
 
-      json_response({ status: 401, error: "Invalid gitlab authentication token" }, 401)
+      json_response(body: { status: 401, error: "Invalid gitlab authentication token" }, status: 401)
     end
   end
 end
