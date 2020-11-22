@@ -128,6 +128,8 @@ tests_standalone_version:
   extends: .tests_standalone_version
   tags:
     - private
+  variables:
+    SETTINGS__GITHUB_ACCESS_TOKEN: $GITHUB_ACCESS_TOKEN
   rules: *main
 tests_standalone_version_fork:
   extends: .tests_standalone_version
