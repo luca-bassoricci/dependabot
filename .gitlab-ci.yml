@@ -7,24 +7,16 @@
 .release: &release
   if: '$CI_COMMIT_TAG =~ /^v[0-9.]+$/'
 
-.all: &all
+.main: &main
   - *mr
-  - *mr_forked
   - *master
   - *release
-
-.build_image:
-  stage: .pre
-  extends: .buildkit_runner
-  script:
-    - script/build.sh $FILE_PATH $DOCKER_IMAGE
+.fork: &fork
+  - *mr_forked
 
 # ======================================================================================================================
 # Global
 # ======================================================================================================================
-include:
-  - local: .gitlab/ci/runners.gitlab-ci.yml
-
 stages:
   - static analysis
   - test
@@ -38,145 +30,108 @@ variables:
   LATEST_TAG: $CI_COMMIT_REF_SLUG-latest
   CODACY_VERSION: "11.2.3"
 
+include:
+  - local: .gitlab/ci/jobs.gitlab-ci.yml
+
 # ======================================================================================================================
 # Pre Stage
 # ======================================================================================================================
 cache_dependencies:
-  stage: .pre
-  extends: .ruby_runner
-  script:
-    - ./script/download-codacy.sh
-  cache:
-    policy: pull-push
-  rules: *all
+  extends: .cache_dependencies
+  tags:
+    - private
+  rules: *main
+cache_dependencies_fork:
+  extends: .cache_dependencies
+  rules: *fork
 
 build_app_image:
-  stage: .pre
-  extends: .build_image
+  extends: .build_app_image
   tags:
     - private
-  variables:
-    FILE_PATH: .
-    DOCKER_IMAGE: $CI_REGISTRY_IMAGE
-  rules:
-    - *mr
-    - *master
-    - *release
+  rules: *main
 build_app_image_fork:
-  stage: .pre
-  extends: .build_image
+  extends: .build_app_image
   tags:
     - docker
   variables:
     FORK: "true"
-    FILE_PATH: .
-    DOCKER_IMAGE: $CI_REGISTRY_IMAGE
-  rules:
-    - *mr_forked
+  rules: *fork
 
 build_mock_image:
-  stage: .pre
-  extends: .build_image
+  extends: .build_mock_image
   tags:
     - private
-  variables:
-    FILE_PATH: spec/gitlab_mock
-    DOCKER_IMAGE: $CI_REGISTRY_IMAGE/gitlab-mock
-  rules:
-    - *mr
-    - *master
-    - *release
+  rules: *main
 build_mock_image_fork:
-  stage: .pre
-  extends: .build_image
+  extends: .build_mock_image
   tags:
     - docker
   variables:
     FORK: "true"
-    FILE_PATH: spec/gitlab_mock
-    DOCKER_IMAGE: $CI_REGISTRY_IMAGE/gitlab-mock
-  rules:
-    - *mr_forked
+  rules: *fork
 
 # ======================================================================================================================
 # Static analysis stage
 # ======================================================================================================================
 rubocop:
-  stage: static analysis
-  extends: .ruby_runner
-  script:
-    - bundle exec rubocop --parallel --color
-  rules: *all
+  extends: .rubocop
+  tags:
+    - private
+  rules: *main
+rubocop_fork:
+  extends: .rubocop
+  rules: *fork
 
 reek:
-  stage: static analysis
-  extends: .ruby_runner
-  script:
-    - bundle exec reek --color --progress --force-exclusion --sort-by smelliness .
-  rules: *all
+  extends: .reek
+  tags:
+    - private
+  rules: *main
+reek_fork:
+  extends: .reek
+  rules: *fork
 
 brakeman:
-  stage: static analysis
-  extends: .ruby_runner
-  script:
-    - bundle exec brakeman --color
-  rules: *all
+  extends: .brakeman
+  tags:
+    - private
+  rules: *main
+brakeman_fork:
+  extends: .brakeman
+  rules: *fork
 
 bundle_audit:
-  stage: static analysis
-  extends: .ruby_runner
-  script:
-    - bundle exec bundle-audit check --update
-  rules: *all
+  extends: .bundle_audit
+  tags:
+    - private
+  rules: *main
+bundle_audit_fork:
+  extends: .bundle_audit
+  tags:
+    - private
+  rules: *fork
 
 # ======================================================================================================================
 # Test Stage
 # ======================================================================================================================
 tests_rspec:
-  stage: test
-  extends: .ruby_runner
-  services:
-    - name: bitnami/redis:6.0-debian-10
-      alias: redis
-    - name: bitnami/mongodb:4.4-debian-10
-      alias: mongodb
-  variables:
-    REDIS_URL: redis://redis:6379
-    REDIS_PASSWORD: $REDIS_PASSWORD
-    MONGODB_URL: mongodb:27017
-    COVERAGE: "true"
-  script:
-    - bundle exec rspec --format documentation --format RspecJunitFormatter --out tmp/rspec.xml
-  after_script:
-    - ./codacy-coverage-reporter-$CODACY_VERSION report -r coverage/coverage.xml
-  coverage: /\((\d{1,3}\.\d{1,2})\%\)/
-  artifacts:
-    reports:
-      cobertura: coverage/coverage.xml
-      junit: tmp/rspec.xml
-    paths:
-      - coverage/dependabot.lcov
-    expire_in: 7 days
-  rules: *all
+  extends: .tests_rspec
+  tags:
+    - private
+  rules: *main
+tests_rspec_fork:
+  extends: .tests_rspec
+  rules: *fork
 
 tests_standalone_version:
-  image:
-    name: $APP_DOCKER_IMAGE:$CURRENT_TAG
-    entrypoint: [""]
-  stage: test
-  services:
-    - name: $GITLAB_MOCK_DOCKER_IMAGE:$CURRENT_TAG
-      alias: gitlab
-  variables:
-    SETTINGS__GITLAB_URL: http://gitlab:4567
-    SETTINGS__GITLAB_ACCESS_TOKEN: e2e-test
-    SETTINGS__STANDALONE: "true"
-    RAILS_ENV: test
-    GIT_STRATEGY: none
-  script:
-    - cd /home/dependabot
-    - bundle exec rake 'dependabot:update[test-repo,bundler,/]'
-  rules: *all
+  extends: .tests_standalone_version
+  tags:
+    - private
+  rules: *main
+tests_standalone_version_fork:
+  extends: .tests_standalone_version
+  rules: *fork
 
 # ======================================================================================================================
 # Release Stage
