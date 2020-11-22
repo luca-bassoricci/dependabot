@@ -33,8 +33,6 @@ module Gitlab
         credentials: Credentials.fetch,
         **mr_options
       ).create.tap { |mr| logger.info { "created mr #{mr.web_url}" } if mr }
-    rescue Octokit::TooManyRequests
-      logger.error { "github API rate limit exceeded! See: https://developer.github.com/v3/#rate-limiting" }
     end
 
     private
