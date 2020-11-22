@@ -81,9 +81,11 @@ Multiple registries of the same type can be configured at the same time
 
 ### Gitlab configuration
 
-In order for gitlab to pick up repository configuration, a [webhook](https://docs.gitlab.com/ee/user/project/integrations/webhooks.html) with url
-`http://{dependabot_host}/api/hooks` and optional secret token needs to be created for repository with trigger for `push` events in the default repository
-branch.
+Following [webhooks](https://docs.gitlab.com/ee/user/project/integrations/webhooks.html) with url
+`http://{dependabot_host}/api/hooks` and optional secret token have to be created in project:
+
+* `Push events` - default repository branch
+* `Merge request events`
 
 ### Dependabot Configuration file
 
