@@ -7,6 +7,6 @@ DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 class SimpleLogFormatter < Sidekiq::Logger::Formatters::Base
   # :reek:LongParameterList
   def call(severity, time, _program_name, message)
-    "[#{time} tid=#{tid}] #{severity}: #{message}\n"
+    "[#{time} tid=#{tid}#{format_context}] #{severity}: #{message}\n"
   end
 end
