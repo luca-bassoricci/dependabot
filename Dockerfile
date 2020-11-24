@@ -33,8 +33,6 @@ RUN bundle install
 
 COPY ./ ./
 
-EXPOSE 3000
-
 ARG COMMIT_SHA
 ARG PROJECT_URL
 
