@@ -212,7 +212,7 @@ GEM
     et-orbi (1.2.4)
       tzinfo
     excon (0.78.0)
-    faker (2.14.0)
+    faker (2.15.1)
       i18n (>= 1.6, < 2)
     faraday (1.1.0)
       multipart-post (>= 1.2, < 3)
@@ -473,7 +473,7 @@ DEPENDENCIES
   config (~> 2.2)
   dependabot-omnibus (~> 0.125.5)
   dry-validation (~> 1.5)
-  faker (~> 2.14)
+  faker (~> 2.15)
   lograge (~> 0.11.2)
   mongoid (~> 7.1)
   pry (~> 0.13.1)
