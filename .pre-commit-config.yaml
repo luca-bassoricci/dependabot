@@ -17,9 +17,3 @@ repos:
         entry: bundle exec reek
         args: [--force-exclusion, --single-line, --sort-by=smelliness]
         types: [ruby]
-      - id: undercover
-        name: Undercover
-        language: script
-        entry: hooks/undercover.sh
-        types: [ruby]
-        files: ^app/
