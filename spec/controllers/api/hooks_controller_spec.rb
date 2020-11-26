@@ -2,6 +2,7 @@
 
 describe Api::HooksController do
   include_context "rack_test"
+  include_context "settings"
 
   context "with successful response" do
     let(:project) { Project.new(name: "project") }
@@ -39,6 +40,13 @@ describe Api::HooksController do
 
   context "with unsuccessful response" do
     let(:error) { StandardError.new("Unexpected") }
+    let(:auth_token) { "auth_token" }
+
+    around do |example|
+      with_settings(SETTINGS__GITLAB_AUTH_TOKEN: auth_token) do
+        example.run
+      end
+    end
 
     before do
       allow(Webhooks::PushEventHandler).to receive(:call).and_raise(error)
@@ -46,7 +54,7 @@ describe Api::HooksController do
     end
 
     it "system error" do
-      post_json("/api/hooks", "spec/fixture/api/webhooks/push.json")
+      post_json("/api/hooks", "spec/fixture/api/webhooks/push.json", auth_token)
 
       expect(Raven).to have_received(:capture_exception).with(error)
       expect(last_response.status).to eq(500)
@@ -54,7 +62,7 @@ describe Api::HooksController do
     end
 
     it "invalid request" do
-      post_json("/api/hooks", { "funky" => "object" })
+      post_json("/api/hooks", { "funky" => "object" }, auth_token)
 
       expect(last_response.status).to eq(400)
       expect(last_response.body).to eq({ status: 400, error: "Unsupported or missing parameter 'object_kind'" }.to_json)
@@ -63,8 +71,10 @@ describe Api::HooksController do
     it "unauthorized request" do
       post_json("/api/hooks", "spec/fixture/api/webhooks/push.json", "invalid_token")
 
-      expect(last_response.status).to eq(401)
-      expect(last_response.body).to eq({ status: 401, error: "Invalid gitlab authentication token" }.to_json)
+      aggregate_failures do
+        expect(last_response.status).to eq(401)
+        expect(last_response.body).to eq({ status: 401, error: "Invalid gitlab authentication token" }.to_json)
+      end
     end
   end
 end

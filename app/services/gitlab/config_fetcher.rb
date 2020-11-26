@@ -4,29 +4,24 @@ module Gitlab
   class MissingConfigurationError < StandardError; end
 
   class ConfigFetcher < ApplicationService
-    # @param [String] repo
-    def initialize(repo)
-      @repo = repo
+    # @param [String] project_name
+    def initialize(project_name, default_branch)
+      @project_name = project_name
+      @default_branch = default_branch
     end
 
     # Get dependabot.yml file contents
     #
     # @return [String]
     def call
-      default_branch = gitlab.project(repo)&.default_branch
-
-      raise("Failed to fetch default branch for #{repo}") unless default_branch
-
-      logger.info { "Fetching configuration for #{repo} from #{default_branch}" }
-      gitlab.file_contents(repo, ".gitlab/dependabot.yml", default_branch).tap do |config|
-        raise("Failed to fetch configuration for #{repo}") unless config
-      end
+      logger.info { "Fetching configuration for #{project_name} from #{default_branch}" }
+      gitlab.file_contents(project_name, ".gitlab/dependabot.yml", default_branch)
     rescue Error::NotFound
       raise(MissingConfigurationError, ".gitlab/dependabot.yml not present in #{repo}'s branch #{default_branch}")
     end
 
     private
 
-    attr_reader :repo
+    attr_reader :project_name, :default_branch
   end
 end

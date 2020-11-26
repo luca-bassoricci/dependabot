@@ -8,6 +8,7 @@ describe DependencyUpdater do
 
   let(:config) { "config" }
   let(:rspec) { "rspec" }
+  let(:branch) { "master" }
 
   let(:project) { Project.new(name: repo) }
 
@@ -41,6 +42,7 @@ describe DependencyUpdater do
   before do
     stub_gitlab
 
+    allow(Gitlab::DefaultBranch).to receive(:call) { branch }
     allow(Gitlab::ConfigFetcher).to receive(:call) { raw_config }
     allow(Dependabot::DependabotSource).to receive(:call) { source }
     allow(Dependabot::FileFetcher).to receive(:call) { fetcher }

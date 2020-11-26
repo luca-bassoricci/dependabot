@@ -2,11 +2,13 @@
 
 ENV["RAILS_ENV"] ||= "test"
 ENV["LOG_LEVEL"] ||= "fatal"
+ENV["SETTINGS__GITLAB_ACCESS_TOKEN"] ||= "token_gitlab"
 
 require_relative "spec_helper"
 require_relative "webmock_helper"
 require_relative "dependabot_helper"
 require_relative "rack_test_helper"
+require_relative "settings_helper"
 require_relative "../config/environment"
 
 require "rspec-sidekiq"
