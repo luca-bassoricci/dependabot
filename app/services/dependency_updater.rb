@@ -25,13 +25,20 @@ class DependencyUpdater < ApplicationService
   # @return [Hash]
   def config
     @config ||= begin
-      config_entry = Dependabot::Config.call(project_name).find do |conf|
+      config_entry = Dependabot::Config.call(project_name, default_branch).find do |conf|
         conf[:package_ecosystem] == package_ecosystem && conf[:directory] == directory
       end
       raise("Configuration missing entry with package-ecosystem: #{package_ecosystem}") unless config_entry
 
       config_entry
     end
+  end
+
+  # Project default branch
+  #
+  # @return [String]
+  def default_branch
+    Gitlab::DefaultBranch.call(project_name)
   end
 
   # Package manager name

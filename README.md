@@ -48,6 +48,8 @@ Application requires few environment variables to work.
 * `SETTINGS__GITHUB_ACCESS_TOKEN` - [github](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) personal access token with repository read scope, without it you can run into rate limits when fetching changelog and release notes for all dependencies which code comes from github
 * `SETTINGS__GITLAB_AUTH_TOKEN` - optional gitlab webhook token which can be configured under webhook settings in gitlab, if not present,
 token set in gitlab webhook configuration will be ignored
+* `SETTINGS__DEPENDABOT_URL` - url application can be reached on, example: `https://dependabot-gitlab.com`. This url will be used to automatically
+add necessary webhooks to project
 
 ### Private registry credentials
 
@@ -81,8 +83,8 @@ Multiple registries of the same type can be configured at the same time
 
 ### Gitlab configuration
 
-Following [webhooks](https://docs.gitlab.com/ee/user/project/integrations/webhooks.html) with url
-`http://{dependabot_host}/api/hooks` and optional secret token have to be created in project:
+If `SETTINGS__DEPENDABOT_URL` is not set, following [webhooks](https://docs.gitlab.com/ee/user/project/integrations/webhooks.html) with url
+`http://{dependabot_host}/api/hooks` and optional secret token have to be created in project manually:
 
 * `Push events` - default repository branch
 * `Merge request events`

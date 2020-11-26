@@ -2,10 +2,12 @@
 
 module Dependabot
   class Config < ApplicationService
-    # @param [String] repo
+    # @param [String] project_name
+    # @param [String] default_branch
     # @param [Boolean] update_cache
-    def initialize(repo, update_cache: false)
-      @repo = repo
+    def initialize(project_name, default_branch, update_cache: false)
+      @project_name = project_name
+      @default_branch = default_branch
       @update_cache = update_cache
     end
 
@@ -13,13 +15,13 @@ module Dependabot
     #
     # @return [Hash<Symbol, Object>]
     def call
-      Rails.cache.fetch("#{repo}-config", expires_in: 12.hours, force: update_cache) do
-        Configuration::Parser.call(Gitlab::ConfigFetcher.call(repo))
+      Rails.cache.fetch("#{project_name}-config", expires_in: 12.hours, force: update_cache) do
+        Configuration::Parser.call(Gitlab::ConfigFetcher.call(project_name, default_branch))
       end
     end
 
     private
 
-    attr_reader :repo, :update_cache
+    attr_reader :project_name, :default_branch, :update_cache
   end
 end

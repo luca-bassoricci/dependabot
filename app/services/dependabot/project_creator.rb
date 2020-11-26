@@ -13,8 +13,8 @@ module Dependabot
     #
     # @return [Array] response info
     def call
-      project.config = config
-      project.tap(&:save!)
+      save_webhook
+      save_project
     end
 
     private
@@ -32,7 +32,36 @@ module Dependabot
     #
     # @return [Array]
     def config
-      @config ||= Configuration::Parser.call(Gitlab::ConfigFetcher.call(project_name))
+      @config ||= Config.call(project_name, default_branch, update_cache: true)
+    end
+
+    # Project default branch
+    #
+    # @return [String]
+    def default_branch
+      @default_branch ||= Gitlab::DefaultBranch.call(project_name)
+    end
+
+    # Save webhook if dependabot url is configured
+    #
+    # @return [void]
+    def save_webhook
+      return unless Settings.dependabot_url
+
+      args = [project, default_branch]
+      project.webhook_id = if project.webhook_id
+                             Gitlab::Hooks::Updater.call(*args)
+                           else
+                             Gitlab::Hooks::Creator.call(*args)
+                           end
+    end
+
+    # Save project
+    #
+    # @return [void]
+    def save_project
+      project.config = config
+      project.tap(&:save!)
     end
   end
 end

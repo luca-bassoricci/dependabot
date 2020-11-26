@@ -5,10 +5,11 @@ class Project
 
   field :name, type: String
   field :config, type: Array
+  field :webhook_id, type: Integer
 
   has_many :merge_requests, dependent: :destroy
 
-  # Symbolize all keys when loading from database
+  # Symbolize all config keys when loading from database
   #
   # @return [Array<Symbol, Object>]
   def symbolized_config
