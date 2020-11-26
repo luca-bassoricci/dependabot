@@ -10,7 +10,7 @@ releases:
   - name: dependabot-gitlab
     namespace: dependabot
     chart: andrcuns/dependabot-gitlab
-    version: 0.0.19
+    version: 0.0.20
     installed: true
     values:
       - image:
@@ -22,6 +22,7 @@ releases:
             dev.inlets.manage: "true"
         env:
           sentryDsn: {{ requiredEnv "SENTRY_DSN" }}
+          dependabotUrl: {{ requiredEnv "DEPENDABOT_URL" }}
         credentials:
             gitlab_access_token: {{ requiredEnv "GITLAB_ACCESS_TOKEN" }}
             github_access_token: {{ requiredEnv "GITHUB_ACCESS_TOKEN" }}
