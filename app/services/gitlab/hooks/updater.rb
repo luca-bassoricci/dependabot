@@ -7,8 +7,6 @@ module Gitlab
       #
       # @return [Integer]
       def call
-        return project.webhook_id unless changed?
-
         logger.info { "Updating webhook for project '#{project.name}'" }
         gitlab.edit_project_hook(project.name, project.webhook_id, hook_url, hook_args).id
       end
