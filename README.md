@@ -2,7 +2,7 @@
 
 # dependabot-gitlab
 
-**The project is still considered to be in alpha stage so settings and setup might change**
+**This software is Work in Progress: features will appear and disappear, API will be changed, your feedback is always welcome!**
 
 Application providing automated dependency updates based on [dependabot-core](https://github.com/dependabot/dependabot-core)
 
