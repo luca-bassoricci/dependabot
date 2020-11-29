@@ -10,7 +10,7 @@ releases:
   - name: dependabot-gitlab
     namespace: dependabot
     chart: andrcuns/dependabot-gitlab
-    version: 0.0.21
+    version: 0.0.24
     installed: true
     values:
       - image:
@@ -31,7 +31,6 @@ releases:
           usePassword: true
           password: {{ requiredEnv "REDIS_PASSWORD" }}
         mongodb:
-          enabled: true
           auth:
             rootPassword: {{ requiredEnv "MONGODB_ROOT_PASSWORD" }}
             password: {{ requiredEnv "MONGODB_PASSWORD" }}
