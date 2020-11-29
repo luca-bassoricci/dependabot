@@ -24,6 +24,12 @@ services:
     ports:
       - 3000:3000
     command: rails server
+    healthcheck:
+      test: ["CMD", "curl -f localhost:3000/healthcheck"]
+      interval: 60s
+      timeout: 10s
+      retries: 20
+      start_period: 20s
 
   worker:
     image: andrcuns/dependabot-gitlab:latest
@@ -35,6 +41,12 @@ services:
     ports:
       - 7433:7433
     command: sidekiq
+    healthcheck:
+      test: ["CMD", "kube/sidekiq-healthcheck.sh"]
+      interval: 60s
+      timeout: 3s
+      retries: 20
+      start_period: 20s
 
 volumes:
   tmp:

@@ -4,6 +4,9 @@ development:
       database: <%= "#{ENV['MONGODB_DATABASE'] || 'dependabot_gitlab_development'}" %>
       hosts:
         - <%= ENV['MONGODB_URL'] || 'localhost:27017' %>
+      options:
+        server_selection_timeout: 1
+        connect_timeout: 1
   options:
     app_name: DependabotGitlab
 
@@ -13,6 +16,9 @@ test:
       database: <%= "#{ENV['MONGODB_DATABASE'] || 'dependabot_gitlab_test'}" %>
       hosts:
         - <%= ENV['MONGODB_URL'] || 'localhost:27017' %>
+      options:
+        server_selection_timeout: 1
+        connect_timeout: 1
   options:
     app_name: DependabotGitlab
 
@@ -25,5 +31,7 @@ production:
       options:
         user: <%= ENV['MONGODB_USER'] %>
         password: <%= ENV['MONGODB_PASSWORD'] %>
+        server_selection_timeout: 5
+        connect_timeout: 5
   options:
     app_name: DependabotGitlab

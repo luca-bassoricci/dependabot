@@ -12,4 +12,6 @@ Rails.application.routes.draw do
     resources :hooks, only: [:create]
     resources :project, only: [:create]
   end
+
+  Healthcheck.routes(self)
 end
