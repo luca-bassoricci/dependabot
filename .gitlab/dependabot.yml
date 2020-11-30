@@ -6,6 +6,8 @@ updates:
       interval: daily
       time: "19:00"
       timezone: Europe/Riga
+    commit-message:
+      prefix: "dependencies"
     assignees:
       - andrcuns
   - package-ecosystem: docker
@@ -14,6 +16,8 @@ updates:
       interval: daily
       time: "19:00"
       timezone: Europe/Riga
+    commit-message:
+      prefix: "dependencies"
     assignees:
       - andrcuns
   - package-ecosystem: docker
@@ -22,7 +26,8 @@ updates:
       interval: daily
       time: "18:00"
       timezone: Europe/Riga
+    commit-message:
+      prefix: "dependencies"
     assignees:
       - andrcuns
     auto-merge: true
-    
