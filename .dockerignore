@@ -5,7 +5,7 @@
 config/environments/
 !config/environments/test.rb
 !config/environments/production.rb
-!lib/
+!lib/tasks/dependabot.rake
 !public/
 !kube/
 

@@ -42,4 +42,5 @@ end
 SimpleCov.start("rails") do
   formatter SimpleCov::Formatter::MultiFormatter.new(formatters)
   enable_coverage :branch
+  add_filter "/lib/"
 end

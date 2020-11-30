@@ -138,7 +138,7 @@ tests_standalone_version_fork:
 # ======================================================================================================================
 # Release Stage
 # ======================================================================================================================
-release:
+release_image:
   stage: release
   extends: .release_runner
   tags:
@@ -154,6 +154,18 @@ release:
       docker tag $APP_DOCKER_IMAGE:$CURRENT_TAG $RELEASE_IMAGE:$RELEASE_VERSION
       docker tag $APP_DOCKER_IMAGE:$CURRENT_TAG $RELEASE_IMAGE:latest
       docker push $RELEASE_IMAGE:$RELEASE_VERSION && docker push $RELEASE_IMAGE:latest
+  rules:
+    - *release
+
+create_gitlab_release:
+  stage: release
+  extends: .ruby_runner
+  variables:
+    SETTINGS__GITLAB_ACCESS_TOKEN: $GITLAB_ACCESS_TOKEN
+  tags:
+    - private
+  script:
+    - bundle exec rake "dependabot:gitlab_release[$CI_COMMIT_TAG]"
   rules:
     - *release
 
