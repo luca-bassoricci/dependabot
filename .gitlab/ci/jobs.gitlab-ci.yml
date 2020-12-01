@@ -7,7 +7,6 @@
     BUNDLE_PATH: vendor/bundle
     BUNDLE_FROZEN: "true"
     BUNDLE_SUPPRESS_INSTALL_USING_MESSAGES: "true"
-    BUNDLE_WITHOUT: development
   before_script:
     - bundle install
   cache:
