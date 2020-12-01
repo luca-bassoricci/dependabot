@@ -5,7 +5,7 @@ source "https://rubygems.org"
 ruby "~> 2.6"
 
 gem "config", "~> 2.2"
-gem "dependabot-omnibus", "~> 0.125.6"
+gem "dependabot-omnibus", "~> 0.125.7"
 gem "dry-validation", "~> 1.5"
 gem "lograge", "~> 0.11.2"
 gem "mongoid", "~> 7.1"
