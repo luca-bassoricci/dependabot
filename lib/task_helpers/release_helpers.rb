@@ -2,6 +2,10 @@
 
 require "semver"
 
+# Release helper which generate proper release notes
+# It requires linear repo history with only merges in to main brunch.
+# All commits must be prefixed with one of the category prefixes configured in .github/release.yml
+#
 class ReleaseHelper
   include ApplicationHelper
 
@@ -26,6 +30,13 @@ class ReleaseHelper
 
   attr_reader :ref_from, :ref_to, :ref_range
 
+  # Release categories config
+  #
+  # @return [Hash]
+  def config
+    @config ||= YAML.load_file(".gitlab/release.yml")
+  end
+
   # Commit list for ref range
   #
   # @return [Array]
@@ -34,24 +45,46 @@ class ReleaseHelper
                  .commits(PROJECT_ID, ref_name: ref_range, first_parent: true, with_stats: true)
                  .auto_paginate
                  .select { |commit| commit.message.start_with?("Merge") }
-                 .map { |commit| "- #{commit.message.split("\n\n").drop(1).join('. ')}" }
+  end
+
+  # Changes split by categories
+  #
+  # @return [Hash]
+  def categorized_changes
+    @categorized_changes ||= commits.each_with_object(config.transform_values { |_| [] }) do |commit, hash|
+      committer = commit.committer_name
+      message = commit.message.split("\n\n").drop(1).join(". ")
+
+      next unless message.match?(/^(#{config.keys.join("|")}):/)
+
+      category = message.match(/(\w+): \S+/)[1]
+
+      hash[category].push("- " + message.gsub("#{category}: ", "") + " - (#{committer})")
+    end
   end
 
   # Get changelog entry
   #
   # @return [String]
   def changelog
-    changelist = commits.join("\n")
-    breaking = changelist.include?("BREAKING")
+    raise("No changes to generate changelog from detected!") if categorized_changes.all?(&:empty?)
+
+    changelist = categorized_changes
+                 .reject { |_category, messages| messages.empty? }
+                 .map { |category, messages| "### #{config[category]}\n\n#{messages.join("\n")}\n" }
+                 .join("\n")
 
     <<~CHANGELOG
-      ## [#{ref_to}](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/#{ref_from}...#{ref_to})#{breaking ? ' *BREAKING*' : ''}
-
       #{changelist}
+      ### 👀 Links
+
+      [Commits since #{ref_from}](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/#{ref_from}...#{ref_to})
     CHANGELOG
   end
 end
 
+# Create a github release for already pushed tag
+#
 class GitlabReleaseCreator < ReleaseHelper
   private_instance_methods :new
 
@@ -77,7 +110,8 @@ class GitlabReleaseCreator < ReleaseHelper
   #
   # @return [Gitlab::ObjectifiedHash]
   def release?
-    gitlab.project_release(PROJECT_ID, ref_to)
+    # Gitlab returns 403 for specific find release endpoint
+    gitlab.project_releases(PROJECT_ID).auto_paginate.detect { |release| release.tag_name == ref_to }
   end
 
   # Create gitlab release
@@ -151,10 +185,16 @@ class ReleaseCreator < ReleaseHelper
   # @return [void]
   def update_changelog
     logger.info { "Updating changelog" }
-    notes = <<~NOTES.strip
+
+    cl = changelog
+    breaking = cl.include?("[BREAKING]")
+
+    notes = <<~NOTES
       # CHANGELOG
 
-      #{changelog}
+      ## [#{ref_to} - #{Time.current.to_date}](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)#{breaking ? ' *BREAKING*' : ''}
+
+      #{cl}
       #{File.read('CHANGELOG.md').match(/^# CHANGELOG\n\n([ \n\S]+)/)[1]}
     NOTES
 
