@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## [v0.2.6](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.2.5...v0.2.6)
+
+- dependencies: bump dependabot-omnibus from 0.125.6 to 0.125.7. See merge request dependabot-gitlab/dependabot!326
+- dependencies: bump simplecov from 0.19.1 to 0.20.0. See merge request dependabot-gitlab/dependabot!328
+- dependencies: bump puma from 5.0.4 to 5.1.0. See merge request dependabot-gitlab/dependabot!329
+- chore: Generate change log and add release utilities. See merge request dependabot-gitlab/dependabot!325
+- Update chart version. See merge request dependabot-gitlab/dependabot!324
+
 ## [v0.2.5](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.2.4...v0.2.5)
 
 - Healthcheck improvements. See merge request dependabot-gitlab/dependabot!322
