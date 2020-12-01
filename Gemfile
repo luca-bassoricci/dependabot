@@ -38,7 +38,7 @@ group :test do
   gem "rspec_junit_formatter", "~> 0.4.1"
   gem "rspec-rails", "~> 4.0.1"
   gem "rspec-sidekiq", "~> 3.1", require: false
-  gem "simplecov", "~> 0.19.1"
+  gem "simplecov", "~> 0.20.0"
   gem "simplecov-cobertura", "~> 1.4.2"
   gem "simplecov-console", "~> 0.8.0"
   gem "simplecov-lcov", "~> 0.8.0"
