@@ -1,19 +1,23 @@
 **
 
 !app/
-!config/
-config/environments/
-!config/environments/test.rb
-!config/environments/production.rb
-!lib/tasks/dependabot.rake
 !public/
 !kube/
-
 !bin/rails
+!lib/tasks/dependabot.rake
 !config.ru
 !Gemfile
 !Gemfile.lock
 !Rakefile
+
+!config/
+config/environments/
+!config/environments/test.rb
+!config/environments/production.rb
+config/brakeman.ignore
+config/credentials.yml
+config/app.yml
+config/spring.rb
 
 !tmp/
 tmp/*

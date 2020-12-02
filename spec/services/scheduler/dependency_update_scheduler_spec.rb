@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe Scheduler::DependencyUpdateScheduler do
-  include_context "dependabot"
+  include_context "with dependabot helper"
 
   let(:project) { Project.new(name: repo, config: config) }
   let(:config) do

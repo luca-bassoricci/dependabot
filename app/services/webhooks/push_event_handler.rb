@@ -8,6 +8,7 @@ module Webhooks
     def initialize(project_name, commits)
       @project_name = project_name
       @commits = commits
+      @config_filename = AppConfig.config_filename
     end
 
     # Create or delete dependency update jobs
@@ -24,14 +25,14 @@ module Webhooks
 
     private
 
-    attr_reader :project_name, :commits
+    attr_reader :project_name, :commits, :config_filename
 
     # Has dependabot config been modified
     #
     # @return [Boolean]
     def modified_config?
       commits.any? do |commit|
-        commit.values_at(:added, :modified).flatten.include?(Settings.config_filename)
+        commit.values_at(:added, :modified).flatten.include?(config_filename)
       end
     end
 
@@ -42,7 +43,7 @@ module Webhooks
       return @deleted_config if defined?(@deleted_config)
 
       @deleted_config = commits.any? do |commit|
-        commit[:removed].include?(Settings.config_filename)
+        commit[:removed].include?(config_filename)
       end
     end
 

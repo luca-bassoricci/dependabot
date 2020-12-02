@@ -10,8 +10,8 @@ describe Dependabot::UpdateChecker do
     )
   end
 
-  include_context "webmock"
-  include_context "dependabot"
+  include_context "with webmock"
+  include_context "with dependabot helper"
 
   let(:checker) { instance_double("Dependabot::Bundler::UpdateChecker") }
   let(:latest_version) { "2.2.1" }

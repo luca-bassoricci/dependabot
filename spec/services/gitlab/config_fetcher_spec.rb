@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 describe Gitlab::ConfigFetcher do
-  subject(:config_fetcher) { described_class.call(repo, branch) }
+  subject(:config_fetcher_return) { described_class.call(repo, branch) }
 
-  include_context "dependabot"
+  include_context "with dependabot helper"
 
   let(:gitlab) { instance_double("Gitlab::client") }
   let(:branch) { "master" }
@@ -13,5 +13,7 @@ describe Gitlab::ConfigFetcher do
     allow(gitlab).to receive(:file_contents).with(repo, ".gitlab/dependabot.yml", branch) { raw_config }
   end
 
-  it { is_expected.to eq(raw_config) }
+  it "returns dependabot.yml contents" do
+    expect(config_fetcher_return).to eq(raw_config)
+  end
 end

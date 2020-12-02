@@ -12,7 +12,7 @@ Sidekiq.configure_server do |config|
   config.log_formatter = SimpleLogFormatter.new
   config.logger.datetime_format = DATETIME_FORMAT
   config.redis = redis_config
-  config.options[:queues].push("default", Settings.sidekiq_healthcheck_queue)
+  config.options[:queues].push("default", HealthcheckConfig.queue)
 end
 Sidekiq.configure_client { |config| config.redis = redis_config }
 

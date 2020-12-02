@@ -36,7 +36,7 @@ Rails.application.configure do
 
   # Use the lowest log level to ensure availability of diagnostic information
   # when problems arise.
-  config.log_level = :info
+  config.log_level = AppConfig.log_level
 
   # Prepend all log lines with the following tags.
   config.log_tags = [:request_id]
@@ -73,7 +73,7 @@ Rails.application.configure do
   # config.active_record.database_resolver = ActiveRecord::Middleware::DatabaseSelector::Resolver
   # config.active_record.database_resolver_context = ActiveRecord::Middleware::DatabaseSelector::Resolver::Session
 
-  unless ENV["SETTINGS__STANDALONE"]
+  unless AppConfig.standalone?
     # Use redis for caching
     config.cache_store = :redis_cache_store,
                          {

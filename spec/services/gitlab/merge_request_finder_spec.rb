@@ -5,7 +5,7 @@ describe Gitlab::MergeRequestFinder do
     described_class.call(project: repo, **search_params)
   end
 
-  include_context "dependabot"
+  include_context "with dependabot helper"
 
   let(:gitlab) { instance_double("Gitlab::Client", merge_requests: [mr]) }
   let(:mr) { OpenStruct.new(iid: 1) }

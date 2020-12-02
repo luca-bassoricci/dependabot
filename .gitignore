@@ -17,3 +17,7 @@ doc
 
 # Ignore integration/e2e test artifacts
 git.store
+
+# Local config
+/config/*.local.yml
+/config/credentials/local.*

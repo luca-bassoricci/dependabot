@@ -29,7 +29,7 @@ class Credentials
   #
   # @return [Hash]
   def github_credentials
-    token = Settings.github_access_token
+    token = CredentialsConfig.github_access_token
     unless token
       logger.warn { "Missing github_access_token. Dependency updates may fail if api rate limit is exceeded." }
       return
@@ -49,9 +49,9 @@ class Credentials
   def gitlab_credentials
     {
       "type" => "git_source",
-      "host" => URI(Settings.gitlab_url).host,
+      "host" => URI(AppConfig.gitlab_url).host,
       "username" => "x-access-token",
-      "password" => Settings.gitlab_access_token
+      "password" => CredentialsConfig.gitlab_access_token
     }
   end
 
@@ -59,17 +59,12 @@ class Credentials
   #
   # @return [Hash]
   def maven_credentials
-    Settings.dig(:credentials, :maven)&.map do |_, repository|
-      if [repository.url, repository.username, repository.password].any?(&:nil?)
-        logger.warn { "Got partially configured maven_repository credentials" }
-        next
-      end
-
+    CredentialsConfig.maven_repos&.map do |repository|
       {
         "type" => "maven_repository",
-        "url" => repository.url,
-        "username" => repository.username,
-        "password" => repository.password
+        "url" => repository[:url],
+        "username" => repository[:username],
+        "password" => repository[:password]
       }
     end
   end
@@ -78,17 +73,12 @@ class Credentials
   #
   # @return [Hash]
   def docker_credentials
-    Settings.dig(:credentials, :docker)&.map do |_, registry|
-      if [registry.registry, registry.username, registry.password].any?(&:nil?)
-        logger.warn { "Got partially configured docker_registry credentials" }
-        next
-      end
-
+    CredentialsConfig.docker_registries&.map do |registry|
       {
         "type" => "docker_registry",
-        "registry" => registry.registry,
-        "username" => registry.username,
-        "password" => registry.password
+        "registry" => registry[:registry],
+        "username" => registry[:username],
+        "password" => registry[:password]
       }
     end
   end
@@ -97,16 +87,11 @@ class Credentials
   #
   # @return [Hash]
   def npm_registry
-    Settings.dig(:credentials, :npm)&.map do |_, registry|
-      if [registry.registry, registry.token].any?(&:nil?)
-        logger.warn { "Got partially configured npm_registry credentials" }
-        next
-      end
-
+    CredentialsConfig.npm_registries&.map do |registry|
       {
         "type" => "npm_registry",
-        "registry" => registry.registry,
-        "token" => registry.token
+        "registry" => registry[:registry],
+        "token" => registry[:token]
       }
     end
   end

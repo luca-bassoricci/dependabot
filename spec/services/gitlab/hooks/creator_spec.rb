@@ -1,15 +1,14 @@
 # frozen_string_literal: true
 
 describe Gitlab::Hooks::Creator do
-  include_context "dependabot"
-  include_context "settings"
+  include_context "with dependabot helper"
 
   let(:id) { 1 }
   let(:gitlab) { instance_double("Gitlab::Client") }
   let(:project) { Project.new(name: repo) }
   let(:branch) { "master" }
   let(:dependabot_url) { "https://test.com" }
-  let(:hook_url) { "#{dependabot_url}/api/hooks" }
+  let(:hook_url) { "#{AppConfig.dependabot_url}/api/hooks" }
   let(:hook_args) do
     {
       merge_requests_events: true,
@@ -21,10 +20,6 @@ describe Gitlab::Hooks::Creator do
   before do
     allow(Gitlab).to receive(:client) { gitlab }
     allow(gitlab).to receive(:add_project_hook) { OpenStruct.new(id: id) }
-  end
-
-  around do |example|
-    with_settings(SETTINGS__DEPENDABOT_URL: dependabot_url) { example.run }
   end
 
   it "creates webhook" do

@@ -40,7 +40,7 @@ module Dependabot
         updated_files: updated_files,
         config: config
       )
-      return if Settings.standalone
+      return if AppConfig.standalone?
 
       save
       close_superseeded_mrs

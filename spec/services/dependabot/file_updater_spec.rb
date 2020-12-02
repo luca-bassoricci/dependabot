@@ -9,8 +9,8 @@ describe Dependabot::FileUpdater do
     )
   end
 
-  include_context "webmock"
-  include_context "dependabot"
+  include_context "with webmock"
+  include_context "with dependabot helper"
 
   let(:files) { fetcher.files }
   let(:updater) { instance_double("Dependabot::Bundler::FileUpdater") }

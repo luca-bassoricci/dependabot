@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe Api::ProjectController do
-  include_context "rack_test"
+  include_context "with rack_test"
 
   let(:project_name) { "dependabot-gitlab/dependabot" }
   let(:project) { Project.new(name: project_name) }

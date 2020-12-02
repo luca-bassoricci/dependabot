@@ -2,7 +2,7 @@
 
 require "rack/test"
 
-RSpec.shared_context("rack_test") do # rubocop:disable RSpec/ContextWording
+RSpec.shared_context("with rack_test") do
   include Rack::Test::Methods
 
   def app

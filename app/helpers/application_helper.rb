@@ -6,8 +6,8 @@ module ApplicationHelper
   # @return [Gitlab::Client]
   def gitlab
     Gitlab.client(
-      endpoint: "#{Settings.gitlab_url}/api/v4",
-      private_token: Settings.gitlab_access_token
+      endpoint: "#{AppConfig.gitlab_url}/api/v4",
+      private_token: CredentialsConfig.gitlab_access_token
     )
   end
 
@@ -24,13 +24,6 @@ module ApplicationHelper
   # @return [Array<Sidekiq::Cron::Job>]
   def all_project_jobs(project)
     Sidekiq::Cron::Job.all.select { |job| job.name.match?(/^#{project}:.*/) }
-  end
-
-  # Check if standalone flag is present
-  #
-  # @return [Boolean]
-  def standalone?
-    Settings.standalone
   end
 
   module_function :gitlab, :log_error

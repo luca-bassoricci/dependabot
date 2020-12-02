@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 describe Gitlab::MergeRequestUpdater do
-  include_context "dependabot"
-  include_context "webmock"
+  include_context "with dependabot helper"
+  include_context "with webmock"
 
   let(:pr_updater) { instance_double("Dependabot::PullRequestUpdater", update: nil) }
   let(:mr) do

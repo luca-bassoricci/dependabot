@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 describe Dependabot::ProjectCreator do
-  include_context "dependabot"
-  include_context "settings"
+  include_context "with dependabot helper"
 
   let(:branch) { "master" }
   let(:gitlab) { instance_double("Gitlab::client") }
@@ -18,10 +17,6 @@ describe Dependabot::ProjectCreator do
   end
 
   context "with dependabot url configured" do
-    around do |example|
-      with_settings(SETTINGS__DEPENDABOT_URL: "https://test.com") { example.run }
-    end
-
     it "creates new project" do
       described_class.call(repo)
 
@@ -56,6 +51,10 @@ describe Dependabot::ProjectCreator do
   end
 
   context "without dependabot url configured" do
+    before do
+      allow(AppConfig).to receive(:dependabot_url).and_return(nil)
+    end
+
     it "skips hook creation" do
       described_class.call(repo)
 
