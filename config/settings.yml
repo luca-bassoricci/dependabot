@@ -1,6 +1,0 @@
-config_filename: .gitlab/dependabot.yml
-gitlab_url: https://gitlab.com
-
-# Used for healthcheck of worker containers
-sidekiq_healthcheck_queue: <%= "healthcheck-#{ENV['HOSTNAME']}" %>
-sidekiq_healthcheck_filename: tmp/healthcheck.txt

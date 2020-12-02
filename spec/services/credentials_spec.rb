@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
-describe Credentials do
-  subject { described_class.fetch }
+describe Credentials, type: :config do
+  subject(:credentials) { described_class.new.credentials }
 
+  include_context "with config helper"
+
+  let(:gitlab_token) { "test_token" }
   let(:github_token) { nil }
 
   let(:maven_url) { nil }
@@ -16,12 +19,27 @@ describe Credentials do
   let(:npm_registry) { nil }
   let(:npm_token) { nil }
 
+  let(:env) do
+    {
+      "SETTINGS__GITLAB_ACCESS_TOKEN" => gitlab_token,
+      "SETTINGS__GITHUB_ACCESS_TOKEN" => github_token,
+      "SETTINGS__CREDENTIALS__MAVEN__REPO1__URL" => maven_url,
+      "SETTINGS__CREDENTIALS__MAVEN__REPO1__USERNAME" => maven_username,
+      "SETTINGS__CREDENTIALS__MAVEN__REPO1__PASSWORD" => maven_password,
+      "SETTINGS__CREDENTIALS__DOCKER__REGISTRY1__REGISTRY" => docker_registry,
+      "SETTINGS__CREDENTIALS__DOCKER__REGISTRY1__USERNAME" => docker_username,
+      "SETTINGS__CREDENTIALS__DOCKER__REGISTRY1__PASSWORD" => docker_password,
+      "SETTINGS__CREDENTIALS__NPM__REGISTRY1__REGISTRY" => npm_registry,
+      "SETTINGS__CREDENTIALS__NPM__REGISTRY1__TOKEN" => npm_token
+    }
+  end
+
   let(:gitlab_creds) do
     {
       "type" => "git_source",
-      "host" => URI(Settings.gitlab_url).host,
+      "host" => URI(AppConfig.gitlab_url).host,
       "username" => "x-access-token",
-      "password" => Settings.gitlab_access_token
+      "password" => gitlab_token
     }
   end
 
@@ -30,67 +48,38 @@ describe Credentials do
       "type" => "git_source",
       "host" => "github.com",
       "username" => "x-access-token",
-      "password" => Settings.github_access_token
+      "password" => github_token
     }
   end
 
   let(:maven_creds) do
     {
       "type" => "maven_repository",
-      "url" => Settings.credentials.maven.repository.url,
-      "username" => Settings.credentials.maven.repository.username,
-      "password" => Settings.credentials.maven.repository.password
+      "url" => maven_url,
+      "username" => maven_username,
+      "password" => maven_password
     }
   end
 
   let(:docker_creds) do
     {
       "type" => "docker_registry",
-      "registry" => Settings.credentials.docker.registry.registry,
-      "username" => Settings.credentials.docker.registry.username,
-      "password" => Settings.credentials.docker.registry.password
+      "registry" => docker_registry,
+      "username" => docker_username,
+      "password" => docker_password
     }
   end
 
   let(:npm_creds) do
     {
       "type" => "npm_registry",
-      "registry" => Settings.credentials.npm.registry.registry,
-      "token" => Settings.credentials.npm.registry.token
+      "registry" => npm_registry,
+      "token" => npm_token
     }
   end
 
-  before do
-    described_class.instance_variable_set(:@credentials, nil)
-
-    Settings.add_source!(
-      {
-        github_access_token: github_token,
-        credentials: {
-          maven: {
-            repository: {
-              url: maven_url,
-              username: maven_username,
-              password: maven_password
-            }
-          },
-          docker: {
-            registry: {
-              registry: docker_registry,
-              username: docker_username,
-              password: docker_password
-            }
-          },
-          npm: {
-            registry: {
-              registry: npm_registry,
-              token: npm_token
-            }
-          }
-        }
-      }
-    )
-    Settings.reload!
+  around do |example|
+    with_env(env) { example.run }
   end
 
   context "with gitlab credentials" do

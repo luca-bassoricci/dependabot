@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe Dependabot::DependabotSource do
-  let(:uri) { URI(Settings.gitlab_url) }
+  let(:uri) { URI(AppConfig.gitlab_url) }
 
   it "returns source" do
     src = described_class.call(repo: "test-repo", directory: "/", branch: "master")

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Api::HooksController do
-  include_context "rack_test"
-  include_context "settings"
+describe Api::HooksController, type: :config do
+  include_context "with rack_test"
+  include_context "with config helper"
 
   context "with successful response" do
     let(:project) { Project.new(name: "project") }
@@ -42,13 +42,8 @@ describe Api::HooksController do
     let(:error) { StandardError.new("Unexpected") }
     let(:auth_token) { "auth_token" }
 
-    around do |example|
-      with_settings(SETTINGS__GITLAB_AUTH_TOKEN: auth_token) do
-        example.run
-      end
-    end
-
     before do
+      allow(CredentialsConfig).to receive(:gitlab_auth_token) { auth_token }
       allow(Webhooks::PushEventHandler).to receive(:call).and_raise(error)
       allow(Raven).to receive(:capture_exception)
     end

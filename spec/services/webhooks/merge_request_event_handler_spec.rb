@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe Webhooks::MergeRequestEventHandler do
-  include_context "dependabot"
+  include_context "with dependabot helper"
 
   let(:project) { Project.new(name: repo, config: dependabot_config) }
   let(:merge_request) do

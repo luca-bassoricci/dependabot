@@ -3,7 +3,7 @@
 describe Webhooks::PushEventHandler do
   subject { described_class }
 
-  include_context "dependabot"
+  include_context "with dependabot helper"
 
   let(:job) { instance_double("Sidekiq::Cron::Job", name: "#{repo}:bundler:/", destroy: true) }
   let(:project) { Project.new(name: repo, config: dependabot_config) }
@@ -41,7 +41,7 @@ describe Webhooks::PushEventHandler do
     end
 
     it "removes project" do
-      described_class.call(repo, commits(removed: [Settings.config_filename]))
+      described_class.call(repo, commits(removed: [AppConfig.config_filename]))
 
       aggregate_failures do
         expect(job).to have_received(:destroy)
@@ -52,7 +52,7 @@ describe Webhooks::PushEventHandler do
 
   context "with config update" do
     it "triggers dependency update" do
-      described_class.call(repo, commits(modified: [Settings.config_filename]))
+      described_class.call(repo, commits(modified: [AppConfig.config_filename]))
 
       aggregate_failures do
         expect(Dependabot::ProjectCreator).to have_received(:call).with(repo)

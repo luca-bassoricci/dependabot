@@ -3,7 +3,7 @@
 describe Configuration::Parser do
   subject(:parser) { described_class }
 
-  include_context "dependabot"
+  include_context "with dependabot helper"
 
   let(:allow_conf) { [{ dependency_type: "direct" }] }
   let(:ignore_conf) { [{ dependency_name: "rspec", versions: ["3.x", "4.x"] }] }

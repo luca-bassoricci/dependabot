@@ -52,7 +52,7 @@ class DependencyUpdater < ApplicationService
   #
   # @return [Project]
   def project
-    @project ||= Settings.standalone ? nil : Project.find_by(name: project_name)
+    @project ||= AppConfig.standalone ? nil : Project.find_by(name: project_name)
   end
 
   # Get file fetcher

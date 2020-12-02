@@ -13,7 +13,7 @@ module Api
     #
     # @return [void]
     def authenticate
-      gitlab_auth_token = Settings.gitlab_auth_token
+      gitlab_auth_token = CredentialsConfig.gitlab_auth_token
       return unless gitlab_auth_token
 
       gitlab_token = request.headers.fetch("X-Gitlab-Token", "")

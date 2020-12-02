@@ -3,8 +3,8 @@
 describe Dependabot::FileFetcher do
   subject { described_class.call(source: source, package_manager: package_manager) }
 
-  include_context "webmock"
-  include_context "dependabot"
+  include_context "with webmock"
+  include_context "with dependabot helper"
 
   before do
     stub_gitlab

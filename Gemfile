@@ -4,7 +4,7 @@ source "https://rubygems.org"
 
 ruby "~> 2.6"
 
-gem "config", "~> 2.2"
+gem "anyway_config", "~> 2.0"
 gem "dependabot-omnibus", "~> 0.125.7"
 gem "dry-validation", "~> 1.5"
 gem "lograge", "~> 0.11.2"
@@ -31,7 +31,6 @@ end
 
 group :test do
   gem "brakeman", "~> 4.10"
-  gem "climate_control", "~> 0.2.0"
   gem "faker", "~> 2.15"
   gem "rack-test", "~> 1.1"
   gem "rspec", "~> 3.10"

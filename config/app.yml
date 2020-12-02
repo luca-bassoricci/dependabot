@@ -1,0 +1,8 @@
+default: &default
+  dependabot_url: "https://dependabot-gitlab.com"
+
+development:
+  <<: *default
+
+test:
+  <<: *default

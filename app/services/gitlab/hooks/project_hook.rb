@@ -8,7 +8,7 @@ module Gitlab
       def initialize(project, default_branch)
         @project = project
         @default_branch = default_branch
-        @dependabot_url = Settings.dependabot_url
+        @dependabot_url = AppConfig.dependabot_url
         @hook_url = "#{@dependabot_url}/api/hooks"
       end
 
@@ -26,7 +26,7 @@ module Gitlab
             push_events_branch_filter: default_branch,
             enable_ssl_verification: URI(dependabot_url).scheme == "https"
           }
-          args[:token] = Settings.gitlab_auth_token if Settings.gitlab_auth_token
+          CredentialsConfig.gitlab_auth_token.tap { |token| args[:token] = token if token }
           args
         end
       end

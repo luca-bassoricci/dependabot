@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 describe Dependabot::FileParser do
-  include_context "webmock"
-  include_context "dependabot"
+  include_context "with webmock"
+  include_context "with dependabot helper"
 
   let(:parser) { instance_double("Dependabot::Bundler::FileParser") }
   let(:args) do

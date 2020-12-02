@@ -46,7 +46,7 @@ module Dependabot
     #
     # @return [void]
     def save_webhook
-      return unless Settings.dependabot_url
+      return unless AppConfig.dependabot_url
 
       args = [project, default_branch]
       project.webhook_id = if project.webhook_id

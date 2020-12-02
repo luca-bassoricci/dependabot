@@ -11,7 +11,7 @@ describe Dependabot::MergeRequestService do
     )
   end
 
-  include_context "dependabot"
+  include_context "with dependabot helper"
 
   let(:project) { Project.new(name: repo, config: dependabot_config) }
   let(:config) { dependabot_config.first }

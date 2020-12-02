@@ -10,8 +10,8 @@ describe Gitlab::MergeRequestCreator do
     )
   end
 
-  include_context "dependabot"
-  include_context "webmock"
+  include_context "with dependabot helper"
+  include_context "with webmock"
 
   let(:pr_creator) { instance_double("Dependabot::PullRequestCreator", create: mr) }
   let(:config) { dependabot_config.first }

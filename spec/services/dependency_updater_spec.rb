@@ -3,8 +3,8 @@
 describe DependencyUpdater do
   subject(:dependency_updater) { described_class }
 
-  include_context "dependabot"
-  include_context "webmock"
+  include_context "with dependabot helper"
+  include_context "with webmock"
 
   let(:config) { "config" }
   let(:rspec) { "rspec" }

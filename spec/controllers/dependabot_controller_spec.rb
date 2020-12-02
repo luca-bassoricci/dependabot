@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe DependabotController do
-  include_context "rack_test"
+  include_context "with rack_test"
 
   before do
     allow(Sidekiq::Cron::Job).to receive(:all).and_return([])
