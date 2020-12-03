@@ -17,3 +17,6 @@ end
 Sidekiq.configure_client { |config| config.redis = redis_config }
 
 Redis.exists_returns_integer = true
+
+# Reduce verbose output of activejob
+ActiveJob::Base.logger = Logger.new(IO::NULL)
