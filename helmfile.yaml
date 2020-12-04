@@ -36,3 +36,4 @@ releases:
             password: {{ requiredEnv "MONGODB_PASSWORD" }}
             username: dependabot
             database: dependabot
+          strategyType: Recreate
