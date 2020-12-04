@@ -30,10 +30,10 @@ namespace :dependabot do # rubocop:disable Metrics/BlockLength
     Rails.logger.debug { "Checking if sidekiq is operational." }
     Sidekiq::ProcessSet.new.size.positive? || raise("Sidekiq process is not running!")
 
-    FileUtils.rm_f(Settings.sidekiq_healthcheck_filename)
+    FileUtils.rm_f(HealthcheckConfig.filename)
     HealthcheckJob.perform_later
     sleep(0.5)
-    File.exist?(Settings.sidekiq_healthcheck_filename) || raise("Healthcheck job failed")
+    File.exist?(HealthcheckConfig.filename) || raise("Healthcheck job failed")
   rescue StandardError => e
     Rails.logger.error { "[Healthcheck] #{e.message}" }
     exit(1)
