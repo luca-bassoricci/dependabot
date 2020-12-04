@@ -26,5 +26,9 @@ module DependabotGitlab
     tagged_logger = ActiveSupport::TaggedLogging.new(logger)
     config.logger = tagged_logger
     config.mongoid.logger = tagged_logger
+
+    config.anyway_config.default_config_path = lambda { |name|
+      Rails.root.join("#{ENV['APP_CONFIG'] || 'config'}/#{name}.yml")
+    }
   end
 end
