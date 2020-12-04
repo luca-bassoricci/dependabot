@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## [v0.2.7 - 2020-12-04](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🔬 Improvements
+
+- Override default config folder via environment variable. See merge request dependabot-gitlab/dependabot!335 - (andrejs)
+- Reduce verbosity of starting sidekiq jobs. See merge request dependabot-gitlab/dependabot!334 - (andrejs)
+- Use anyway_config gem for configuration. See merge request dependabot-gitlab/dependabot!332 - (andrejs)
+- changelog visual improvements. See merge request dependabot-gitlab/dependabot!331 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump semantic_range from 2.3.0 to 2.3.1. See merge request dependabot-gitlab/dependabot!333 - (andrejs)
+- bump mongoid from 7.1.5 to 7.2.0. See merge request dependabot-gitlab/dependabot!330 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.2.6](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.2.6...v0.2.7)
+
 ## [v0.2.6](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.2.5...v0.2.6)
 
 - dependencies: bump dependabot-omnibus from 0.125.6 to 0.125.7. See merge request dependabot-gitlab/dependabot!326
