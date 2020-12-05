@@ -4,7 +4,7 @@
 RSpec.shared_context("with dependabot helper") do
   let(:repo) { Faker::Alphanumeric.unique.alpha(number: 15) }
   let(:package_manager) { "bundler" }
-  let(:raw_config) { File.read("spec/gitlab_mock/responses/gitlab/dependabot.yml") }
+  let(:raw_config) { File.read("spec/fixture/gitlab/responses/dependabot.yml") }
   let(:allow_conf) { [{ dependency_type: "direct" }] }
   let(:ignore_conf) { [{ dependency_name: "rspec", versions: ["3.x", "4.x"] }] }
 

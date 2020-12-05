@@ -33,6 +33,10 @@ RUN bundle install
 
 COPY ./ ./
 
+# Smoke test image
+RUN SETTINGS__GITLAB_ACCESS_TOKEN=token RAILS_ENV=production \
+    bundle exec rake about
+
 ARG COMMIT_SHA
 ARG PROJECT_URL
 

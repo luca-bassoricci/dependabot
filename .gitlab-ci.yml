@@ -5,7 +5,10 @@
 .master: &master
   if: '$CI_COMMIT_BRANCH == "master"'
 .release: &release
-  if: '$CI_COMMIT_TAG =~ /^v[0-9.]+$/'
+  if: "$CI_COMMIT_TAG =~ /^v[0-9.]+$/"
+.e2e_changes: &e2e_changes
+  - Dockerfile
+  - spec/fixture/gitlab/**/*
 
 .main: &main
   - *mr
@@ -15,21 +18,6 @@
   - *mr_forked
 
 # ======================================================================================================================
-# Global
-# ======================================================================================================================
-stages:
-  - static analysis
-  - test
-  - release
-  - deploy
-
-variables:
-  APP_DOCKER_IMAGE: $CI_REGISTRY_IMAGE
-  GITLAB_MOCK_DOCKER_IMAGE: $CI_REGISTRY_IMAGE/gitlab-mock
-  CURRENT_TAG: $CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
-  LATEST_TAG: $CI_COMMIT_REF_SLUG-latest
-  CODACY_VERSION: "11.2.3"
-
 include:
   - local: .gitlab/ci/jobs.gitlab-ci.yml
 
@@ -62,14 +50,20 @@ build_mock_image:
   extends: .build_mock_image
   tags:
     - private
-  rules: *main
+  rules:
+    - *master
+    - *release
+    - <<: *mr
+      changes: *e2e_changes
 build_mock_image_fork:
   extends: .build_mock_image
   tags:
     - docker
   variables:
     FORK: "true"
-  rules: *fork
+  rules:
+    - <<: *mr_forked
+      changes: *e2e_changes
 
 # ======================================================================================================================
 # Static analysis stage
@@ -115,25 +109,34 @@ bundle_audit_fork:
 # ======================================================================================================================
 # Test Stage
 # ======================================================================================================================
-tests_rspec:
-  extends: .tests_rspec
+rspec:
+  extends: .rspec
   tags:
     - private
   rules: *main
-tests_rspec_fork:
-  extends: .tests_rspec
+rspec_fork:
+  extends: .rspec
   rules: *fork
 
-tests_standalone_version:
-  extends: .tests_standalone_version
+# ======================================================================================================================
+# E2E Test Stage
+# ======================================================================================================================
+e2e:
+  extends: .e2e
   tags:
     - private
   variables:
     SETTINGS__GITHUB_ACCESS_TOKEN: $GITHUB_ACCESS_TOKEN
-  rules: *main
-tests_standalone_version_fork:
-  extends: .tests_standalone_version
-  rules: *fork
+  rules:
+    - *master
+    - *release
+    - <<: *mr
+      changes: *e2e_changes
+e2e_fork:
+  extends: .e2e
+  rules:
+    - <<: *mr_forked
+      changes: *e2e_changes
 
 # ======================================================================================================================
 # Release Stage
@@ -150,9 +153,9 @@ release_image:
       apk -qq update && apk -qq add grep
       export RELEASE_VERSION=$(echo $CI_COMMIT_TAG | grep -oP 'v\K[0-9.]+')
     - |
-      docker pull $APP_DOCKER_IMAGE:$CURRENT_TAG
-      docker tag $APP_DOCKER_IMAGE:$CURRENT_TAG $RELEASE_IMAGE:$RELEASE_VERSION
-      docker tag $APP_DOCKER_IMAGE:$CURRENT_TAG $RELEASE_IMAGE:latest
+      docker pull $CI_REGISTRY_IMAGE:$CURRENT_TAG
+      docker tag $CI_REGISTRY_IMAGE:$CURRENT_TAG $RELEASE_IMAGE:$RELEASE_VERSION
+      docker tag $CI_REGISTRY_IMAGE:$CURRENT_TAG $RELEASE_IMAGE:latest
       docker push $RELEASE_IMAGE:$RELEASE_VERSION && docker push $RELEASE_IMAGE:latest
   rules:
     - *release

@@ -24,6 +24,6 @@ RSpec.shared_context("with webmock") do
   end
 
   def body(file)
-    File.read("spec/gitlab_mock/responses/gitlab/#{file}")
+    File.read("spec/fixture/gitlab/responses/#{file}")
   end
 end

@@ -51,6 +51,21 @@
       EOF
 
 # ======================================================================================================================
+# Global
+# ======================================================================================================================
+stages:
+  - static analysis
+  - test
+  - release
+  - deploy
+
+variables:
+  GITLAB_MOCK_DOCKER_IMAGE: $CI_REGISTRY_IMAGE/gitlab-mock
+  CURRENT_TAG: $CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
+  LATEST_TAG: $CI_COMMIT_REF_SLUG-latest
+  CODACY_VERSION: "11.2.3"
+
+# ======================================================================================================================
 # Jobs
 # ======================================================================================================================
 .cache_dependencies:
@@ -64,20 +79,13 @@
 .build_app_image:
   stage: .pre
   extends: .buildkit_runner
-  variables:
-    FILE_PATH: .
-    DOCKER_IMAGE: $CI_REGISTRY_IMAGE
   script:
-    - script/build.sh $FILE_PATH $DOCKER_IMAGE
-
+    - script/build.sh "." "$CI_REGISTRY_IMAGE"
 .build_mock_image:
   stage: .pre
   extends: .buildkit_runner
-  variables:
-    FILE_PATH: spec/gitlab_mock
-    DOCKER_IMAGE: $CI_REGISTRY_IMAGE/gitlab-mock
   script:
-    - script/build.sh $FILE_PATH $DOCKER_IMAGE
+    - script/build.sh "spec/fixture/gitlab" "$GITLAB_MOCK_DOCKER_IMAGE"
 
 .rubocop:
   stage: static analysis
@@ -103,7 +111,7 @@
   script:
     - bundle exec bundle-audit check --update
 
-.tests_rspec:
+.rspec:
   stage: test
   extends: .ruby_runner
   services:
@@ -129,11 +137,11 @@
       - coverage/dependabot.lcov
     expire_in: 7 days
 
-.tests_standalone_version:
-  image:
-    name: $APP_DOCKER_IMAGE:$CURRENT_TAG
-    entrypoint: [""]
+.e2e:
   stage: test
+  image:
+    name: $CI_REGISTRY_IMAGE:$CURRENT_TAG
+    entrypoint: [""]
   services:
     - name: $GITLAB_MOCK_DOCKER_IMAGE:$CURRENT_TAG
       alias: gitlab
@@ -141,8 +149,8 @@
     SETTINGS__GITLAB_URL: http://gitlab:4567
     SETTINGS__GITLAB_ACCESS_TOKEN: e2e-test
     SETTINGS__STANDALONE: "true"
+    SETTINGS__LOG_LEVEL: "debug"
     RAILS_ENV: test
     GIT_STRATEGY: none
   script:
-    - cd /home/dependabot
-    - bundle exec rake 'dependabot:update[test-repo,bundler,/]'
+    - cd /home/dependabot && bundle exec rake 'dependabot:update[test-repo,bundler,/]'

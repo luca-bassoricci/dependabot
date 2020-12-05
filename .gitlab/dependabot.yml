@@ -21,13 +21,13 @@ updates:
     assignees:
       - andrcuns
   - package-ecosystem: docker
-    directory: "/spec/gitlab_mock"
+    directory: "/spec/fixture/gitlab"
     schedule:
       interval: daily
       time: "18:00"
       timezone: Europe/Riga
     commit-message:
-      prefix: "dep"
+      prefix: "dev"
     assignees:
       - andrcuns
     auto-merge: true

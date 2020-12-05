@@ -3,6 +3,7 @@ default: &default
 
 development:
   <<: *default
+  gitlab_url: http://host.docker.internal:4567
 
 test:
   <<: *default

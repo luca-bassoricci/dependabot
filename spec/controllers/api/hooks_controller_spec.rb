@@ -23,14 +23,14 @@ describe Api::HooksController, type: :config do
     end
 
     it "push event" do
-      post_json("/api/hooks", "spec/fixture/api/webhooks/push.json")
+      post_json("/api/hooks", "spec/fixture/gitlab/webhooks/push.json")
 
       expect(last_response.status).to eq(200)
       expect(last_response.body).to eq(project.to_json)
     end
 
     it "merge request close event" do
-      post_json("/api/hooks", "spec/fixture/api/webhooks/mr_close.json")
+      post_json("/api/hooks", "spec/fixture/gitlab/webhooks/mr_close.json")
 
       expect(last_response.status).to eq(200)
       expect(last_response.body).to eq(merge_request.to_json)
@@ -49,7 +49,7 @@ describe Api::HooksController, type: :config do
     end
 
     it "system error" do
-      post_json("/api/hooks", "spec/fixture/api/webhooks/push.json", auth_token)
+      post_json("/api/hooks", "spec/fixture/gitlab/webhooks/push.json", auth_token)
 
       expect(Raven).to have_received(:capture_exception).with(error)
       expect(last_response.status).to eq(500)
@@ -64,7 +64,7 @@ describe Api::HooksController, type: :config do
     end
 
     it "unauthorized request" do
-      post_json("/api/hooks", "spec/fixture/api/webhooks/push.json", "invalid_token")
+      post_json("/api/hooks", "spec/fixture/gitlab/webhooks/push.json", "invalid_token")
 
       aggregate_failures do
         expect(last_response.status).to eq(401)
