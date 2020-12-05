@@ -5,9 +5,6 @@ vendor/bundle
 # Ignore master key for decrypting credentials and more.
 config/master.key
 
-# Ignore local settings
-config/settings.local.yml
-
 # Ignore coverage
 coverage
 

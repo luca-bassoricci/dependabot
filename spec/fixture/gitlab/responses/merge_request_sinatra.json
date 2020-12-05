@@ -1,0 +1,13 @@
+{
+  "id": 1,
+  "iid": 1,
+  "project_id": 3,
+  "web_url": "http://gitlab.com/test-repo/merge_requests/1",
+  "sha": "88b0f12ac",
+  "references": {
+    "short": "!1",
+    "relative": "!1",
+    "full": "my-group/my-project!1"
+  },
+  "has_conflicts": true
+}

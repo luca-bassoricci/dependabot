@@ -30,7 +30,7 @@ describe Configuration::Parser do
   end
 
   it "returns parsed configuration" do
-    expect(parser.call(File.read("spec/gitlab_mock/responses/gitlab/dependabot.yml"))).to eq(dependabot_config)
+    expect(parser.call(File.read("spec/fixture/gitlab/responses/dependabot.yml"))).to eq(dependabot_config)
   end
 
   it "throws invalid configuration error" do

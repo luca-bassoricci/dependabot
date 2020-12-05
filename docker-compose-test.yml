@@ -26,7 +26,7 @@ services:
     command: script/entrypoint.sh
 
   gitlab:
-    build: spec/gitlab_mock
+    build: spec/fixture/gitlab
 
 volumes:
   gems:
