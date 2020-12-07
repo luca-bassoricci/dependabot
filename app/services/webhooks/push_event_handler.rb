@@ -18,9 +18,7 @@ module Webhooks
       return unless modified_config? || deleted_config?
       return clean if deleted_config?
 
-      Dependabot::ProjectCreator.call(project_name).tap do |project|
-        Scheduler::DependencyUpdateScheduler.call(project)
-      end
+      Dependabot::ProjectCreator.call(project_name).tap { |project| Cron::JobSync.call(project) }
     end
 
     private
@@ -69,8 +67,7 @@ module Webhooks
     #
     # @return [void]
     def delete_all_jobs
-      logger.info { "Removing all dependency update jobs for project: #{project_name}" }
-      all_project_jobs(project_name).each(&:destroy)
+      Cron::JobRemover.call(project_name)
     end
   end
 end

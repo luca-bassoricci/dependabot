@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
-module Scheduler
-  class DependencyUpdateScheduler < ApplicationService
-    # @param [String] project_name
+module Cron
+  class JobSync < ApplicationService
+    # @param [Project] project
     def initialize(project)
       @project = project
     end
 
-    # Update and enque jobs
+    # Sync cron jobs and return array
     #
     # @return [Array<Sidekiq::Cron::Job>]
     def call
       sync_jobs
-      enque_all_jobs
+      project_jobs
     end
 
     private
@@ -33,9 +33,9 @@ module Scheduler
       @project_name ||= project.name
     end
 
-    # Currently configured project cron jobs
+    # Persist project jobs
     #
-    # @return [Array<Sidekiq::Cron::Job>]
+    # @return [Sidekiq::Cron::Job]
     def project_jobs
       @project_jobs ||= config.map do |opts|
         package_ecosystem = opts[:package_ecosystem]
@@ -48,7 +48,7 @@ module Scheduler
           args: { "repo" => project_name, "package_ecosystem" => package_ecosystem, "directory" => directory },
           active_job: true,
           description: "Update #{package_ecosystem} dependencies for #{project_name} in #{directory}"
-        )
+        ).tap(&:save)
       end
     end
 
@@ -56,23 +56,9 @@ module Scheduler
     #
     # @return [void]
     def sync_jobs
-      all_project_jobs(project_name).reject { |job| project_jobs.any? { |jb| jb.name == job.name } }.each(&:destroy)
-    end
-
-    # Save and enque all jobs
-    #
-    # @return [Array<Sidekiq::Cron::Job>]
-    def enque_all_jobs
-      project_jobs.tap { |jobs| jobs.each { |job| run(job) } }
-    end
-
-    # Save and run a job or print error message
-    #
-    # @param [Sidekiq::Cron::Job] job
-    # @return [Sidekiq::Cron::Job]
-    def run(job)
-      job.valid? ? (job.save && job.enque!) : logger.error { job.errors }
-      job
+      ProjectJobFinder.call(project_name)
+                      .reject { |job| project_jobs.any? { |jb| jb.name == job.name } }
+                      .each(&:destroy)
     end
   end
 end

@@ -33,14 +33,14 @@ describe "rake" do # rubocop:disable RSpec/DescribeClass
 
     before do
       allow(Dependabot::ProjectCreator).to receive(:call) { project }
-      allow(Scheduler::DependencyUpdateScheduler).to receive(:call)
+      allow(Cron::JobSync).to receive(:call)
     end
 
     it "registers new project" do
       task.invoke(project_name)
 
       expect(Dependabot::ProjectCreator).to have_received(:call).with(project_name)
-      expect(Scheduler::DependencyUpdateScheduler).to have_received(:call).with(project)
+      expect(Cron::JobSync).to have_received(:call).with(project)
     end
   end
 

@@ -18,7 +18,7 @@ describe Webhooks::PushEventHandler do
 
   before do
     allow(Sidekiq::Cron::Job).to receive(:all)
-    allow(Scheduler::DependencyUpdateScheduler).to receive(:call)
+    allow(Cron::JobSync).to receive(:call)
     allow(Dependabot::ProjectCreator).to receive(:call) { project }
 
     project.save!
@@ -30,7 +30,7 @@ describe Webhooks::PushEventHandler do
 
       aggregate_failures do
         expect(Sidekiq::Cron::Job).not_to have_received(:all)
-        expect(Scheduler::DependencyUpdateScheduler).not_to have_received(:call)
+        expect(Cron::JobSync).not_to have_received(:call)
       end
     end
   end
@@ -56,7 +56,7 @@ describe Webhooks::PushEventHandler do
 
       aggregate_failures do
         expect(Dependabot::ProjectCreator).to have_received(:call).with(repo)
-        expect(Scheduler::DependencyUpdateScheduler).to have_received(:call).with(project)
+        expect(Cron::JobSync).to have_received(:call).with(project)
       end
     end
   end
