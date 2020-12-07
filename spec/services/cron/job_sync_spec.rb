@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Scheduler::DependencyUpdateScheduler do
+describe Cron::JobSync do
   include_context "with dependabot helper"
 
   let(:project) { Project.new(name: repo, config: config) }
@@ -32,13 +32,11 @@ describe Scheduler::DependencyUpdateScheduler do
   end
 
   before do
-    allow(Rails.logger).to receive(:error)
-
     project.save!
   end
 
-  context "with valid configuration" do
-    it "creates and enques jobs" do
+  context "with new configuration" do
+    it "creates jobs" do
       described_class.call(project)
 
       aggregate_failures do
@@ -61,20 +59,6 @@ describe Scheduler::DependencyUpdateScheduler do
       aggregate_failures do
         expect(Sidekiq::Cron::Job.all.count { |job| job.name.include?(repo) }).to eq(1)
       end
-    end
-  end
-
-  context "with invalid config" do
-    let(:invalid_config) { config.dup.tap { |conf| conf[1].delete(:cron) } }
-
-    before do
-      project.update_attributes!(config: invalid_config)
-    end
-
-    it "logs job error" do
-      described_class.call(project)
-
-      expect(Rails.logger).to have_received(:error).once
     end
   end
 end

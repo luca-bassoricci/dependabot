@@ -8,7 +8,7 @@ describe Api::ProjectController do
 
   before do
     allow(Dependabot::ProjectCreator).to receive(:call).with(project_name) { project }
-    allow(Scheduler::DependencyUpdateScheduler).to receive(:call).with(project_name)
+    allow(Cron::JobSync).to receive(:call).with(project_name)
   end
 
   it "creates project and jobs" do

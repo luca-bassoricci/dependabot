@@ -13,7 +13,7 @@ namespace :dependabot do # rubocop:disable Metrics/BlockLength
   desc "add dependency updates for repository"
   task(:register, [:project] => :environment) do |_task, args|
     Dependabot::ProjectCreator.call(args[:project]).tap do |project|
-      Scheduler::DependencyUpdateScheduler.call(project)
+      Cron::JobSync.call(project)
     end
   end
 

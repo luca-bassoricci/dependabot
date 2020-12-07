@@ -7,7 +7,7 @@ module Api
     # @return [void]
     def create
       project = Dependabot::ProjectCreator.call(project_name)
-      Scheduler::DependencyUpdateScheduler.call(project_name)
+      Cron::JobSync.call(project_name)
       json_response(body: project)
     rescue ActionController::ParameterMissing
       json_response(body: { status: 400, error: "Missing parameter 'project'" }, status: 400)
