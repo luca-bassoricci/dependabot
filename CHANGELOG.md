@@ -1,5 +1,24 @@
 # CHANGELOG
 
+## [v0.2.8 - 2020-12-08](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🔬 Improvements
+
+- do not enque all jobs when adding project. See merge request dependabot-gitlab/dependabot!339 - (andrejs)
+- testing improvements. See merge request dependabot-gitlab/dependabot!337 - (andrejs)
+
+### 🐞 Bug Fixes
+
+- allow registering projects without configuration file. Closes #44. See merge request dependabot-gitlab/dependabot!340 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump dry-validation from 1.5.6 to 1.6.0. See merge request dependabot-gitlab/dependabot!338 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.2.7](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.2.7...v0.2.8)
+
 ## [v0.2.7 - 2020-12-04](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🔬 Improvements
@@ -303,3 +322,4 @@
 ## [v0.0.1](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/f7c9b31...v0.0.1)
 
 - Initial release
+
