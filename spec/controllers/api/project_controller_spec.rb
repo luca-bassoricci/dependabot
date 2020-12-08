@@ -8,14 +8,17 @@ describe Api::ProjectController do
 
   before do
     allow(Dependabot::ProjectCreator).to receive(:call).with(project_name) { project }
-    allow(Cron::JobSync).to receive(:call).with(project_name)
+    allow(Cron::JobSync).to receive(:call).with(project).and_call_original
   end
 
   it "creates project and jobs" do
     post_json("/api/project", { project: project_name })
 
-    expect(last_response.status).to eq(200)
-    expect(last_response.body).to eq(project.to_json)
+    aggregate_failures do
+      expect(last_response.status).to eq(200)
+      expect(last_response.body).to eq(project.to_json)
+      expect(Cron::JobSync).to have_received(:call)
+    end
   end
 
   it "handles incorrect request" do

@@ -1,9 +1,2 @@
-default: &default
-  dependabot_url: "https://dependabot-gitlab.com"
-
-development:
-  <<: *default
-  gitlab_url: http://host.docker.internal:4567
-
 test:
-  <<: *default
+  dependabot_url: "https://dependabot-gitlab.com"

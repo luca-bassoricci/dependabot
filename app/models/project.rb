@@ -4,7 +4,7 @@ class Project
   include Mongoid::Document
 
   field :name, type: String
-  field :config, type: Array
+  field :config, type: Array, default: []
   field :webhook_id, type: Integer
 
   has_many :merge_requests, dependent: :destroy

@@ -5,12 +5,14 @@ describe Dependabot::ProjectCreator do
 
   let(:branch) { "master" }
   let(:gitlab) { instance_double("Gitlab::client") }
-  let(:project) { Project.new(name: repo, config: [], webhook_id: 1) }
+  let(:project) { Project.new(name: repo, webhook_id: 1) }
   let(:hook_id) { 1 }
+  let(:config_exists?) { true }
 
   before do
     allow(Gitlab).to receive(:client) { gitlab }
     allow(gitlab).to receive(:project).with(repo) { OpenStruct.new(default_branch: branch) }
+    allow(Gitlab::ConfigChecker).to receive(:call).with(repo, branch) { config_exists? }
     allow(Gitlab::ConfigFetcher).to receive(:call).with(repo, branch) { raw_config }
     allow(Gitlab::Hooks::Creator).to receive(:call) { hook_id }
     allow(Gitlab::Hooks::Updater).to receive(:call) { hook_id }
@@ -62,6 +64,16 @@ describe Dependabot::ProjectCreator do
         expect(Gitlab::Hooks::Creator).not_to have_received(:call)
         expect(Gitlab::Hooks::Updater).not_to have_received(:call)
       end
+    end
+  end
+
+  context "without config file in repository" do
+    let(:config_exists?) { false }
+
+    it "creates new project with empty config" do
+      described_class.call(repo)
+
+      expect(Project.find_by(name: repo).config).to be_empty
     end
   end
 end

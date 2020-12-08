@@ -29,11 +29,11 @@ describe "rake" do # rubocop:disable RSpec/DescribeClass
 
   describe "dependabot:register" do
     let(:project_name) { "test-project" }
-    let(:project) { Project.new(name: project_name, config: []) }
+    let(:project) { Project.new(name: project_name) }
 
     before do
       allow(Dependabot::ProjectCreator).to receive(:call) { project }
-      allow(Cron::JobSync).to receive(:call)
+      allow(Cron::JobSync).to receive(:call).with(project).and_call_original
     end
 
     it "registers new project" do

@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
 describe Gitlab::ConfigFetcher do
-  subject(:config_fetcher_return) { described_class.call(repo, branch) }
-
-  include_context "with dependabot helper"
+  subject(:config_fetcher_return) { described_class.call(project_name, branch) }
 
   let(:gitlab) { instance_double("Gitlab::client") }
+  let(:project_name) { "project" }
   let(:branch) { "master" }
+  let(:raw_config) { "dependabot.yml contents" }
 
   before do
     allow(Gitlab).to receive(:client) { gitlab }
-    allow(gitlab).to receive(:file_contents).with(repo, ".gitlab/dependabot.yml", branch) { raw_config }
+    allow(gitlab).to receive(:file_contents).with(project_name, AppConfig.config_filename, branch) { raw_config }
   end
 
   it "returns dependabot.yml contents" do
