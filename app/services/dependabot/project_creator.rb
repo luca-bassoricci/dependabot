@@ -32,7 +32,11 @@ module Dependabot
     #
     # @return [Array]
     def config
-      @config ||= Config.call(project_name, default_branch, update_cache: true)
+      @config ||= begin
+        return nil unless Gitlab::ConfigChecker.call(project_name, default_branch)
+
+        Config.call(project_name, default_branch, update_cache: true)
+      end
     end
 
     # Project default branch
@@ -60,7 +64,7 @@ module Dependabot
     #
     # @return [void]
     def save_project
-      project.config = config
+      project.config = config if config
       project.tap(&:save!)
     end
   end
