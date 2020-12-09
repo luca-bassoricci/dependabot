@@ -35,7 +35,7 @@
 
 .buildkit_runner:
   image:
-    name: moby/buildkit:v0.7.2
+    name: moby/buildkit:v0.8.0
     entrypoint: [""]
   before_script:
     - mkdir -p /root/.docker
