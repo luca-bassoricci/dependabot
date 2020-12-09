@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## [v0.2.9 - 2020-12-09](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🚀 New Features
+
+- allow registering multiple projects at once. See merge request dependabot-gitlab/dependabot!344 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump dependabot-omnibus from 0.125.7 to 0.126.0. See merge request dependabot-gitlab/dependabot!342 - (andrejs)
+- bump rubocop-rails from 2.8.1 to 2.9.0. See merge request dependabot-gitlab/dependabot!343 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.2.8](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.2.8...v0.2.9)
+
 ## [v0.2.8 - 2020-12-08](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🔬 Improvements
@@ -322,4 +337,5 @@
 ## [v0.0.1](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/f7c9b31...v0.0.1)
 
 - Initial release
+
 
