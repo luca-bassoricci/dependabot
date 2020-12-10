@@ -28,8 +28,8 @@ class FakeGitlab < Sinatra::Base
       [200, [file("responses/dependabot.yml")]]
     end
 
-    get "#{REPO_URL}/repository/files/:file" do
-      [200, [file("responses/#{params['file']}.json")]]
+    get "#{REPO_URL}/repository/files/*" do |file|
+      [200, [file("responses/#{file.include?('dependabot') ? 'dependabot.yml' : file}.json")]]
     end
 
     # branches
