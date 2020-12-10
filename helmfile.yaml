@@ -10,7 +10,7 @@ releases:
   - name: dependabot-gitlab
     namespace: dependabot
     chart: andrcuns/dependabot-gitlab
-    version: 0.0.25
+    version: 0.0.26
     installed: true
     values:
       - image:
@@ -27,6 +27,9 @@ releases:
             gitlab_access_token: {{ requiredEnv "GITLAB_ACCESS_TOKEN" }}
             github_access_token: {{ requiredEnv "GITHUB_ACCESS_TOKEN" }}
             gitlab_auth_token: {{ requiredEnv "GITLAB_AUTH_TOKEN" }}
+        projects:
+          - dependabot-gitlab/dependabot
+          - dependabot-gitlab/dependency-test
         redis:
           usePassword: true
           password: {{ requiredEnv "REDIS_PASSWORD" }}
