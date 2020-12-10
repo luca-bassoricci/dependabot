@@ -9,13 +9,12 @@ services:
       - redis
       - mongodb
     environment:
-      RAILS_ENV: test
       BUNDLE_PATH: /code/vendor/bundle
-      BUNDLE_WITHOUT: development
+      RAILS_ENV: development
       REDIS_URL: redis://redis:6379
       MONGODB_URL: mongodb:27017
       SETTINGS__GITLAB_URL: http://gitlab:4567
-      SETTINGS__GITLAB_ACCESS_TOKEN: e2e-test
+      SETTINGS__GITLAB_ACCESS_TOKEN: dev
       SETTINGS__GITHUB_ACCESS_TOKEN:
     volumes:
       - $PWD:/code
@@ -23,6 +22,9 @@ services:
     ports:
       - 3000:3000
     command: script/entrypoint.sh
+
+  gitlab:
+    build: spec/fixture/gitlab
 
 volumes:
   gems:
