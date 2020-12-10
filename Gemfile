@@ -21,6 +21,7 @@ gem "bootsnap", ">= 1.4.2", require: false
 
 group :development, :test do
   gem "bundle-audit", "~> 0.1.0", require: false
+  gem "pry-byebug", "~> 3.9"
   gem "pry-rails", "~> 0.3.9"
   gem "reek", "~> 6.0", require: false
   gem "rubocop", "~> 0.93.1", require: false

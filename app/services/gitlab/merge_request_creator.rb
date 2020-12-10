@@ -31,6 +31,7 @@ module Gitlab
         dependencies: updated_dependencies,
         files: updated_files,
         credentials: Credentials.fetch,
+        github_redirection_service: "github.com",
         **mr_options
       ).create.tap { |mr| logger.info { "created mr #{mr.web_url}" } if mr }
     end

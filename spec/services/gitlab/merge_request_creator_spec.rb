@@ -51,6 +51,7 @@ describe Gitlab::MergeRequestCreator do
         dependencies: updated_dependencies,
         files: updated_files,
         credentials: Credentials.fetch,
+        github_redirection_service: "github.com",
         **mr_params
       }
     )
