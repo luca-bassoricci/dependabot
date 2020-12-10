@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
-require_relative "../log_formatter"
-
 redis_config = {
   password: ENV["REDIS_PASSWORD"],
   timeout: 1,
   reconnect_attempts: 3
 }
+Redis.exists_returns_integer = true
 
 Sidekiq.configure_server do |config|
   config.log_formatter = SimpleLogFormatter.new
@@ -15,8 +14,7 @@ Sidekiq.configure_server do |config|
   config.options[:queues].push("default", HealthcheckConfig.queue)
 end
 Sidekiq.configure_client { |config| config.redis = redis_config }
-
-Redis.exists_returns_integer = true
+Sidekiq.logger = DependabotLogger.logger
 
 # Reduce verbose output of activejob
 ActiveJob::Base.logger = Logger.new(IO::NULL)
