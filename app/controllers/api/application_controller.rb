@@ -7,6 +7,8 @@ module Api
 
     before_action :authenticate
 
+    delegate :logger, to: :Rails
+
     private
 
     # Authenticate request against gitlab token
