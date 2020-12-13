@@ -3,18 +3,20 @@
 module Gitlab
   module Hooks
     class ProjectHook < ApplicationService
-      # @param [Project] project
+      # @param [String] project_name
+      # @param [Integer] webhook_id
       # @param [String] default_branch
-      def initialize(project, default_branch)
-        @project = project
+      def initialize(project_name, default_branch = nil, webhook_id = nil)
+        @project_name = project_name
         @default_branch = default_branch
+        @webhook_id = webhook_id
         @dependabot_url = AppConfig.dependabot_url
         @hook_url = "#{@dependabot_url}/api/hooks"
       end
 
       private
 
-      attr_reader :project, :default_branch, :dependabot_url, :hook_url
+      attr_reader :project_name, :webhook_id, :default_branch, :dependabot_url, :hook_url
 
       # Hook creation arguments
       #

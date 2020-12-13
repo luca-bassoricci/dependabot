@@ -5,8 +5,9 @@ describe Dependabot::ProjectCreator do
 
   let(:branch) { "master" }
   let(:gitlab) { instance_double("Gitlab::client") }
-  let(:project) { Project.new(name: repo, webhook_id: 1) }
-  let(:hook_id) { 1 }
+  let(:project) { Project.new(name: repo) }
+  let(:hook_id) { Faker::Number.number(digits: 10) }
+  let(:upstream_hook_id) { hook_id }
   let(:config_exists?) { true }
 
   before do
@@ -16,38 +17,48 @@ describe Dependabot::ProjectCreator do
     allow(Gitlab::ConfigFetcher).to receive(:call).with(repo, branch) { raw_config }
     allow(Gitlab::Hooks::Creator).to receive(:call) { hook_id }
     allow(Gitlab::Hooks::Updater).to receive(:call) { hook_id }
+    allow(Gitlab::Hooks::Finder).to receive(:call) { upstream_hook_id }
   end
 
   context "with dependabot url configured" do
-    it "creates new project" do
-      described_class.call(repo)
+    context "without existing project" do
+      let(:upstream_hook_id) { nil }
 
-      saved_project = Project.find_by(name: repo)
-      aggregate_failures do
-        expect(saved_project).not_to be_nil
-        expect(saved_project.symbolized_config).to eq(dependabot_config)
+      it "creates new project and hook" do
+        described_class.call(repo)
+
+        saved_project = Project.find_by(name: repo)
+        aggregate_failures do
+          expect(saved_project.name).to eq(repo)
+          expect(saved_project.symbolized_config).to eq(dependabot_config)
+          expect(saved_project.webhook_id).to eq(hook_id)
+        end
       end
     end
 
-    it "creates and saves hook" do
-      described_class.call(repo)
+    context "with existing project" do
+      it "updates existing project and hook" do
+        project.webhook_id = hook_id
+        project.save!
 
-      saved_project = Project.find_by(name: repo)
-      aggregate_failures do
-        expect(saved_project.webhook_id).to eq(1)
-        expect(Gitlab::Hooks::Creator).to have_received(:call).with(kind_of(Project), branch)
-        expect(Gitlab::Hooks::Updater).not_to have_received(:call)
+        described_class.call(repo)
+        aggregate_failures do
+          expect(project.reload.symbolized_config).to eq(dependabot_config)
+          expect(Gitlab::Hooks::Updater).to have_received(:call).with(repo, branch, hook_id)
+          expect(Gitlab::Hooks::Creator).not_to have_received(:call)
+          expect(Gitlab::Hooks::Finder).not_to have_received(:call)
+        end
       end
-    end
 
-    it "updates existing project and hook" do
-      project.save!
+      it "updates existing upstream hook" do
+        project.save!
 
-      described_class.call(repo)
-      aggregate_failures do
-        expect(project.reload.symbolized_config).to eq(dependabot_config)
-        expect(Gitlab::Hooks::Updater).to have_received(:call).with(project, branch)
-        expect(Gitlab::Hooks::Creator).not_to have_received(:call)
+        described_class.call(repo)
+        aggregate_failures do
+          expect(project.reload.symbolized_config).to eq(dependabot_config)
+          expect(Gitlab::Hooks::Updater).to have_received(:call).with(repo, branch, hook_id)
+          expect(Gitlab::Hooks::Creator).not_to have_received(:call)
+        end
       end
     end
   end
