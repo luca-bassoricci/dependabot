@@ -1,5 +1,30 @@
 # CHANGELOG
 
+## [v0.2.10 - 2020-12-13](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🚀 New Features
+
+- Implement versioning strategy option. Closes #47. See merge request dependabot-gitlab/dependabot!355 - (andrejs)
+
+### 🔬 Improvements
+
+- logging improvements. See merge request dependabot-gitlab/dependabot!347 - (andrejs)
+
+### 🐞 Bug Fixes
+
+- check for existing hooks before creating new one. Closes #49. See merge request dependabot-gitlab/dependabot!356 - (andrejs)
+- sanitize mentions on merge request descriptions. Closes #48. See merge request dependabot-gitlab/dependabot!350 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump dependabot-omnibus from 0.126.0 to 0.126.1. See merge request dependabot-gitlab/dependabot!354 - (andrejs)
+- bump dependabot/dependabot-core from 0.126.0 to 0.126.1. See merge request dependabot-gitlab/dependabot!353 - (andrejs)
+- bump puma from 5.1.0 to 5.1.1. See merge request dependabot-gitlab/dependabot!349 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.2.9](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.2.9...v0.2.10)
+
 ## [v0.2.9 - 2020-12-09](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🚀 New Features
@@ -337,5 +362,6 @@
 ## [v0.0.1](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/f7c9b31...v0.0.1)
 
 - Initial release
+
 
 
