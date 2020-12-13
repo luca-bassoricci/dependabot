@@ -52,12 +52,11 @@ module Dependabot
     def save_webhook
       return unless AppConfig.dependabot_url
 
-      args = [project, default_branch]
-      project.webhook_id = if project.webhook_id
-                             Gitlab::Hooks::Updater.call(*args)
-                           else
-                             Gitlab::Hooks::Creator.call(*args)
-                           end
+      (project.webhook_id || Gitlab::Hooks::Finder.call(project_name)).tap do |hook_id|
+        return Gitlab::Hooks::Updater.call(project_name, default_branch, hook_id) if hook_id
+      end
+
+      project.webhook_id = Gitlab::Hooks::Creator.call(project_name, default_branch)
     end
 
     # Save project

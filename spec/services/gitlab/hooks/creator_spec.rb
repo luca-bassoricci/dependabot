@@ -3,9 +3,8 @@
 describe Gitlab::Hooks::Creator do
   include_context "with dependabot helper"
 
-  let(:id) { 1 }
+  let(:id) { Faker::Number.number(digits: 10) }
   let(:gitlab) { instance_double("Gitlab::Client") }
-  let(:project) { Project.new(name: repo) }
   let(:branch) { "master" }
   let(:dependabot_url) { "https://test.com" }
   let(:hook_url) { "#{AppConfig.dependabot_url}/api/hooks" }
@@ -24,7 +23,7 @@ describe Gitlab::Hooks::Creator do
 
   it "creates webhook" do
     aggregate_failures do
-      expect(described_class.call(project, branch)).to eq(id)
+      expect(described_class.call(repo, branch)).to eq(id)
       expect(gitlab).to have_received(:add_project_hook).with(repo, hook_url, hook_args)
     end
   end
