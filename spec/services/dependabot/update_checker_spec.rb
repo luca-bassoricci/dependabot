@@ -6,7 +6,8 @@ describe Dependabot::UpdateChecker do
       dependency: dependency,
       dependency_files: fetcher.files,
       allow: allow_conf,
-      ignore: ignore_conf
+      ignore: ignore_conf,
+      versioning_strategy: versioning_strategy
     )
   end
 
@@ -21,10 +22,18 @@ describe Dependabot::UpdateChecker do
   let(:can_update_own_unlock) { true }
   let(:can_update_all_unlock) { true }
   let(:can_update_none_unlock) { true }
+  let(:versioning_strategy) { :bump_versions }
 
   before do
     stub_gitlab
-    allow(Dependabot::Bundler::UpdateChecker).to receive(:new) { checker }
+    allow(Dependabot::Bundler::UpdateChecker).to receive(:new)
+      .with(
+        dependency: dependency,
+        dependency_files: fetcher.files,
+        credentials: Credentials.fetch,
+        requirements_update_strategy: kind_of(Symbol)
+      )
+      .and_return(checker)
     allow(checker).to receive(:vulnerable?) { vulnerable }
     allow(checker).to receive(:up_to_date?) { up_to_date }
     allow(checker).to receive(:requirements_unlocked_or_can_be?) { unlocked_or_can_be }
@@ -100,6 +109,15 @@ describe Dependabot::UpdateChecker do
       allow(checker).to receive(:latest_version) { latest_version }
       allow(checker).to receive(:security_advisories).and_return([])
       allow(checker).to receive(:updated_dependencies) { updated_dependencies }
+    end
+
+    context "when only lockfile updates are allowed" do
+      let(:versioning_strategy) { "lockfile-only" }
+
+      it do
+        expect(update_checker_return).to eq(updated_deps)
+        expect(checker).to have_received(:updated_dependencies).with(requirements_to_unlock: :none)
+      end
     end
 
     context "when no requirements to unlock" do

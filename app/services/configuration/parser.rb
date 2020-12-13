@@ -91,7 +91,8 @@ module Configuration
         custom_labels: opts[:labels],
         open_merge_requests_limit: opts[:"open-pull-requests-limit"] || 5,
         rebase_strategy: opts[:"rebase-strategy"] || "auto",
-        auto_merge: opts[:"auto-merge"]
+        auto_merge: opts[:"auto-merge"],
+        versioning_strategy: opts[:"versioning-strategy"] || "auto"
       }
     end
 

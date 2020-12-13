@@ -29,7 +29,14 @@ describe DependencyUpdater do
     }
   end
 
-  let(:checker_args) { { dependency_files: fetcher.files, allow: allow_conf, ignore: ignore_conf } }
+  let(:checker_args) do
+    {
+      dependency_files: fetcher.files,
+      allow: allow_conf,
+      ignore: ignore_conf,
+      versioning_strategy: "auto"
+    }
+  end
   let(:file_updater_args) { { dependency_files: fetcher.files, package_manager: package_manager } }
   let(:mr_service_args) do
     {

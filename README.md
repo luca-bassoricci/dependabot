@@ -130,10 +130,6 @@ Automatically accept merge request and set it to merge when pipeline succeeds. I
 auto-merge: true
 ```
 
-#### not implemented options
-
-* [versioning-strategy](https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates#versioning-strategy)
-
 ## Adding update jobs
 
 If gitlab webhook is configured, update jobs are created automatically once dependabot.yml configuration file is pushed to the repository's default branch. Configuration is

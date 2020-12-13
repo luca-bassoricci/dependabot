@@ -127,7 +127,8 @@ class DependencyUpdater < ApplicationService
         dependency: dependency,
         dependency_files: fetcher.files,
         allow: config[:allow],
-        ignore: config[:ignore]
+        ignore: config[:ignore],
+        versioning_strategy: config[:versioning_strategy]
       )
     end
   end
