@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Dependabot
-  class UpdateChecker < ApplicationService
+  class UpdateChecker < ApplicationService # rubocop:disable Metrics/ClassLength
     # @return [Hash<String, Proc>] handlers for type allow rules
     TYPE_HANDLERS = {
       "all" => proc { true },
@@ -12,15 +12,25 @@ module Dependabot
       "security" => proc { |_, checker| checker.vulnerable? }
     }.freeze
 
+    # @return [Hash<String, Symbol>] mapping for versioning strategies option
+    VERSIONING_STRATEGIES = {
+      "lockfile-only" => :lockfile_only,
+      "widen" => :widen_ranges,
+      "increase" => :bump_versions,
+      "increase-if-necessary" => :bump_versions_if_necessary
+    }.freeze
+
     # @param [Dependabot::Dependency] dependency
     # @param [Array<Dependabot::DependencyFile>] dependency_files
     # @param [Array<Hash>] allow
     # @param [Array<Hash>] ignore
-    def initialize(dependency:, dependency_files:, allow:, ignore:)
+    # @param [String] versioning_strategy
+    def initialize(dependency:, dependency_files:, allow:, ignore:, versioning_strategy:)
       @dependency = dependency
       @dependency_files = dependency_files
       @allow = allow
       @ignore = ignore
+      @versioning_strategy = VERSIONING_STRATEGIES.fetch(versioning_strategy, :auto)
     end
 
     # Get updated dependencies
@@ -41,7 +51,7 @@ module Dependabot
 
     private
 
-    attr_reader :dependency, :dependency_files, :allow, :ignore
+    attr_reader :dependency, :dependency_files, :allow, :ignore, :versioning_strategy
 
     # Full dependency name
     #
@@ -96,7 +106,8 @@ module Dependabot
       @checker ||= Dependabot::UpdateCheckers.for_package_manager(dependency.package_manager).new(
         dependency: dependency,
         dependency_files: dependency_files,
-        credentials: Credentials.fetch
+        credentials: Credentials.fetch,
+        requirements_update_strategy: versioning_strategy
       )
     end
 
@@ -105,7 +116,7 @@ module Dependabot
     # @return [Symbol]
     def requirements_to_unlock
       @requirements_to_unlock ||= begin
-        unless checker.requirements_unlocked_or_can_be?
+        if lockfile_only? || !checker.requirements_unlocked_or_can_be?
           return checker.can_update?(requirements_to_unlock: :none) ? :none : :update_not_possible
         end
         return :own if checker.can_update?(requirements_to_unlock: :own)
@@ -158,8 +169,7 @@ module Dependabot
     # @param [Hash<Symbol, String>] rule
     # @return [Boolean]
     def matches_type?(rule)
-      type = rule.fetch(:dependency_type, "direct")
-      TYPE_HANDLERS[type].call(dependency, checker)
+      TYPE_HANDLERS[rule.fetch(:dependency_type, "direct")].call(dependency, checker)
     end
 
     # Matches defined dependency version or range
@@ -172,6 +182,13 @@ module Dependabot
       versions.any? do |version|
         SemanticRange.satisfies(checker.latest_version.to_s, version)
       end
+    end
+
+    # Versioning strategy set to lock file only
+    #
+    # @return [Boolean]
+    def lockfile_only?
+      versioning_strategy == :lockfile_only
     end
   end
 end
