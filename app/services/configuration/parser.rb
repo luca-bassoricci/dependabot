@@ -12,11 +12,19 @@ module Configuration
   end
 
   class Parser < ApplicationService
+    # @return [Hash<String, String>]
     PACKAGE_ECOSYSTEM_MAPPING = {
       "npm" => "npm_and_yarn",
       "gomod" => "go_modules",
       "gitsubmodule" => "submodules",
       "mix" => "hex"
+    }.freeze
+    # @return [Hash<String, Symbol>] mapping for versioning strategies option
+    VERSIONING_STRATEGIES = {
+      "lockfile-only" => :lockfile_only,
+      "widen" => :widen_ranges,
+      "increase" => :bump_versions,
+      "increase-if-necessary" => :bump_versions_if_necessary
     }.freeze
 
     # @param [String] config dependabot.yml configuration file
@@ -92,7 +100,7 @@ module Configuration
         open_merge_requests_limit: opts[:"open-pull-requests-limit"] || 5,
         rebase_strategy: opts[:"rebase-strategy"] || "auto",
         auto_merge: opts[:"auto-merge"],
-        versioning_strategy: opts[:"versioning-strategy"] || "auto"
+        versioning_strategy: versioning_strategy(opts[:"versioning-strategy"])
       }
     end
 
@@ -136,6 +144,15 @@ module Configuration
           dependency_type: opt[:"dependency-type"],
           versions: opt[:versions]
         }.compact
+      end
+    end
+
+    def versioning_strategy(strategy)
+      return unless strategy
+
+      VERSIONING_STRATEGIES.fetch(strategy) do |el|
+        logger.error("Unsupported versioning-strategy #{el}")
+        nil
       end
     end
   end

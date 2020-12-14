@@ -34,7 +34,7 @@ describe DependencyUpdater do
       dependency_files: fetcher.files,
       allow: allow_conf,
       ignore: ignore_conf,
-      versioning_strategy: "auto"
+      versioning_strategy: nil
     }
   end
   let(:file_updater_args) { { dependency_files: fetcher.files, package_manager: package_manager } }

@@ -23,17 +23,19 @@ describe Dependabot::UpdateChecker do
   let(:can_update_all_unlock) { true }
   let(:can_update_none_unlock) { true }
   let(:versioning_strategy) { :bump_versions }
+  let(:checker_args) do
+    args = {
+      dependency: dependency,
+      dependency_files: fetcher.files,
+      credentials: Credentials.fetch
+    }
+    args[:requirements_update_strategy] = versioning_strategy if versioning_strategy != :lockfile_only
+    args
+  end
 
   before do
     stub_gitlab
-    allow(Dependabot::Bundler::UpdateChecker).to receive(:new)
-      .with(
-        dependency: dependency,
-        dependency_files: fetcher.files,
-        credentials: Credentials.fetch,
-        requirements_update_strategy: kind_of(Symbol)
-      )
-      .and_return(checker)
+    allow(Dependabot::Bundler::UpdateChecker).to receive(:new).with(checker_args) { checker }
     allow(checker).to receive(:vulnerable?) { vulnerable }
     allow(checker).to receive(:up_to_date?) { up_to_date }
     allow(checker).to receive(:requirements_unlocked_or_can_be?) { unlocked_or_can_be }
@@ -112,7 +114,7 @@ describe Dependabot::UpdateChecker do
     end
 
     context "when only lockfile updates are allowed" do
-      let(:versioning_strategy) { "lockfile-only" }
+      let(:versioning_strategy) { :lockfile_only }
 
       it do
         expect(update_checker_return).to eq(updated_deps)
