@@ -12,25 +12,17 @@ module Dependabot
       "security" => proc { |_, checker| checker.vulnerable? }
     }.freeze
 
-    # @return [Hash<String, Symbol>] mapping for versioning strategies option
-    VERSIONING_STRATEGIES = {
-      "lockfile-only" => :lockfile_only,
-      "widen" => :widen_ranges,
-      "increase" => :bump_versions,
-      "increase-if-necessary" => :bump_versions_if_necessary
-    }.freeze
-
     # @param [Dependabot::Dependency] dependency
     # @param [Array<Dependabot::DependencyFile>] dependency_files
     # @param [Array<Hash>] allow
     # @param [Array<Hash>] ignore
     # @param [String] versioning_strategy
-    def initialize(dependency:, dependency_files:, allow:, ignore:, versioning_strategy:)
+    def initialize(dependency:, dependency_files:, allow:, ignore:, versioning_strategy: nil)
       @dependency = dependency
       @dependency_files = dependency_files
       @allow = allow
       @ignore = ignore
-      @versioning_strategy = VERSIONING_STRATEGIES.fetch(versioning_strategy, :auto)
+      @versioning_strategy = versioning_strategy
     end
 
     # Get updated dependencies
@@ -103,12 +95,15 @@ module Dependabot
     #
     # @return [Dependabot::UpdateChecker]
     def checker
-      @checker ||= Dependabot::UpdateCheckers.for_package_manager(dependency.package_manager).new(
-        dependency: dependency,
-        dependency_files: dependency_files,
-        credentials: Credentials.fetch,
-        requirements_update_strategy: versioning_strategy
-      )
+      @checker ||= begin
+        args = {
+          dependency: dependency,
+          dependency_files: dependency_files,
+          credentials: Credentials.fetch
+        }
+        args[:requirements_update_strategy] = versioning_strategy if versioning_strategy && !lockfile_only?
+        Dependabot::UpdateCheckers.for_package_manager(dependency.package_manager).new(**args)
+      end
     end
 
     # Get requirements to unlock
