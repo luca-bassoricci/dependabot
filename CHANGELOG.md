@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## [v0.2.11 - 2020-12-14](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🐞 Bug Fixes
+
+- do not pass invalid versioning strategy option to update checker. See merge request dependabot-gitlab/dependabot!358 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.2.10](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.2.10...v0.2.11)
+
 ## [v0.2.10 - 2020-12-13](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🚀 New Features
@@ -362,6 +372,7 @@
 ## [v0.0.1](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/f7c9b31...v0.0.1)
 
 - Initial release
+
 
 
 
