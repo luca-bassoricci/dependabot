@@ -33,7 +33,7 @@ module Gitlab
         credentials: Credentials.fetch,
         github_redirection_service: "github.com",
         **mr_options
-      ).create.tap { |mr| logger.info { "created mr #{mr.web_url}" } if mr }
+      ).create.tap { |mr| log(:info, "created mr #{mr.web_url}") if mr }
     end
 
     private

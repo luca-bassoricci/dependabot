@@ -13,7 +13,7 @@ module Gitlab
     #
     # @return [void]
     def call
-      logger.info { "Closing mr with iid: #{mr_iid}" }
+      log(:info, "Closing mr with iid: #{mr_iid}")
       gitlab.update_merge_request(project, mr_iid, state_event: "close")
     end
 

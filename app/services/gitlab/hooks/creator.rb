@@ -7,7 +7,7 @@ module Gitlab
       #
       # @return [Integer]
       def call
-        logger.info { "Creating webhooks for project '#{project_name}'" }
+        log(:info, "Creating webhooks for project '#{project_name}'")
         gitlab.add_project_hook(project_name, hook_url, hook_args).id
       end
     end

@@ -6,7 +6,7 @@ module Api
     #
     # @return [void]
     def create
-      logger.info { "Registering project '#{project_name}'" }
+      log(:info, "Registering project '#{project_name}'")
       project = Dependabot::ProjectCreator.call(project_name)
       Cron::JobSync.call(project)
       json_response(body: project)

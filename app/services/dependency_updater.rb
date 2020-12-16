@@ -13,7 +13,7 @@ class DependencyUpdater < ApplicationService
     update_security_vulnerabilities
     update_dependencies
   rescue Octokit::TooManyRequests
-    logger.error { "github API rate limit exceeded! See: https://developer.github.com/v3/#rate-limiting" }
+    log(:error, "github API rate limit exceeded! See: https://developer.github.com/v3/#rate-limiting")
   end
 
   private

@@ -4,10 +4,9 @@ module Api
   class ApplicationController < ActionController::API
     include Response
     include ExceptionHandler
+    include ApplicationHelper
 
     before_action :authenticate
-
-    delegate :logger, to: :Rails
 
     private
 

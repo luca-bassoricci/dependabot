@@ -19,6 +19,18 @@ module ApplicationHelper
     Rails.logger.error { "#{error.message}\n#{error.backtrace&.join('\n')}" }
   end
 
+  # Log tagged message with dependency context
+  #
+  # @param [Symbol] level
+  # @param [String] message
+  # @param [String] tag
+  # @return [void]
+  def log(level, message, tag = nil)
+    logger = proc { Rails.logger.send(level, message) }
+    tags = [Thread.current[:context], tag].compact
+    tags.empty? ? logger.call : Rails.logger.tagged(tags, &logger)
+  end
+
   # All project cron jobs
   #
   # @return [Array<Sidekiq::Cron::Job>]
@@ -26,5 +38,5 @@ module ApplicationHelper
     Sidekiq::Cron::Job.all.select { |job| job.name.match?(/^#{project}:.*/) }
   end
 
-  module_function :gitlab, :log_error
+  module_function :gitlab, :log, :log_error
 end

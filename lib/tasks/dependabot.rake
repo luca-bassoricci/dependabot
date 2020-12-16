@@ -13,7 +13,7 @@ namespace :dependabot do # rubocop:disable Metrics/BlockLength
   desc "add dependency updates for repository"
   task(:register, [:projects] => :environment) do |_task, args|
     args[:projects].split(" ").each do |project_name|
-      Rails.logger.info { "Registering project '#{project_name}'" }
+      ApplicationHelper.log(:info, "Registering project '#{project_name}'")
       Dependabot::ProjectCreator.call(project_name).tap do |project|
         Cron::JobSync.call(project)
       end
@@ -30,7 +30,7 @@ namespace :dependabot do # rubocop:disable Metrics/BlockLength
       }
     end
 
-    Rails.logger.debug { "Checking if sidekiq is operational." }
+    ApplicationHelper.log(:debug, "Checking if sidekiq is operational.", "Healthcheck")
     Sidekiq::ProcessSet.new.size.positive? || raise("Sidekiq process is not running!")
 
     FileUtils.rm_f(HealthcheckConfig.filename)
@@ -38,7 +38,7 @@ namespace :dependabot do # rubocop:disable Metrics/BlockLength
     sleep(0.5)
     File.exist?(HealthcheckConfig.filename) || raise("Healthcheck job failed")
   rescue StandardError => e
-    Rails.logger.error { "[Healthcheck] #{e.message}" }
+    ApplicationHelper.log(:error, e.message, "Healthcheck")
     exit(1)
   end
 end

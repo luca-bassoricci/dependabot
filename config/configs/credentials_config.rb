@@ -22,7 +22,7 @@ class CredentialsConfig < ApplicationConfig
   def maven_repos
     @maven_repos ||= credentials["maven"]&.map do |_, repository|
       if [repository["url"], repository["username"], repository["password"]].any?(&:nil?)
-        Rails.logger.warn { "Got partially configured maven_repository credentials" }
+        log(:warn, "Got partially configured maven_repository credentials")
         next
       end
 
@@ -36,7 +36,7 @@ class CredentialsConfig < ApplicationConfig
   def docker_registries
     @docker_registries ||= credentials["docker"]&.map do |_, registry|
       if [registry["registry"], registry["username"], registry["password"]].any?(&:nil?)
-        Rails.logger.warn { "Got partially configured docker_registry credentials" }
+        log(:warn, "Got partially configured docker_registry credentials")
         next
       end
 
@@ -50,7 +50,7 @@ class CredentialsConfig < ApplicationConfig
   def npm_registries
     @npm_registries ||= credentials["npm"]&.map do |_, registry|
       if [registry["registry"], registry["token"]].any?(&:nil?)
-        Rails.logger.warn { "Got partially configured npm_registry credentials" }
+        log(:warn, "Got partially configured npm_registry credentials")
         next
       end
 

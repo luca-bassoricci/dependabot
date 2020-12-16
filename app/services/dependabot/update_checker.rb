@@ -31,7 +31,7 @@ module Dependabot
     def call
       return skipped if !allowed? || ignored?
 
-      logger.info { "Fetching info for #{name}" }
+      log(:info, "Fetching info for #{name}")
       return up_to_date if checker.up_to_date?
       return update_impossible if requirements_to_unlock == :update_not_possible
 
@@ -56,7 +56,7 @@ module Dependabot
     #
     # @return [nil]
     def skipped
-      logger.debug { "Skipping #{name} due to allow/ignore rules" }
+      log(:debug, "Skipping #{name} due to allow/ignore rules")
       nil
     end
 
@@ -64,7 +64,7 @@ module Dependabot
     #
     # @return [nil]
     def up_to_date
-      logger.info { "#{name} is up to date" }
+      log(:info, "#{name} is up to date")
       nil
     end
 
@@ -72,7 +72,7 @@ module Dependabot
     #
     # @return [nil]
     def update_impossible
-      logger.info { "Update for #{name} is impossible" }
+      log(:info, "Update for #{name} is impossible")
       nil
     end
 
@@ -81,7 +81,7 @@ module Dependabot
     # @return [Array<Dependabot::Dependency>]
     def updated_dependencies
       updated_version = "#{name} => #{checker.latest_version}"
-      logger.info { "found version for update: #{updated_version}" }
+      log(:info, "found version for update: #{updated_version}")
 
       {
         name: updated_version,
