@@ -10,7 +10,8 @@ describe Gitlab::MergeRequestUpdater do
       web_url: "mr-url",
       iid: 1,
       sha: "5f92cc4d9939",
-      has_conflicts: has_conflicts
+      has_conflicts: has_conflicts,
+      references: OpenStruct.new(short: "!1")
     )
   end
 

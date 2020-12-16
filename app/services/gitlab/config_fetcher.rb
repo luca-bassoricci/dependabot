@@ -14,7 +14,7 @@ module Gitlab
     #
     # @return [String]
     def call
-      logger.info { "Fetching configuration for #{project_name} from #{default_branch}" }
+      log(:info, "Fetching configuration for #{project_name} from #{default_branch}")
       gitlab.file_contents(project_name, AppConfig.config_filename, default_branch)
     rescue Error::NotFound
       raise(MissingConfigurationError, "#{AppConfig.config_filename} not present in #{repo}'s branch #{default_branch}")

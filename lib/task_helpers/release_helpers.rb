@@ -184,7 +184,7 @@ class ReleaseCreator < ReleaseHelper
   #
   # @return [void]
   def update_changelog
-    logger.info { "Updating changelog" }
+    log(:info, "Updating changelog")
 
     cl = changelog
     breaking = cl.include?("[BREAKING]")
@@ -205,7 +205,7 @@ class ReleaseCreator < ReleaseHelper
   #
   # @return [void]
   def commit_and_tag
-    logger.info { "Comitting changelog" }
+    log(:info, "Comitting changelog")
     exec(<<~CMD)
       git commit CHANGELOG.md -m "Update to #{ref_to}" && git tag #{ref_to}
     CMD

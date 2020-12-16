@@ -5,17 +5,10 @@
 class DependabotLogger
   DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
-  class SimpleLogFormatter < Sidekiq::Logger::Formatters::Base
-    # :reek:LongParameterList
-    def call(severity, time, _program_name, message)
-      "[#{time} tid=#{tid}#{format_context}] #{severity}: #{message}\n"
-    end
-  end
-
   def self.logger
     Logger.new(STDOUT).tap do |log|
-      log.formatter = SimpleLogFormatter.new
       log.datetime_format = DATETIME_FORMAT
+      log.formatter = proc { |severity, time, _program_name, message| "[#{time}] #{severity}: #{message}\n" }
     end
   end
 end

@@ -10,7 +10,7 @@ module Cron
     #
     # @return [void]
     def call
-      logger.info { "Removing all dependency update jobs for project: #{project_name}" }
+      log(:info, "Removing all dependency update jobs for project: #{project_name}")
       ProjectJobFinder.call(project_name).each(&:destroy)
     end
 

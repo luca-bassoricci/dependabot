@@ -11,7 +11,7 @@ module Gitlab
     #
     # @return [Gitlab::ObjectifiedHash]
     def call
-      logger.info { "accepting merge request #{mr.references.short}" }
+      log(:info, "accepting merge request #{mr.references.short}")
       gitlab.accept_merge_request(
         mr.project_id,
         mr.iid,

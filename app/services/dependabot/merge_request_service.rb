@@ -19,7 +19,7 @@ module Dependabot
     #
     # @return [void]
     def call
-      logger.info { "Updating following dependencies: #{updated_dependencies_name}" }
+      log(:info, "Updating following dependencies: #{updated_dependencies_name}")
       mr ? update_mr : create_mr
       accept_mr
 
