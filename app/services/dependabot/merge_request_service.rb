@@ -40,7 +40,7 @@ module Dependabot
         updated_files: updated_files,
         config: config
       )
-      return if AppConfig.standalone?
+      return if AppConfig.standalone? || !mr
 
       save
       close_superseeded_mrs
@@ -50,8 +50,6 @@ module Dependabot
     #
     # @return [void]
     def save
-      return unless mr
-
       MergeRequest.create!(
         project: project,
         iid: mr.iid,
