@@ -34,6 +34,9 @@ Metrics/MethodLength:
   Enabled: true
   Max: 15
 
+Lint/MissingSuper:
+  Enabled: false
+
 Style/Documentation:
   Enabled: false
 

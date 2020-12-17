@@ -59,7 +59,7 @@ class ReleaseHelper
 
       category = message.match(/(\w+): \S+/)[1]
 
-      hash[category].push("- " + message.gsub("#{category}: ", "") + " - (#{committer})")
+      hash[category].push("- " + message.gsub("#{category}: ", "") + " - (#{committer})") # rubocop:disable Style/StringConcatenation
     end
   end
 
