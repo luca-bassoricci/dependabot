@@ -24,6 +24,6 @@ updates:
       - dependency
     pull-request-branch-name:
       separator: "-"
-    versioning-strategy: auto
+    versioning-strategy: lockfile-only
     rebase-strategy: auto
     auto-merge: true
