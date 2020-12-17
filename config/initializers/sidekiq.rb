@@ -5,12 +5,15 @@ redis_conf = {
   timeout: 1,
   reconnect_attempts: 3
 }
+logger = DependabotLogger.logger
 
 Sidekiq.configure_server do |config|
-  config.options[:queues].push(HealthcheckConfig.queue)
+  config.logger = logger
   config.redis = redis_conf
+  config.options[:queues].push(HealthcheckConfig.queue)
 end
 Sidekiq.configure_client do |config|
+  config.logger = logger
   config.redis = redis_conf
 end
 

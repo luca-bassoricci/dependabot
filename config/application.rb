@@ -19,9 +19,10 @@ module DependabotGitlab
     config.load_defaults 6.0
     config.active_job.queue_adapter = :sidekiq
 
-    tagged_logger = ActiveSupport::TaggedLogging.new(DependabotLogger.logger)
-    config.logger = tagged_logger
-    config.mongoid.logger = tagged_logger
+    DependabotLogger.logger.tap do |logger|
+      config.logger = logger
+      config.mongoid.logger = logger
+    end
 
     config.anyway_config.default_config_path = lambda { |name|
       Rails.root.join("#{ENV['APP_CONFIG'] || 'config'}/#{name}.yml")

@@ -9,9 +9,10 @@ class DependencyUpdateJob < ApplicationJob
   # @param [Hash] args
   # @return [void]
   def perform(args)
-    project_name, package_ecosystem, directory = args.values_at("repo", "package_ecosystem", "directory")
+    context = args.values_at("repo", "package_ecosystem", "directory")
+    context.pop if context.last == "/"
     # Save context for tagged logger
-    Thread.current[:context] = "#{project_name}=>#{package_ecosystem}=>#{directory}"
+    Thread.current[:context] = context.join("=>")
 
     DependencyUpdater.call(args)
   end

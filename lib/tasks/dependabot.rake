@@ -22,14 +22,6 @@ namespace :dependabot do # rubocop:disable Metrics/BlockLength
 
   desc "worker healthcheck"
   task(check_sidekiq: :environment) do
-    Sidekiq.configure_client do |config|
-      config.redis = {
-        password: ENV["REDIS_PASSWORD"],
-        timeout: 1,
-        reconnect_attempts: 3
-      }
-    end
-
     ApplicationHelper.log(:debug, "Checking if sidekiq is operational.", "Healthcheck")
     Sidekiq::ProcessSet.new.size.positive? || raise("Sidekiq process is not running!")
 
