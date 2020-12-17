@@ -8,8 +8,4 @@ class AppConfig < ApplicationConfig
               config_filename: ".gitlab/dependabot.yml",
               standalone: false,
               log_level: "info"
-
-  def log_level
-    super&.to_sym
-  end
 end
