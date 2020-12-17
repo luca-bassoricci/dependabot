@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## [v0.2.12 - 2020-12-17](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🔬 Improvements
+
+- logging improvements follow up. See merge request dependabot-gitlab/dependabot!371 - (andrejs)
+- add tagged logger messages. See merge request dependabot-gitlab/dependabot!368 - (andrejs)
+
+### 🐞 Bug Fixes
+
+- do not try to close previous mr if new one was not created. See merge request dependabot-gitlab/dependabot!370 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump rubocop and rubocop-rspec. See merge request dependabot-gitlab/dependabot!366 - (andrejs)
+- bump rubocop-rails from 2.9.0 to 2.9.1. See merge request dependabot-gitlab/dependabot!369 - (andrejs)
+- bump dependabot-omnibus from 0.126.1 to 0.129.0. See merge request dependabot-gitlab/dependabot!365 - (andrejs)
+- bump solargraph from 0.39.17 to 0.40.0. See merge request dependabot-gitlab/dependabot!363 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.2.11](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.2.11...v0.2.12)
+
 ## [v0.2.11 - 2020-12-14](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🐞 Bug Fixes
@@ -372,6 +394,7 @@
 ## [v0.0.1](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/f7c9b31...v0.0.1)
 
 - Initial release
+
 
 
 
