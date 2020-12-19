@@ -5,6 +5,7 @@ source "https://rubygems.org"
 ruby "~> 2.6"
 
 gem "anyway_config", "~> 2.0"
+gem "bootsnap", ">= 1.4.2", require: false
 gem "dependabot-omnibus", "~> 0.129.0"
 gem "dry-validation", "~> 1.6"
 gem "lograge", "~> 0.11.2"
@@ -16,8 +17,9 @@ gem "semantic_range", "~> 2.3"
 gem "sentry-raven", "~> 3.1", require: false
 gem "sidekiq", "~> 6.1.2"
 gem "sidekiq-cron", "~> 1.2"
-
-gem "bootsnap", ">= 1.4.2", require: false
+gem "yabeda-prometheus-mmap", "~> 0.1.1"
+gem "yabeda-puma-plugin", "~> 0.5.0"
+gem "yabeda-sidekiq", "~> 0.7.0"
 
 group :development, :test do
   gem "bundle-audit", "~> 0.1.0", require: false
