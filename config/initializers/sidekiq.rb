@@ -8,6 +8,8 @@ redis_conf = {
 logger = DependabotLogger.logger
 
 Sidekiq.configure_server do |config|
+  Yabeda::Prometheus::Exporter.start_metrics_server!
+
   config.logger = logger
   config.redis = redis_conf
   config.options[:queues].push(HealthcheckConfig.queue)
