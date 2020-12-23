@@ -6,7 +6,7 @@ ruby "~> 2.6"
 
 gem "anyway_config", "~> 2.0"
 gem "bootsnap", ">= 1.4.2", require: false
-gem "dependabot-omnibus", "~> 0.129.0"
+gem "dependabot-omnibus", "~> 0.129.1"
 gem "dry-validation", "~> 1.6"
 gem "lograge", "~> 0.11.2"
 gem "mongoid", "~> 7.2"
