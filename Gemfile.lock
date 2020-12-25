@@ -81,7 +81,7 @@ GEM
     benchmark (0.1.0)
     bootsnap (1.5.1)
       msgpack (~> 1.0)
-    brakeman (4.10.0)
+    brakeman (4.10.1)
     bson (4.11.1)
     builder (3.2.4)
     bundle-audit (0.1.0)
