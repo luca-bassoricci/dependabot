@@ -38,7 +38,7 @@ group :test do
   gem "rack-test", "~> 1.1"
   gem "rspec", "~> 3.10"
   gem "rspec_junit_formatter", "~> 0.4.1"
-  gem "rspec-rails", "~> 4.0.1"
+  gem "rspec-rails", "~> 4.0.2"
   gem "rspec-sidekiq", "~> 3.1", require: false
   gem "simplecov", "~> 0.20.0"
   gem "simplecov-cobertura", "~> 1.4.2"
