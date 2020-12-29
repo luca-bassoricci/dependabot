@@ -4,7 +4,7 @@ source "https://rubygems.org"
 
 ruby "~> 2.6"
 
-gem "anyway_config", "~> 2.0"
+gem "anyway_config", "~> 2.1"
 gem "bootsnap", ">= 1.4.2", require: false
 gem "dependabot-omnibus", "~> 0.129.1"
 gem "dry-validation", "~> 1.6"
