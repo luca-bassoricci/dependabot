@@ -1,5 +1,32 @@
 # CHANGELOG
 
+## [v0.2.13 - 2021-01-04](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🚀 New Features
+
+- prometheus metrics. Closes #43. See merge request dependabot-gitlab/dependabot!375 - (andrejs)
+
+### 🐞 Bug Fixes
+
+- fix incorrect variable name in error message. Closes #50. See merge request dependabot-gitlab/dependabot!385 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump simplecov from 0.20.0 to 0.21.0. See merge request dependabot-gitlab/dependabot!384 - (andrejs)
+- bump rubocop-performance from 1.9.1 to 1.9.2. See merge request dependabot-gitlab/dependabot!383 - (andrejs)
+- bump anyway_config from 2.0.6 to 2.1.0. See merge request dependabot-gitlab/dependabot!382 - (andrejs)
+- bump solargraph from 0.40.0 to 0.40.1. See merge request dependabot-gitlab/dependabot!381 - (andrejs)
+- bump rspec-rails from 4.0.1 to 4.0.2. See merge request dependabot-gitlab/dependabot!380 - (andrejs)
+- bump brakeman from 4.10.0 to 4.10.1. See merge request dependabot-gitlab/dependabot!379 - (andrejs)
+- bump rubocop from 1.6.1 to 1.7.0. See merge request dependabot-gitlab/dependabot!378 - (andrejs)
+- bump dependabot-omnibus from 0.129.0 to 0.129.1. See merge request dependabot-gitlab/dependabot!377 - (andrejs)
+- bump webmock from 3.10.0 to 3.11.0. See merge request dependabot-gitlab/dependabot!374 - (andrejs)
+- bump rubocop-rspec from 2.0.1 to 2.1.0. See merge request dependabot-gitlab/dependabot!373 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.2.12](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.2.12...v0.2.13)
+
 ## [v0.2.12 - 2020-12-17](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🔬 Improvements
@@ -394,6 +421,7 @@
 ## [v0.0.1](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/f7c9b31...v0.0.1)
 
 - Initial release
+
 
 
 
