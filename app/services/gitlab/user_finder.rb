@@ -11,9 +11,15 @@ module Gitlab
     #
     # @return [Array<Number>]
     def call
-      @usernames&.map do |user|
-        Rails.cache.fetch(user, skip_nil: true, expires_in: 1.hour) { gitlab.user_search(user).first&.id }
-      end
+      return unless @usernames
+
+      ids = @usernames.map do |user|
+        Rails.cache.fetch(user, skip_nil: true, expires_in: 1.hour) do
+          gitlab.user_search(user).first&.id.tap { |id| logger.error { "User '#{user}' not found!" } unless id }
+        end
+      end.compact
+
+      ids.any? ? ids : nil
     end
   end
 end
