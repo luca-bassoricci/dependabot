@@ -61,7 +61,7 @@ module Gitlab
       @mr_options ||= {
         label_language: true,
         assignees: assignees,
-        reviewers: { approvers: reviewers },
+        reviewers: reviewers ? { approvers: reviewers } : {},
         **config.select { |key, _value| MR_OPTIONS.include?(key) }
       }
     end
