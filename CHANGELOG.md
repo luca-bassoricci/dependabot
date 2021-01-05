@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## [v0.2.14 - 2021-01-05](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🔬 Improvements
+
+- handle incorrect usernames. See merge request dependabot-gitlab/dependabot!389 - (andrejs)
+
+### 🐞 Bug Fixes
+
+- don't pass approvers if not defined in .dependabot.yml configuration. Closes #51. See merge request dependabot-gitlab/dependabot!386 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump dependabot-omnibus from 0.129.1 to 0.129.2. See merge request dependabot-gitlab/dependabot!388 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.2.13](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.2.13...v0.2.14)
+
 ## [v0.2.13 - 2021-01-04](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🚀 New Features
@@ -421,6 +439,7 @@
 ## [v0.0.1](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/f7c9b31...v0.0.1)
 
 - Initial release
+
 
 
 
