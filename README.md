@@ -158,3 +158,7 @@ Index page of application, like `http://localhost:3000/` will display a table wi
 * Submit merge request
 
 Running app locally will require running redis instance. Redis in docker container can be started with `docker-compose up`
+
+## Supported by
+
+[![jetbrains](jetbrains.png)](https://www.jetbrains.com/?from=dependabot-gitlab)
