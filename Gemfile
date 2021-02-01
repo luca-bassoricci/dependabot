@@ -33,7 +33,7 @@ group :development, :test do
 end
 
 group :test do
-  gem "brakeman", "~> 4.10"
+  gem "brakeman", "~> 5.0"
   gem "faker", "~> 2.15"
   gem "rack-test", "~> 1.1"
   gem "rspec", "~> 3.10"
