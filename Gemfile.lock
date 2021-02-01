@@ -81,7 +81,7 @@ GEM
     benchmark (0.1.1)
     bootsnap (1.7.0)
       msgpack (~> 1.0)
-    brakeman (4.10.1)
+    brakeman (5.0.0)
     bson (4.11.1)
     builder (3.2.4)
     bundle-audit (0.1.0)
@@ -493,7 +493,7 @@ PLATFORMS
 DEPENDENCIES
   anyway_config (~> 2.1)
   bootsnap (>= 1.4.2)
-  brakeman (~> 4.10)
+  brakeman (~> 5.0)
   bundle-audit (~> 0.1.0)
   dependabot-omnibus (~> 0.130.3)
   dry-validation (~> 1.6)
