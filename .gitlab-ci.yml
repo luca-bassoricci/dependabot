@@ -119,6 +119,35 @@ rspec_fork:
   rules: *fork
 
 # ======================================================================================================================
+# Coverage
+# ======================================================================================================================
+coverage_line:
+  extends: .coverage_line
+  needs:
+    - rspec
+  tags:
+    - private
+  rules: *main
+coverage_line_fork:
+  extends: .coverage_line
+  needs:
+    - rspec_fork
+  rules: *fork
+
+coverage_branch:
+  extends: .coverage_branch
+  needs:
+    - rspec
+  tags:
+    - private
+  rules: *main
+coverage_branch_fork:
+  extends: .coverage_branch
+  needs:
+    - rspec_fork
+  rules: *fork
+
+# ======================================================================================================================
 # E2E Test Stage
 # ======================================================================================================================
 e2e:
