@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 require "simplecov"
-require "simplecov-console"
-require "simplecov-cobertura"
-require "simplecov-lcov"
 
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
@@ -22,25 +19,4 @@ RSpec.configure do |config|
   config.order = :random
 end
 
-return unless ENV["COVERAGE"]
-
-formatters = [SimpleCov::Formatter::Console]
-formatters << SimpleCov::Formatter::HTMLFormatter if ENV["COV_HTML_REPORT"]
-
-if ENV["CI"]
-  SimpleCov::Formatter::Console.max_rows = 8
-  SimpleCov::Formatter::Console.output_style = "block"
-  SimpleCov::Formatter::LcovFormatter.config do |conf|
-    conf.report_with_single_file = true
-    conf.output_directory = "coverage"
-  end
-
-  formatters << SimpleCov::Formatter::CoberturaFormatter
-  formatters << SimpleCov::Formatter::LcovFormatter
-end
-
-SimpleCov.start("rails") do
-  formatter SimpleCov::Formatter::MultiFormatter.new(formatters)
-  enable_coverage :branch
-  add_filter "/lib/"
-end
+SimpleCov.start("rails") if ENV["COVERAGE"]
