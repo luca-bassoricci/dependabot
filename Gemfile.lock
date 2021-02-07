@@ -238,7 +238,7 @@ GEM
       concurrent-ruby (~> 1.0)
     jaro_winkler (1.5.4)
     jmespath (1.4.0)
-    json (2.4.1)
+    json (2.5.1)
     kramdown (2.3.0)
       rexml
     kramdown-parser-gfm (1.1.0)
@@ -476,10 +476,10 @@ GEM
     yabeda-prometheus-mmap (0.1.1)
       prometheus-client-mmap
       yabeda (~> 0.5)
-    yabeda-puma-plugin (0.5.0)
+    yabeda-puma-plugin (0.6.0)
       json
       puma
-      yabeda (~> 0.2)
+      yabeda (~> 0.5)
     yabeda-sidekiq (0.7.0)
       sidekiq
       yabeda (~> 0.6)
@@ -526,7 +526,7 @@ DEPENDENCIES
   spring (~> 2.1.1)
   webmock (~> 3.11)
   yabeda-prometheus-mmap (~> 0.1.1)
-  yabeda-puma-plugin (~> 0.5.0)
+  yabeda-puma-plugin (~> 0.6.0)
   yabeda-sidekiq (~> 0.7.0)
 
 RUBY VERSION
