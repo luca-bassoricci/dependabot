@@ -151,6 +151,7 @@ module Dependabot
       @superseeded_mrs ||= project.merge_requests
                                   .where(dependencies: current_dependencies_name, state: "opened")
                                   .not(iid: mr.iid)
+                                  .compact
     end
   end
 end
