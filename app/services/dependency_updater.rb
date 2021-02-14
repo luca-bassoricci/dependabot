@@ -10,8 +10,10 @@ class DependencyUpdater < ApplicationService
   #
   # @return [void]
   def call
-    update_security_vulnerabilities
-    update_dependencies
+    Semaphore.synchronize do
+      update_security_vulnerabilities
+      update_dependencies
+    end
   rescue Octokit::TooManyRequests
     log(:error, "github API rate limit exceeded! See: https://developer.github.com/v3/#rate-limiting")
   end
@@ -109,41 +111,35 @@ class DependencyUpdater < ApplicationService
   #
   # @return [Array<Dependabot::Dependency>]
   def dependencies
-    @dependencies ||= Semaphore.synchronize do
-      Dependabot::FileParser.call(
-        source: fetcher.source,
-        dependency_files: fetcher.files,
-        package_manager: package_manager
-      )
-    end
+    @dependencies ||= Dependabot::FileParser.call(
+      source: fetcher.source,
+      dependency_files: fetcher.files,
+      package_manager: package_manager
+    )
   end
 
   # Array of updated dependencies
   #
   # @return [Array<Dependabot::Dependency>]
   def updated_dependencies(dependency)
-    Semaphore.synchronize do
-      Dependabot::UpdateChecker.call(
-        dependency: dependency,
-        dependency_files: fetcher.files,
-        allow: config[:allow],
-        ignore: config[:ignore],
-        versioning_strategy: config[:versioning_strategy]
-      )
-    end
+    Dependabot::UpdateChecker.call(
+      dependency: dependency,
+      dependency_files: fetcher.files,
+      allow: config[:allow],
+      ignore: config[:ignore],
+      versioning_strategy: config[:versioning_strategy]
+    )
   end
 
   # Array of updated files
   #
   # @return [Array<Dependabot::DependencyFile>]
   def updated_files(updated_dependencies)
-    Semaphore.synchronize do
-      Dependabot::FileUpdater.call(
-        dependencies: updated_dependencies,
-        dependency_files: fetcher.files,
-        package_manager: package_manager
-      )
-    end
+    Dependabot::FileUpdater.call(
+      dependencies: updated_dependencies,
+      dependency_files: fetcher.files,
+      package_manager: package_manager
+    )
   end
 
   # Create or update merge request
