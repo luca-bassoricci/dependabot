@@ -1,5 +1,54 @@
 # CHANGELOG
 
+## [v0.2.15 - 2021-02-16](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🔬 Improvements
+
+- synchronize operations on package ecosystem level. See merge request dependabot-gitlab/dependabot!434 - (Andrejs)
+
+### 🐞 Bug Fixes
+
+- remove potential nil values from existing mr list. Closes #55. See merge request dependabot-gitlab/dependabot!433 - (Andrejs)
+- Handle missing has_conflicts field. Closes #53. See merge request dependabot-gitlab/dependabot!401 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump dependabot-omnibus from 0.133.2 to 0.133.3. See merge request dependabot-gitlab/dependabot!436 - (Andrejs)
+- bump rubocop from 1.9.1 to 1.10.0. See merge request dependabot-gitlab/dependabot!435 - (Andrejs)
+- bump dependabot-omnibus from 0.132.0 to 0.133.2. See merge request dependabot-gitlab/dependabot!431 - (Andrejs)
+- bump rails from 6.0.3.4 to 6.0.3.5. See merge request dependabot-gitlab/dependabot!432 - (Andrejs)
+- bump faker from 2.15.1 to 2.16.0. See merge request dependabot-gitlab/dependabot!429 - (Andrejs)
+- update base ruby image for mock and ci. See merge request dependabot-gitlab/dependabot!426 - (Andrejs)
+- bump bootsnap from 1.7.1 to 1.7.2. See merge request dependabot-gitlab/dependabot!424 - (Andrejs)
+- bump dependabot-omnibus from 0.131.2 to 0.132.0. See merge request dependabot-gitlab/dependabot!425 - (Andrejs)
+- bump yabeda-puma-plugin from 0.5.0 to 0.6.0. See merge request dependabot-gitlab/dependabot!420 - (Andrejs)
+- bump puma from 5.2.0 to 5.2.1. See merge request dependabot-gitlab/dependabot!421 - (Andrejs)
+- bump solargraph from 0.40.2 to 0.40.3. See merge request dependabot-gitlab/dependabot!422 - (Andrejs)
+- bump dependabot-omnibus from 0.131.0 to 0.131.2. See merge request dependabot-gitlab/dependabot!419 - (Andrejs)
+- bump dependabot-omnibus from 0.130.3 to 0.131.0. See merge request dependabot-gitlab/dependabot!417 - (Andrejs)
+- bump bootsnap from 1.7.0 to 1.7.1. See merge request dependabot-gitlab/dependabot!416 - (Andrejs)
+- bump rubocop-rspec from 2.1.0 to 2.2.0. See merge request dependabot-gitlab/dependabot!413 - (andrejs)
+- bump webmock from 3.11.1 to 3.11.2. See merge request dependabot-gitlab/dependabot!412 - (andrejs)
+- bump simplecov-console from 0.8.0 to 0.9.1. See merge request dependabot-gitlab/dependabot!411 - (andrejs)
+- bump rubocop from 1.9.0 to 1.9.1. See merge request dependabot-gitlab/dependabot!409 - (andrejs)
+- bump brakeman from 4.10.1 to 5.0.0. See merge request dependabot-gitlab/dependabot!410 - (andrejs)
+- bump bootsnap from 1.6.0 to 1.7.0. See merge request dependabot-gitlab/dependabot!408 - (andrejs)
+- bump sidekiq from 6.1.2 to 6.1.3. See merge request dependabot-gitlab/dependabot!406 - (andrejs)
+- bump bootsnap from 1.5.1 to 1.6.0. See merge request dependabot-gitlab/dependabot!403 - (andrejs)
+- bump puma from 5.1.1 to 5.2.0. See merge request dependabot-gitlab/dependabot!405 - (andrejs)
+- bump reek, rubocop, solargraph and dependabot-omnibus. See merge request dependabot-gitlab/dependabot!407 - (andrejs)
+- bump dependabot-omnibus from 0.130.0 to 0.130.1. See merge request dependabot-gitlab/dependabot!400 - (andrejs)
+- bump dependabot-omnibus from 0.129.5 to 0.130.0. See merge request dependabot-gitlab/dependabot!397 - (andrejs)
+- bump webmock from 3.11.0 to 3.11.1. See merge request dependabot-gitlab/dependabot!398 - (andrejs)
+- bump simplecov from 0.21.1 to 0.21.2. See merge request dependabot-gitlab/dependabot!395 - (andrejs)
+- bump dependabot-omnibus from 0.129.3 to 0.129.5. See merge request dependabot-gitlab/dependabot!394 - (andrejs)
+- bump dependabot-omnibus from 0.129.2 to 0.129.3. See merge request dependabot-gitlab/dependabot!391 - (andrejs)
+- bump simplecov from 0.21.0 to 0.21.1. See merge request dependabot-gitlab/dependabot!392 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.2.14](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.2.14...v0.2.15)
+
 ## [v0.2.14 - 2021-01-05](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🔬 Improvements
@@ -439,6 +488,7 @@
 ## [v0.0.1](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/f7c9b31...v0.0.1)
 
 - Initial release
+
 
 
 
