@@ -5,10 +5,7 @@ module ApplicationHelper
   #
   # @return [Gitlab::Client]
   def gitlab
-    Gitlab.client(
-      endpoint: "#{AppConfig.gitlab_url}/api/v4",
-      private_token: CredentialsConfig.gitlab_access_token
-    )
+    Gitlab::ClientWithRetry.new
   end
 
   # Log error message and backtrace
