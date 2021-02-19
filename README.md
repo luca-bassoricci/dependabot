@@ -1,4 +1,6 @@
-![dependabot](logo.png)
+<p align="center">
+  <img src="logo.png" alt="dependabot-gitlab">
+</p>
 
 # dependabot-gitlab
 
