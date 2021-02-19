@@ -2,7 +2,11 @@
 
 module Gitlab
   class ClientWithRetry
-    RETRYABLE_ERRORS = [Gitlab::Error::BadGateway].freeze
+    RETRYABLE_ERRORS = [
+      # gitlab might often fail to accept mr due to pipeline not starting fast enough
+      Gitlab::Error::NotAcceptable,
+      Gitlab::Error::BadGateway
+    ].freeze
 
     def initialize
       @max_retries = 2
