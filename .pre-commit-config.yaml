@@ -10,7 +10,7 @@ repos:
         language: system
         entry: bundle exec rubocop
         types: [ruby]
-        exclude: \.lock
+        exclude: \.lock|\.json
       - id: reek
         name: Reek
         language: system
