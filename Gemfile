@@ -22,7 +22,6 @@ gem "yabeda-puma-plugin", "~> 0.6.0"
 gem "yabeda-sidekiq", "~> 0.7.0"
 
 group :development, :test do
-  gem "bundle-audit", "~> 0.1.0", require: false
   gem "pry-byebug", "~> 3.9"
   gem "pry-rails", "~> 0.3.9"
   gem "reek", "~> 6.0", require: false

@@ -65,6 +65,7 @@ variables:
   CURRENT_TAG: $CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
   LATEST_TAG: $CI_COMMIT_REF_SLUG-latest
   CODACY_VERSION: "11.2.3"
+  DEPENDENCY_SCANNING_DISABLED: "true"
 
 # ======================================================================================================================
 # Jobs
@@ -108,9 +109,13 @@ variables:
 
 .bundle_audit:
   stage: static analysis
-  extends: .ruby_runner
-  script:
-    - bundle exec bundle-audit check --update
+  extends: bundler-audit-dependency_scanning
+
+.dep_scanning:
+  stage: static analysis
+  variables:
+    DS_REMEDIATE: "false"
+  extends: gemnasium-dependency_scanning
 
 .rspec:
   stage: test

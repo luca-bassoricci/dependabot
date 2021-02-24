@@ -19,6 +19,7 @@
 
 # ======================================================================================================================
 include:
+  - template: Dependency-Scanning.gitlab-ci.yml
   - local: .gitlab/ci/jobs.gitlab-ci.yml
 
 # ======================================================================================================================
@@ -102,9 +103,14 @@ bundle_audit:
   rules: *main
 bundle_audit_fork:
   extends: .bundle_audit
+  rules: *fork
+
+dep_scanning:
+  extends: .dep_scanning
   tags:
     - private
-  rules: *fork
+  rules:
+    - *master
 
 # ======================================================================================================================
 # Test Stage
