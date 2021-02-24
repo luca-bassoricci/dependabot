@@ -21,6 +21,7 @@
 include:
   - template: Dependency-Scanning.gitlab-ci.yml
   - template: Security/SAST.gitlab-ci.yml
+  - template: Container-Scanning.gitlab-ci.yml
   - local: .gitlab/ci/jobs.gitlab-ci.yml
 
 # ======================================================================================================================
@@ -108,6 +109,13 @@ bundle_audit_fork:
 
 dep_scanning:
   extends: .dep_scanning
+  tags:
+    - private
+  rules:
+    - *master
+
+container_scan:
+  extends: .container_scanning
   tags:
     - private
   rules:

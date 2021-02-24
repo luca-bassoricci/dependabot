@@ -67,6 +67,7 @@ variables:
   CODACY_VERSION: "11.2.3"
   DEPENDENCY_SCANNING_DISABLED: "true"
   SAST_DISABLED: "true"
+  CONTAINER_SCANNING_DISABLED: "true"
 
 # ======================================================================================================================
 # Jobs
@@ -115,6 +116,12 @@ variables:
   variables:
     DS_REMEDIATE: "false"
   extends: gemnasium-dependency_scanning
+
+.container_scanning:
+  stage: static analysis
+  extends: container_scanning
+  variables:
+    DOCKER_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
 
 .rspec:
   stage: test
