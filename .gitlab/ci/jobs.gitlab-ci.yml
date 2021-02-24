@@ -66,6 +66,7 @@ variables:
   LATEST_TAG: $CI_COMMIT_REF_SLUG-latest
   CODACY_VERSION: "11.2.3"
   DEPENDENCY_SCANNING_DISABLED: "true"
+  SAST_DISABLED: "true"
 
 # ======================================================================================================================
 # Jobs
@@ -103,9 +104,7 @@ variables:
 
 .brakeman:
   stage: static analysis
-  extends: .ruby_runner
-  script:
-    - bundle exec brakeman --color
+  extends: brakeman-sast
 
 .bundle_audit:
   stage: static analysis
