@@ -111,11 +111,11 @@ variables:
   stage: static analysis
   extends: bundler-audit-dependency_scanning
 
-.dep_scanning:
+.dependency_scan:
   stage: static analysis
+  extends: gemnasium-dependency_scanning
   variables:
     DS_REMEDIATE: "false"
-  extends: gemnasium-dependency_scanning
 
 .container_scanning:
   stage: static analysis

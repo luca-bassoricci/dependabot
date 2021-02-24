@@ -9,6 +9,11 @@
 .e2e_changes: &e2e_changes
   - Dockerfile
   - spec/fixture/gitlab/**/*
+.docker_changes: &docker_changes
+  - Dockerfile
+.dependency_changes: &dependency_changes
+  - Gemfile
+  - Gemfile.lock
 
 .main: &main
   - *mr
@@ -27,21 +32,21 @@ include:
 # ======================================================================================================================
 # Pre Stage
 # ======================================================================================================================
-cache_dependencies:
+cache-dependencies:
   extends: .cache_dependencies
   tags:
     - private
   rules: *main
-cache_dependencies_fork:
+cache-dependencies-fork:
   extends: .cache_dependencies
   rules: *fork
 
-build_app_image:
+build-app-image:
   extends: .build_app_image
   tags:
     - private
   rules: *main
-build_app_image_fork:
+build-app-image-fork:
   extends: .build_app_image
   tags:
     - docker
@@ -49,7 +54,7 @@ build_app_image_fork:
     FORK: "true"
   rules: *fork
 
-build_mock_image:
+build-mock-image:
   extends: .build_mock_image
   tags:
     - private
@@ -58,7 +63,7 @@ build_mock_image:
     - *release
     - <<: *mr
       changes: *e2e_changes
-build_mock_image_fork:
+build-mock-image-fork:
   extends: .build_mock_image
   tags:
     - docker
@@ -76,7 +81,7 @@ rubocop:
   tags:
     - private
   rules: *main
-rubocop_fork:
+rubocop-fork:
   extends: .rubocop
   rules: *fork
 
@@ -85,7 +90,7 @@ reek:
   tags:
     - private
   rules: *main
-reek_fork:
+reek-fork:
   extends: .reek
   rules: *fork
 
@@ -94,32 +99,46 @@ brakeman:
   tags:
     - private
   rules: *main
-brakeman_fork:
+brakeman-fork:
   extends: .brakeman
   rules: *fork
 
-bundle_audit:
+bundle-audit:
   extends: .bundle_audit
   tags:
     - private
   rules: *main
-bundle_audit_fork:
+bundle-audit-fork:
   extends: .bundle_audit
   rules: *fork
 
-dep_scanning:
-  extends: .dep_scanning
+dependency-scan:
+  extends: .dependency_scan
   tags:
     - private
   rules:
     - *master
+    - <<: *mr
+      changes: *dependency_changes
+dep-scanning-fork:
+  extends: .dependency_scan
+  rules:
+    - <<: *mr_forked
+      changes: *dependency_changes
 
-container_scan:
+container-scan:
   extends: .container_scanning
   tags:
     - private
   rules:
     - *master
+    - <<: *mr
+      changes: *dependency_changes
+container-scan-fork:
+  extends: .container_scanning
+  rules:
+    - <<: *mr_forked
+      changes: *dependency_changes
 
 # ======================================================================================================================
 # Test Stage
@@ -129,37 +148,37 @@ rspec:
   tags:
     - private
   rules: *main
-rspec_fork:
+rspec-fork:
   extends: .rspec
   rules: *fork
 
 # ======================================================================================================================
 # Coverage
 # ======================================================================================================================
-coverage_line:
+coverage-line:
   extends: .coverage_line
   needs:
     - rspec
   tags:
     - private
   rules: *main
-coverage_line_fork:
+coverage-line-fork:
   extends: .coverage_line
   needs:
-    - rspec_fork
+    - rspec-fork
   rules: *fork
 
-coverage_branch:
+coverage-branch:
   extends: .coverage_branch
   needs:
     - rspec
   tags:
     - private
   rules: *main
-coverage_branch_fork:
+coverage-branch-fork:
   extends: .coverage_branch
   needs:
-    - rspec_fork
+    - rspec-fork
   rules: *fork
 
 # ======================================================================================================================
@@ -176,7 +195,7 @@ e2e:
     - *release
     - <<: *mr
       changes: *e2e_changes
-e2e_fork:
+e2e-fork:
   extends: .e2e
   rules:
     - <<: *mr_forked
@@ -185,7 +204,7 @@ e2e_fork:
 # ======================================================================================================================
 # Release Stage
 # ======================================================================================================================
-release_image:
+release-image:
   stage: release
   extends: .release_runner
   tags:
@@ -204,7 +223,7 @@ release_image:
   rules:
     - *release
 
-create_gitlab_release:
+create-gitlab-release:
   stage: release
   extends: .ruby_runner
   variables:
