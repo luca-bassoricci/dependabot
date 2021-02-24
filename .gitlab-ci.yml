@@ -133,12 +133,12 @@ container-scan:
   rules:
     - *master
     - <<: *mr
-      changes: *dependency_changes
+      changes: *docker_changes
 container-scan-fork:
   extends: .container_scanning
   rules:
     - <<: *mr_forked
-      changes: *dependency_changes
+      changes: *docker_changes
 
 # ======================================================================================================================
 # Test Stage
