@@ -11,7 +11,7 @@ gem "dry-validation", "~> 1.6"
 gem "lograge", "~> 0.11.2"
 gem "mongoid", "~> 7.2"
 gem "puma", "~> 5.2"
-gem "rails", "~> 6.0.3"
+gem "rails", "~> 6.1.3"
 gem "rails-healthcheck", "~> 1.2"
 gem "semantic_range", "~> 2.3"
 gem "sentry-raven", "~> 3.1", require: false
