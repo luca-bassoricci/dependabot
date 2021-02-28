@@ -18,3 +18,6 @@ git.store
 # Local config
 /config/*.local.yml
 /config/credentials/local.*
+
+# Chart repo
+charts

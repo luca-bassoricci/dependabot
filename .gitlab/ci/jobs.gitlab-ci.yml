@@ -183,3 +183,11 @@ variables:
     GIT_STRATEGY: none
   script:
     - cd /home/dependabot && bundle exec rake 'dependabot:update[test-repo,bundler,/]'
+
+.update_chart:
+  extends: .ruby_runner
+  stage: release
+  before_script:
+    - source script/setup-git.sh
+  script:
+    - bundle exec rake "dependabot:bump_chart[$CI_COMMIT_TAG]"

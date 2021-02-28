@@ -45,6 +45,7 @@ group :test do
 end
 
 group :development do
+  gem "git", "~> 1.8", require: false
   gem "semver2", "~> 3.4", require: false
   gem "solargraph", "~> 0.40.3", require: false
   gem "spring", "~> 2.1.1", require: false
