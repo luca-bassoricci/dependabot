@@ -1,8 +1,9 @@
 ---
 categories:
-  feature: "🚀 New Features"
+  feature: "🚀 New features"
   improvement: "🔬 Improvements"
   fix: "🐞 Bug Fixes"
   dependency: "📦 Dependency updates"
-  chore: "🛠️ Dev improvements"
+  dev-dependency: "📦 Development dependency updates"
+  chore: "🛠️ Development improvements"
   doc: "📄 Documentation updates"

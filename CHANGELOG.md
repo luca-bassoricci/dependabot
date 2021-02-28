@@ -2,13 +2,30 @@
 
 ## [v0.2.16 - 2021-02-28](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
+### 🔬 Improvements
 
-### 👀 Links
+- Retry gitlab requests for certain errors. See merge request dependabot-gitlab/dependabot!438 - (Andrejs)
+- retry auto-merge requests. See merge request dependabot-gitlab/dependabot!440 - (Andrejs)
 
-[Commits since v0.2.15](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.2.15...v0.2.16)
+### 📦 Dependency updates
 
-## [v0.2.16 - 2021-02-28](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+- bump dependabot-omnibus from 0.133.3 to 0.133.5. See merge request dependabot-gitlab/dependabot!439 - (Andrejs)
+- bump dependabot-omnibus from 0.133.5 to 0.133.6. See merge request dependabot-gitlab/dependabot!444 - (Andrejs)
+- bump rails and mongoid. See merge request dependabot-gitlab/dependabot!447 - (Andrejs)
 
+### 📦 Development dependency updates
+
+- bump webmock from 3.11.2 to 3.11.3. See merge request dependabot-gitlab/dependabot!451 - (Andrejs)
+- bump webmock from 3.11.3 to 3.12.0. See merge request dependabot-gitlab/dependabot!452 - (Andrejs)
+
+### 🛠️ Development improvements
+
+- updated mocked responses for e2e tests. See merge request dependabot-gitlab/dependabot!442 - (Andrejs)
+- Add dependency scanning. See merge request dependabot-gitlab/dependabot!445 - (Andrejs)
+- Replace brakeman with gitlab brakeman-sast job. See merge request dependabot-gitlab/dependabot!448 - (Andrejs)
+- Add container scanner. See merge request dependabot-gitlab/dependabot!449 - (Andrejs)
+- Adjust scanner job rules, rename jobs. See merge request dependabot-gitlab/dependabot!450 - (Andrejs)
+- Add prepare-message git hook. See merge request dependabot-gitlab/dependabot!453 - (Andrejs)
 
 ### 👀 Links
 
@@ -502,13 +519,3 @@
 ## [v0.0.1](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/f7c9b31...v0.0.1)
 
 - Initial release
-
-
-
-
-
-
-
-
-
-
