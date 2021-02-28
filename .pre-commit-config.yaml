@@ -11,9 +11,19 @@ repos:
         entry: bundle exec rubocop
         types: [ruby]
         exclude: \.lock|\.json
+        stages:
+          - commit
       - id: reek
         name: Reek
         language: system
         entry: bundle exec reek
         args: [--force-exclusion, --single-line, --sort-by=smelliness]
         types: [ruby]
+        stages:
+          - commit
+      - id: prepare-commit-msg
+        name: Prepare commit message
+        entry: ruby hooks/prepare-commit-msg.rb
+        language: system
+        stages:
+          - prepare-commit-msg

@@ -4,7 +4,7 @@ require "semver"
 
 # Release helper which generate proper release notes
 # It requires linear repo history with only merges in to main brunch.
-# All commits must be prefixed with one of the category prefixes configured in .github/release.yml
+# All commits must be prefixed with one of the category prefixes configured in .gitlab/changelog_config.yml
 #
 class ReleaseHelper
   include ApplicationHelper
@@ -34,7 +34,7 @@ class ReleaseHelper
   #
   # @return [Hash]
   def config
-    @config ||= YAML.load_file(".gitlab/release.yml")
+    @config ||= YAML.load_file(".gitlab/changelog_config.yml")["categories"]
   end
 
   # Commit list for ref range

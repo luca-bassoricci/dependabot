@@ -7,7 +7,7 @@ updates:
       time: "19:00"
       timezone: Europe/Riga
     commit-message:
-      prefix: "dep"
+      prefix: "dependency"
       prefix-development: "chore"
     assignees:
       - andrcuns
@@ -18,7 +18,7 @@ updates:
       time: "19:00"
       timezone: Europe/Riga
     commit-message:
-      prefix: "dep"
+      prefix: "dependency"
     assignees:
       - andrcuns
   - package-ecosystem: docker
