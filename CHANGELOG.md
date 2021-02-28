@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## [v0.2.16 - 2021-02-28](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+
+### 👀 Links
+
+[Commits since v0.2.15](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.2.15...v0.2.16)
+
+## [v0.2.16 - 2021-02-28](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+
+### 👀 Links
+
+[Commits since v0.2.15](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.2.15...v0.2.16)
+
 ## [v0.2.15 - 2021-02-16](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🔬 Improvements
@@ -488,6 +502,8 @@
 ## [v0.0.1](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/f7c9b31...v0.0.1)
 
 - Initial release
+
+
 
 
 

@@ -207,7 +207,7 @@ class ReleaseCreator < ReleaseHelper
   def commit_and_tag
     log(:info, "Comitting changelog")
     exec(<<~CMD)
-      git commit CHANGELOG.md -m "Update to #{ref_to}" && git tag #{ref_to}
+      git commit CHANGELOG.md --no-verify -m "Update to #{ref_to}" && git tag #{ref_to}
     CMD
   end
 end
