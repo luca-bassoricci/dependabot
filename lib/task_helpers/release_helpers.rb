@@ -57,7 +57,7 @@ class ReleaseHelper
 
       next unless message.match?(/^(#{config.keys.join("|")}):/)
 
-      category = message.match(/(\w+): \S+/)[1]
+      category = message.match(/(\S+): \S+/)[1]
 
       hash[category].push("- " + message.gsub("#{category}: ", "") + " - (#{committer})") # rubocop:disable Style/StringConcatenation
     end

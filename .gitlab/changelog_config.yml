@@ -4,6 +4,6 @@ categories:
   improvement: "🔬 Improvements"
   fix: "🐞 Bug Fixes"
   dependency: "📦 Dependency updates"
-  dev-dependency: "📦 Development dependency updates"
+  development-dependency: "📦 Development dependency updates"
   chore: "🛠️ Development improvements"
   doc: "📄 Documentation updates"
