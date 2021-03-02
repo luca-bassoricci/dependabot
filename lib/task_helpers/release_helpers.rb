@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "semver"
+require "git"
 
 # Release helper which generate proper release notes
 # It requires linear repo history with only merges in to main brunch.
@@ -206,8 +207,9 @@ class ReleaseCreator < ReleaseHelper
   # @return [void]
   def commit_and_tag
     log(:info, "Comitting changelog")
-    exec(<<~CMD)
-      git commit CHANGELOG.md --no-verify -m "Update to #{ref_to}" && git tag #{ref_to}
-    CMD
+    git = Git.init
+    git.add("CHANGELOG.md")
+    git.commit("Update to #{ref_to}", no_verify: true)
+    git.add_tag(ref_to.to_s)
   end
 end
