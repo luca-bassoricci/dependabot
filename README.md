@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.png" alt="dependabot-gitlab">
+  <img src="logo.png" alt="dependabot-gitlab" width="100" height="100">
 </p>
 
 # dependabot-gitlab
@@ -10,18 +10,27 @@ Application providing automated dependency updates based on [dependabot-core](ht
 
 ## Docker image variants
 
-* Release version - docker.io/andrcuns/dependabot-gitlab:latest
-* Latest master - registry.gitlab.com/dependabot-gitlab/dependabot:master-latest
+* Release version - `docker.io/andrcuns/dependabot-gitlab:latest`
+* Latest master - `registry.gitlab.com/dependabot-gitlab/dependabot:master-latest`
 
-## Running Standalone
+## Usage
 
-It is possible to use app in "standalone" mode without the need to deploy. Project [dependabot-standalone](https://gitlab.com/dependabot-gitlab/dependabot-standalone) contains pipeline configuration to run dependency updates via scheduled gitlab pipelines
+### Standalone
 
-## Running Deployed
+It is possible to use app in "standalone" mode without the need to deploy. Project [dependabot-standalone](https://gitlab.com/dependabot-gitlab/dependabot-standalone) contains pipeline configuration to run dependency updates via scheduled gitlab pipelines.
+
+This variation exists similar use as [dependabot-script](https://github.com/dependabot/dependabot-script), which inspired
+creation of this project. The features and further development and support for standalone mode is very limited.
+
+### Service
+
+dependabot-gitlab is packaged as docker container and it's possible to deploy them via various means described in [Deployment](#Deployment) section.
+
+## Deployment
 
 ### Kubernetes
 
-Preferred way of deployment is via [helm](https://helm.sh/) package manager
+Preferred way of deployment is via [helm](https://helm.sh/) package manager.
 
 ```bash
 helm repo add dependabot https://andrcuns.github.io/charts
@@ -39,9 +48,10 @@ worker and redis. Simple production like deployment using `docker-compose` can b
 docker-compose -f docker-compose.yml -f docker-compose-prod.yml up
 ```
 
-## Configuration
+<details>
+<summary><b>Manual configuration options via environment variables</b></summary>
 
-### Environment configuration
+#### Environment configuration
 
 Application requires few environment variables to work.
 
@@ -53,7 +63,15 @@ token set in gitlab webhook configuration will be ignored
 * `SETTINGS__DEPENDABOT_URL` - url application can be reached on, example: `https://dependabot-gitlab.com`. This url will be used to automatically
 add necessary webhooks to project
 
-### Private registry credentials
+#### Gitlab configuration
+
+If `SETTINGS__DEPENDABOT_URL` is not set, following [webhooks](https://docs.gitlab.com/ee/user/project/integrations/webhooks.html) with url
+`http://{dependabot_host}/api/hooks` and optional secret token have to be created in project manually:
+
+* `Push events` - default repository branch
+* `Merge request events`
+
+#### Private registry credentials
 
 For dependabot to be able to resolve dependencies from private registries, credentials must be provided. Credentials are configured via
 environment variables with following naming pattern:
@@ -66,39 +84,49 @@ environment variables with following naming pattern:
 Please note the mandatory double underscores `__`\
 Multiple registries of the same type can be configured at the same time
 
-#### Maven repositories
+##### Maven repositories
 
 * `SETTINGS__CREDENTIALS__MAVEN__{REPOSITORY_NAME}__URL` - base url of the repository
 * `SETTINGS__CREDENTIALS__MAVEN__{REPOSITORY_NAME}__USERNAME` - user with read access
 * `SETTINGS__CREDENTIALS__MAVEN__{REPOSITORY_NAME}__PASSWORD` - password for the user
 
-#### Docker registries
+##### Docker registries
 
 * `SETTINGS__CREDENTIALS__DOCKER__{REGISTRY_NAME}__REGISTRY` - registry hostname like `registry.hub.docker.com`
 * `SETTINGS__CREDENTIALS__DOCKER__{REGISTRY_NAME}__USERNAME` - user with read access
 * `SETTINGS__CREDENTIALS__DOCKER__{REGISTRY_NAME}__PASSWORD` - password for the user
 
-#### Npm registries
+##### Npm registries
 
 * `SETTINGS__CREDENTIALS__NPM__{REGISTRY_NAME}__REGISTRY` - registry url
 * `SETTINGS__CREDENTIALS__NPM__{REGISTRY_NAME}__TOKEN` - authentication token
 
-### Gitlab configuration
+##### Example
 
-If `SETTINGS__DEPENDABOT_URL` is not set, following [webhooks](https://docs.gitlab.com/ee/user/project/integrations/webhooks.html) with url
-`http://{dependabot_host}/api/hooks` and optional secret token have to be created in project manually:
+```bash
+SETTINGS__CREDENTIALS__MAVEN__REPO1__URL=maven_url
+SETTINGS__CREDENTIALS__MAVEN__REPO1__USERNAME=maven_username
+SETTINGS__CREDENTIALS__MAVEN__REPO1__PASSWORD=maven_password
+SETTINGS__CREDENTIALS__DOCKER__REGISTRY1__REGISTRY=docker_registry
+SETTINGS__CREDENTIALS__DOCKER__REGISTRY1__USERNAME=docker_username
+SETTINGS__CREDENTIALS__DOCKER__REGISTRY1__PASSWORD=docker_password
+SETTINGS__CREDENTIALS__NPM__REGISTRY1__REGISTRY=npm_registry
+SETTINGS__CREDENTIALS__NPM__REGISTRY1__TOKEN=npm_token
+```
 
-* `Push events` - default repository branch
-* `Merge request events`
+</details>
 
-### Dependabot Configuration file
+## dependabot.yml
 
 Repository must contain [.gitlab/dependabot.yml](https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates)
 configuration for dependabot updates to work.
 
 Most of the options function same way as in original documentation.
 
-#### allow/ignore
+<details>
+<summary><b>Additional options and/or different behavior</b></summary>
+
+### allow/ignore
 
 Multiple global allow options will be combined. Following options will result in updating only direct production dependencies:
 
@@ -132,23 +160,36 @@ Automatically accept merge request and set it to merge when pipeline succeeds. I
 auto-merge: true
 ```
 
+This feature is not guaranteed to work due to gitlab limitation of accepting merge request before pipeline has been triggered. If pipeline
+started with delay after merge request was created, trying to accept and auto merge might fail with `Method Not Allowed` error.
+</details>
+
 ## Adding update jobs
 
-If gitlab webhook is configured, update jobs are created automatically once dependabot.yml configuration file is pushed to the repository's default branch. Configuration is
-also updated when dependabot.yml file is changed in default branch. Jobs are removed is dependabot.yml file is deleted from repository.
+If gitlab webhook is configured, update jobs are created automatically once dependabot.yml configuration file is pushed to the repository's default branch. Configuration is also updated when dependabot.yml file is changed in default branch.
+Jobs are removed is dependabot.yml file is deleted from repository.
 
 ### Adding project manually
 
+While this service is mostly UI-less for now, few ways of registering project manually exist if webhooks have not been configured manually beforehand.
+
+#### API
+
 Endpoint `api/project` can receive POST request with json `{"project":"dependabot-gitlab/dependabot"}` to add update jobs for project manually. Project must have a valid dependabot configuration file.
+
+#### Rake task
+
+`dependabot:register[project]` - manually register repository where `project` is repository name with namespace, ex: `dependabot-gitlab/dependabot`, repository must have valid dependabot config file
 
 ## Rake tasks
 
-Additional rake tasks exist for manual interaction with dependency updates and configuration.
+Additional rake tasks exist for manual interaction with dependency updates
 
-* `dependabot:register[project]` - manually register repository where `project` is repository name with namespace, ex: `dependabot-gitlab/dependabot`, repository must have valid dependabot config file
-* `dependabot:update[project,package_manager,directory]` - trigger dependency update where `project` is repository full name and `package_manager` is `package_ecosystem` parameter like `bundler` and directory is path where dependency files are stored, usually `/`
+`dependabot:update[project,package_manager,directory]` - trigger dependency update where `project` is repository full name and `package_manager` is `package_ecosystem` parameter like `bundler` and directory is path where dependency files are stored, usually `/`
 
-## Job list
+This task is used to provide standalone use capability
+
+## UI
 
 Index page of application, like `http://localhost:3000/` will display a table with jobs currently configured to run dependency updates
 
@@ -156,10 +197,8 @@ Index page of application, like `http://localhost:3000/` will display a table wi
 
 * Install dependencies with `bundle install`
 * Setup [pre-commit](https://pre-commit.com/) hooks with `pre-commit install`
-* Make change and make sure tests pass with `bundle exec rspec`
+* Make change and make sure tests pass with `bundle exec rspec` (some tests require instance of mongodb and redis which can be started via `docker-compose up` command)
 * Submit merge request
-
-Running app locally will require running redis instance. Redis in docker container can be started with `docker-compose up`
 
 ## Supported by
 
