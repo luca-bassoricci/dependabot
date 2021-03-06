@@ -1,6 +1,6 @@
 ARG BUNDLER_VERSION=2.0.2
 
-FROM dependabot/dependabot-core:0.134.1 AS dependabot
+FROM dependabot/dependabot-core:0.135.0 AS dependabot
 
 FROM dependabot AS local
 
