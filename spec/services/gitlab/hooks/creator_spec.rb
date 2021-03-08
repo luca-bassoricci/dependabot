@@ -11,6 +11,7 @@ describe Gitlab::Hooks::Creator do
   let(:hook_args) do
     {
       merge_requests_events: true,
+      note_events: true,
       push_events_branch_filter: branch,
       enable_ssl_verification: true
     }

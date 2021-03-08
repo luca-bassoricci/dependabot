@@ -25,6 +25,7 @@ module Gitlab
         @hook_args ||= begin
           args = {
             merge_requests_events: true,
+            note_events: true,
             push_events_branch_filter: default_branch,
             enable_ssl_verification: URI(dependabot_url).scheme == "https"
           }

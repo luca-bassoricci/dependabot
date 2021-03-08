@@ -1,0 +1,13 @@
+{
+  "object_kind": "note",
+  "event_type": "note",
+  "project": {
+    "path_with_namespace": "dependabot-gitlab/test"
+  },
+  "object_attributes": {
+    "note": "test comment"
+  },
+  "merge_request": {
+    "iid": 69
+  }
+}

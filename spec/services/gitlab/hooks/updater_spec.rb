@@ -23,6 +23,7 @@ describe Gitlab::Hooks::Updater do
       id,
       hook_url,
       merge_requests_events: true,
+      note_events: true,
       push_events_branch_filter: branch,
       enable_ssl_verification: true,
       token: token
