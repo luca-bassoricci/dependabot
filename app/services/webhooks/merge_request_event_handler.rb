@@ -2,7 +2,8 @@
 
 module Webhooks
   class MergeRequestEventHandler < ApplicationService
-    # @param [ActionController::Parameters] params
+    # @param [String] project
+    # @param [String] mr_iid
     def initialize(project, mr_iid)
       @project = project
       @mr_iid = mr_iid

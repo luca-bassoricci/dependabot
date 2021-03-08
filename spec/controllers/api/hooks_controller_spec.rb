@@ -20,6 +20,7 @@ describe Api::HooksController, type: :config do
     before do
       allow(Webhooks::PushEventHandler).to receive(:call) { project }
       allow(Webhooks::MergeRequestEventHandler).to receive(:call) { merge_request }
+      allow(Webhooks::CommentEventHandler).to receive(:call).and_return(nil)
     end
 
     it "push event" do
@@ -35,6 +36,14 @@ describe Api::HooksController, type: :config do
       expect(last_response.status).to eq(200)
       expect(last_response.body).to eq(merge_request.to_json)
       expect(Webhooks::MergeRequestEventHandler).to have_received(:call).with("dependabot-gitlab/test", 69)
+    end
+
+    it "comment event" do
+      post_json("/api/hooks", "spec/fixture/gitlab/webhooks/comment.json")
+
+      expect(last_response.status).to eq(204)
+      expect(last_response.body).to eq("")
+      expect(Webhooks::CommentEventHandler).to have_received(:call).with("test comment", "dependabot-gitlab/test", 69)
     end
   end
 

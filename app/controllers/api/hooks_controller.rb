@@ -34,6 +34,7 @@ module Api
           removed: []
         ]
       )
+
       Webhooks::PushEventHandler.call(args.dig(:project, :path_with_namespace), args[:commits])
     end
 
@@ -55,6 +56,20 @@ module Api
       Webhooks::MergeRequestEventHandler.call(
         args.dig(:project, :path_with_namespace),
         args.dig(:object_attributes, :iid)
+      )
+    end
+
+    def note
+      args = params.permit(
+        object_attributes: [:note],
+        project: [:path_with_namespace],
+        merge_request: [:iid]
+      )
+
+      Webhooks::CommentEventHandler.call(
+        args.dig(:object_attributes, :note),
+        args.dig(:project, :path_with_namespace),
+        args.dig(:merge_request, :iid)
       )
     end
   end

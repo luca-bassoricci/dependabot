@@ -83,13 +83,17 @@ describe Credentials, type: :config do
   end
 
   context "with gitlab credentials" do
-    it { is_expected.to eq([gitlab_creds]) }
+    it "contains gitlab credentials" do
+      expect(credentials).to eq([gitlab_creds])
+    end
   end
 
   context "with github credentials" do
     let(:github_token) { "token" }
 
-    it { is_expected.to eq([github_creds, gitlab_creds]) }
+    it "contains github credentials" do
+      expect(credentials).to eq([github_creds, gitlab_creds])
+    end
   end
 
   context "with maven credentials" do
@@ -97,7 +101,9 @@ describe Credentials, type: :config do
     let(:maven_username) { "username" }
     let(:maven_password) { "password" }
 
-    it { is_expected.to eq([gitlab_creds, maven_creds]) }
+    it "contains mavend repo credentials" do
+      expect(credentials).to eq([gitlab_creds, maven_creds])
+    end
   end
 
   context "with docker credentials" do
@@ -105,13 +111,17 @@ describe Credentials, type: :config do
     let(:docker_username) { "username" }
     let(:docker_password) { "password" }
 
-    it { is_expected.to eq([gitlab_creds, docker_creds]) }
+    it "contains docker registry credentials" do
+      expect(credentials).to eq([gitlab_creds, docker_creds])
+    end
   end
 
   context "with npm credentials" do
     let(:npm_registry) { "npm-private" }
     let(:npm_token) { "username" }
 
-    it { is_expected.to eq([gitlab_creds, npm_creds]) }
+    it "contains npm registry credentials" do
+      expect(credentials).to eq([gitlab_creds, npm_creds])
+    end
   end
 end
