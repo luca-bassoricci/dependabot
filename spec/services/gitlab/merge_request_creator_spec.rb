@@ -34,6 +34,17 @@ describe Gitlab::MergeRequestCreator do
       **config.select { |key, _value| mr_opt_keys.include?(key) }
     }
   end
+  let(:footer) do
+    <<~MSG
+      ---
+      <details>
+      <summary>Dependabot commands</summary>
+      <br />
+      You can trigger Dependabot actions by commenting on this MR
+      - `$dependabot rebase` will rebase this MR
+      </details>
+    MSG
+  end
 
   before do
     stub_gitlab
@@ -52,6 +63,7 @@ describe Gitlab::MergeRequestCreator do
         files: updated_files,
         credentials: Credentials.fetch,
         github_redirection_service: "github.com",
+        pr_message_footer: footer,
         **mr_params
       }
     )
