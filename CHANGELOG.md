@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## [v0.3.1 - 2021-03-09](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🛠️ Development improvements
+
+- fix docker release runner. See merge request dependabot-gitlab/dependabot!482 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.3.0](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.3.0...v0.3.1)
+
 ## [v0.3.0 - 2021-03-09](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🚀 New features
@@ -566,4 +576,5 @@
 ## [v0.0.1](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/f7c9b31...v0.0.1)
 
 - Initial release
+
 
