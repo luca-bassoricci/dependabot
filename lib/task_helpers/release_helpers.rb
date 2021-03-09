@@ -169,7 +169,10 @@ class ReleaseCreator < ReleaseHelper
     # @param [String] ref_from
     # @return [SemVer]
     def minor(ref_from)
-      semver(ref_from).tap { |ver| ver.minor += 1 }
+      semver(ref_from).tap do |ver|
+        ver.minor += 1
+        ver.patch = 0
+      end
     end
 
     # Increase major version
@@ -177,7 +180,11 @@ class ReleaseCreator < ReleaseHelper
     # @param [String] ref_from
     # @return [SemVer]
     def major(ref_from)
-      semver(ref_from).tap { |ver| ver.major += 1 }
+      semver(ref_from).tap do |ver|
+        ver.major += 1
+        ver.minor = 0
+        ver.patch = 0
+      end
     end
   end
 
