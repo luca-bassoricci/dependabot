@@ -73,11 +73,14 @@ module Gitlab
     def message_footer
       <<~MSG
         ---
+
         <details>
         <summary>Dependabot commands</summary>
         <br />
         You can trigger Dependabot actions by commenting on this MR
+
         - `$dependabot rebase` will rebase this MR
+
         </details>
       MSG
     end
