@@ -23,11 +23,13 @@
   services:
     - docker:20.10.5-dind
   variables:
-    DOCKER_DRIVER: overlay2
-    DOCKER_HOST: tcp://localhost:2375
-    DOCKER_TLS_CERTDIR: ""
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: /certs
+    DOCKER_CERT_PATH: /certs/client
+    DOCKER_TLS_VERIFY: 1
     DOCKER_BUILDKIT: 1
   before_script:
+    - while ! test -f "$DOCKER_CERT_PATH/ca.pem"; do sleep 2; done
     - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
 
 .deploy_runner:
