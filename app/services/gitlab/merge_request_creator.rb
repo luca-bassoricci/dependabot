@@ -32,7 +32,7 @@ module Gitlab
         files: updated_files,
         credentials: Credentials.fetch,
         github_redirection_service: "github.com",
-        pr_message_footer: message_footer,
+        pr_message_footer: AppConfig.standalone ? nil : message_footer,
         **mr_options
       ).create.tap { |mr| log(:info, "created mr #{mr.web_url}") if mr }
     end
