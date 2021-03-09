@@ -1,5 +1,52 @@
 # CHANGELOG
 
+## [v0.3.0 - 2021-03-09](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🚀 New features
+
+- rebase merge request command. Closes #5. See merge request dependabot-gitlab/dependabot!476 - (andrejs)
+
+### 🔬 Improvements
+
+- dont add mr footer for standalone app. See merge request dependabot-gitlab/dependabot!481 - (andrejs)
+- add proper spacing to pr message footer. See merge request dependabot-gitlab/dependabot!478 - (andrejs)
+- dependabot command description in mr footer. See merge request dependabot-gitlab/dependabot!477 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump dependabot-omnibus from 0.135.0 to 0.136.0. See merge request dependabot-gitlab/dependabot!475 - (andrejs)
+- bump dependabot-omnibus from 0.134.1 to 0.135.0. See merge request dependabot-gitlab/dependabot!469 - (andrejs)
+- bump semantic_range from 2.3.1 to 3.0.0. See merge request dependabot-gitlab/dependabot!467 - (andrejs)
+- bump dependabot-omnibus from 0.134.1 to 0.134.2. See merge request dependabot-gitlab/dependabot!462 - (andrejs)
+- bump puma from 5.2.1 to 5.2.2. See merge request dependabot-gitlab/dependabot!459 - (andrejs)
+- bump dependabot-omnibus from 0.133.6 to 0.134.1. See merge request dependabot-gitlab/dependabot!458 - (andrejs)
+
+### 📦 Development dependency updates
+
+- bump rspec-rails from 4.1.0 to 5.0.0. See merge request dependabot-gitlab/dependabot!480 - (andrejs)
+- bump buildkit and docker ci runner versions. See merge request dependabot-gitlab/dependabot!472 - (andrejs)
+- bump rspec-rails from 4.0.2 to 4.1.0. See merge request dependabot-gitlab/dependabot!470 - (andrejs)
+- bump webmock from 3.12.0 to 3.12.1. See merge request dependabot-gitlab/dependabot!471 - (andrejs)
+- bump solargraph from 0.40.3 to 0.40.4. See merge request dependabot-gitlab/dependabot!463 - (andrejs)
+- bump rubocop-performance from 1.10.0 to 1.10.1. See merge request dependabot-gitlab/dependabot!460 - (andrejs)
+- bump rubocop-performance from 1.9.2 to 1.10.0. See merge request dependabot-gitlab/dependabot!456 - (andrejs)
+- bump rubocop from 1.10.0 to 1.11.0. See merge request dependabot-gitlab/dependabot!455 - (andrejs)
+
+### 🛠️ Development improvements
+
+- properly bump minor and major version. See merge request dependabot-gitlab/dependabot!479 - (andrejs)
+- Remove plain exec git operations. Closes #62. See merge request dependabot-gitlab/dependabot!461 - (andrejs)
+- automatically update helm chart on release. Closes #61. See merge request dependabot-gitlab/dependabot!454 - (andrejs)
+
+### 📄 Documentation updates
+
+- improve readme structure. See merge request dependabot-gitlab/dependabot!473 - (andrejs)
+- documentation improvements. See merge request dependabot-gitlab/dependabot!465 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.2.16](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.2.16...v0.3.0)
+
 ## [v0.2.16 - 2021-02-28](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🔬 Improvements
@@ -519,3 +566,4 @@
 ## [v0.0.1](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/f7c9b31...v0.0.1)
 
 - Initial release
+
