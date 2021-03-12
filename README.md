@@ -1,6 +1,4 @@
-<p align="center">
-  <img src="logo.png" alt="dependabot-gitlab" width="100" height="100">
-</p>
+**This project is not affiliated with, funded by, or associated with the Dependabot team or GitHub**
 
 # dependabot-gitlab
 
