@@ -1,5 +1,24 @@
 # CHANGELOG
 
+## [v0.3.2 - 2021-03-15](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 📦 Dependency updates
+
+- bump dependabot-omnibus from 0.136.0 to 0.137.1. See merge request dependabot-gitlab/dependabot!485 - (andrejs)
+
+### 📦 Development dependency updates
+
+- bump faker from 2.16.0 to 2.17.0. See merge request dependabot-gitlab/dependabot!484 - (andrejs)
+
+### 📄 Documentation updates
+
+- document adding 'Comments' webhook. See merge request dependabot-gitlab/dependabot!486 - (andrejs)
+- remove dependabot logo, add disclaimer. See merge request dependabot-gitlab/dependabot!483 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.3.1](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.3.1...v0.3.2)
+
 ## [v0.3.1 - 2021-03-09](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🛠️ Development improvements
@@ -576,5 +595,6 @@
 ## [v0.0.1](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/f7c9b31...v0.0.1)
 
 - Initial release
+
 
 
