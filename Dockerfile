@@ -1,15 +1,11 @@
-ARG BUNDLER_VERSION=2.0.2
-
-FROM dependabot/dependabot-core:0.136.0 AS dependabot
+FROM dependabot/dependabot-core:0.137.1 AS dependabot
 
 FROM dependabot AS local
 
-ARG BUNDLER_VERSION
-
 ENV BUNDLE_PATH=/vendor/bundle
 
-RUN apt-get update && apt-get install -y --no-install-recommends supervisor=3.3.1-1.1; \
-    gem install bundler -v ${BUNDLER_VERSION} --no-document; \
+RUN apt-get update; \
+    apt-get install -y --no-install-recommends supervisor=3.3.1-1.1; \
     rm -rf /var/lib/apt/lists/* /tmp/*
 
 WORKDIR /code
@@ -18,12 +14,8 @@ ENTRYPOINT [ "/bin/bash", "-c" ]
 
 FROM dependabot AS production
 
-ARG BUNDLER_VERSION
-
 ENV BUNDLE_PATH=vendor/bundle \
     BUNDLE_WITHOUT="development:test"
-
-RUN gem install bundler -v ${BUNDLER_VERSION} --no-document
 
 WORKDIR /home/dependabot
 
