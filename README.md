@@ -122,6 +122,7 @@ If `env.dependabotUrl` in helm values or `SETTINGS__DEPENDABOT_URL` is not set, 
 
 * `Push events` - default repository branch
 * `Merge request events`
+* `Comments`
 
 It is possible to set up system hooks on Gitlab instance level as well.
 Make sure `dependabot url` property is not set, so same project doesn't end up with 2 identical webhooks configured.
