@@ -41,8 +41,8 @@ describe Api::HooksController, type: :config do
     it "comment event" do
       post_json("/api/hooks", "spec/fixture/gitlab/webhooks/comment.json")
 
-      expect(last_response.status).to eq(204)
-      expect(last_response.body).to eq("")
+      expect(last_response.status).to eq(202)
+      expect(last_response.body).to eq({}.to_json)
       expect(Webhooks::CommentEventHandler).to have_received(:call).with("test comment", "dependabot-gitlab/test", 69)
     end
   end
