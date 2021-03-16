@@ -15,7 +15,7 @@ gem "rails", "~> 6.1.3"
 gem "rails-healthcheck", "~> 1.2"
 gem "semantic_range", "~> 3.0"
 gem "sentry-raven", "~> 3.1", require: false
-gem "sidekiq", "~> 6.1.3"
+gem "sidekiq", "~> 6.2.0"
 gem "sidekiq-cron", "~> 1.2"
 gem "yabeda-prometheus-mmap", "~> 0.1.1"
 gem "yabeda-puma-plugin", "~> 0.6.0"
