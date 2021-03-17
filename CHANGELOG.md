@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## [v0.3.3 - 2021-03-17](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🔬 Improvements
+
+- change no content response to accepted for requests not performing any action. See merge request dependabot-gitlab/dependabot!490 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump dependabot-omnibus from 0.137.2 to 0.138.1. See merge request dependabot-gitlab/dependabot!492 - (andrejs)
+- bump sidekiq from 6.1.3 to 6.2.0. See merge request dependabot-gitlab/dependabot!489 - (andrejs)
+- bump dependabot-omnibus from 0.137.1 to 0.137.2. See merge request dependabot-gitlab/dependabot!488 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.3.2](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.3.2...v0.3.3)
+
 ## [v0.3.2 - 2021-03-15](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 📦 Dependency updates
@@ -595,6 +611,7 @@
 ## [v0.0.1](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/f7c9b31...v0.0.1)
 
 - Initial release
+
 
 
 
