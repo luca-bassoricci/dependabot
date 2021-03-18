@@ -10,7 +10,7 @@ releases:
   - name: dependabot-gitlab
     namespace: dependabot
     chart: andrcuns/dependabot-gitlab
-    version: 0.0.26
+    version: 0.0.31
     installed: true
     values:
       - image:
@@ -18,8 +18,7 @@ releases:
           tag: {{ requiredEnv "CURRENT_TAG" }}
         service:
           type: LoadBalancer
-          annotations:
-            dev.inlets.manage: "true"
+          port: 9999
         env:
           sentryDsn: {{ requiredEnv "SENTRY_DSN" }}
           dependabotUrl: {{ requiredEnv "DEPENDABOT_URL" }}

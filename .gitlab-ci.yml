@@ -246,19 +246,14 @@ update-helm-chart:
 # ======================================================================================================================
 # Deploy Stage
 # ======================================================================================================================
-deploy:
-  stage: deploy
-  extends: .deploy_runner
+deploy-production:
+  extends: .deploy
   tags:
-    - private
+    - deploy
   environment:
     name: production
-    url: $DEPENDABOT_URL
-  script:
-    - helmfile repos
-    - helmfile apply --suppress-secrets --context 10
+    url: $DEPENDABOT_URL_PRODUCTION
+  variables:
+    DEPENDABOT_URL: $DEPENDABOT_URL_PRODUCTION
   rules:
     - *master
-    - <<: *mr
-      when: manual
-      allow_failure: true
