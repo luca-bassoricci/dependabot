@@ -193,3 +193,10 @@ variables:
     - source script/setup-git.sh
   script:
     - bundle exec rake "dependabot:bump_chart[$CI_COMMIT_TAG]"
+
+.deploy:
+  extends: .deploy_runner
+  stage: deploy
+  script:
+    - helmfile repos
+    - helmfile apply --suppress-secrets --context 10
