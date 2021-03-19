@@ -18,7 +18,9 @@ releases:
           tag: {{ requiredEnv "CURRENT_TAG" }}
         service:
           type: LoadBalancer
-          port: 9999
+          port: 443
+          annotations:
+            service.beta.kubernetes.io/do-loadbalancer-certificate-id: {{ requiredEnv "SSL_CERT_ID" }}
         env:
           sentryDsn: {{ requiredEnv "SENTRY_DSN" }}
           dependabotUrl: {{ requiredEnv "DEPENDABOT_URL" }}
