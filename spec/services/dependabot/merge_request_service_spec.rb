@@ -5,9 +5,14 @@ describe Dependabot::MergeRequestService do
     described_class.call(
       project: project,
       fetcher: fetcher,
-      updated_dependencies: updated_dependencies,
-      updated_files: updated_files,
-      **config
+      config: config,
+      updated_dependency: Dependabot::UpdatedDependency.new(
+        name: dependency.name,
+        updated_dependencies: updated_dependencies,
+        updated_files: updated_files,
+        vulnerable: false,
+        security_advisories: []
+      )
     )
   end
 

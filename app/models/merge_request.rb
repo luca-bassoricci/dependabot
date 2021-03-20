@@ -8,6 +8,7 @@ class MergeRequest
   field :state, type: String
   field :auto_merge, type: Boolean
   field :dependencies, type: String
+  field :main_dependency, type: String
 
   belongs_to :project
 end

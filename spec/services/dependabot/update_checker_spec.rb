@@ -100,8 +100,7 @@ describe Dependabot::UpdateChecker do
   context "when dependency can be updated" do
     let(:updated_deps) do
       {
-        name: "#{dependency.name} #{dependency.version} => #{latest_version}",
-        dependencies: updated_dependencies,
+        updated_dependencies: updated_dependencies,
         vulnerable: checker.vulnerable?,
         security_advisories: checker.security_advisories
       }
