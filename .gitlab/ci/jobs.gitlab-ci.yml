@@ -33,7 +33,7 @@
     - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
 
 .deploy_runner:
-  image: quay.io/roboll/helmfile:helm3-v0.134.1
+  image: quay.io/roboll/helmfile:helm3-v0.138.7
 
 .buildkit_runner:
   image:
@@ -198,5 +198,16 @@ variables:
   extends: .deploy_runner
   stage: deploy
   script:
+    - cd kube/helm
     - helmfile repos
-    - helmfile apply --suppress-secrets --context 10
+    - helmfile apply --context 10
+
+.stop:
+  extends: .deploy_runner
+  stage: deploy
+  environment:
+    action: stop
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - helm uninstall dependabot-gitlab -n dependabot

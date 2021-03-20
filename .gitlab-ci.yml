@@ -253,7 +253,42 @@ deploy-production:
   environment:
     name: production
     url: $DEPENDABOT_URL_PRODUCTION
+    on_stop: stop-production
   variables:
     DEPENDABOT_URL: $DEPENDABOT_URL_PRODUCTION
   rules:
     - *master
+deploy-development:
+  extends: .deploy
+  tags:
+    - private
+  environment:
+    name: development
+    url: $DEPENDABOT_URL_DEVELOPMENT
+    on_stop: stop-development
+    auto_stop_in: 1d
+  rules:
+    - <<: *mr
+      when: manual
+      allow_failure: true
+
+stop-production:
+  extends: .stop
+  tags:
+    - deploy
+  environment:
+    name: production
+  rules:
+    - <<: *master
+      when: manual
+      allow_failure: true
+stop-development:
+  extends: .stop
+  tags:
+    - private
+  environment:
+    name: development
+  rules:
+    - <<: *mr
+      when: manual
+      allow_failure: true

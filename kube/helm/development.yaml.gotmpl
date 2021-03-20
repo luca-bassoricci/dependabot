@@ -1,0 +1,21 @@
+image:
+  repository: registry.gitlab.com/dependabot-gitlab/dependabot
+  tag: {{ requiredEnv "CURRENT_TAG" }}
+service:
+  type: LoadBalancer
+projects:
+  - dependabot-gitlab/dependency-test
+credentials:
+    gitlab_access_token: {{ requiredEnv "GITLAB_ACCESS_TOKEN" }}
+    github_access_token: {{ requiredEnv "GITHUB_ACCESS_TOKEN" }}
+    gitlab_auth_token: {{ requiredEnv "GITLAB_AUTH_TOKEN" }}
+redis:
+  usePassword: true
+  password: {{ requiredEnv "REDIS_PASSWORD" }}
+mongodb:
+  auth:
+    rootPassword: {{ requiredEnv "MONGODB_ROOT_PASSWORD" }}
+    password: {{ requiredEnv "MONGODB_PASSWORD" }}
+    username: dependabot
+    database: dependabot
+  strategyType: Recreate
