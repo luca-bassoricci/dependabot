@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Dependabot
-  class UpdateChecker < ApplicationService # rubocop:disable Metrics/ClassLength
+  class UpdateChecker < ApplicationService
     # @return [Hash<String, Proc>] handlers for type allow rules
     TYPE_HANDLERS = {
       "all" => proc { true },
@@ -80,12 +80,10 @@ module Dependabot
     #
     # @return [Array<Dependabot::Dependency>]
     def updated_dependencies
-      updated_version = "#{name} => #{checker.latest_version}"
-      log(:info, "found version for update: #{updated_version}")
+      log(:info, "found version for update: #{name} => #{checker.latest_version}")
 
       {
-        name: updated_version,
-        dependencies: checker.updated_dependencies(requirements_to_unlock: requirements_to_unlock),
+        updated_dependencies: checker.updated_dependencies(requirements_to_unlock: requirements_to_unlock),
         vulnerable: checker.vulnerable?,
         security_advisories: checker.security_advisories
       }

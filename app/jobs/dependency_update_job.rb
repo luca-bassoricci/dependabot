@@ -14,6 +14,6 @@ class DependencyUpdateJob < ApplicationJob
     # Save context for tagged logger
     Thread.current[:context] = context.join("=>")
 
-    DependencyUpdater.call(args)
+    UpdateService.call(args)
   end
 end

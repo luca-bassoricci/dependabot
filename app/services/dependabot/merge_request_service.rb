@@ -2,17 +2,15 @@
 
 module Dependabot
   class MergeRequestService < ApplicationService
-    # @param [String] name Updated dependency name for logging
     # @param [Dependabot::FileFetchers::Base] fetcher
-    # @param [Array<Dependabot::Dependency>] updated_dependencies
-    # @param [Array<Dependabot::DependencyFile>] updated_files
-    # @param [Hash] opts
-    def initialize(fetcher:, updated_dependencies:, updated_files:, project:, **config)
+    # @param [Project] project
+    # @param [Hash] config
+    # @param [Dependabot::UpdatedDependency] updated_dependency
+    def initialize(fetcher:, project:, config:, updated_dependency:)
       @fetcher = fetcher
-      @updated_dependencies = updated_dependencies
-      @updated_files = updated_files
       @project = project
       @config = config
+      @updated_dependency = updated_dependency
     end
 
     # Create or update MR
@@ -28,7 +26,9 @@ module Dependabot
 
     private
 
-    attr_reader :project, :fetcher, :updated_dependencies, :updated_files, :config
+    delegate :updated_files, :updated_dependencies, :name, to: :updated_dependency
+
+    attr_reader :project, :fetcher, :updated_dependency, :config
 
     # Create mr
     #
@@ -56,7 +56,8 @@ module Dependabot
         package_manager: config[:package_manager],
         state: "opened",
         auto_merge: config[:auto_merge],
-        dependencies: current_dependencies_name
+        dependencies: current_dependencies_name,
+        main_dependency: name
       )
     end
 
@@ -130,7 +131,7 @@ module Dependabot
       config[:rebase_strategy] == "auto"
     end
 
-    # All dependencies to be updated with latest versions
+    # All dependencies to be updated with new versions
     #
     # @return [String]
     def updated_dependencies_name

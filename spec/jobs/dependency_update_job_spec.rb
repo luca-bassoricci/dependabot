@@ -8,7 +8,7 @@ describe DependencyUpdateJob do
   let(:args) { { "repo" => "test-repo", "package_ecosystem" => "bundler" } }
 
   before do
-    allow(DependencyUpdater).to receive(:call)
+    allow(UpdateService).to receive(:call)
   end
 
   it "queues job" do
@@ -20,6 +20,6 @@ describe DependencyUpdateJob do
   it "performs enqued job" do
     perform_enqueued_jobs { job.perform_later(args) }
 
-    expect(DependencyUpdater).to have_received(:call).with(args)
+    expect(UpdateService).to have_received(:call).with(args)
   end
 end
