@@ -13,12 +13,13 @@ module Dependabot
     # @return [Array<Dependabot::UpdatedDependency>]
     def call
       dependencies.map do |dependency|
-        dependencies = updated_dependencies(dependency)
+        updated_deps = updated_dependencies(dependency)
+        next unless updated_deps
 
         UpdatedDependency.new(
           name: dependency.name,
-          updated_files: updated_files(dependencies[:dependencies]),
-          **dependencies
+          updated_files: updated_files(updated_deps[:updated_dependencies]),
+          **updated_deps
         )
       end.compact
     end
