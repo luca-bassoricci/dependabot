@@ -2,7 +2,6 @@
 
 !app/
 !public/
-!kube/
 !bin/rails
 !lib/tasks/dependabot.rake
 !config.ru
@@ -19,6 +18,8 @@ config/credentials.yml
 config/app.yml
 config/spring.rb
 
+!kube/
+kube/helm/
 !tmp/
 tmp/*
 !log/
