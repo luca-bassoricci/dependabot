@@ -2,40 +2,30 @@
 
 module Dependabot
   class UpdateChecker < ApplicationService
-    # @return [Hash<String, Proc>] handlers for type allow rules
-    TYPE_HANDLERS = {
-      "all" => proc { true },
-      "direct" => proc { |dep| dep.top_level? },
-      "indirect" => proc { |dep| !dep.top_level? },
-      "production" => proc { |dep| dep.production? },
-      "development" => proc { |dep| !dep.production? },
-      "security" => proc { |_, checker| checker.vulnerable? }
-    }.freeze
-
     # @param [Dependabot::Dependency] dependency
     # @param [Array<Dependabot::DependencyFile>] dependency_files
     # @param [Array<Hash>] allow
     # @param [Array<Hash>] ignore
     # @param [String] versioning_strategy
-    def initialize(dependency:, dependency_files:, allow:, ignore:, versioning_strategy: nil)
+    def initialize(dependency:, dependency_files:, config:)
       @dependency = dependency
       @dependency_files = dependency_files
-      @allow = allow
-      @ignore = ignore
-      @versioning_strategy = versioning_strategy
+      @config = config
+      @versioning_strategy = config[:versioning_strategy]
+      @package_manager = config[:package_manager]
     end
 
     # Get updated dependencies
     #
     # @return [Array<Dependabot::Dependency>]
     def call
-      return skipped if !allowed? || ignored?
+      return skipped unless rule_handler.update?
 
       log(:info, "Fetching info for #{name}")
       return up_to_date if checker.up_to_date?
       return update_impossible if requirements_to_unlock == :update_not_possible
 
-      updated_dependencies
+      updated_dependency
     rescue StandardError => e
       log_error(e)
       nil
@@ -43,13 +33,24 @@ module Dependabot
 
     private
 
-    attr_reader :dependency, :dependency_files, :allow, :ignore, :versioning_strategy
+    attr_reader :dependency, :dependency_files, :config, :versioning_strategy, :package_manager
 
     # Full dependency name
     #
     # @return [String]
     def name
       @name ||= "#{dependency.name} #{dependency.version}"
+    end
+
+    # Rule handler
+    #
+    # @return [RuleHandler]
+    def rule_handler
+      @rule_handler ||= RuleHandler.new(
+        dependency: dependency,
+        checker: checker,
+        config: config
+      )
     end
 
     # Print skipped message
@@ -76,17 +77,27 @@ module Dependabot
       nil
     end
 
+    # Versioning strategy set to lock file only
+    #
+    # @return [Boolean]
+    def lockfile_only?
+      versioning_strategy == :lockfile_only
+    end
+
     # Get filtered updated dependencies
     #
     # @return [Array<Dependabot::Dependency>]
-    def updated_dependencies
+    def updated_dependency
       log(:info, "found version for update: #{name} => #{checker.latest_version}")
+      updated_dependencies = checker.updated_dependencies(requirements_to_unlock: requirements_to_unlock)
 
-      {
-        updated_dependencies: checker.updated_dependencies(requirements_to_unlock: requirements_to_unlock),
+      Dependabot::UpdatedDependency.new(
+        name: dependency.name,
+        updated_dependencies: updated_dependencies,
+        updated_files: updated_files(updated_dependencies),
         vulnerable: checker.vulnerable?,
         security_advisories: checker.security_advisories
-      }
+      )
     end
 
     # Get update checker
@@ -119,69 +130,15 @@ module Dependabot
       end
     end
 
-    # Global allow rules
+    # Array of updated files
     #
-    # @return [Array<Hash>]
-    def global_rules
-      @global_rules ||= allow.select { |entry| !entry[:dependency_name] && entry[:dependency_type] }
-    end
-
-    # Dependency specific allow rules
-    #
-    # @return [Array<Hash>]
-    def dependency_rules
-      @dependency_rules ||= allow.select { |entry| entry[:dependency_name] }
-    end
-
-    # Check if dependency matches allowed rules
-    #
-    # @return [Boolean]
-    def allowed?
-      return checker.vulnerable? || global_rules.all? { |rule| matches_type?(rule) } if dependency_rules.empty?
-
-      dependency_rules.any? { |rule| matches_name?(rule) && matches_type?(rule) }
-    end
-
-    # Check if dependency matches ignore rules
-    #
-    # @return [Boolean]
-    def ignored?
-      ignore.any? { |rule| matches_name?(rule) && matches_versions?(rule[:versions]) }
-    end
-
-    # Matches defined dependency name
-    #
-    # @param [Hash<Symbol, String>] rule
-    # @return [Boolean]
-    def matches_name?(rule)
-      dependency.name.match?((rule[:dependency_name]))
-    end
-
-    # Matches defined dependency type
-    #
-    # @param [Hash<Symbol, String>] rule
-    # @return [Boolean]
-    def matches_type?(rule)
-      TYPE_HANDLERS[rule.fetch(:dependency_type, "direct")].call(dependency, checker)
-    end
-
-    # Matches defined dependency version or range
-    #
-    # @param [Array] versions
-    # @return [Boolean]
-    def matches_versions?(versions)
-      return true unless versions
-
-      versions.any? do |version|
-        SemanticRange.satisfies(checker.latest_version.to_s, version)
-      end
-    end
-
-    # Versioning strategy set to lock file only
-    #
-    # @return [Boolean]
-    def lockfile_only?
-      versioning_strategy == :lockfile_only
+    # @return [Array<Dependabot::DependencyFile>]
+    def updated_files(updated_dependencies)
+      Dependabot::FileUpdater.call(
+        dependencies: updated_dependencies,
+        dependency_files: dependency_files,
+        package_manager: package_manager
+      )
     end
   end
 end
