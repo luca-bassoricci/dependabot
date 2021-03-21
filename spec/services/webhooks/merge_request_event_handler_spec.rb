@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Webhooks::MergeRequestEventHandler do
+describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services, feature: :webhooks do
   include_context "with dependabot helper"
 
   let(:project) { Project.new(name: repo, config: dependabot_config) }

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Webhooks::CommentEventHandler do
+describe Webhooks::CommentEventHandler, epic: :services, feature: :webhooks do
   let(:project) { "dependabot/test" }
   let(:mr_id) { 1 }
   let(:response) { "mr" }

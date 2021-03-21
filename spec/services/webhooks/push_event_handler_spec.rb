@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Webhooks::PushEventHandler do
+describe Webhooks::PushEventHandler, integration: true, epic: :services, feature: :webhooks do
   subject { described_class }
 
   include_context "with dependabot helper"

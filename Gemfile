@@ -32,6 +32,7 @@ group :development, :test do
 end
 
 group :test do
+  gem "allure-rspec", "~> 2.13.8.5"
   gem "faker", "~> 2.17"
   gem "rack-test", "~> 1.1"
   gem "rspec", "~> 3.10"
@@ -49,4 +50,5 @@ group :development do
   gem "semver2", "~> 3.4", require: false
   gem "solargraph", "~> 0.40.4", require: false
   gem "spring", "~> 2.1.1", require: false
+  gem "spring-commands-rspec", "~> 1.0.4"
 end

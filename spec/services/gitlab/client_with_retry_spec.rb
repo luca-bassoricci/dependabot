@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Gitlab::ClientWithRetry do
+describe Gitlab::ClientWithRetry, epic: :services, feature: :gitlab do
   subject(:client) { described_class.new }
 
   let(:gitlab) { instance_double("Gitlab::client") }

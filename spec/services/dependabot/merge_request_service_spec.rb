@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Dependabot::MergeRequestService do
+describe Dependabot::MergeRequestService, integration: true, epic: :services, feature: :dependabot do
   subject(:service_return) do
     described_class.call(
       project: project,

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Gitlab::UserFinder do
+describe Gitlab::UserFinder, epic: :services, feature: :gitlab do
   subject(:user_finder_return) { described_class.call(usernames) }
 
   let(:gitlab) { instance_double("Gitlab::Client", user_search: [user]) }

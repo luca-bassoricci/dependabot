@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe DependabotController do
+describe DependabotController, epic: :controllers do
   include_context "with rack_test"
 
   before do

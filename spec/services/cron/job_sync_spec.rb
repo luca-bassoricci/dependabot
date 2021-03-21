@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Cron::JobSync do
+describe Cron::JobSync, integration: true, epic: :services, feature: :cron do
   include_context "with dependabot helper"
 
   let(:project) { Project.new(name: repo, config: config) }

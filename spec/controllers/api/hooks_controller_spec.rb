@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Api::HooksController, type: :config do
+describe Api::HooksController, type: :config, epic: :controllers do
   include_context "with rack_test"
   include_context "with config helper"
 

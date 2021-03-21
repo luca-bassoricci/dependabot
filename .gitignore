@@ -8,6 +8,9 @@ config/master.key
 # Ignore coverage
 coverage
 
+# Ignore test reports
+reports/
+
 # Ignore yard docs
 .yardoc
 doc
