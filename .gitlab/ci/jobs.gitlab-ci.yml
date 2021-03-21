@@ -2,7 +2,7 @@
 # Runners
 # ======================================================================================================================
 .ruby_runner:
-  image: andrcuns/ruby:2.6.6-slim-10.8
+  image: andrcuns/ruby:2.6.6-slim-10.8.1
   variables:
     BUNDLE_PATH: vendor/bundle
     BUNDLE_FROZEN: "true"
