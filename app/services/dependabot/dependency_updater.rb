@@ -12,16 +12,7 @@ module Dependabot
     #
     # @return [Array<Dependabot::UpdatedDependency>]
     def call
-      dependencies.map do |dependency|
-        updated_deps = updated_dependencies(dependency)
-        next unless updated_deps
-
-        UpdatedDependency.new(
-          name: dependency.name,
-          updated_files: updated_files(updated_deps[:updated_dependencies]),
-          **updated_deps
-        )
-      end.compact
+      dependencies.map { |dependency| updated_dependencies(dependency) }.compact
     end
 
     # Get single updated dependency
@@ -29,15 +20,10 @@ module Dependabot
     # @param [String] name
     # @return [Dependabot::UpdatedDependency]
     def updated_depedency(name)
-      dep = dependencies.detect { |dependency| dependency.name == name }
-      raise "#{name} not found in project dependencies" unless dep
+      dependency = dependencies.detect { |dep| dep.name == name }
+      raise "#{name} not found in project dependencies" unless dependency
 
-      dependencies = updated_dependencies(dep)
-      UpdatedDependency.new(
-        name: dep.name,
-        updated_files: updated_files(dependencies[:dependencies]),
-        **dependencies
-      )
+      updated_dependencies(dependency)
     end
 
     private
@@ -49,13 +35,6 @@ module Dependabot
     # @return [Dependabot::FileFetcher]
     attr_reader :fetcher
 
-    # Package manager name
-    #
-    # @return [String]
-    def package_manager
-      @package_manager ||= config[:package_manager]
-    end
-
     # Dependencies
     #
     # @return [Array<Dependabot::Dependency>]
@@ -63,7 +42,7 @@ module Dependabot
       @dependencies ||= Dependabot::FileParser.call(
         source: fetcher.source,
         dependency_files: fetcher.files,
-        package_manager: package_manager
+        package_manager: config[:package_manager]
       )
     end
 
@@ -74,20 +53,7 @@ module Dependabot
       Dependabot::UpdateChecker.call(
         dependency: dependency,
         dependency_files: fetcher.files,
-        allow: config[:allow],
-        ignore: config[:ignore],
-        versioning_strategy: config[:versioning_strategy]
-      )
-    end
-
-    # Array of updated files
-    #
-    # @return [Array<Dependabot::DependencyFile>]
-    def updated_files(updated_dependencies)
-      Dependabot::FileUpdater.call(
-        dependencies: updated_dependencies,
-        dependency_files: fetcher.files,
-        package_manager: package_manager
+        config: config
       )
     end
   end

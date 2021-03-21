@@ -5,9 +5,10 @@ module Dependabot
   #
   class UpdatedDependency
     # @param [String] name
-    # @param [Array<Dependabot::Dependency>] dependencies
+    # @param [Array<Dependabot::Dependency>] updated_dependencies
     # @param [Array<Dependabot::DependencyFile>] updated_files
     # @param [Boolean] vulnerable
+    # @param [Array<String>] security_advisories
     def initialize(name:, updated_dependencies:, updated_files:, vulnerable:, security_advisories:)
       @name = name
       @updated_dependencies = updated_dependencies

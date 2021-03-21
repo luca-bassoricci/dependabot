@@ -3,7 +3,7 @@ version: "3.8"
 services:
   dependabot:
     build:
-      context: ../
+      context: .
       target: local
     depends_on:
       - redis
@@ -17,14 +17,14 @@ services:
       SETTINGS__GITLAB_ACCESS_TOKEN: dev
       SETTINGS__GITHUB_ACCESS_TOKEN:
     volumes:
-      - ../:/code
+      - ./:/code
       - gems:/code/vendor/bundle
     ports:
       - 3000:3000
     command: script/entrypoint.sh
 
   gitlab:
-    build: ../spec/fixture/gitlab
+    build: spec/fixture/gitlab
 
 volumes:
   gems:
