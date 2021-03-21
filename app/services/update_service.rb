@@ -28,10 +28,13 @@ class UpdateService < ApplicationService
   #
   # @return [Hash]
   def fetch_config
-    default_branch = Gitlab::DefaultBranch.call(project_name)
-    config_entry = Dependabot::Config.call(project_name, default_branch).find do |conf|
-      conf[:package_ecosystem] == package_ecosystem && conf[:directory] == directory
-    end
+    config_entry = Dependabot::Config.call(
+      project_name,
+      find_by: {
+        package_ecosystem: package_ecosystem,
+        directory: directory
+      }
+    )
     raise("Configuration missing entry with package-ecosystem: #{package_ecosystem}") unless config_entry
 
     @config = config_entry
@@ -48,14 +51,7 @@ class UpdateService < ApplicationService
   #
   # @return [Dependabot::FileFetcher]
   def fetcher
-    @fetcher ||= Dependabot::FileFetcher.call(
-      package_manager: package_manager,
-      source: Dependabot::DependabotSource.call(
-        repo: project_name,
-        branch: config[:branch],
-        directory: config[:directory]
-      )
-    )
+    @fetcher ||= Dependabot::FileFetcher.call(project_name, config)
   end
 
   # All security updates

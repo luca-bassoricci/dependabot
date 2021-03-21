@@ -2,23 +2,27 @@
 
 module Dependabot
   class FileFetcher < ApplicationService
-    attr_reader :source, :package_manager
-
     # Get specific file fetcher
     # @param [Dependabot::Source] source
     # @param [String] package_manager
-    def initialize(source:, package_manager:)
-      @source = source
-      @package_manager = package_manager
+    def initialize(project_name, config)
+      @project_name = project_name
+      @config = config
     end
+
+    attr_reader :project_name, :config
 
     # Get FileFetcher
     #
     # @return [Dependabot::FileFetcher]
     def call
-      Dependabot::FileFetchers.for_package_manager(package_manager).new(
-        source: source,
-        credentials: Credentials.fetch
+      Dependabot::FileFetchers.for_package_manager(config[:package_manager]).new(
+        credentials: Credentials.fetch,
+        source: Dependabot::DependabotSource.call(
+          repo: project_name,
+          branch: config[:branch],
+          directory: config[:directory]
+        )
       )
     end
   end

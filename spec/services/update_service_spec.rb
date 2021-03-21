@@ -50,10 +50,9 @@ describe UpdateService, integration: true, epic: :services, feature: :updater do
   before do
     stub_gitlab
 
-    allow(Gitlab::DefaultBranch).to receive(:call) { branch }
-    allow(Gitlab::ConfigFetcher).to receive(:call) { raw_config }
-    allow(Dependabot::DependabotSource).to receive(:call) { source }
-    allow(Dependabot::FileFetcher).to receive(:call) { fetcher }
+    allow(Gitlab::DefaultBranch).to receive(:call).with(repo) { branch }
+    allow(Gitlab::ConfigFetcher).to receive(:call).with(repo, branch) { raw_config }
+    allow(Dependabot::FileFetcher).to receive(:call).with(repo, dependabot_config.first) { fetcher }
     allow(Dependabot::DependencyUpdater).to receive(:call)
       .with(repo, config, fetcher)
       .and_return([updated_config, updated_rspec])
