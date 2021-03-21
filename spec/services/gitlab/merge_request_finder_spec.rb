@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Gitlab::MergeRequestFinder do
+describe Gitlab::MergeRequestFinder, epic: :services, feature: :gitlab do
   subject(:mr_finder_return) do
     described_class.call(project: repo, **search_params)
   end

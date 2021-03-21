@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Configuration::Parser do
+describe Configuration::Parser, epic: :services, feature: :configuration do
   subject(:parser) { described_class }
 
   include_context "with dependabot helper"

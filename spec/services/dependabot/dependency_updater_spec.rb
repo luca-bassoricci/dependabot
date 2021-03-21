@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Dependabot::DependencyUpdater do
+describe Dependabot::DependencyUpdater, epic: :services, feature: :dependabot do
   include_context "with webmock"
   include_context "with dependabot helper"
 

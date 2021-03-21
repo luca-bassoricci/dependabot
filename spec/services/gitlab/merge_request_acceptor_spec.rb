@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Gitlab::MergeRequestAcceptor do
+describe Gitlab::MergeRequestAcceptor, epic: :services, feature: :gitlab do
   let(:gitlab) { instance_double("Gitlab::Client", accept_merge_request: nil) }
   let(:mr) do
     OpenStruct.new(

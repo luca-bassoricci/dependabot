@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Dependabot::DependabotSource do
+describe Dependabot::DependabotSource, epic: :services, feature: :dependabot do
   let(:uri) { URI(AppConfig.gitlab_url) }
 
   it "returns source" do

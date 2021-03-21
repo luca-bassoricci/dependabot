@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Api::ProjectController do
+describe Api::ProjectController, epic: :controllers do
   include_context "with rack_test"
 
   let(:project_name) { "dependabot-gitlab/dependabot" }
@@ -11,7 +11,7 @@ describe Api::ProjectController do
     allow(Cron::JobSync).to receive(:call).with(project).and_call_original
   end
 
-  it "creates project and jobs" do
+  it "creates project and jobs", integration: true do
     post_json("/api/project", { project: project_name })
 
     aggregate_failures do

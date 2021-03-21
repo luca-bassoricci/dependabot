@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Dependabot::ProjectCreator do
+describe Dependabot::ProjectCreator, integration: true, epic: :services, feature: :dependabot do
   include_context "with dependabot helper"
 
   let(:branch) { "master" }

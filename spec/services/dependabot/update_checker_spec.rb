@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Dependabot::UpdateChecker do
+describe Dependabot::UpdateChecker, epic: :services, feature: :dependabot do
   subject(:update_checker_return) do
     described_class.call(
       dependency: dependency,

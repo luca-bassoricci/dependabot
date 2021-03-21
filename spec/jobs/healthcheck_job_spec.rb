@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe HealthcheckJob do
+describe HealthcheckJob, epic: :jobs do
   include ActiveJob::TestHelper
 
   subject(:job) { described_class }

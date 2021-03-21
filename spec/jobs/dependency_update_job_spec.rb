@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe DependencyUpdateJob do
+describe DependencyUpdateJob, epic: :jobs do
   include ActiveJob::TestHelper
 
   subject(:job) { described_class }

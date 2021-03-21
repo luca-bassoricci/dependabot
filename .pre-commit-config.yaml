@@ -1,29 +1,22 @@
+default_stages:
+  - commit
 repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.2.0
+  - repo: https://gitlab.com/dependabot-gitlab/pre-commit-hooks
+    rev: 0.0.4
     hooks:
-      - id: trailing-whitespace
+      - id: reek
+      - id: rubocop
+      - id: rspec
+        args: [--tag=~integration]
+        stages: [push]
+  - repo: https://github.com/jumanjihouse/pre-commit-hooks
+    rev: 2.1.5
+    hooks:
+      - id: git-check
   - repo: local
     hooks:
-      - id: rubocop
-        name: Rubocop
-        language: system
-        entry: bundle exec rubocop
-        types: [ruby]
-        exclude: \.lock|\.json
-        stages:
-          - commit
-      - id: reek
-        name: Reek
-        language: system
-        entry: bundle exec reek
-        args: [--force-exclusion, --single-line, --sort-by=smelliness]
-        types: [ruby]
-        stages:
-          - commit
       - id: prepare-commit-msg
         name: Prepare commit message
-        entry: ruby hooks/prepare-commit-msg.rb
-        language: system
-        stages:
-          - prepare-commit-msg
+        entry: hooks/prepare-commit-msg.rb
+        language: script
+        stages: [prepare-commit-msg]

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Gitlab::MergeRequestUpdater do
+describe Gitlab::MergeRequestUpdater, epic: :services, feature: :gitlab do
   include_context "with dependabot helper"
   include_context "with webmock"
 

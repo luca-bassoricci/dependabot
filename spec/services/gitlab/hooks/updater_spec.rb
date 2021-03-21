@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Gitlab::Hooks::Updater do
+describe Gitlab::Hooks::Updater, epic: :services, feature: :gitlab do
   include_context "with dependabot helper"
 
   let(:id) { Faker::Number.number(digits: 10) }

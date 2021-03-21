@@ -22,6 +22,7 @@ module DependabotGitlab
     DependabotLogger.logger.tap do |logger|
       config.logger = logger
       config.mongoid.logger = logger
+      config.log_level = AppConfig.log_level
     end
 
     config.anyway_config.default_config_path = lambda { |name|

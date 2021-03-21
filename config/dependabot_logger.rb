@@ -28,7 +28,7 @@ class DependabotLogger
       Logger.new($stdout).tap do |log|
         log.formatter = SimpleLogFormatter.new
         log.datetime_format = DATETIME_FORMAT
-        log.level = Sidekiq::LoggingUtils::LEVELS[AppConfig.log_level]
+        log.level = AppConfig.log_level
       end
     )
   end

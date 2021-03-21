@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "rake" do # rubocop:disable RSpec/DescribeClass
+describe "rake", epic: :tasks do # rubocop:disable RSpec/DescribeClass
   include_context "with rake helper"
 
   describe "dependabot:update" do
@@ -27,7 +27,7 @@ describe "rake" do # rubocop:disable RSpec/DescribeClass
     end
   end
 
-  describe "dependabot:register" do
+  describe "dependabot:register", integration: true do
     let(:project_name) { "test-project" }
     let(:project) { Project.new(name: project_name) }
 
