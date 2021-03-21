@@ -47,11 +47,11 @@ For all configuration options, refer to [chart repository](https://github.com/an
 
 ## Docker Compose
 
-Simple example deployment can be seen in [docker-compose-prod.yml](docker/docker-compose-prod.yml). Deployment consists of 3 containers - web server, sidekiq
+Simple example deployment can be seen in [docker-compose-prod.yml](docker-compose-prod.yml). Deployment consists of 3 containers - web server, sidekiq
 worker and redis. Simple production like deployment using `docker-compose` can be done with following command:
 
 ```bash
-docker-compose -f docker/docker-compose.yml -f docker/docker-compose-prod.yml up
+docker-compose -f docker-compose.yml -f docker-compose-prod.yml up
 ```
 
 <details>
@@ -214,7 +214,7 @@ Index page of application, like `http://localhost:3000/` will display a table wi
 
 * Install dependencies with `bundle install`
 * Setup [pre-commit](https://pre-commit.com/) hooks with `pre-commit install`
-* Make change and make sure tests pass with `bundle exec rspec` (some tests require instance of mongodb and redis which can be started via `docker-compose -f docker/docker-compose.yml up` command)
+* Make change and make sure tests pass with `bundle exec rspec` (some tests require instance of mongodb and redis which can be started via `docker-compose -f docker-compose.yml up` command)
 * Submit merge request
 
 # Supported by
