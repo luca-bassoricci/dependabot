@@ -54,6 +54,7 @@ module Dependabot
         project: project,
         iid: mr.iid,
         package_manager: config[:package_manager],
+        directory: config[:directory],
         state: "opened",
         auto_merge: config[:auto_merge],
         dependencies: current_dependencies_name,
