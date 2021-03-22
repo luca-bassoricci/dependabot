@@ -18,8 +18,6 @@ module Gitlab
     #
     # @return [void]
     def call
-      return log(:info, "merge request #{mr.references.short} doesn't require rebasing") unless mr["has_conflicts"]
-
       log(:info, "rebasing merge request #{mr.references.short}")
       Dependabot::PullRequestUpdater.new(
         source: fetcher.source,

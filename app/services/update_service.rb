@@ -65,7 +65,11 @@ class UpdateService < ApplicationService
   #
   # @return [Array<Dependabot::UpdatedDependency>]
   def all_updated_dependencies
-    @all_updated_dependencies ||= Dependabot::DependencyUpdater.call(project_name, config, fetcher)
+    @all_updated_dependencies ||= Dependabot::DependencyUpdater.call(
+      project_name: project_name,
+      config: config,
+      fetcher: fetcher
+    )
   end
 
   # Run updates for vulnerable dependencies

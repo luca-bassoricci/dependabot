@@ -10,7 +10,7 @@ describe Gitlab::MergeRequestUpdater, epic: :services, feature: :gitlab do
       web_url: "mr-url",
       iid: 1,
       sha: "5f92cc4d9939",
-      has_conflicts: has_conflicts,
+      has_conflicts: false,
       references: OpenStruct.new(short: "!1")
     )
   end
@@ -21,30 +21,16 @@ describe Gitlab::MergeRequestUpdater, epic: :services, feature: :gitlab do
     allow(Dependabot::PullRequestUpdater).to receive(:new) { pr_updater }
   end
 
-  context "when merge request has conflicts" do
-    let(:has_conflicts) { true }
+  it "performs mr update" do
+    described_class.call(fetcher: fetcher, updated_files: updated_files, merge_request: mr)
 
-    it "performs rebase" do
-      described_class.call(fetcher: fetcher, updated_files: updated_files, merge_request: mr)
-
-      expect(Dependabot::PullRequestUpdater).to have_received(:new).with(
-        source: fetcher.source,
-        base_commit: fetcher.commit,
-        old_commit: mr.sha,
-        files: updated_files,
-        credentials: Credentials.fetch,
-        pull_request_number: mr.iid
-      )
-    end
-  end
-
-  context "when merge request has no conflicts" do
-    let(:has_conflicts) { false }
-
-    it "skips rebase" do
-      described_class.call(fetcher: fetcher, updated_files: updated_files, merge_request: mr)
-
-      expect(Dependabot::PullRequestUpdater).not_to have_received(:new)
-    end
+    expect(Dependabot::PullRequestUpdater).to have_received(:new).with(
+      source: fetcher.source,
+      base_commit: fetcher.commit,
+      old_commit: mr.sha,
+      files: updated_files,
+      credentials: Credentials.fetch,
+      pull_request_number: mr.iid
+    )
   end
 end

@@ -7,6 +7,7 @@ describe Webhooks::CommentEventHandler, epic: :services, feature: :webhooks do
 
   before do
     allow(Gitlab::MergeRequestRebaser).to receive(:call) { response }
+    allow(MergeRequestRecreationJob).to receive(:perform_now) { response }
   end
 
   it "skips invalid commands" do
@@ -20,6 +21,13 @@ describe Webhooks::CommentEventHandler, epic: :services, feature: :webhooks do
     aggregate_failures do
       expect(described_class.call("$dependabot rebase", project, mr_id)).to eq(response)
       expect(Gitlab::MergeRequestRebaser).to have_received(:call).with(project, mr_id)
+    end
+  end
+
+  it "recreates merge request" do
+    aggregate_failures do
+      expect(described_class.call("$dependabot recreate", project, mr_id)).to eq(response)
+      expect(MergeRequestRecreationJob).to have_received(:perform_now).with(project, mr_id)
     end
   end
 end
