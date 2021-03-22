@@ -54,7 +54,7 @@ describe UpdateService, integration: true, epic: :services, feature: :updater do
     allow(Gitlab::ConfigFetcher).to receive(:call).with(repo, branch) { raw_config }
     allow(Dependabot::FileFetcher).to receive(:call).with(repo, dependabot_config.first) { fetcher }
     allow(Dependabot::DependencyUpdater).to receive(:call)
-      .with(repo, config, fetcher)
+      .with(project_name: repo, config: config, fetcher: fetcher)
       .and_return([updated_config, updated_rspec])
 
     allow(Dependabot::MergeRequestService).to receive(:call)

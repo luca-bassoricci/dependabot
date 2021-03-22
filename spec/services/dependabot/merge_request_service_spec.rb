@@ -1,11 +1,42 @@
 # frozen_string_literal: true
 
 describe Dependabot::MergeRequestService, integration: true, epic: :services, feature: :dependabot do
-  subject(:service_return) do
+  include_context "with dependabot helper"
+
+  let(:project) { Project.new(name: repo, config: dependabot_config) }
+  let(:config) { dependabot_config.first }
+  let(:current_dependencies_name) { updated_dependencies.map { |dep| "#{dep.name}-#{dep.previous_version}" }.join("/") }
+  let(:has_conflicts) { true }
+  let(:mr) do
+    OpenStruct.new(
+      web_url: "mr-url",
+      iid: Faker::Number.unique.number(digits: 10),
+      sha: "5f92cc4d9939",
+      has_conflicts: has_conflicts,
+      references: OpenStruct.new(short: "!1")
+    )
+  end
+  let(:existing_mr) { mr }
+  let(:mr_db) { create_mr(mr.iid, "opened", current_dependencies_name) }
+
+  def create_mr(iid, state, dependencies)
+    MergeRequest.new(
+      project: project,
+      iid: iid,
+      package_manager: config[:package_manager],
+      directory: config[:directory],
+      state: state,
+      auto_merge: config[:auto_merge],
+      dependencies: dependencies
+    )
+  end
+
+  def service_return(recreate: false)
     described_class.call(
       project: project,
       fetcher: fetcher,
       config: config,
+      recreate: recreate,
       updated_dependency: Dependabot::UpdatedDependency.new(
         name: dependency.name,
         updated_dependencies: updated_dependencies,
@@ -13,33 +44,6 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
         vulnerable: false,
         security_advisories: []
       )
-    )
-  end
-
-  include_context "with dependabot helper"
-
-  let(:project) { Project.new(name: repo, config: dependabot_config) }
-  let(:config) { dependabot_config.first }
-  let(:current_dependencies_name) { updated_dependencies.map { |dep| "#{dep.name}-#{dep.previous_version}" }.join("/") }
-  let(:existing_mr) { mr }
-  let(:mr_db) { create_mr(mr.iid, "opened", current_dependencies_name) }
-  let(:mr) do
-    OpenStruct.new(
-      web_url: "mr-url",
-      iid: Faker::Number.unique.number(digits: 10),
-      sha: "5f92cc4d9939",
-      has_conflicts: true
-    )
-  end
-
-  def create_mr(iid, state, dependencies)
-    MergeRequest.new(
-      project: project,
-      iid: iid,
-      package_manager: config[:package_manager],
-      state: state,
-      auto_merge: config[:auto_merge],
-      dependencies: dependencies
     )
   end
 
@@ -83,6 +87,24 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
         target_branch: "master",
         state: "opened"
       )
+    end
+  end
+
+  context "with conflicts" do
+    let(:has_conflicts) { true }
+
+    before do
+      config[:rebase_strategy] = "none"
+    end
+
+    it "skips updating" do
+      expect(service_return).to eq(mr)
+      expect(Gitlab::MergeRequestUpdater).not_to have_received(:call)
+    end
+
+    it "updates on recreate flag" do
+      expect(service_return(recreate: true)).to eq(mr)
+      expect(Gitlab::MergeRequestUpdater).to have_received(:call)
     end
   end
 

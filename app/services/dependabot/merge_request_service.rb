@@ -6,11 +6,13 @@ module Dependabot
     # @param [Project] project
     # @param [Hash] config
     # @param [Dependabot::UpdatedDependency] updated_dependency
-    def initialize(fetcher:, project:, config:, updated_dependency:)
+    # :reek:BooleanParameter
+    def initialize(fetcher:, project:, config:, updated_dependency:, recreate: false)
       @fetcher = fetcher
       @project = project
       @config = config
       @updated_dependency = updated_dependency
+      @recreate = recreate
     end
 
     # Create or update MR
@@ -28,7 +30,7 @@ module Dependabot
 
     delegate :updated_files, :updated_dependencies, :name, to: :updated_dependency
 
-    attr_reader :project, :fetcher, :updated_dependency, :config
+    attr_reader :project, :fetcher, :updated_dependency, :config, :recreate
 
     # Create mr
     #
@@ -80,7 +82,7 @@ module Dependabot
     #
     # @return [void]
     def update_mr
-      return unless rebase?
+      return log(:info, "merge request #{mr.references.short} doesn't require updating") unless update_mr?
 
       Gitlab::MergeRequestUpdater.call(
         fetcher: fetcher,
@@ -130,6 +132,13 @@ module Dependabot
     # @return [Boolean]
     def rebase?
       config[:rebase_strategy] == "auto"
+    end
+
+    # Check if mr should be updated
+    #
+    # @return [Boolean]
+    def update_mr?
+      recreate || (rebase? || !mr["has_conflicts"])
     end
 
     # All dependencies to be updated with new versions

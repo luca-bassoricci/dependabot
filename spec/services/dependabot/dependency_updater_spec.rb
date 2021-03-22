@@ -5,6 +5,13 @@ describe Dependabot::DependencyUpdater, epic: :services, feature: :dependabot do
   include_context "with dependabot helper"
 
   let(:config) { dependabot_config.first }
+  let(:updater_args) do
+    {
+      project_name: repo,
+      config: config,
+      fetcher: fetcher
+    }
+  end
 
   let(:result) do
     Dependabot::UpdatedDependency.new(
@@ -36,15 +43,15 @@ describe Dependabot::DependencyUpdater, epic: :services, feature: :dependabot do
   end
 
   it "returns updated dependencies" do
-    expect(described_class.call(repo, config, fetcher)).to eq([result])
+    expect(described_class.call(updater_args)).to eq([result])
   end
 
   it "returns single updated dependency" do
-    expect(described_class.new(repo, config, fetcher).updated_depedency(dependency.name)).to eq(result)
+    expect(described_class.call(**updater_args, name: dependency.name)).to eq(result)
   end
 
   it "raises error if dependency not found" do
-    expect { described_class.new(repo, config, fetcher).updated_depedency("test") }.to raise_error(
+    expect { described_class.call(**updater_args, name: "test") }.to raise_error(
       "test not found in project dependencies"
     )
   end

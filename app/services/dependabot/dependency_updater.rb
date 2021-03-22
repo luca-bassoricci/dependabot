@@ -2,28 +2,18 @@
 
 module Dependabot
   class DependencyUpdater < ApplicationService
-    def initialize(project_name, config, fetcher)
+    def initialize(project_name:, config:, fetcher:, name: nil)
       @project_name = project_name
       @config = config
       @fetcher = fetcher
+      @name = name
     end
 
     # Get updated dependency list
     #
-    # @return [Array<Dependabot::UpdatedDependency>]
+    # @return [Array<Dependabot::UpdatedDependency>, Dependabot::UpdatedDependency]
     def call
-      dependencies.map { |dependency| updated_dependencies(dependency) }.compact
-    end
-
-    # Get single updated dependency
-    #
-    # @param [String] name
-    # @return [Dependabot::UpdatedDependency]
-    def updated_depedency(name)
-      dependency = dependencies.detect { |dep| dep.name == name }
-      raise "#{name} not found in project dependencies" unless dependency
-
-      updated_dependencies(dependency)
+      name ? single_dependency : dependency_list
     end
 
     private
@@ -34,6 +24,26 @@ module Dependabot
     attr_reader :config
     # @return [Dependabot::FileFetcher]
     attr_reader :fetcher
+    # @return [String]
+    attr_reader :name
+
+    # Get updated dependency list
+    #
+    # @return [Array<Dependabot::UpdatedDependency>]
+    def dependency_list
+      dependencies.map { |dependency| updated_dependencies(dependency) }.compact
+    end
+
+    # Get single updated dependency
+    #
+    # @param [String] name
+    # @return [Dependabot::UpdatedDependency]
+    def single_dependency
+      dependency = dependencies.detect { |dep| dep.name == name }
+      raise "#{name} not found in project dependencies" unless dependency
+
+      updated_dependencies(dependency)
+    end
 
     # Dependencies
     #

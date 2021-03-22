@@ -9,7 +9,7 @@ describe Gitlab::MergeRequestRebaser, epic: :services, feature: :gitlab do
     allow(Gitlab::Client).to receive(:new) { gitlab }
   end
 
-  it "closes merge request" do
+  it "rebases merge request" do
     described_class.call(project, iid)
 
     expect(gitlab).to have_received(:rebase_merge_request).with(project, iid)

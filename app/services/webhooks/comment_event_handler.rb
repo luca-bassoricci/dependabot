@@ -28,7 +28,8 @@ module Webhooks
     # @return [Hash]
     def action_map
       @action_map ||= {
-        "rebase" => -> { Gitlab::MergeRequestRebaser.call(project, mr_iid) }
+        "rebase" => -> { Gitlab::MergeRequestRebaser.call(project, mr_iid) },
+        "recreate" => -> { MergeRequestRecreationJob.perform_now(project, mr_iid) }
       }
     end
 
