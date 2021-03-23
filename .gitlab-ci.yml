@@ -254,6 +254,7 @@ deploy-production:
     name: production
     url: $DEPENDABOT_URL_PRODUCTION
     on_stop: stop-production
+  resource_group: production
   variables:
     DEPENDABOT_URL: $DEPENDABOT_URL_PRODUCTION
   rules:
