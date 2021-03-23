@@ -11,7 +11,7 @@ module Gitlab
     #
     # @return [String]
     def call
-      Rails.cache.fetch("#{project_name}-branch", expires_in: 30.minutes) do
+      Rails.cache.fetch("#{project_name}-branch", expires_in: 1.hour) do
         gitlab.project(project_name)&.default_branch || raise("Failed to fetch default branch for #{project_name}")
       end
     end
