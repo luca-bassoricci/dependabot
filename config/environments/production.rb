@@ -74,6 +74,7 @@ Rails.application.configure do
     config.cache_store = :redis_cache_store,
                          {
                            url: ENV["REDIS_URL"],
+                           password: ENV["REDIS_PASSWORD"],
                            namespace: "cache",
                            read_timeout: 0.2,
                            write_timeout: 0.2,
