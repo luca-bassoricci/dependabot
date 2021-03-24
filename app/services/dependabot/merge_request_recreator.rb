@@ -42,15 +42,13 @@ module Dependabot
     #
     # @return [Hash]
     def config
-      @config ||= begin
-        Dependabot::Config.call(
-          project_name,
-          find_by: {
-            package_manager: mr.package_manager,
-            directory: mr.directory
-          }
-        )
-      end
+      @config ||= Dependabot::Config.call(
+        project_name,
+        find_by: {
+          package_manager: mr.package_manager,
+          directory: mr.directory
+        }
+      )
     end
 
     # Get file fetcher
