@@ -1,13 +1,16 @@
 # frozen_string_literal: true
 
 describe Webhooks::CommentEventHandler, epic: :services, feature: :webhooks do
+  include ActiveJob::TestHelper
+
   let(:project) { "dependabot/test" }
   let(:mr_id) { 1 }
   let(:response) { "mr" }
 
+  let(:job) { MergeRequestRecreationJob }
+
   before do
     allow(Gitlab::MergeRequestRebaser).to receive(:call) { response }
-    allow(MergeRequestRecreationJob).to receive(:perform_now) { response }
   end
 
   it "skips invalid commands" do
@@ -25,9 +28,9 @@ describe Webhooks::CommentEventHandler, epic: :services, feature: :webhooks do
   end
 
   it "recreates merge request" do
-    aggregate_failures do
-      expect(described_class.call("$dependabot recreate", project, mr_id)).to eq(response)
-      expect(MergeRequestRecreationJob).to have_received(:perform_now).with(project, mr_id)
-    end
+    ActiveJob::Base.queue_adapter = :test
+    expect { described_class.call("$dependabot recreate", project, mr_id) }.to have_enqueued_job(job)
+      .with(project, mr_id)
+      .on_queue("default")
   end
 end
