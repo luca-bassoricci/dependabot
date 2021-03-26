@@ -1,5 +1,55 @@
 # CHANGELOG
 
+## [v0.3.4 - 2021-03-26](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🚀 New features
+
+- add merge request recreate command. Closes #39. See merge request dependabot-gitlab/dependabot!507 - (andrejs)
+
+### 🔬 Improvements
+
+- report cache errors, adjust cache expiry. See merge request dependabot-gitlab/dependabot!512 - (andrejs)
+- add recreate command description to merge requests. See merge request dependabot-gitlab/dependabot!510 - (andrejs)
+
+### 🐞 Bug Fixes
+
+- do not perform recreate command synchronously. See merge request dependabot-gitlab/dependabot!517 - (andrejs)
+- add missing redis password for cache store. Closes #58. See merge request dependabot-gitlab/dependabot!513 - (andrejs)
+- correctly handle dependency updates. See merge request dependabot-gitlab/dependabot!499 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump dependabot-omnibus from 0.138.3 to 0.138.5. See merge request dependabot-gitlab/dependabot!520 - (andrejs)
+- bump mimemagic to 0.3.10. See merge request dependabot-gitlab/dependabot!522 - (andrejs)
+- bump dependabot-omnibus from 0.138.2 to 0.138.3. See merge request dependabot-gitlab/dependabot!515 - (andrejs)
+- bump dependabot-omnibus from 0.138.1 to 0.138.2. See merge request dependabot-gitlab/dependabot!508 - (andrejs)
+- bump bootsnap from 1.7.2 to 1.7.3. See merge request dependabot-gitlab/dependabot!505 - (andrejs)
+
+### 📦 Development dependency updates
+
+- bump webmock from 3.12.1 to 3.12.2. See merge request dependabot-gitlab/dependabot!521 - (andrejs)
+- bump rubocop from 1.11.0 to 1.12.0. See merge request dependabot-gitlab/dependabot!516 - (andrejs)
+- bump rubocop-performance from 1.10.1 to 1.10.2. See merge request dependabot-gitlab/dependabot!506 - (andrejs)
+- update base ruby image. See merge request dependabot-gitlab/dependabot!502 - (andrejs)
+- bump rspec-rails from 5.0.0 to 5.0.1. See merge request dependabot-gitlab/dependabot!494 - (andrejs)
+
+### 🛠️ Development improvements
+
+- prevent parallel deployments to production. See merge request dependabot-gitlab/dependabot!511 - (andrejs)
+- add directory to merge request model. See merge request dependabot-gitlab/dependabot!504 - (andrejs)
+- refactor dependency updater. See merge request dependabot-gitlab/dependabot!503 - (andrejs)
+- testing improvements. See merge request dependabot-gitlab/dependabot!501 - (andrejs)
+- move compose files back to root. See merge request dependabot-gitlab/dependabot!500 - (andrejs)
+- split dependency update logic, add main dependecy name to mr db entry. See merge request dependabot-gitlab/dependabot!498 - (andrejs)
+- add development environment deployment. See merge request dependabot-gitlab/dependabot!497 - (andrejs)
+- update favicon. See merge request dependabot-gitlab/dependabot!496 - (andrejs)
+- update load balancer settings. See merge request dependabot-gitlab/dependabot!495 - (andrejs)
+- digital-ocean deployment. See merge request dependabot-gitlab/dependabot!493 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.3.3](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.3.3...v0.3.4)
+
 ## [v0.3.3 - 2021-03-17](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🔬 Improvements
@@ -611,3 +661,4 @@
 ## [v0.0.1](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/f7c9b31...v0.0.1)
 
 - Initial release
+
