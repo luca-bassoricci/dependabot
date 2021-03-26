@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Dependabot::MergeRequestRecreator do
+describe Dependabot::MergeRequestRecreator, epic: :services, feature: :dependabot, integration: true do
   include_context "with dependabot helper"
   include_context "with webmock"
 
