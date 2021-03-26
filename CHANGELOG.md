@@ -661,4 +661,3 @@
 ## [v0.0.1](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/f7c9b31...v0.0.1)
 
 - Initial release
-
