@@ -75,6 +75,7 @@ Rails.application.configure do
                          {
                            url: ENV["REDIS_URL"],
                            password: ENV["REDIS_PASSWORD"],
+                           expires_in: 24.hours,
                            namespace: "cache",
                            read_timeout: 0.2,
                            write_timeout: 0.2,
