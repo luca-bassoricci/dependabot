@@ -6,9 +6,6 @@ function log() {
   echo -e "\033[1;33m$1\033[0m"
 }
 
-log "Install ssh"
-which ssh-agent || (apt-get update -qq && apt-get install openssh-client -qq)
-
 log "Start ssh agent"
 eval $(ssh-agent -s)
 
