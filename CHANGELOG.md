@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## [v0.3.5 - 2021-03-27](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### ⚠️ Security updates
+
+- bump kramdown from 2.3.0 to 2.3.1. Closes #70. See merge request dependabot-gitlab/dependabot!526 - (andrejs)
+
+### 🛠️ Development improvements
+
+- changelog improvements. See merge request dependabot-gitlab/dependabot!527 - (andrejs)
+- add security updates changelog entry. See merge request dependabot-gitlab/dependabot!525 - (andrejs)
+- fix container scanner. See merge request dependabot-gitlab/dependabot!524 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.3.4](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.3.4...v0.3.5)
+
 ## [v0.3.4 - 2021-03-26](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🚀 New features
