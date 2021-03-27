@@ -1,5 +1,6 @@
 ---
 categories:
+  security: "⚠️ Security updates"
   feature: "🚀 New features"
   improvement: "🔬 Improvements"
   fix: "🐞 Bug Fixes"
@@ -7,4 +8,3 @@ categories:
   development-dependency: "📦 Development dependency updates"
   chore: "🛠️ Development improvements"
   doc: "📄 Documentation updates"
-  security: "⚠️ Security updates"

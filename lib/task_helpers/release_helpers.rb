@@ -197,7 +197,7 @@ class ReleaseCreator < ReleaseHelper
     cl = changelog
     breaking = cl.include?("[BREAKING]")
 
-    notes = <<~NOTES
+    notes = <<~NOTES.strip
       # CHANGELOG
 
       ## [#{ref_to} - #{Time.current.to_date}](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)#{breaking ? ' *BREAKING*' : ''}
@@ -206,7 +206,7 @@ class ReleaseCreator < ReleaseHelper
       #{File.read('CHANGELOG.md').match(/^# CHANGELOG\n\n([ \n\S]+)/)[1]}
     NOTES
 
-    File.write("CHANGELOG.md", notes, mode: "w")
+    File.write("CHANGELOG.md", "#{notes}\n", mode: "w")
   end
 
   # Commit update changelog and create tag
