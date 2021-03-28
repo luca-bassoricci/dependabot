@@ -13,7 +13,6 @@
 config/environments/
 !config/environments/test.rb
 !config/environments/production.rb
-config/brakeman.ignore
 config/credentials.yml
 config/app.yml
 config/spring.rb
