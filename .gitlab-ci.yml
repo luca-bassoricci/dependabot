@@ -14,6 +14,18 @@
 .dependency_changes: &dependency_changes
   - Gemfile
   - Gemfile.lock
+.prod_deploy_changes: &prod_deploy_changes
+  - app/**/*
+  - config/**/*
+  - kube/**/*
+  - public/**/*
+  - bin/rails
+  - lib/tasks/dependabot.rake
+  - config.ru
+  - Dockerfile
+  - Gemfile
+  - Gemfile.lock
+  - Rakefile
 
 .main: &main
   - *mr
@@ -258,7 +270,9 @@ deploy-production:
   variables:
     DEPENDABOT_URL: $DEPENDABOT_URL_PRODUCTION
   rules:
-    - *master
+    - <<: *master
+      changes: *prod_deploy_changes
+
 deploy-development:
   extends: .deploy
   tags:
@@ -283,6 +297,8 @@ stop-production:
     - <<: *master
       when: manual
       allow_failure: true
+      changes: *prod_deploy_changes
+
 stop-development:
   extends: .stop
   tags:
