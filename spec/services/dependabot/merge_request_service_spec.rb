@@ -48,12 +48,12 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
   end
 
   before do
-    allow(Gitlab::MergeRequestFinder).to receive(:call) { existing_mr }
-    allow(Gitlab::MergeRequestCreator).to receive(:call) { mr }
-    allow(Gitlab::MergeRequestAcceptor).to receive(:call).with(mr)
-    allow(Gitlab::MergeRequestCloser).to receive(:call)
-    allow(Gitlab::MergeRequestUpdater).to receive(:call)
-    allow(Gitlab::MergeRequestCommenter).to receive(:call)
+    allow(Gitlab::MergeRequest::Finder).to receive(:call) { existing_mr }
+    allow(Gitlab::MergeRequest::Creator).to receive(:call) { mr }
+    allow(Gitlab::MergeRequest::Acceptor).to receive(:call).with(mr)
+    allow(Gitlab::MergeRequest::Closer).to receive(:call)
+    allow(Gitlab::MergeRequest::Updater).to receive(:call)
+    allow(Gitlab::MergeRequest::Commenter).to receive(:call)
 
     project.save!
   end
@@ -64,7 +64,7 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
     it "gets created" do
       expect(service_return).to eq(mr)
       expect(mr_db.dependencies).to eq(MergeRequest.find_by(iid: mr.iid).dependencies)
-      expect(Gitlab::MergeRequestCreator).to have_received(:call).with(
+      expect(Gitlab::MergeRequest::Creator).to have_received(:call).with(
         fetcher: fetcher,
         updated_dependencies: updated_dependencies,
         updated_files: updated_files,
@@ -76,12 +76,12 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
   context "with existing merge request" do
     it "gets updated" do
       expect(service_return).to eq(mr)
-      expect(Gitlab::MergeRequestUpdater).to have_received(:call).with(
+      expect(Gitlab::MergeRequest::Updater).to have_received(:call).with(
         fetcher: fetcher,
         updated_files: updated_files,
         merge_request: mr
       )
-      expect(Gitlab::MergeRequestFinder).to have_received(:call).with(
+      expect(Gitlab::MergeRequest::Finder).to have_received(:call).with(
         project: repo,
         source_branch: "dependabot-bundler-.-master-config-2.2.1",
         target_branch: "master",
@@ -99,12 +99,12 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
 
     it "skips updating" do
       expect(service_return).to eq(mr)
-      expect(Gitlab::MergeRequestUpdater).not_to have_received(:call)
+      expect(Gitlab::MergeRequest::Updater).not_to have_received(:call)
     end
 
     it "updates on recreate flag" do
       expect(service_return(recreate: true)).to eq(mr)
-      expect(Gitlab::MergeRequestUpdater).to have_received(:call)
+      expect(Gitlab::MergeRequest::Updater).to have_received(:call)
     end
   end
 
@@ -115,7 +115,7 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
 
     it "merge request is not set to be merged automatically" do
       expect(service_return).to eq(mr)
-      expect(Gitlab::MergeRequestAcceptor).not_to have_received(:call)
+      expect(Gitlab::MergeRequest::Acceptor).not_to have_received(:call)
     end
   end
 
@@ -132,9 +132,9 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
     it "old mr is closed" do
       aggregate_failures do
         expect(service_return).to eq(mr)
-        expect(Gitlab::MergeRequestCloser).to have_received(:call).with(project.name, superseeded_mr.iid).once
+        expect(Gitlab::MergeRequest::Closer).to have_received(:call).with(project.name, superseeded_mr.iid).once
         expect(superseeded_mr.reload.state).to eq("closed")
-        expect(Gitlab::MergeRequestCommenter).to have_received(:call).with(
+        expect(Gitlab::MergeRequest::Commenter).to have_received(:call).with(
           project.name,
           superseeded_mr.iid,
           "This merge request has been superseeded by #{mr.web_url}"

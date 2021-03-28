@@ -36,7 +36,7 @@ module Dependabot
     #
     # @return [void]
     def create_mr
-      @mr = Gitlab::MergeRequestCreator.call(
+      @mr = Gitlab::MergeRequest::Creator.call(
         fetcher: fetcher,
         updated_dependencies: updated_dependencies,
         updated_files: updated_files,
@@ -69,8 +69,8 @@ module Dependabot
     # @return [void]
     def close_superseeded_mrs
       superseeded_mrs.each do |existing_mr|
-        Gitlab::MergeRequestCloser.call(project.name, existing_mr.iid)
-        Gitlab::MergeRequestCommenter.call(
+        Gitlab::MergeRequest::Closer.call(project.name, existing_mr.iid)
+        Gitlab::MergeRequest::Commenter.call(
           project.name, existing_mr.iid,
           "This merge request has been superseeded by #{mr.web_url}"
         )
@@ -84,7 +84,7 @@ module Dependabot
     def update_mr
       return log(:info, "merge request #{mr.references.short} doesn't require updating") unless update_mr?
 
-      Gitlab::MergeRequestUpdater.call(
+      Gitlab::MergeRequest::Updater.call(
         fetcher: fetcher,
         updated_files: updated_files,
         merge_request: mr
@@ -97,7 +97,7 @@ module Dependabot
     def accept_mr
       return unless mr && config[:auto_merge]
 
-      Gitlab::MergeRequestAcceptor.call(mr)
+      Gitlab::MergeRequest::Acceptor.call(mr)
     end
 
     # Get source branch name
@@ -119,7 +119,7 @@ module Dependabot
     #
     # @return [nil] if merge request doesn't exist
     def mr
-      @mr ||= Gitlab::MergeRequestFinder.call(
+      @mr ||= Gitlab::MergeRequest::Finder.call(
         project: fetcher.source.repo,
         source_branch: source_branch,
         target_branch: fetcher.source.branch,

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Gitlab::MergeRequestCreator, epic: :services, feature: :gitlab do
+describe Gitlab::MergeRequest::Creator, epic: :services, feature: :gitlab do
   subject(:mr_creator_return) do
     described_class.call(
       fetcher: fetcher,

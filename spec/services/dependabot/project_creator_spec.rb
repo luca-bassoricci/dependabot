@@ -13,8 +13,8 @@ describe Dependabot::ProjectCreator, integration: true, epic: :services, feature
   before do
     allow(Gitlab).to receive(:client) { gitlab }
     allow(gitlab).to receive(:project).with(repo) { OpenStruct.new(default_branch: branch) }
-    allow(Gitlab::ConfigChecker).to receive(:call).with(repo, branch) { config_exists? }
-    allow(Gitlab::ConfigFetcher).to receive(:call).with(repo, branch) { raw_config }
+    allow(Gitlab::Config::Checker).to receive(:call).with(repo, branch) { config_exists? }
+    allow(Gitlab::Config::Fetcher).to receive(:call).with(repo, branch) { raw_config }
     allow(Gitlab::Hooks::Creator).to receive(:call) { hook_id }
     allow(Gitlab::Hooks::Updater).to receive(:call) { hook_id }
     allow(Gitlab::Hooks::Finder).to receive(:call) { upstream_hook_id }

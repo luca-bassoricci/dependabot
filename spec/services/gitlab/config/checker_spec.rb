@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Gitlab::ConfigChecker, epic: :services, feature: :gitlab do
+describe Gitlab::Config::Checker, epic: :services, feature: :gitlab do
   subject { described_class.call(project_name, branch) }
 
   let(:gitlab) { instance_double("Gitlab::client") }

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Gitlab::MergeRequestCloser, epic: :services, feature: :gitlab do
+describe Gitlab::MergeRequest::Closer, epic: :services, feature: :gitlab do
   let(:gitlab) { instance_double("Gitlab::Client", update_merge_request: nil) }
   let(:project) { "test" }
   let(:iid) { 1 }

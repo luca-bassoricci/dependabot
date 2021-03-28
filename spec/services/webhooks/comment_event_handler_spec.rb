@@ -10,20 +10,20 @@ describe Webhooks::CommentEventHandler, epic: :services, feature: :webhooks do
   let(:job) { MergeRequestRecreationJob }
 
   before do
-    allow(Gitlab::MergeRequestRebaser).to receive(:call) { response }
+    allow(Gitlab::MergeRequest::Rebaser).to receive(:call) { response }
   end
 
   it "skips invalid commands" do
     aggregate_failures do
       expect(described_class.call("test comment", project, mr_id)).to be_nil
-      expect(Gitlab::MergeRequestRebaser).not_to have_received(:call)
+      expect(Gitlab::MergeRequest::Rebaser).not_to have_received(:call)
     end
   end
 
   it "rebases merge request" do
     aggregate_failures do
       expect(described_class.call("$dependabot rebase", project, mr_id)).to eq(response)
-      expect(Gitlab::MergeRequestRebaser).to have_received(:call).with(project, mr_id)
+      expect(Gitlab::MergeRequest::Rebaser).to have_received(:call).with(project, mr_id)
     end
   end
 
