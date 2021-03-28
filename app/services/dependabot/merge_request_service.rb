@@ -42,16 +42,17 @@ module Dependabot
         updated_files: updated_files,
         config: config
       )
+      mr ? log(:info, "  created merge request: #{mr.web_url}") : log(:error, " failed to create merge request")
       return if AppConfig.standalone? || !mr
 
-      save
+      save_mr
       close_superseeded_mrs
     end
 
     # Persist merge request
     #
     # @return [void]
-    def save
+    def save_mr
       MergeRequest.create!(
         project: project,
         iid: mr.iid,
@@ -82,8 +83,9 @@ module Dependabot
     #
     # @return [void]
     def update_mr
-      return log(:info, "merge request #{mr.references.short} doesn't require updating") unless update_mr?
+      return log(:info, " merge request #{mr.references.short} doesn't require updating") unless update_mr?
 
+      log(:info, "  updating merge request #{mr.references.short}")
       Gitlab::MergeRequest::Updater.call(
         fetcher: fetcher,
         updated_files: updated_files,
@@ -97,6 +99,7 @@ module Dependabot
     def accept_mr
       return unless mr && config[:auto_merge]
 
+      log(:info, "  accepting merge request #{mr.references.short}")
       Gitlab::MergeRequest::Acceptor.call(mr)
     end
 
