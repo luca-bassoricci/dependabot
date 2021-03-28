@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Dependabot
-  class MergeRequestService < ApplicationService
+  class MergeRequestService < ApplicationService # rubocop:disable Metrics/ClassLength
     # @param [Dependabot::FileFetchers::Base] fetcher
     # @param [Project] project
     # @param [Hash] config
@@ -85,12 +85,12 @@ module Dependabot
     def update_mr
       return log(:info, " merge request #{mr.references.short} doesn't require updating") unless update_mr?
 
-      log(:info, "  updating merge request #{mr.references.short}")
       Gitlab::MergeRequest::Updater.call(
         fetcher: fetcher,
         updated_files: updated_files,
         merge_request: mr
       )
+      log(:info, "  updated merge request #{mr.references.short}")
     end
 
     # Accept merge request and set to merge automatically
@@ -99,8 +99,10 @@ module Dependabot
     def accept_mr
       return unless mr && config[:auto_merge]
 
-      log(:info, "  accepting merge request #{mr.references.short}")
       Gitlab::MergeRequest::Acceptor.call(mr)
+      log(:info, "  accepted merge request #{mr.references.short}")
+    rescue Gitlab::Error::MethodNotAllowed, Gitlab::Error::NotAcceptable => e
+      log(:error, " failed to accept merge request: #{e.message}")
     end
 
     # Get source branch name

@@ -17,8 +17,6 @@ module Gitlab
           mr.iid,
           merge_when_pipeline_succeeds: true
         )
-      rescue Gitlab::Error::MethodNotAllowed, Gitlab::Error::NotAcceptable => e
-        logger.error { "failed to accept merge request: #{e.message}" }
       end
 
       private
