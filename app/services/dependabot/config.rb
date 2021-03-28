@@ -17,7 +17,7 @@ module Dependabot
     def call
       default_branch = Gitlab::DefaultBranch.call(project_name)
       config = Rails.cache.fetch("#{project_name}-config", expires_in: 24.hours, force: update_cache) do
-        Configuration::Parser.call(Gitlab::ConfigFetcher.call(project_name, default_branch))
+        Configuration::Parser.call(Gitlab::Config::Fetcher.call(project_name, default_branch))
       end
 
       find_by ? config_entry(config) : config

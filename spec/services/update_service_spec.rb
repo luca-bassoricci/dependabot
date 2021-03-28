@@ -51,7 +51,7 @@ describe UpdateService, integration: true, epic: :services, feature: :updater do
     stub_gitlab
 
     allow(Gitlab::DefaultBranch).to receive(:call).with(repo) { branch }
-    allow(Gitlab::ConfigFetcher).to receive(:call).with(repo, branch) { raw_config }
+    allow(Gitlab::Config::Fetcher).to receive(:call).with(repo, branch) { raw_config }
     allow(Dependabot::FileFetcher).to receive(:call).with(repo, dependabot_config.first) { fetcher }
     allow(Dependabot::DependencyUpdater).to receive(:call)
       .with(project_name: repo, config: config, fetcher: fetcher)
