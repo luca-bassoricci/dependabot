@@ -65,7 +65,7 @@ module Dependabot
     #
     # @return [nil]
     def up_to_date
-      log(:info, "#{name} is up to date")
+      log(:info, "  #{name} is up to date")
       nil
     end
 
@@ -73,7 +73,7 @@ module Dependabot
     #
     # @return [nil]
     def update_impossible
-      log(:info, "Update for #{name} is impossible")
+      log(:info, "  update for #{name} is impossible")
       nil
     end
 
@@ -88,7 +88,7 @@ module Dependabot
     #
     # @return [Array<Dependabot::Dependency>]
     def updated_dependency
-      log(:info, "found version for update: #{name} => #{checker.latest_version}")
+      log(:info, "  found version for update: #{name} => #{checker.latest_version}")
       updated_dependencies = checker.updated_dependencies(requirements_to_unlock: requirements_to_unlock)
 
       Dependabot::UpdatedDependency.new(

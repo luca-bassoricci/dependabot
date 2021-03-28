@@ -35,7 +35,7 @@ module Gitlab
           github_redirection_service: "github.com",
           pr_message_footer: AppConfig.standalone ? nil : message_footer,
           **mr_options
-        ).create.tap { |mr| log(:info, "created mr #{mr.web_url}") if mr }
+        ).create
       end
 
       private

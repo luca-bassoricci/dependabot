@@ -19,7 +19,6 @@ module Gitlab
       #
       # @return [void]
       def call
-        log(:info, "rebasing merge request #{mr.references.short}")
         Dependabot::PullRequestUpdater.new(
           source: fetcher.source,
           base_commit: fetcher.commit,
