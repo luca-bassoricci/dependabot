@@ -5,6 +5,7 @@ describe Dependabot::DependencyUpdater, epic: :services, feature: :dependabot do
   include_context "with dependabot helper"
 
   let(:config) { dependabot_config.first }
+  let(:repo_contents_path) { nil }
   let(:updater_args) do
     {
       project_name: repo,
@@ -30,7 +31,8 @@ describe Dependabot::DependencyUpdater, epic: :services, feature: :dependabot do
       .with(
         source: fetcher.source,
         dependency_files: fetcher.files,
-        package_manager: package_manager
+        package_manager: package_manager,
+        repo_contents_path: repo_contents_path
       )
       .and_return([dependency])
     allow(Dependabot::UpdateChecker).to receive(:call)
@@ -42,17 +44,33 @@ describe Dependabot::DependencyUpdater, epic: :services, feature: :dependabot do
       .and_return(result)
   end
 
-  it "returns updated dependencies" do
-    expect(described_class.call(updater_args)).to eq([result])
+  context "with vendored deps" do
+    let(:repo_contents_path) do
+      Rails.root.join("tmp", "repo-contents", repo, package_manager)
+    end
+
+    before do
+      config[:vendor] = true
+    end
+
+    it "returns updated dependencies" do
+      expect(described_class.call(updater_args)).to eq([result])
+    end
   end
 
-  it "returns single updated dependency" do
-    expect(described_class.call(**updater_args, name: dependency.name)).to eq(result)
-  end
+  context "without vendored deps" do
+    it "returns updated dependencies" do
+      expect(described_class.call(updater_args)).to eq([result])
+    end
 
-  it "raises error if dependency not found" do
-    expect { described_class.call(**updater_args, name: "test") }.to raise_error(
-      "test not found in project dependencies"
-    )
+    it "returns single updated dependency" do
+      expect(described_class.call(**updater_args, name: dependency.name)).to eq(result)
+    end
+
+    it "raises error if dependency not found" do
+      expect { described_class.call(**updater_args, name: "test") }.to raise_error(
+        "test not found in project dependencies"
+      )
+    end
   end
 end

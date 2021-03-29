@@ -18,6 +18,7 @@ module Dependabot
     def call
       Dependabot::FileFetchers.for_package_manager(config[:package_manager]).new(
         credentials: Credentials.fetch,
+        repo_contents_path: DependabotHelper.repo_contents_path(project_name, config),
         source: Dependabot::DependabotSource.call(
           repo: project_name,
           branch: config[:branch],
