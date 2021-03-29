@@ -9,7 +9,6 @@ module DependabotHelper
   def self.repo_contents_path(project_name, config)
     return unless config[:vendor] || Dependabot::Utils.always_clone_for_package_manager?(config[:package_manager])
 
-    directory = config[:directory] == "/" ? "" : config[:directory]
-    Rails.root.join("tmp", "repo-contents", project_name, directory, config[:package_manager])
+    Rails.root.join("tmp", "repo-contents", project_name)
   end
 end

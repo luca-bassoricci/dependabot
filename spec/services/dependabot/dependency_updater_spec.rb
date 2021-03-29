@@ -46,7 +46,7 @@ describe Dependabot::DependencyUpdater, epic: :services, feature: :dependabot do
 
   context "with vendored deps" do
     let(:repo_contents_path) do
-      Rails.root.join("tmp", "repo-contents", repo, package_manager)
+      Rails.root.join("tmp", "repo-contents", repo)
     end
 
     before do
