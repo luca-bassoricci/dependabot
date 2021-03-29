@@ -5,10 +5,11 @@ module Dependabot
     # @param [Array<Dependabot::DependencyFile>] dependency_files
     # @param [Dependabot::Source] source
     # @param [String] package_manager
-    def initialize(dependency_files:, source:, package_manager:)
+    def initialize(dependency_files:, source:, package_manager:, repo_contents_path:)
       @dependency_files = dependency_files
       @source = source
       @package_manager = package_manager
+      @repo_contents_path = repo_contents_path
     end
 
     # Get parsed dependencies from files
@@ -18,12 +19,13 @@ module Dependabot
       Dependabot::FileParsers.for_package_manager(package_manager).new(
         dependency_files: dependency_files,
         source: source,
-        credentials: Credentials.fetch
+        credentials: Credentials.fetch,
+        repo_contents_path: repo_contents_path
       ).parse
     end
 
     private
 
-    attr_reader :dependency_files, :source, :package_manager, :semaphore
+    attr_reader :dependency_files, :source, :package_manager, :repo_contents_path
   end
 end

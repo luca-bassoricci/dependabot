@@ -40,6 +40,7 @@ class DependabotConfigContract < Dry::Validation::Contract
       optional(:"open-pull-requests-limit").filled(:integer)
       optional(:"rebase-strategy").filled(:string)
       optional(:"target-branch").filled(:string)
+      optional(:vendor).filled(:bool?)
     end
   end
 end

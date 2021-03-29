@@ -8,7 +8,8 @@ describe Dependabot::FileParser, epic: :services, feature: :dependabot do
   let(:args) do
     {
       dependency_files: fetcher.files,
-      source: source
+      source: source,
+      repo_contents_path: nil
     }
   end
 

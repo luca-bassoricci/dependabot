@@ -13,6 +13,7 @@ describe Configuration::Parser, epic: :services, feature: :configuration do
       version: 2
       updates:
         - package-ecosystem: bundler
+          vendor: "true"
           schedule:
             time: "19:00"
           milestone: 4
@@ -26,6 +27,7 @@ describe Configuration::Parser, epic: :services, feature: :configuration do
       0.schedule.interval: is missing
       0.ignore.0.dependency-name: is missing
       0.milestone: must be a string
+      0.vendor: must be boolean
     ERR
   end
 

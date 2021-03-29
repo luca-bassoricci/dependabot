@@ -92,6 +92,7 @@ module Configuration
         # https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates#package-ecosystem
         package_manager: PACKAGE_ECOSYSTEM_MAPPING.fetch(package_ecosystem, package_ecosystem),
         package_ecosystem: package_ecosystem,
+        vendor: opts[:vendor],
         directory: opts[:directory],
         milestone: opts[:milestone],
         assignees: opts[:assignees],
