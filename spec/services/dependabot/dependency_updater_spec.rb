@@ -39,7 +39,8 @@ describe Dependabot::DependencyUpdater, epic: :services, feature: :dependabot do
       .with(
         dependency: dependency,
         dependency_files: fetcher.files,
-        config: config
+        config: config,
+        repo_contents_path: repo_contents_path
       )
       .and_return(result)
   end
