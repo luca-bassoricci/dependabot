@@ -5,7 +5,8 @@ describe Dependabot::UpdateChecker, epic: :services, feature: :dependabot do
     described_class.call(
       dependency: dependency,
       dependency_files: fetcher.files,
-      config: config
+      config: config,
+      repo_contents_path: nil
     )
   end
 
@@ -44,7 +45,12 @@ describe Dependabot::UpdateChecker, epic: :services, feature: :dependabot do
   before do
     stub_gitlab
 
-    allow(Dependabot::FileUpdater).to receive(:call) { updated_files }
+    allow(Dependabot::FileUpdater).to receive(:call).with(
+      dependencies: updated_dependencies,
+      dependency_files: fetcher.files,
+      package_manager: package_manager,
+      repo_contents_path: nil
+    ).and_return(updated_files)
 
     allow(Dependabot::RuleHandler).to receive(:new).with(
       dependency: dependency,

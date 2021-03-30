@@ -7,12 +7,13 @@ module Dependabot
     # @param [Array<Hash>] allow
     # @param [Array<Hash>] ignore
     # @param [String] versioning_strategy
-    def initialize(dependency:, dependency_files:, config:)
+    def initialize(dependency:, dependency_files:, config:, repo_contents_path:)
       @dependency = dependency
       @dependency_files = dependency_files
       @config = config
       @versioning_strategy = config[:versioning_strategy]
       @package_manager = config[:package_manager]
+      @repo_contents_path = repo_contents_path
     end
 
     # Get updated dependencies
@@ -33,7 +34,12 @@ module Dependabot
 
     private
 
-    attr_reader :dependency, :dependency_files, :config, :versioning_strategy, :package_manager
+    attr_reader :dependency,
+                :dependency_files,
+                :config,
+                :versioning_strategy,
+                :package_manager,
+                :repo_contents_path
 
     # Full dependency name
     #
@@ -137,7 +143,8 @@ module Dependabot
       Dependabot::FileUpdater.call(
         dependencies: updated_dependencies,
         dependency_files: dependency_files,
-        package_manager: package_manager
+        package_manager: package_manager,
+        repo_contents_path: repo_contents_path
       )
     end
   end

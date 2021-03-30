@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Dependabot
+  # :reek:InstanceVariableAssumption
   class DependencyUpdater < ApplicationService
     def initialize(project_name:, config:, fetcher:, name: nil)
       @project_name = project_name
@@ -26,6 +27,15 @@ module Dependabot
     attr_reader :fetcher
     # @return [String]
     attr_reader :name
+
+    # Get cloned repository path
+    #
+    # @return [String]
+    def repo_contents_path
+      return @repo_contents_path if defined?(@repo_contents_path)
+
+      @repo_contents_path = DependabotHelper.repo_contents_path(project_name, config)
+    end
 
     # Get updated dependency list
     #
@@ -53,7 +63,7 @@ module Dependabot
         source: fetcher.source,
         dependency_files: fetcher.files,
         package_manager: config[:package_manager],
-        repo_contents_path: DependabotHelper.repo_contents_path(project_name, config)
+        repo_contents_path: repo_contents_path
       )
     end
 
@@ -64,7 +74,8 @@ module Dependabot
       Dependabot::UpdateChecker.call(
         dependency: dependency,
         dependency_files: fetcher.files,
-        config: config
+        config: config,
+        repo_contents_path: repo_contents_path
       )
     end
   end

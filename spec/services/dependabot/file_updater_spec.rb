@@ -5,7 +5,8 @@ describe Dependabot::FileUpdater, epic: :services, feature: :dependabot do
     described_class.call(
       dependencies: updated_dependencies,
       dependency_files: fetcher.files,
-      package_manager: package_manager
+      package_manager: package_manager,
+      repo_contents_path: nil
     )
   end
 
@@ -27,7 +28,8 @@ describe Dependabot::FileUpdater, epic: :services, feature: :dependabot do
     expect(Dependabot::Bundler::FileUpdater).to have_received(:new).with(
       dependencies: updated_dependencies,
       dependency_files: fetcher.files,
-      credentials: Credentials.fetch
+      credentials: Credentials.fetch,
+      repo_contents_path: nil
     )
   end
 end
