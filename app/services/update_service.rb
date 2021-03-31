@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# :reek:InstanceVariableAssumption
 class UpdateService < ApplicationService
   # @param [Hash<String, Object>] args
   def initialize(args)
@@ -23,6 +24,15 @@ class UpdateService < ApplicationService
   private
 
   attr_reader :project_name, :package_ecosystem, :directory, :config
+
+  # Get cloned repository path
+  #
+  # @return [String]
+  def repo_contents_path
+    return @repo_contents_path if defined?(@repo_contents_path)
+
+    @repo_contents_path = DependabotHelper.repo_contents_path(project_name, config)
+  end
 
   # Fetch config for project
   #
@@ -51,7 +61,7 @@ class UpdateService < ApplicationService
   #
   # @return [Dependabot::FileFetcher]
   def fetcher
-    @fetcher ||= Dependabot::FileFetcher.call(project_name, config)
+    @fetcher ||= Dependabot::FileFetcher.call(project_name, config, repo_contents_path)
   end
 
   # All security updates
@@ -68,7 +78,8 @@ class UpdateService < ApplicationService
     @all_updated_dependencies ||= Dependabot::DependencyUpdater.call(
       project_name: project_name,
       config: config,
-      fetcher: fetcher
+      fetcher: fetcher,
+      repo_contents_path: repo_contents_path
     )
   end
 
