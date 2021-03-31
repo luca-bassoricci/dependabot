@@ -23,9 +23,15 @@ describe Dependabot::MergeRequestRecreator, epic: :services, feature: :dependabo
 
     allow(Gitlab::DefaultBranch).to receive(:call).with(repo) { branch }
     allow(Gitlab::Config::Fetcher).to receive(:call).with(repo, branch) { raw_config }
-    allow(Dependabot::FileFetcher).to receive(:call).with(repo, config) { fetcher }
+    allow(Dependabot::FileFetcher).to receive(:call).with(repo, config, nil) { fetcher }
     allow(Dependabot::DependencyUpdater).to receive(:call)
-      .with(project_name: repo, config: config, fetcher: fetcher, name: updated_dependency.name)
+      .with(
+        project_name: repo,
+        config: config,
+        fetcher: fetcher,
+        name: updated_dependency.name,
+        repo_contents_path: nil
+      )
       .and_return(updated_dependency)
 
     allow(Dependabot::MergeRequestService).to receive(:call)

@@ -10,7 +10,8 @@ describe Dependabot::DependencyUpdater, epic: :services, feature: :dependabot do
     {
       project_name: repo,
       config: config,
-      fetcher: fetcher
+      fetcher: fetcher,
+      repo_contents_path: repo_contents_path
     }
   end
 
@@ -47,7 +48,7 @@ describe Dependabot::DependencyUpdater, epic: :services, feature: :dependabot do
 
   context "with vendored deps" do
     let(:repo_contents_path) do
-      Rails.root.join("tmp", "repo-contents", repo)
+      Rails.root.join("tmp", "repo-contents", repo, Time.zone.now.strftime("%d-%m-%Y-%H-%M-%S"))
     end
 
     before do

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Dependabot
+  # :reek:InstanceVariableAssumption
   class MergeRequestRecreator < ApplicationService
     def initialize(project_name, mr_iid)
       @project_name = project_name
@@ -23,6 +24,15 @@ module Dependabot
     private
 
     attr_reader :project_name, :mr_iid
+
+    # Get cloned repository path
+    #
+    # @return [String]
+    def repo_contents_path
+      return @repo_contents_path if defined?(@repo_contents_path)
+
+      @repo_contents_path = DependabotHelper.repo_contents_path(project_name, config)
+    end
 
     # Find project
     #
@@ -55,7 +65,7 @@ module Dependabot
     #
     # @return [Dependabot::FileFetcher]
     def fetcher
-      @fetcher ||= Dependabot::FileFetcher.call(project_name, config)
+      @fetcher ||= Dependabot::FileFetcher.call(project_name, config, repo_contents_path)
     end
 
     # Updated dependency
@@ -66,7 +76,8 @@ module Dependabot
         project_name: project_name,
         config: config,
         fetcher: fetcher,
-        name: mr.main_dependency
+        name: mr.main_dependency,
+        repo_contents_path: repo_contents_path
       )
     end
   end
