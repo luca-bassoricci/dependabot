@@ -19,6 +19,9 @@ class UpdateService < ApplicationService
     end
   rescue Octokit::TooManyRequests
     log(:error, "github API rate limit exceeded! See: https://developer.github.com/v3/#rate-limiting")
+  ensure
+    # TODO: See if it's possible to update core with pulling in to already cloned repo to not clone new copy each time
+    FileUtils.rm_r(repo_contents_path, force: true, secure: true) if repo_contents_path
   end
 
   private

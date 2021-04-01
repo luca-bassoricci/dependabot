@@ -19,6 +19,8 @@ module Dependabot
         updated_dependency: updated_dependency,
         recreate: true
       )
+    ensure
+      FileUtils.rm_r(repo_contents_path, force: true, secure: true) if repo_contents_path
     end
 
     private
