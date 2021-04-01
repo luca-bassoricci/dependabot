@@ -12,13 +12,16 @@ module Dependabot
     #
     # @return [Gitlab::ObjectifiedHash]
     def call
-      Dependabot::MergeRequestService.call(
-        fetcher: fetcher,
-        project: project,
-        config: config,
-        updated_dependency: updated_dependency,
-        recreate: true
-      )
+      args = Semaphore.synchronize do
+        {
+          fetcher: fetcher,
+          project: project,
+          config: config,
+          updated_dependency: updated_dependency,
+          recreate: true
+        }
+      end
+      Dependabot::MergeRequestService.call(args)
     ensure
       FileUtils.rm_r(repo_contents_path, force: true, secure: true) if repo_contents_path
     end
