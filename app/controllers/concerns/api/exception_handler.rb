@@ -6,7 +6,7 @@ module Api
 
     included do
       rescue_from StandardError do |error|
-        Raven.capture_exception(error)
+        Sentry.capture_exception(error)
         ApplicationHelper.log_error(error)
 
         json_response(body: { status: 500, error: error.message }, status: 500)

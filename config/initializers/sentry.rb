@@ -2,8 +2,11 @@
 
 return if ENV["SIDEKIQ_HEALTHCHECK"]
 
-require "sentry-raven"
+require "sentry-ruby"
+require "sentry-rails"
+require "sentry-sidekiq"
 
-Raven.configure do |config|
-  config.environments = ["production"]
+Sentry.init do |config|
+  config.enabled_environments = ["production"]
+  config.traces_sample_rate = 0.5
 end

@@ -81,7 +81,7 @@ Rails.application.configure do
                            write_timeout: 0.2,
                            reconnect_attempts: 1,
                            error_handler: lambda do |method:, _returning:, exception:|
-                             Raven.capture_exception(exception, tags: { method: method })
+                             Sentry.capture_exception(exception, tags: { method: method })
                            end
                          }
   end
