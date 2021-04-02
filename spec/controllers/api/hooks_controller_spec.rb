@@ -54,13 +54,13 @@ describe Api::HooksController, type: :config, epic: :controllers do
     before do
       allow(CredentialsConfig).to receive(:gitlab_auth_token) { auth_token }
       allow(Webhooks::PushEventHandler).to receive(:call).and_raise(error)
-      allow(Raven).to receive(:capture_exception)
+      allow(Sentry).to receive(:capture_exception)
     end
 
     it "system error" do
       post_json("/api/hooks", "spec/fixture/gitlab/webhooks/push.json", auth_token)
 
-      expect(Raven).to have_received(:capture_exception).with(error)
+      expect(Sentry).to have_received(:capture_exception).with(error)
       expect(last_response.status).to eq(500)
       expect(last_response.body).to eq({ status: 500, error: "Unexpected" }.to_json)
     end
