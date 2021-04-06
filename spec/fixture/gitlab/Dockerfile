@@ -1,6 +1,6 @@
 ARG SINATRA_VERSION=2.1.0
 
-FROM andrcuns/ruby:2.6.6-slim-10.8.6 as gitlab
+FROM andrcuns/ruby:2.6.6-slim-10.9 as gitlab
 
 LABEL maintainer="andrejs.cunskis@gmail.com"
 
