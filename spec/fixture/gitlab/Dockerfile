@@ -1,6 +1,6 @@
 ARG SINATRA_VERSION=2.1.0
 
-FROM andrcuns/ruby:2.6.7-slim-10.9 as gitlab
+FROM registry.gitlab.com/dependabot-gitlab/docker-images:2.6.7-buster-0.1 as gitlab
 
 LABEL maintainer="andrejs.cunskis@gmail.com"
 
