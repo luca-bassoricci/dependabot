@@ -5,7 +5,7 @@ describe DependencyUpdateJob, epic: :jobs do
 
   subject(:job) { described_class }
 
-  let(:args) { { "repo" => "test-repo", "package_ecosystem" => "bundler" } }
+  let(:args) { { "project_name" => "test-repo", "package_ecosystem" => "bundler", "directory" => "/" } }
 
   before do
     allow(Dependabot::UpdateService).to receive(:call)
@@ -21,5 +21,11 @@ describe DependencyUpdateJob, epic: :jobs do
     perform_enqueued_jobs { job.perform_later(args) }
 
     expect(Dependabot::UpdateService).to have_received(:call).with(args)
+  end
+
+  it "raises error on blank argument" do
+    expect { job.perform_now({ "directory" => "/", "package_ecosystem" => nil, "project_name" => "" }) }.to raise_error(
+      ArgumentError, '["package_ecosystem", "project_name"] must not be blank'
+    )
   end
 end

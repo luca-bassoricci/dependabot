@@ -5,7 +5,7 @@ module Dependabot
   class UpdateService < ApplicationService
     # @param [Hash<String, Object>] args
     def initialize(args)
-      @project_name, @package_ecosystem, @directory = args.values_at("repo", "package_ecosystem", "directory")
+      @project_name, @package_ecosystem, @directory = args.values_at("project_name", "package_ecosystem", "directory")
     end
 
     # Create or update mr's for dependencies

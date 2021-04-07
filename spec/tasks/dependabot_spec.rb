@@ -20,7 +20,7 @@ describe "rake", epic: :tasks do # rubocop:disable RSpec/DescribeClass
       task.invoke(*args.values)
 
       expect(DependencyUpdateJob).to have_received(:perform_now).with(
-        "repo" => args[:project],
+        "project_name" => args[:project],
         "package_ecosystem" => args[:package_ecosystem],
         "directory" => args[:directory]
       )
