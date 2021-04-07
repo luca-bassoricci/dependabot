@@ -28,7 +28,7 @@ describe Dependabot::FileUpdater, epic: :services, feature: :dependabot do
     expect(Dependabot::Bundler::FileUpdater).to have_received(:new).with(
       dependencies: updated_dependencies,
       dependency_files: fetcher.files,
-      credentials: Credentials.fetch,
+      credentials: Dependabot::Credentials.call,
       repo_contents_path: nil
     )
   end

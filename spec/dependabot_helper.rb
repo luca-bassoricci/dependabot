@@ -22,7 +22,7 @@ RSpec.shared_context("with dependabot helper") do
   let(:fetcher) do
     Dependabot::FileFetchers.for_package_manager(package_manager).new(
       source: source,
-      credentials: Credentials.fetch
+      credentials: Dependabot::Credentials.call
     )
   end
 

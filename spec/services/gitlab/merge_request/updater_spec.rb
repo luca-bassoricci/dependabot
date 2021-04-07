@@ -29,7 +29,7 @@ describe Gitlab::MergeRequest::Updater, epic: :services, feature: :gitlab do
       base_commit: fetcher.commit,
       old_commit: mr.sha,
       files: updated_files,
-      credentials: Credentials.fetch,
+      credentials: Dependabot::Credentials.call,
       pull_request_number: mr.iid
     )
   end

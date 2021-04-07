@@ -31,7 +31,7 @@ module Gitlab
           base_commit: fetcher.commit,
           dependencies: updated_dependencies,
           files: updated_files,
-          credentials: Credentials.fetch,
+          credentials: Dependabot::Credentials.call,
           github_redirection_service: "github.com",
           pr_message_footer: AppConfig.standalone ? nil : message_footer,
           **mr_options

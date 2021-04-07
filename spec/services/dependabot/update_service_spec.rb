@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe UpdateService, integration: true, epic: :services, feature: :updater do
+describe Dependabot::UpdateService, integration: true, epic: :services, feature: :updater do
   subject(:dependency_updater) { described_class }
 
   include_context "with dependabot helper"
