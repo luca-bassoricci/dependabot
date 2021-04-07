@@ -24,7 +24,8 @@ describe Dependabot::FileParser, epic: :services, feature: :dependabot do
     described_class.call(package_manager: package_manager, **args)
 
     aggregate_failures do
-      expect(Dependabot::Bundler::FileParser).to have_received(:new).with(credentials: Credentials.fetch, **args)
+      expect(Dependabot::Bundler::FileParser).to have_received(:new)
+        .with(credentials: Dependabot::Credentials.call, **args)
       expect(parser).to have_received(:parse)
     end
   end

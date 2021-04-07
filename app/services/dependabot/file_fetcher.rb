@@ -19,7 +19,7 @@ module Dependabot
     # @return [Dependabot::FileFetcher]
     def call
       Dependabot::FileFetchers.for_package_manager(config[:package_manager]).new(
-        credentials: Credentials.fetch,
+        credentials: Credentials.call,
         repo_contents_path: repo_contents_path,
         source: Dependabot::DependabotSource.call(
           repo: project_name,

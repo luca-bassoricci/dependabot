@@ -114,7 +114,7 @@ module Dependabot
         args = {
           dependency: dependency,
           dependency_files: dependency_files,
-          credentials: Credentials.fetch
+          credentials: Credentials.call
         }
         args[:requirements_update_strategy] = versioning_strategy if versioning_strategy && !lockfile_only?
         Dependabot::UpdateCheckers.for_package_manager(dependency.package_manager).new(**args)

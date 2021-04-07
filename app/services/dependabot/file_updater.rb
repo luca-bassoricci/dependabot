@@ -19,7 +19,7 @@ module Dependabot
       Dependabot::FileUpdaters.for_package_manager(package_manager).new(
         dependencies: dependencies,
         dependency_files: dependency_files,
-        credentials: Credentials.fetch,
+        credentials: Credentials.call,
         repo_contents_path: repo_contents_path
       ).updated_dependency_files
     end

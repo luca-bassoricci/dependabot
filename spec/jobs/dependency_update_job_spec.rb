@@ -8,7 +8,7 @@ describe DependencyUpdateJob, epic: :jobs do
   let(:args) { { "repo" => "test-repo", "package_ecosystem" => "bundler" } }
 
   before do
-    allow(UpdateService).to receive(:call)
+    allow(Dependabot::UpdateService).to receive(:call)
   end
 
   it "queues job" do
@@ -20,6 +20,6 @@ describe DependencyUpdateJob, epic: :jobs do
   it "performs enqued job" do
     perform_enqueued_jobs { job.perform_later(args) }
 
-    expect(UpdateService).to have_received(:call).with(args)
+    expect(Dependabot::UpdateService).to have_received(:call).with(args)
   end
 end

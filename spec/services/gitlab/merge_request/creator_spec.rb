@@ -65,7 +65,7 @@ describe Gitlab::MergeRequest::Creator, epic: :services, feature: :gitlab do
         base_commit: fetcher.commit,
         dependencies: updated_dependencies,
         files: updated_files,
-        credentials: Credentials.fetch,
+        credentials: Dependabot::Credentials.call,
         github_redirection_service: "github.com",
         pr_message_footer: footer,
         **mr_params
