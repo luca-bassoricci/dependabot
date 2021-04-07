@@ -45,7 +45,7 @@ module Cron
           name: "#{project_name}:#{package_ecosystem}:#{directory}",
           cron: opts[:cron],
           class: "DependencyUpdateJob",
-          args: { "repo" => project_name, "package_ecosystem" => package_ecosystem, "directory" => directory },
+          args: { "project_name" => project_name, "package_ecosystem" => package_ecosystem, "directory" => directory },
           active_job: true,
           description: "Update #{package_ecosystem} dependencies for #{project_name} in #{directory}"
         ).tap(&:save)

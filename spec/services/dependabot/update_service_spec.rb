@@ -68,7 +68,7 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
   end
 
   it "runs dependency update for repository" do
-    dependency_updater.call({ "repo" => repo, "package_ecosystem" => package_manager, "directory" => "/" })
+    dependency_updater.call({ "project_name" => repo, "package_ecosystem" => package_manager, "directory" => "/" })
 
     expect(Dependabot::MergeRequestService).to have_received(:call).with(rspec_mr_args)
     expect(Dependabot::MergeRequestService).to have_received(:call).with(config_mr_args)
