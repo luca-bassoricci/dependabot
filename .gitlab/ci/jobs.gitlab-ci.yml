@@ -97,7 +97,7 @@ variables:
   extends: .buildkit_runner
   variables:
     DOCKER_CONTEXT: spec/fixture/gitlab
-    DOCKER_IMAGE: $GITLAB_MOCK_DOCKER_IMAGE
+    DOCKER_IMAGE: $CI_REGISTRY_IMAGE/gitlab-mock
     PUSH: "true"
 
 .build_ruby_image:
