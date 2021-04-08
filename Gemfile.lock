@@ -429,7 +429,7 @@ GEM
       faraday
     sentry-sidekiq (4.3.0)
       sentry-ruby-core (~> 4.3.0)
-    sidekiq (6.2.0)
+    sidekiq (6.2.1)
       connection_pool (>= 2.2.2)
       rack (~> 2.0)
       redis (>= 4.2.0)
@@ -543,7 +543,7 @@ DEPENDENCIES
   sentry-rails (~> 4.3)
   sentry-ruby (~> 4.3)
   sentry-sidekiq (~> 4.3)
-  sidekiq (~> 6.2.0)
+  sidekiq (~> 6.2.1)
   sidekiq-cron (~> 1.2)
   simplecov (~> 0.21.2)
   simplecov-cobertura (~> 1.4.2)

@@ -17,7 +17,7 @@ gem "semantic_range", "~> 3.0"
 gem "sentry-rails", "~> 4.3", require: false
 gem "sentry-ruby", "~> 4.3", require: false
 gem "sentry-sidekiq", "~> 4.3", require: false
-gem "sidekiq", "~> 6.2.0"
+gem "sidekiq", "~> 6.2.1"
 gem "sidekiq-cron", "~> 1.2"
 gem "yabeda-prometheus-mmap", "~> 0.1.1"
 gem "yabeda-puma-plugin", "~> 0.6.0"
