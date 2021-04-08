@@ -2,7 +2,7 @@
 # Runners
 # ======================================================================================================================
 .ruby_runner:
-  image: registry.gitlab.com/dependabot-gitlab/docker-images:2.6.7-buster-0.1
+  image: registry.gitlab.com/dependabot-gitlab/dependabot/ruby:2.6.7-buster-8ad50495
   variables:
     BUNDLE_PATH: vendor/bundle
     BUNDLE_FROZEN: "true"
