@@ -85,6 +85,15 @@ build-mock-image-fork:
     - <<: *mr_forked
       changes: *e2e_changes
 
+build-ruby-image:
+  extends: .build_ruby_image
+  tags:
+    - private
+  rules:
+    - <<: *mr
+      changes:
+        - docker/Dockerfile
+
 # ======================================================================================================================
 # Static analysis stage
 # ======================================================================================================================
@@ -254,6 +263,15 @@ update-helm-chart:
     - private
   rules:
     - *release
+
+release-ruby-image:
+  extends: .release_ruby_image
+  tags:
+    - private
+  rules:
+    - <<: *master
+      changes:
+        - docker/Dockerfile
 
 # ======================================================================================================================
 # Deploy Stage
