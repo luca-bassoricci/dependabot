@@ -288,6 +288,7 @@ deploy-production:
   variables:
     DEPENDABOT_URL: $DEPENDABOT_URL_PRODUCTION
   rules:
+    - *release
     - <<: *master
       changes: *prod_deploy_changes
 
@@ -312,6 +313,7 @@ stop-production:
   environment:
     name: production
   rules:
+    - *release
     - <<: *master
       when: manual
       allow_failure: true
