@@ -1,5 +1,66 @@
 # CHANGELOG
 
+## [v0.3.6 - 2021-04-09](https://gitlab.com/dependabot-gitlab/dependabot/-/releases) *BREAKING*
+
+### 🚀 New features
+
+- add support for vendor option. See merge request dependabot-gitlab/dependabot!539 - (andrejs)
+
+### 🔬 Improvements
+
+- [BREAKING] validate arguments passed to update service. See merge request dependabot-gitlab/dependabot!561 - (andrejs)
+- clean cloned repo once updates ha finished. See merge request dependabot-gitlab/dependabot!550 - (andrejs)
+
+### 🐞 Bug Fixes
+
+- synchronize fetching files and updating dependencies on mr recreation. See merge request dependabot-gitlab/dependabot!551 - (andrejs)
+- create unique repo content path. See merge request dependabot-gitlab/dependabot!546 - (andrejs)
+- pass repo_contents_path to file updater. See merge request dependabot-gitlab/dependabot!544 - (andrejs)
+- remove unnecessary components from repo path. See merge request dependabot-gitlab/dependabot!540 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump sidekiq from 6.2.0 to 6.2.1. See merge request dependabot-gitlab/dependabot!568 - (andrejs)
+- bump dependabot-omnibus from 0.139.2 to 0.140.1. See merge request dependabot-gitlab/dependabot!567 - (andrejs)
+- bump sentry-ruby from 4.3.1 to 4.3.2. See merge request dependabot-gitlab/dependabot!559 - (andrejs)
+- bump dependabot-omnibus from 0.139.1 to 0.139.2. See merge request dependabot-gitlab/dependabot!555 - (andrejs)
+- bump sentry-rails from 4.3.3 to 4.3.4. See merge request dependabot-gitlab/dependabot!556 - (andrejs)
+- bump dependabot-omnibus from 0.139.0 to 0.139.1. See merge request dependabot-gitlab/dependabot!547 - (andrejs)
+- bump rails-healthcheck from 1.2.0 to 1.3.0. See merge request dependabot-gitlab/dependabot!548 - (andrejs)
+- bump dependabot-omnibus from 0.138.6 to 0.139.0. See merge request dependabot-gitlab/dependabot!541 - (andrejs)
+- bump dependabot-omnibus from 0.138.5 to 0.138.6. See merge request dependabot-gitlab/dependabot!537 - (andrejs)
+- bump rails from 6.1.3 to 6.1.3.1. See merge request dependabot-gitlab/dependabot!530 - (andrejs)
+
+### 📦 Development dependency updates
+
+- update ruby to 2.6.7 and bundler to 2.2.15. See merge request dependabot-gitlab/dependabot!562 - (andrejs)
+- bump andrcuns/ruby from 2.6.6-slim-10.8.6 to 2.6.6-slim-10.9 in /spec/fixture/gitlab. See merge request dependabot-gitlab/dependabot!554 - (andrejs)
+- bump rubocop from 1.12.0 to 1.12.1. See merge request dependabot-gitlab/dependabot!553 - (andrejs)
+- bump andrcuns/ruby from 2.6.6-slim-10.8.5 to 2.6.6-slim-10.8.6 in /spec/fixture/gitlab. See merge request dependabot-gitlab/dependabot!536 - (andrejs)
+- bump andrcuns/ruby from 2.6.6-slim-10.8.1 to 2.6.6-slim-10.8.5 in /spec/fixture/gitlab. See merge request dependabot-gitlab/dependabot!529 - (andrejs)
+
+### 🛠️ Development improvements
+
+- add autoupdates for ruby base image. See merge request dependabot-gitlab/dependabot!573 - (andrejs)
+- use ruby base built in dependabot repo. See merge request dependabot-gitlab/dependabot!571 - (andrejs)
+- pin package versions. See merge request dependabot-gitlab/dependabot!572 - (andrejs)
+- fix tag name for ruby image. See merge request dependabot-gitlab/dependabot!569 - (andrejs)
+- build ruby base image for ci and mock. See merge request dependabot-gitlab/dependabot!565 - (andrejs)
+- update base ci ruby image. See merge request dependabot-gitlab/dependabot!563 - (andrejs)
+- move services to Dependabot module. See merge request dependabot-gitlab/dependabot!560 - (andrejs)
+- replace sentry-raven with sentry-ruby. Closes #72. See merge request dependabot-gitlab/dependabot!552 - (andrejs)
+- remove custom cs major version. See merge request dependabot-gitlab/dependabot!545 - (andrejs)
+- format log messages for better readability. See merge request dependabot-gitlab/dependabot!535 - (andrejs)
+- remove unused brakeman.ignore. See merge request dependabot-gitlab/dependabot!534 - (andrejs)
+- add specific file list for production deployments. See merge request dependabot-gitlab/dependabot!533 - (andrejs)
+- organize similar function classes in to modules. See merge request dependabot-gitlab/dependabot!532 - (andrejs)
+- add default expiry for redis cache. See merge request dependabot-gitlab/dependabot!531 - (andrejs)
+- update ci ruby image. See merge request dependabot-gitlab/dependabot!528 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.3.5](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.3.5...v0.3.6)
+
 ## [v0.3.5 - 2021-03-27](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### ⚠️ Security updates
