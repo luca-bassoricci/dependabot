@@ -12,8 +12,9 @@ Sidekiq.configure_server do |config|
 
   config.logger = logger
   config.redis = redis_conf
-  config.options[:queues].push(HealthcheckConfig.queue)
+  config.options[:queues].push("hooks", HealthcheckConfig.queue)
 end
+
 Sidekiq.configure_client do |config|
   config.logger = logger
   config.redis = redis_conf
