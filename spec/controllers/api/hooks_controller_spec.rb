@@ -43,7 +43,12 @@ describe Api::HooksController, type: :config, epic: :controllers do
 
       expect(last_response.status).to eq(202)
       expect(last_response.body).to eq({}.to_json)
-      expect(Webhooks::CommentEventHandler).to have_received(:call).with("test comment", "dependabot-gitlab/test", 69)
+      expect(Webhooks::CommentEventHandler).to have_received(:call).with(
+        "3343534",
+        "test comment",
+        "dependabot-gitlab/test",
+        69
+      )
     end
   end
 

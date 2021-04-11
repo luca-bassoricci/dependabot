@@ -6,7 +6,7 @@ class MergeRequestRecreationJob < ApplicationJob
 
   # Perform merge request recreation
   #
-  # @param [Hash] args
+  # @param [Array] args
   # @return [void]
   def perform(*args)
     Dependabot::MergeRequestRecreator.call(*args)
