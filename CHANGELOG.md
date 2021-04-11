@@ -1,5 +1,34 @@
 # CHANGELOG
 
+## [v0.3.7 - 2021-04-11](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🚀 New features
+
+- add status notifications of recreate action. See merge request dependabot-gitlab/dependabot!579 - (andrejs)
+- add rebase action progress reply. See merge request dependabot-gitlab/dependabot!578 - (andrejs)
+
+### 🐞 Bug Fixes
+
+- add sidekiq hooks queue. See merge request dependabot-gitlab/dependabot!580 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump dependabot-omnibus from 0.140.1 to 0.140.2. See merge request dependabot-gitlab/dependabot!575 - (andrejs)
+
+### 📦 Development dependency updates
+
+- bump chart version. See merge request dependabot-gitlab/dependabot!577 - (andrejs)
+
+### 🛠️ Development improvements
+
+- add manual prod deploy option when triggering from web. See merge request dependabot-gitlab/dependabot!582 - (andrejs)
+- add stricter rules for master pipeline trigger. See merge request dependabot-gitlab/dependabot!581 - (andrejs)
+- deploy app on tag push. See merge request dependabot-gitlab/dependabot!574 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.3.6](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.3.6...v0.3.7)
+
 ## [v0.3.6 - 2021-04-09](https://gitlab.com/dependabot-gitlab/dependabot/-/releases) *BREAKING*
 
 ### 🚀 New features
