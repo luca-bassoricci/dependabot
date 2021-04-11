@@ -1,3 +1,4 @@
+# Rule definitions
 .mr: &mr
   if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_NAMESPACE == "dependabot-gitlab"'
 .mr_forked: &mr_forked
@@ -6,6 +7,26 @@
   if: '$CI_COMMIT_BRANCH == "master" && ($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "web")'
 .release: &release
   if: '$CI_COMMIT_TAG =~ /^v[0-9.]+$/ && $CI_PIPELINE_SOURCE == "push"'
+.prod_deploy: &prod_deploy
+  <<: *master
+  changes:
+    - app/**/*
+    - config/**/*
+    - kube/**/*
+    - public/**/*
+    - bin/rails
+    - lib/tasks/dependabot.rake
+    - config.ru
+    - Dockerfile
+    - Gemfile
+    - Gemfile.lock
+    - Rakefile
+.dev_deploy: &dev_deploy
+  - <<: *mr
+    when: manual
+    allow_failure: true
+
+# Change definitions
 .e2e_changes: &e2e_changes
   - Dockerfile
   - spec/fixture/gitlab/**/*
@@ -14,18 +35,6 @@
 .dependency_changes: &dependency_changes
   - Gemfile
   - Gemfile.lock
-.prod_deploy_changes: &prod_deploy_changes
-  - app/**/*
-  - config/**/*
-  - kube/**/*
-  - public/**/*
-  - bin/rails
-  - lib/tasks/dependabot.rake
-  - config.ru
-  - Dockerfile
-  - Gemfile
-  - Gemfile.lock
-  - Rakefile
 
 .main: &main
   - *mr
@@ -289,8 +298,9 @@ deploy-production:
     DEPENDABOT_URL: $DEPENDABOT_URL_PRODUCTION
   rules:
     - *release
-    - <<: *master
-      changes: *prod_deploy_changes
+    - *prod_deploy
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "web"'
+      when: manual
 
 deploy-development:
   extends: .deploy
@@ -301,10 +311,7 @@ deploy-development:
     url: $DEPENDABOT_URL_DEVELOPMENT
     on_stop: stop-development
     auto_stop_in: 1d
-  rules:
-    - <<: *mr
-      when: manual
-      allow_failure: true
+  rules: *dev_deploy
 
 stop-production:
   extends: .stop
@@ -314,10 +321,9 @@ stop-production:
     name: production
   rules:
     - *release
-    - <<: *master
+    - <<: *prod_deploy
       when: manual
       allow_failure: true
-      changes: *prod_deploy_changes
 
 stop-development:
   extends: .stop
@@ -325,7 +331,4 @@ stop-development:
     - private
   environment:
     name: development
-  rules:
-    - <<: *mr
-      when: manual
-      allow_failure: true
+  rules: *dev_deploy
