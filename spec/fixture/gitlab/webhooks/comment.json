@@ -5,6 +5,7 @@
     "path_with_namespace": "dependabot-gitlab/test"
   },
   "object_attributes": {
+    "discussion_id": "3343534",
     "note": "test comment"
   },
   "merge_request": {
