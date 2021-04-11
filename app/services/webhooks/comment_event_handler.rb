@@ -42,7 +42,7 @@ module Webhooks
     #
     # @return [void]
     def recreate
-      MergeRequestRecreationJob.perform_later(project_name, mr_iid)
+      MergeRequestRecreationJob.perform_later(project_name, mr_iid, discussion_id)
       { recreate_in_progrss: true }
     end
 
