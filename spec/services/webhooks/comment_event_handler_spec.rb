@@ -3,11 +3,11 @@
 describe Webhooks::CommentEventHandler, epic: :services, feature: :webhooks do
   include ActiveJob::TestHelper
 
-  subject(:action) { described_class.call(discussion_id, command, project, mr_id) }
+  subject(:action) { described_class.call(discussion_id, command, project, mr_iid) }
 
   let(:discussion_id) { "11r4" }
   let(:project) { "dependabot/test" }
-  let(:mr_id) { 1 }
+  let(:mr_iid) { 1 }
 
   let(:job) { MergeRequestRecreationJob }
 
@@ -33,7 +33,7 @@ describe Webhooks::CommentEventHandler, epic: :services, feature: :webhooks do
     it "triggers merge request rebase" do
       aggregate_failures do
         expect(action).to eq({ rebase_in_progress: true })
-        expect(Gitlab::MergeRequest::Rebaser).to have_received(:call).with(project, mr_id)
+        expect(Gitlab::MergeRequest::Rebaser).to have_received(:call).with(project, mr_iid)
       end
     end
 
@@ -42,7 +42,7 @@ describe Webhooks::CommentEventHandler, epic: :services, feature: :webhooks do
 
       expect(Gitlab::MergeRequest::DiscussionReplier).to have_received(:call).with(
         project_name: project,
-        mr_iid: mr_id,
+        mr_iid: mr_iid,
         discussion_id: discussion_id,
         note: ":white_check_mark: `dependabot` successfully triggered merge request rebase!"
       )
@@ -55,7 +55,7 @@ describe Webhooks::CommentEventHandler, epic: :services, feature: :webhooks do
         expect(action).to eq({ rebase_in_progress: false })
         expect(Gitlab::MergeRequest::DiscussionReplier).to have_received(:call).with(
           project_name: project,
-          mr_iid: mr_id,
+          mr_iid: mr_iid,
           discussion_id: discussion_id,
           note: ":x: `dependabot` failed to trigger merge request rebase! `error message`"
         )
@@ -70,8 +70,8 @@ describe Webhooks::CommentEventHandler, epic: :services, feature: :webhooks do
       ActiveJob::Base.queue_adapter = :test
 
       expect { action }.to have_enqueued_job(job)
-        .with(project, mr_id)
-        .on_queue("default")
+        .with(project, mr_iid, discussion_id)
+        .on_queue("hooks")
     end
   end
 end
