@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## [v0.3.8 - 2021-04-13](https://gitlab.com/dependabot-gitlab/dependabot/-/releases) *BREAKING*
+
+### 🔬 Improvements
+
+- [BREAKING] change application user and application path in docker image. See merge request dependabot-gitlab/dependabot!588 - (andrejs)
+- save webhook id if project has been removed in local database but not on Gitlab. See merge request dependabot-gitlab/dependabot!587 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump dependabot-omnibus from 0.140.3 to 0.141.0. See merge request dependabot-gitlab/dependabot!585 - (andrejs)
+- bump dependabot-omnibus from 0.140.2 to 0.140.3. See merge request dependabot-gitlab/dependabot!583 - (andrejs)
+
+### 🛠️ Development improvements
+
+- bump chart version. See merge request dependabot-gitlab/dependabot!589 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.3.7](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.3.7...v0.3.8)
+
 ## [v0.3.7 - 2021-04-11](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🚀 New features
