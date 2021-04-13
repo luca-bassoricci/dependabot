@@ -88,6 +88,12 @@ Multiple registries of the same type can be configured at the same time
 * `SETTINGS__CREDENTIALS__MAVEN__{REPOSITORY_NAME}__USERNAME` - user with read access
 * `SETTINGS__CREDENTIALS__MAVEN__{REPOSITORY_NAME}__PASSWORD` - password for the user
 
+##### Gitlab package registry
+
+To [authenticate](https://docs.gitlab.com/ee/user/packages/maven_repository/#authenticate-with-a-personal-access-token-in-maven) to Package Registry,
+`SETTINGS__GITLAB_ACCESS_TOKEN` is used automatically if the configured gitlab host matches the host of maven package registry. If it is required to use
+packages from different project package registries, make sure that gitlab access token has access to these projects as well.
+
 #### Docker registries
 
 * `SETTINGS__CREDENTIALS__DOCKER__{REGISTRY_NAME}__REGISTRY` - registry hostname like `registry.hub.docker.com`
