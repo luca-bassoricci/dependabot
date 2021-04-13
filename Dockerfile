@@ -17,13 +17,15 @@ FROM dependabot AS production
 ENV BUNDLE_PATH=vendor/bundle \
     BUNDLE_WITHOUT="development:test"
 
-WORKDIR /home/dependabot
+USER dependabot
+
+WORKDIR /home/dependabot/app
 
 # Copy gemfile first so cache can be reused
-COPY Gemfile Gemfile.lock ./
+COPY --chown=dependabot:dependabot Gemfile Gemfile.lock ./
 RUN bundle install
 
-COPY ./ ./
+COPY --chown=dependabot:dependabot ./ ./
 
 # Smoke test image
 RUN SETTINGS__GITLAB_ACCESS_TOKEN=token RAILS_ENV=production \

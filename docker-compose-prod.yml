@@ -9,7 +9,7 @@ x-environment: &environment_variables
   SETTINGS__GITLAB_ACCESS_TOKEN:
 x-volumes: &service_volumes
   volumes:
-    - tmp:/home/dependabot/tmp
+    - tmp:/home/dependabot/app/tmp
 
 services:
   web:
