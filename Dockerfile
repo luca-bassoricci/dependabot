@@ -1,4 +1,4 @@
-FROM dependabot/dependabot-core:0.140.3 AS dependabot
+FROM dependabot/dependabot-core:0.141.0 AS dependabot
 
 FROM dependabot AS local
 
