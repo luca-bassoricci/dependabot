@@ -199,7 +199,7 @@ variables:
     RAILS_ENV: test
     GIT_STRATEGY: none
   script:
-    - cd /home/dependabot && bundle exec rake 'dependabot:update[test-repo,bundler,/]'
+    - cd /home/dependabot/app && bundle exec rake 'dependabot:update[test-repo,bundler,/]'
 
 .update_chart:
   extends: .ruby_runner
