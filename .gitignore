@@ -13,7 +13,6 @@ reports/
 
 # Ignore yard docs
 .yardoc
-doc
 
 # Ignore integration/e2e test artifacts
 git.store
