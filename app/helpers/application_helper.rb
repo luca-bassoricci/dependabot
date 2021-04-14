@@ -5,7 +5,7 @@ module ApplicationHelper
   #
   # @return [Gitlab::Client]
   def gitlab
-    Gitlab::ClientWithRetry.new
+    @gitlab ||= Gitlab::ClientWithRetry.new
   end
 
   # Log error message and backtrace

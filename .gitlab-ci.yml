@@ -235,39 +235,28 @@ e2e-fork:
 # Release Stage
 # ======================================================================================================================
 release-image:
-  stage: release
-  extends: .release_runner
+  extends: .release_image
   tags:
     - private
-  variables:
-    RELEASE_IMAGE: docker.io/andrcuns/dependabot-gitlab
-  script:
-    - |
-      apk -qq update && apk -qq add grep
-      export RELEASE_VERSION=$(echo $CI_COMMIT_TAG | grep -oP 'v\K[0-9.]+')
-    - |
-      docker pull $CI_REGISTRY_IMAGE:$CURRENT_TAG
-      docker tag $CI_REGISTRY_IMAGE:$CURRENT_TAG $RELEASE_IMAGE:$RELEASE_VERSION
-      docker tag $CI_REGISTRY_IMAGE:$CURRENT_TAG $RELEASE_IMAGE:latest
-      docker push $RELEASE_IMAGE:$RELEASE_VERSION && docker push $RELEASE_IMAGE:latest
   rules:
     - *release
 
 create-gitlab-release:
-  stage: release
-  extends: .ruby_runner
-  variables:
-    SETTINGS__GITLAB_ACCESS_TOKEN: $GITLAB_ACCESS_TOKEN
+  extends: .gitlab_release
   tags:
     - private
-  script:
-    - bundle exec rake "dependabot:gitlab_release[$CI_COMMIT_TAG]"
   rules:
     - *release
 
 update-helm-chart:
-  stage: release
   extends: .update_chart
+  tags:
+    - private
+  rules:
+    - *release
+
+update-standalone-repo:
+  extends: .update_standalone
   tags:
     - private
   rules:

@@ -18,20 +18,6 @@
       - codacy-coverage-reporter-$CODACY_VERSION
     policy: pull
 
-.release_runner:
-  image: docker:20.10.5
-  services:
-    - docker:20.10.5-dind
-  variables:
-    DOCKER_HOST: tcp://docker:2376
-    DOCKER_TLS_CERTDIR: /certs
-    DOCKER_CERT_PATH: /certs/client
-    DOCKER_TLS_VERIFY: 1
-    DOCKER_BUILDKIT: 1
-  before_script:
-    - while ! test -f "$DOCKER_CERT_PATH/ca.pem"; do sleep 2; done
-    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
-
 .deploy_runner:
   image: quay.io/roboll/helmfile:helm3-v0.138.7
 
@@ -201,13 +187,54 @@ variables:
   script:
     - cd /home/dependabot/app && bundle exec rake 'dependabot:update[test-repo,bundler,/]'
 
+.release_image:
+  stage: release
+  image: docker:20.10.5
+  services:
+    - docker:20.10.5-dind
+  variables:
+    RELEASE_IMAGE: docker.io/andrcuns/dependabot-gitlab
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: /certs
+    DOCKER_CERT_PATH: /certs/client
+    DOCKER_TLS_VERIFY: 1
+    DOCKER_BUILDKIT: 1
+  before_script:
+    - while ! test -f "$DOCKER_CERT_PATH/ca.pem"; do sleep 2; done
+    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+  script:
+    - |
+      apk -qq update && apk -qq add grep
+      export RELEASE_VERSION=$(echo $CI_COMMIT_TAG | grep -oP 'v\K[0-9.]+')
+    - |
+      docker pull $CI_REGISTRY_IMAGE:$CURRENT_TAG
+      docker tag $CI_REGISTRY_IMAGE:$CURRENT_TAG $RELEASE_IMAGE:$RELEASE_VERSION
+      docker tag $CI_REGISTRY_IMAGE:$CURRENT_TAG $RELEASE_IMAGE:latest
+      docker push $RELEASE_IMAGE:$RELEASE_VERSION && docker push $RELEASE_IMAGE:latest
+
+.gitlab_release:
+  stage: release
+  extends: .ruby_runner
+  variables:
+    SETTINGS__GITLAB_ACCESS_TOKEN: $GITLAB_ACCESS_TOKEN
+  script:
+    - bundle exec rake "release:gitlab[$CI_COMMIT_TAG]"
+
 .update_chart:
   extends: .ruby_runner
   stage: release
   before_script:
     - source script/setup-git.sh
   script:
-    - bundle exec rake "dependabot:bump_chart[$CI_COMMIT_TAG]"
+    - bundle exec rake "release:chart[$CI_COMMIT_TAG]"
+
+.update_standalone:
+  extends: .ruby_runner
+  stage: release
+  variables:
+    SETTINGS__GITLAB_ACCESS_TOKEN: $GITLAB_ACCESS_TOKEN
+  script:
+    - bundle exec rake "release:standalone[$CI_COMMIT_TAG]"
 
 .deploy:
   extends: .deploy_runner
