@@ -31,7 +31,9 @@ Multiple registries of the same type can be configured at the same time
 
 #### Gitlab package registry
 
-To [authenticate](https://docs.gitlab.com/ee/user/packages/maven_repository/#authenticate-with-a-personal-access-token-in-maven) to Package Registry, `SETTINGS__GITLAB_ACCESS_TOKEN` is used automatically if the configured gitlab host matches the host of maven package registry. If it is required to use packages from different project package registries, make sure that gitlab access token has access to these projects as well.
+To [authenticate](https://docs.gitlab.com/ee/user/packages/maven_repository/#authenticate-with-a-personal-access-token-in-maven) to Gitlab Package Registry, `SETTINGS__GITLAB_ACCESS_TOKEN` is used automatically if the configured gitlab host matches the host of maven package registry. Only `SETTINGS__CREDENTIALS__MAVEN__{REPOSITORY_NAME}__URL` variable needs to be configured in this case.
+
+If it is required to use packages from different project package registries, make sure that gitlab access token has access to these projects as well.
 
 ### Docker registries
 

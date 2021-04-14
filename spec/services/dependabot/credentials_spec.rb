@@ -97,31 +97,71 @@ describe Dependabot::Credentials, type: :config, epic: :services, feature: :cred
   end
 
   context "with maven credentials" do
-    let(:maven_url) { "url" }
-    let(:maven_username) { "username" }
-    let(:maven_password) { "password" }
+    context "with fully configured credentials" do
+      let(:maven_url) { "url" }
+      let(:maven_username) { "username" }
+      let(:maven_password) { "password" }
 
-    it "contains mavend repo credentials" do
-      expect(credentials).to eq([gitlab_creds, maven_creds])
+      it "contains maven repo credentials" do
+        expect(credentials).to eq([gitlab_creds, maven_creds])
+      end
+    end
+
+    context "with only url configured in credentials" do
+      let(:maven_url) { "url" }
+
+      it "contains maven repo credentials with just the configred url" do
+        expect(credentials).to eq([gitlab_creds, maven_creds.reject { |_k, v| v.nil? }])
+      end
+    end
+
+    context "with username missing in credentials" do
+      let(:maven_url) { "url" }
+      let(:maven_password) { "password" }
+
+      it "does not contain maven repo credentials" do
+        expect(credentials).to eq([gitlab_creds])
+      end
     end
   end
 
   context "with docker credentials" do
-    let(:docker_registry) { "dockerhub" }
-    let(:docker_username) { "username" }
-    let(:docker_password) { "password" }
+    context "with fully configured credentials" do
+      let(:docker_registry) { "dockerhub" }
+      let(:docker_username) { "username" }
+      let(:docker_password) { "password" }
 
-    it "contains docker registry credentials" do
-      expect(credentials).to eq([gitlab_creds, docker_creds])
+      it "contains docker registry credentials" do
+        expect(credentials).to eq([gitlab_creds, docker_creds])
+      end
+    end
+
+    context "with partially configured credentials" do
+      let(:docker_registry) { "dockerhub" }
+      let(:docker_password) { "password" }
+
+      it "does not contain docker registry credentials" do
+        expect(credentials).to eq([gitlab_creds])
+      end
     end
   end
 
   context "with npm credentials" do
-    let(:npm_registry) { "npm-private" }
-    let(:npm_token) { "username" }
+    context "with fully configured credentials" do
+      let(:npm_registry) { "npm-private" }
+      let(:npm_token) { "username" }
 
-    it "contains npm registry credentials" do
-      expect(credentials).to eq([gitlab_creds, npm_creds])
+      it "contains npm registry credentials" do
+        expect(credentials).to eq([gitlab_creds, npm_creds])
+      end
+    end
+
+    context "with partially configured credentials" do
+      let(:npm_registry) { "npm-private" }
+
+      it "does not contain npm registry credentials" do
+        expect(credentials).to eq([gitlab_creds])
+      end
     end
   end
 end
