@@ -63,10 +63,10 @@ module Dependabot
       CredentialsConfig.maven_repos&.map do |repository|
         {
           "type" => "maven_repository",
-          "url" => repository[:url],
-          "username" => repository[:username],
-          "password" => repository[:password]
-        }
+          "url" => repository["url"],
+          "username" => repository["username"],
+          "password" => repository["password"]
+        }.compact
       end
     end
 
@@ -77,9 +77,9 @@ module Dependabot
       CredentialsConfig.docker_registries&.map do |registry|
         {
           "type" => "docker_registry",
-          "registry" => registry[:registry],
-          "username" => registry[:username],
-          "password" => registry[:password]
+          "registry" => registry["registry"],
+          "username" => registry["username"],
+          "password" => registry["password"]
         }
       end
     end
@@ -91,8 +91,8 @@ module Dependabot
       CredentialsConfig.npm_registries&.map do |registry|
         {
           "type" => "npm_registry",
-          "registry" => registry[:registry],
-          "token" => registry[:token]
+          "registry" => registry["registry"],
+          "token" => registry["token"]
         }
       end
     end
