@@ -1,5 +1,24 @@
 # CHANGELOG
 
+## [v0.3.9 - 2021-04-14](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🐞 Bug Fixes
+
+- Allow maven repo configuration with just the url. Closes #69. See merge request dependabot-gitlab/dependabot!592 - (andrejs)
+
+### 🛠️ Development improvements
+
+- bump chart version. See merge request dependabot-gitlab/dependabot!589 - (andrejs)
+
+### 📄 Documentation updates
+
+- extract documentation for manual configuration and specific dependabot.yml config options. See merge request dependabot-gitlab/dependabot!591 - (andrejs)
+- add description for using gitlab package registries for maven repositories. See merge request dependabot-gitlab/dependabot!590 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.3.8](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.3.8...v0.3.9)
+
 ## [v0.3.8 - 2021-04-13](https://gitlab.com/dependabot-gitlab/dependabot/-/releases) *BREAKING*
 
 ### 🔬 Improvements
