@@ -22,7 +22,7 @@ module Dependabot
     def call
       return skipped unless rule_handler.update?
 
-      log(:info, "Fetching info for #{name}")
+      log(:info, "Fetching info for #{dependency.name}")
       return up_to_date if checker.up_to_date?
       return update_impossible if requirements_to_unlock == :update_not_possible
 
@@ -45,7 +45,7 @@ module Dependabot
     #
     # @return [String]
     def name
-      @name ||= "#{dependency.name} #{dependency.version}"
+      @name ||= "#{dependency.name}: #{dependency.version}"
     end
 
     # Rule handler
