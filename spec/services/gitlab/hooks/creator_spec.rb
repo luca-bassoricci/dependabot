@@ -12,6 +12,7 @@ describe Gitlab::Hooks::Creator, epic: :services, feature: :gitlab do
     {
       merge_requests_events: true,
       note_events: true,
+      pipeline_events: true,
       push_events_branch_filter: branch,
       enable_ssl_verification: true
     }

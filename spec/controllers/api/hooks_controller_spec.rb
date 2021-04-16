@@ -21,6 +21,7 @@ describe Api::HooksController, type: :config, epic: :controllers do
       allow(Webhooks::PushEventHandler).to receive(:call) { project }
       allow(Webhooks::MergeRequestEventHandler).to receive(:call) { merge_request }
       allow(Webhooks::CommentEventHandler).to receive(:call).and_return(nil)
+      allow(Webhooks::PipelineEventHandler).to receive(:call).and_return(nil)
     end
 
     it "push event" do
@@ -48,6 +49,20 @@ describe Api::HooksController, type: :config, epic: :controllers do
         "test comment",
         "dependabot-gitlab/test",
         69
+      )
+    end
+
+    it "pipeline event" do
+      post_json("/api/hooks", "spec/fixture/gitlab/webhooks/pipeline.json")
+
+      expect(last_response.status).to eq(202)
+      expect(last_response.body).to eq({}.to_json)
+      expect(Webhooks::PipelineEventHandler).to have_received(:call).with(
+        "merge_request_event",
+        "success",
+        "dependabot-gitlab/test",
+        1,
+        "can_be_merged"
       )
     end
   end
