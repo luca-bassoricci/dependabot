@@ -100,8 +100,7 @@ module Dependabot
       return unless AppConfig.standalone
       return unless mr && config[:auto_merge]
 
-      # Fetch project name from fetcher since project is not passed to mr service in standalone mode
-      Gitlab::MergeRequest::Acceptor.call(fetcher.source.repo, mr.iid, merge_when_pipeline_succeeds: true)
+      Gitlab::MergeRequest::Acceptor.call(project.name, mr.iid, merge_when_pipeline_succeeds: true)
       log(:info, "  accepted merge request #{mr.references.short}")
     rescue Gitlab::Error::MethodNotAllowed, Gitlab::Error::NotAcceptable => e
       log(:error, " failed to accept merge request: #{e.message}")
@@ -122,9 +121,7 @@ module Dependabot
 
     # Get existing mr
     #
-    # @return [Gitlab::ObjectifiedHash] if mr exists
-    #
-    # @return [nil] if merge request doesn't exist
+    # @return [<Gitlab::ObjectifiedHash, nil>]
     def mr
       @mr ||= Gitlab::MergeRequest::Finder.call(
         project: fetcher.source.repo,

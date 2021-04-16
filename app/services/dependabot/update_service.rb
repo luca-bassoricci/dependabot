@@ -115,7 +115,7 @@ module Dependabot
     # @return [Gitlab::ObjectifiedHash]
     def create_mr(updated_dependency)
       Dependabot::MergeRequestService.call(
-        project: AppConfig.standalone ? nil : Project.find_by(name: project_name),
+        project: AppConfig.standalone ? Project.new(name: project_name) : Project.find_by(name: project_name),
         fetcher: fetcher,
         config: config,
         updated_dependency: updated_dependency
