@@ -23,9 +23,10 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
   end
 
   it "closes saved mr" do
-    described_class.call(repo, 1)
-
-    expect(merge_request.reload.state).to eq("closed")
+    aggregate_failures do
+      expect(described_class.call(repo, 1)).to eq({ closed_merge_request: true })
+      expect(merge_request.reload.state).to eq("closed")
+    end
   end
 
   it "skips non existing mrs" do

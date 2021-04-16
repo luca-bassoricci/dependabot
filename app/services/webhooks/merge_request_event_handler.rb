@@ -13,9 +13,12 @@ module Webhooks
     #
     # @return [void]
     def call
-      return unless merge_request
+      merge_request&.yield_self do |mr|
+        log(:info, "Setting merge request !#{mr.iid} state to closed!")
+        mr.update_attributes!(state: "closed")
 
-      merge_request.tap { |mr| mr.update_attributes!(state: "closed") }
+        { closed_merge_request: true }
+      end
     end
 
     private
@@ -24,9 +27,14 @@ module Webhooks
 
     # Opened merge request
     #
-    # @return [MergeRequest]
+    # @return [<MergeRequest, nil>]
     def merge_request
-      @merge_request ||= Project.find_by(name: project).merge_requests.where(iid: mr_iid, state: "opened").first
+      @merge_request ||= Project
+                         .find_by(name: project)
+                         .merge_requests
+                         .find_by(iid: mr_iid, state: "opened")
+    rescue Mongoid::Errors::DocumentNotFound
+      nil
     end
   end
 end
