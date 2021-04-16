@@ -50,7 +50,7 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
   before do
     allow(Gitlab::MergeRequest::Finder).to receive(:call) { existing_mr }
     allow(Gitlab::MergeRequest::Creator).to receive(:call) { mr }
-    allow(Gitlab::MergeRequest::Acceptor).to receive(:call).with(mr)
+    allow(Gitlab::MergeRequest::Acceptor).to receive(:call).with(repo, mr.iid, merge_when_pipeline_succeeds: true)
     allow(Gitlab::MergeRequest::Closer).to receive(:call)
     allow(Gitlab::MergeRequest::Updater).to receive(:call)
     allow(Gitlab::MergeRequest::Commenter).to receive(:call)
@@ -61,14 +61,30 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
   context "with new merge request" do
     let(:existing_mr) { nil }
 
+    before do
+      allow(AppConfig).to receive(:standalone).and_return(true)
+    end
+
     it "gets created" do
-      expect(service_return).to eq(mr)
-      expect(mr_db.dependencies).to eq(MergeRequest.find_by(iid: mr.iid).dependencies)
-      expect(Gitlab::MergeRequest::Creator).to have_received(:call).with(
-        fetcher: fetcher,
-        updated_dependencies: updated_dependencies,
-        updated_files: updated_files,
-        config: dependabot_config.first
+      aggregate_failures do
+        expect(service_return).to eq(mr)
+        expect(mr_db.dependencies).to eq(MergeRequest.find_by(iid: mr.iid).dependencies)
+        expect(Gitlab::MergeRequest::Creator).to have_received(:call).with(
+          fetcher: fetcher,
+          updated_dependencies: updated_dependencies,
+          updated_files: updated_files,
+          config: dependabot_config.first
+        )
+      end
+    end
+
+    it "gets auto merged in standalone mode" do
+      service_return
+
+      expect(Gitlab::MergeRequest::Acceptor).to have_received(:call).with(
+        repo,
+        mr.iid,
+        merge_when_pipeline_succeeds: true
       )
     end
   end

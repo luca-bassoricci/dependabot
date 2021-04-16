@@ -1,0 +1,14 @@
+{
+  "object_kind": "pipeline",
+  "object_attributes":{
+     "source": "merge_request_event",
+     "status": "success"
+  },
+   "merge_request": {
+     "iid": 1,
+     "merge_status": "can_be_merged"
+  },
+  "project":{
+     "path_with_namespace": "dependabot-gitlab/test"
+  }
+}

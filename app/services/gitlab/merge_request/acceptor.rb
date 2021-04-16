@@ -3,25 +3,28 @@
 module Gitlab
   module MergeRequest
     class Acceptor < ApplicationService
-      # @param [Gitlab::ObjectifiedHash] merge_request
-      def initialize(merge_request)
-        @mr = merge_request
+      # Accept existing merge request
+      #
+      # @param [String] project_name
+      # @param [Number] mr_iid
+      # @param [Hash] opts
+      # @option opts [Boolean] :merge_when_pipeline_succeeds
+      def initialize(project_name, mr_iid, opts = {})
+        @project_name = project_name
+        @mr_iid = mr_iid
+        @opts = opts
       end
 
       # Accept merge request
       #
       # @return [Gitlab::ObjectifiedHash]
       def call
-        gitlab.accept_merge_request(
-          mr.project_id,
-          mr.iid,
-          merge_when_pipeline_succeeds: true
-        )
+        gitlab.accept_merge_request(project_name, mr_iid, opts)
       end
 
       private
 
-      attr_reader :mr
+      attr_reader :project_name, :mr_iid, :opts
     end
   end
 end

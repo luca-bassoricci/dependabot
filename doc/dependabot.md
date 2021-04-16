@@ -38,5 +38,7 @@ Automatically accept merge request and set it to merge when pipeline succeeds. I
 auto-merge: true
 ```
 
-This feature is not guaranteed to work due to gitlab limitation of accepting merge request before pipeline has been triggered. If pipeline
+In standalone mode this feature is not guaranteed to work due to gitlab limitation of accepting merge request before pipeline has been triggered. If pipeline
 started with delay after merge request was created, trying to accept and auto merge might fail with `Method Not Allowed` error.
+
+In service mode, merge request is accepted based on event sent on pipeline completion asynchronously instead of relying on gitlab's `merge_when_pipeline_succeeds` option.
