@@ -56,6 +56,10 @@ describe Webhooks::PipelineEventHandler, integration: true, epic: :services, fea
     it "skips merge if pipeline is not merge request event" do
       expect(event_result(source: "branch")).to eq(nil)
     end
+
+    it "skips merge if mr cannot be merged" do
+      expect(event_result(merge: "cannot_be_merged")).to eq(nil)
+    end
   end
 
   context "with auto_merge: false" do
