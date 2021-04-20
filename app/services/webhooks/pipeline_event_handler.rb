@@ -31,7 +31,7 @@ module Webhooks
     #
     # @return [Boolean]
     def actionable?
-      source == "merge_request_event" && status == "success" && merge_status == "can_be_merged"
+      source == "merge_request_event" && status == "success" && merge_status != "cannot_be_merged"
     end
 
     # Is mr set for auto merging
