@@ -42,7 +42,7 @@ module Dependabot
     #
     # @return [Hash]
     def fetch_config
-      config_entry = Dependabot::Config.call(
+      config_entry = Dependabot::ConfigFetcher.call(
         project_name,
         find_by: {
           package_ecosystem: package_ecosystem,
