@@ -2,7 +2,7 @@
 
 require "date"
 
-module Configuration
+module Cron
   # Parse dependabot schedule data and create cron string
   #
   class Schedule < ApplicationService

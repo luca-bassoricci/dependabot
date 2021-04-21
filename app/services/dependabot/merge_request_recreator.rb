@@ -57,7 +57,7 @@ module Dependabot
     #
     # @return [Hash]
     def config
-      @config ||= Dependabot::Config.call(
+      @config ||= Dependabot::ConfigFetcher.call(
         project_name,
         find_by: {
           package_manager: mr.package_manager,

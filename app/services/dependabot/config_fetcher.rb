@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Dependabot
-  class Config < ApplicationService
+  class ConfigFetcher < ApplicationService
     # @param [String] project_name
     # @param [Boolean] update_cache
     # @param [Hash] find_by
@@ -17,7 +17,7 @@ module Dependabot
     def call
       default_branch = Gitlab::DefaultBranch.call(project_name)
       config = Rails.cache.fetch("#{project_name}-config", expires_in: 24.hours, force: update_cache) do
-        Configuration::Parser.call(Gitlab::Config::Fetcher.call(project_name, default_branch))
+        ConfigParser.call(Gitlab::Config::Fetcher.call(project_name, default_branch))
       end
 
       find_by ? config_entry(config) : config

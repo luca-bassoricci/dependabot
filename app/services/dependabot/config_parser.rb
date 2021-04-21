@@ -2,7 +2,7 @@
 
 require "yaml"
 
-module Configuration
+module Dependabot
   class InvalidConfigurationError < StandardError
     def self.format(result)
       result.errors.group_by(&:path).map do |path, messages|
@@ -11,7 +11,7 @@ module Configuration
     end
   end
 
-  class Parser < ApplicationService
+  class ConfigParser < ApplicationService
     # @return [Hash<String, String>]
     PACKAGE_ECOSYSTEM_MAPPING = {
       "npm" => "npm_and_yarn",
@@ -44,7 +44,7 @@ module Configuration
           **branch_options(configuration),
           **commit_message_options(configuration),
           **filter_options(configuration),
-          cron: Schedule.call(configuration[:schedule])
+          cron: Cron::Schedule.call(configuration[:schedule])
         }.compact
       end
     end

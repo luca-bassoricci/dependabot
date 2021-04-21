@@ -35,7 +35,7 @@ module Dependabot
       @config ||= begin
         return nil unless Gitlab::Config::Checker.call(project_name, default_branch)
 
-        Config.call(project_name, update_cache: true)
+        ConfigFetcher.call(project_name, update_cache: true)
       end
     end
 
