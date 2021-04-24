@@ -142,7 +142,7 @@ module Dependabot
     #
     # @return [Boolean]
     def update_mr?
-      recreate || (rebase? || !mr["has_conflicts"])
+      recreate || (rebase? && mr["has_conflicts"])
     end
 
     # All dependencies to be updated with new versions

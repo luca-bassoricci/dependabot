@@ -106,7 +106,43 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
     end
   end
 
-  context "with conflicts" do
+  context "without conflicts and no rebase" do
+    let(:has_conflicts) { false }
+
+    before do
+      config[:rebase_strategy] = "none"
+    end
+
+    it "skips updating" do
+      expect(service_return).to eq(mr)
+      expect(Gitlab::MergeRequest::Updater).not_to have_received(:call)
+    end
+
+    it "updates on recreate flag" do
+      expect(service_return(recreate: true)).to eq(mr)
+      expect(Gitlab::MergeRequest::Updater).to have_received(:call)
+    end
+  end
+
+  context "without conflicts and auto rebase" do
+    let(:has_conflicts) { false }
+
+    before do
+      config[:rebase_strategy] = "auto"
+    end
+
+    it "skips updating" do
+      expect(service_return).to eq(mr)
+      expect(Gitlab::MergeRequest::Updater).not_to have_received(:call)
+    end
+
+    it "updates on recreate flag" do
+      expect(service_return(recreate: true)).to eq(mr)
+      expect(Gitlab::MergeRequest::Updater).to have_received(:call)
+    end
+  end
+
+  context "with conflicts and no rebase" do
     let(:has_conflicts) { true }
 
     before do
@@ -116,6 +152,24 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
     it "skips updating" do
       expect(service_return).to eq(mr)
       expect(Gitlab::MergeRequest::Updater).not_to have_received(:call)
+    end
+
+    it "updates on recreate flag" do
+      expect(service_return(recreate: true)).to eq(mr)
+      expect(Gitlab::MergeRequest::Updater).to have_received(:call)
+    end
+  end
+
+  context "with conflicts and auto rebase" do
+    let(:has_conflicts) { true }
+
+    before do
+      config[:rebase_strategy] = "auto"
+    end
+
+    it "updates on conflict" do
+      expect(service_return).to eq(mr)
+      expect(Gitlab::MergeRequest::Updater).to have_received(:call)
     end
 
     it "updates on recreate flag" do
