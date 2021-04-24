@@ -1,5 +1,45 @@
 # CHANGELOG
 
+## [v0.3.10 - 2021-04-24](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🔬 Improvements
+
+- trigger automerge based on pipeline events. Closes #76. See merge request dependabot-gitlab/dependabot!600 - (andrejs)
+
+### 🐞 Bug Fixes
+
+- skip update when merge request has no conflict. Closes #79. See merge request dependabot-gitlab/dependabot!616 - (@manandre)
+- forked project pipeline fix. See merge request dependabot-gitlab/dependabot!618 - (andrejs)
+- skip automerge when merge_status is explicitly cannot_be_merged. See merge request dependabot-gitlab/dependabot!607 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump dependabot-omnibus from 0.143.1 to 0.143.3. See merge request dependabot-gitlab/dependabot!614 - (andrejs)
+- bump dependabot-omnibus from 0.142.1 to 0.143.1. See merge request dependabot-gitlab/dependabot!610 - (andrejs)
+- bump bootsnap from 1.7.3 to 1.7.4. See merge request dependabot-gitlab/dependabot!609 - (andrejs)
+- bump dependabot-omnibus from 0.142.0 to 0.142.1. See merge request dependabot-gitlab/dependabot!603 - (andrejs)
+- bump dependabot-omnibus from 0.141.1 to 0.142.0. See merge request dependabot-gitlab/dependabot!597 - (andrejs)
+- bump dependabot-omnibus from 0.141.0 to 0.141.1. See merge request dependabot-gitlab/dependabot!593 - (andrejs)
+- bump mongoid from 7.2.1 to 7.2.2. See merge request dependabot-gitlab/dependabot!594 - (andrejs)
+
+### 📦🛠️ Development dependency updates
+
+- bump rubocop-performance from 1.10.2 to 1.11.0. See merge request dependabot-gitlab/dependabot!611 - (andrejs)
+- bump rubocop from 1.12.1 to 1.13.0. See merge request dependabot-gitlab/dependabot!608 - (andrejs)
+- bump allure-rspec from 2.13.8.5 to 2.13.9. See merge request dependabot-gitlab/dependabot!598 - (andrejs)
+
+### 🛠️ Chore
+
+- remove Config class and Configuration module. See merge request dependabot-gitlab/dependabot!613 - (andrejs)
+- remove version from initial log message on dependency info fetching. See merge request dependabot-gitlab/dependabot!604 - (andrejs)
+- rename development improvements to more general chore. See merge request dependabot-gitlab/dependabot!602 - (andrejs)
+- Improve project queries. See merge request dependabot-gitlab/dependabot!601 - (andrejs)
+- update dependabot-standalone gitlab-ci.yml with explicit image version on release. See merge request dependabot-gitlab/dependabot!596 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.3.9](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.3.9...v0.3.10)
+
 ## [v0.3.9 - 2021-04-14](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🐞 Bug Fixes

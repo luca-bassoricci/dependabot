@@ -23,7 +23,7 @@ function build_fork() {
   buildctl-daemonless.sh build $args --export-cache type=inline --import-cache type=registry,ref="$DOCKER_IMAGE:$LATEST_TAG"
 }
 
-if [[ -z "$FORK" ]]; then 
+if [[ -z "$FORK" ]]; then
   build
 else
   build_fork
