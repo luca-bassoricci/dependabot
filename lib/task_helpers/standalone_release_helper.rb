@@ -42,7 +42,7 @@ class StandaloneReleaseHelper
   #
   # @return [String]
   def current_version
-    @current_version ||= gitlab_ci.match(/#{IMAGE}:(?<tag>\w+)/)[:tag]
+    @current_version ||= gitlab_ci.match(/name: #{IMAGE}:(?<tag>[0-9.]+)/)[:tag]
   end
 
   # Updated .gitlab-ci.yml file
