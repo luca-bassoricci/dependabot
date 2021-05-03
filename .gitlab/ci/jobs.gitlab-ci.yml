@@ -46,7 +46,7 @@
 stages:
   - static analysis
   - test
-  - coverage
+  - report
   - release
   - deploy
 
@@ -151,10 +151,11 @@ variables:
       junit: tmp/rspec.xml
     paths:
       - coverage/.resultset.json
+      - reports/allure-results
     expire_in: 7 days
 
 .coverage:
-  stage: coverage
+  stage: report
   extends: .ruby_runner
   variables:
     NO_COLOR: 1
@@ -168,6 +169,19 @@ variables:
 .coverage_branch:
   extends: .coverage
   coverage: /^BRANCH COVERAGE:\s+(\d{1,3}\.\d{1,2})\%/
+
+.allure_report:
+  stage: report
+  image:
+    name: ghcr.io/andrcuns/allure-report-publisher:latest
+    entrypoint: [""]
+  script:
+    - |
+      allure-report-publisher upload s3 \
+        --result-files-glob="reports/allure-results/*" \
+        --bucket="allure-reports-andrcuns" \
+        --prefix="dependabot-gitlab/$CI_COMMIT_REF_SLUG" \
+        --color
 
 .e2e:
   stage: test
