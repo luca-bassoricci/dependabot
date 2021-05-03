@@ -182,8 +182,25 @@ rspec-fork:
   extends: .rspec
   rules: *fork
 
+e2e:
+  extends: .e2e
+  tags:
+    - private
+  variables:
+    SETTINGS__GITHUB_ACCESS_TOKEN: $GITHUB_ACCESS_TOKEN
+  rules:
+    - *master
+    - *release
+    - <<: *mr
+      changes: *e2e_changes
+e2e-fork:
+  extends: .e2e
+  rules:
+    - <<: *mr_forked
+      changes: *e2e_changes
+
 # ======================================================================================================================
-# Coverage
+# Reporting
 # ======================================================================================================================
 coverage-line:
   extends: .coverage_line
@@ -211,25 +228,13 @@ coverage-branch-fork:
     - rspec-fork
   rules: *fork
 
-# ======================================================================================================================
-# E2E Test Stage
-# ======================================================================================================================
-e2e:
-  extends: .e2e
+publish-allure-reports:
+  extends: .allure_report
+  needs:
+    - rspec
   tags:
     - private
-  variables:
-    SETTINGS__GITHUB_ACCESS_TOKEN: $GITHUB_ACCESS_TOKEN
-  rules:
-    - *master
-    - *release
-    - <<: *mr
-      changes: *e2e_changes
-e2e-fork:
-  extends: .e2e
-  rules:
-    - <<: *mr_forked
-      changes: *e2e_changes
+  rules: *main
 
 # ======================================================================================================================
 # Release Stage
