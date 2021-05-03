@@ -175,12 +175,15 @@ variables:
   image:
     name: ghcr.io/andrcuns/allure-report-publisher:latest
     entrypoint: [""]
+  variables:
+    GITLAB_AUTH_TOKEN: $GITLAB_ACCESS_TOKEN
   script:
     - |
       allure-report-publisher upload s3 \
         --result-files-glob="reports/allure-results/*" \
         --bucket="allure-reports-andrcuns" \
         --prefix="dependabot-gitlab/$CI_COMMIT_REF_SLUG" \
+        --update-pr \
         --color
 
 .e2e:
