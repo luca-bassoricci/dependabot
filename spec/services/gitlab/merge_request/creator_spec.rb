@@ -43,8 +43,8 @@ describe Gitlab::MergeRequest::Creator, epic: :services, feature: :gitlab do
       <br />
       You can trigger Dependabot actions by commenting on this MR
 
-      - `$dependabot rebase` will rebase this MR
-      - `$dependabot recreate` will recreate this MR rewriting all the manual changes and resolving conflicts
+      - `#{AppConfig.commands_prefix} rebase` will rebase this MR
+      - `#{AppConfig.commands_prefix} recreate` will recreate this MR rewriting all the manual changes and resolving conflicts
 
       </details>
     MSG

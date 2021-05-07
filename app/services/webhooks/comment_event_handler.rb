@@ -2,8 +2,6 @@
 
 module Webhooks
   class CommentEventHandler < ApplicationService
-    COMMENT_PATTERN = /^\$dependabot (?<action>rebase|recreate)$/.freeze
-
     # @param [String] discussion_id
     # @param [String] comment
     # @param [String] project_name
@@ -24,6 +22,13 @@ module Webhooks
     private
 
     attr_reader :comment, :project_name, :mr_iid, :discussion_id
+
+    # Comment action pattern
+    #
+    # @return [Regexp]
+    def comment_pattern
+      @comment_pattern ||= /^#{Regexp.quote(AppConfig.commands_prefix)} (?<action>rebase|recreate)/
+    end
 
     # Trigger merge request rebase
     #
@@ -50,14 +55,14 @@ module Webhooks
     #
     # @return [Boolean]
     def actionable_comment?
-      comment.match?(COMMENT_PATTERN)
+      comment.match?(comment_pattern)
     end
 
     # Action to run
     #
     # @return [String]
     def action
-      comment.match(COMMENT_PATTERN)[:action]
+      comment.match(comment_pattern)[:action]
     end
 
     # Add action status reply

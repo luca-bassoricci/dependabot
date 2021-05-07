@@ -7,5 +7,6 @@ class AppConfig < ApplicationConfig
               gitlab_url: "https://gitlab.com",
               config_filename: ".gitlab/dependabot.yml",
               standalone: false,
-              log_level: "info"
+              log_level: "info",
+              commands_prefix: "$dependabot"
 end
