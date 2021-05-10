@@ -9,7 +9,7 @@ gem "bootsnap", ">= 1.4.2", require: false
 gem "dependabot-omnibus", "~> 0.145.3"
 gem "dry-validation", "~> 1.6"
 gem "lograge", "~> 0.11.2"
-gem "mongoid", "~> 7.2"
+gem "mongoid", "~> 7.3"
 gem "puma", "~> 5.3"
 gem "rails", "~> 6.1.3"
 gem "rails-healthcheck", "~> 1.3"
