@@ -1,18 +1,12 @@
 **This project is not affiliated with, funded by, or associated with the Dependabot team or GitHub**
 
-# dependabot-gitlab
-
 **This software is Work in Progress: features will appear and disappear, API will be changed, your feedback is always welcome!**
+
+---
 
 Application providing automated dependency updates based on [dependabot-core](https://github.com/dependabot/dependabot-core)
 
-* [Usage](#usage)
-* [Deployment](#deployment)
-* [Configuration](#configuration)
-* [Adding projects](#adding-projects)
-* [Rake tasks](#rake-tasks)
-* [UI](#ui)
-* [Development](#development)
+[[_TOC_]]
 
 # Docker image variants
 
@@ -25,16 +19,26 @@ Application providing automated dependency updates based on [dependabot-core](ht
 
 It is possible to use app in "standalone" mode without the need to deploy. Project [dependabot-standalone](https://gitlab.com/dependabot-gitlab/dependabot-standalone) contains pipeline configuration to run dependency updates via scheduled gitlab pipelines.
 
-This variation exists similar use as [dependabot-script](https://github.com/dependabot/dependabot-script), which inspired
-creation of this project. The features and further development and support for standalone mode is very limited.
+This mode can be used similarly to [dependabot-script](https://github.com/dependabot/dependabot-script), which inspired
+creation of this project. Standalone mode is limited to following features:
+
+* basic dependency updates
+* limited ability of MR automerge
+
+Features not supported:
+
+* automatic closure of superseeded merge requests
+* merge request commands
+* webhooks
+* UI with managed project list
 
 ## Service
 
-dependabot-gitlab is packaged as docker container and it's possible to deploy them via various means described in [Deployment](#Deployment) section.
+dependabot-gitlab is packaged as docker container and it's possible to deploy it via various means described in [Deployment](#Deployment) section.
 
 # Deployment
 
-## Kubernetes
+## Helm
 
 Preferred way of deployment is via [helm](https://helm.sh/) package manager.
 
@@ -45,8 +49,8 @@ helm install dependabot dependabot/dependabot-gitlab --set credentials.gitlab_ac
 
 ## Docker Compose
 
-Simple example deployment can be seen in [docker-compose-prod.yml](docker-compose-prod.yml). Deployment consists of 3 containers - web server, sidekiq
-worker and redis. Simple production like deployment using `docker-compose` can be done with following command:
+Simple example deployment can be seen in [docker-compose-prod.yml](docker-compose-prod.yml). Deployment consists of 4 containers - web server, sidekiq
+worker, mongodb and redis. Simple production like deployment using `docker-compose` can be done with following command:
 
 ```bash
 docker-compose -f docker-compose.yml -f docker-compose-prod.yml up
@@ -54,10 +58,15 @@ docker-compose -f docker-compose.yml -f docker-compose-prod.yml up
 
 # Configuration
 
-## APP
+## Application
 
-* `kubernetes` - for all configuration options, refer to [chart repository](https://github.com/andrcuns/charts/blob/master/charts/dependabot-gitlab/README.md)
-* `docker-compose` / `standalone` - for manual configuration via environment variables, refer to [environment](doc/environment.md) doc
+### Helm chart
+
+For all configuration options, refer to [chart repository](https://github.com/andrcuns/charts/blob/master/charts/dependabot-gitlab/README.md)
+
+### Manual
+
+[environment.md](doc/environment.md) describes all possible environment variables for use with `docker-compose` or `standalone` mode
 
 ## Webhooks
 
