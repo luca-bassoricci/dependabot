@@ -30,6 +30,7 @@ rebase-strategy: auto
 
 Automatically accept merge request and set it to merge when pipeline succeeds. In order for this function to work, following criteria must be met:
 
+* `Pipeline events` webhook is configured
 * pipelines for merge requests must be enabled
 * user must be able to merge
 * merge request doesn't have mandatory approvals
