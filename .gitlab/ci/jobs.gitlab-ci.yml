@@ -173,15 +173,15 @@ variables:
 .allure_report:
   stage: report
   image:
-    name: andrcuns/allure-report-publisher:0.0.4
+    name: andrcuns/allure-report-publisher:0.0.6
     entrypoint: [""]
   variables:
     GITLAB_AUTH_TOKEN: $GITLAB_ACCESS_TOKEN
   script:
     - |
-      allure-report-publisher upload s3 \
+      allure-report-publisher upload gcs \
         --results-glob="reports/allure-results/*" \
-        --bucket="allure-reports-andrcuns" \
+        --bucket="allure-test-reports" \
         --prefix="dependabot-gitlab/$CI_COMMIT_REF_SLUG" \
         --update-pr \
         --copy-latest \
