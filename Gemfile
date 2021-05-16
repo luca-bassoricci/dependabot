@@ -44,7 +44,7 @@ group :test do
   gem "simplecov", "~> 0.21.2", require: false
   gem "simplecov-cobertura", "~> 1.4.2"
   gem "simplecov-console", "~> 0.9.1"
-  gem "webmock", "~> 3.12"
+  gem "webmock", "~> 3.13"
 end
 
 group :development do
