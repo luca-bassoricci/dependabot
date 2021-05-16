@@ -217,7 +217,7 @@ GEM
     et-orbi (1.2.4)
       tzinfo
     excon (0.81.0)
-    faker (2.17.0)
+    faker (2.18.0)
       i18n (>= 1.6, < 2)
     faraday (1.4.1)
       faraday-excon (~> 1.1)
@@ -525,7 +525,7 @@ DEPENDENCIES
   bootsnap (>= 1.4.2)
   dependabot-omnibus (~> 0.147.0)
   dry-validation (~> 1.6)
-  faker (~> 2.17)
+  faker (~> 2.18)
   git (~> 1.8)
   lograge (~> 0.11.2)
   mongoid (~> 7.3)
