@@ -35,7 +35,7 @@ end
 
 group :test do
   gem "allure-rspec", "~> 2.13.9"
-  gem "faker", "~> 2.17"
+  gem "faker", "~> 2.18"
   gem "rack-test", "~> 1.1"
   gem "rspec", "~> 3.10"
   gem "rspec_junit_formatter", "~> 0.4.1"
