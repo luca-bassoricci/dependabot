@@ -13,7 +13,10 @@ module ApplicationHelper
   # @param [StndardError] error
   # @return [void]
   def log_error(error)
-    Rails.logger.error { "#{error.message}\n#{error.backtrace&.join('\n')}" }
+    Rails.logger.tap do |logger|
+      logger.error { "#{error}: #{error.message}" }
+      logger.debug { error.backtrace&.join("\n") }
+    end
   end
 
   # Log tagged message with dependency context
