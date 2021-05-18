@@ -1,5 +1,66 @@
 # CHANGELOG
 
+## [v0.4.0 - 2021-05-18](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🔬 Improvements
+
+- log error stacktrace to debug level. See merge request dependabot-gitlab/dependabot!670 - (andrejs)
+- Add configurable commands prefix. Closes #81. See merge request dependabot-gitlab/dependabot!646 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump rails-healthcheck from 1.3.0 to 1.4.0. See merge request dependabot-gitlab/dependabot!671 - (andrejs)
+- bump dependabot-omnibus from 0.146.1 to 0.147.0. See merge request dependabot-gitlab/dependabot!665 - (andrejs)
+- bump dependabot-omnibus from 0.146.0 to 0.146.1. See merge request dependabot-gitlab/dependabot!661 - (andrejs)
+- bump yabeda-sidekiq from 0.7.0 to 0.8.0. See merge request dependabot-gitlab/dependabot!659 - (andrejs)
+- bump puma from 5.3.0 to 5.3.1. See merge request dependabot-gitlab/dependabot!656 - (andrejs)
+- bump sentry-ruby from 4.4.1 to 4.4.2. See merge request dependabot-gitlab/dependabot!657 - (andrejs)
+- bump dependabot-omnibus from 0.145.3 to 0.146.0. See merge request dependabot-gitlab/dependabot!655 - (andrejs)
+- bump mongoid from 7.2.2 to 7.3.0. See merge request dependabot-gitlab/dependabot!653 - (andrejs)
+- bump dependabot-omnibus from 0.145.2 to 0.145.3. See merge request dependabot-gitlab/dependabot!651 - (andrejs)
+- bump dependabot-omnibus from 0.145.1 to 0.145.2. See merge request dependabot-gitlab/dependabot!647 - (andrejs)
+- bump puma from 5.2.2 to 5.3.0. See merge request dependabot-gitlab/dependabot!648 - (andrejs)
+- bump dependabot-omnibus from 0.144.0 to 0.145.1. See merge request dependabot-gitlab/dependabot!642 - (andrejs)
+- bump rails from 6.1.3.1 to 6.1.3.2. See merge request dependabot-gitlab/dependabot!636 - (andrejs)
+- bump dependabot-omnibus from 0.143.6 to 0.144.0. See merge request dependabot-gitlab/dependabot!635 - (andrejs)
+- bump sentry-ruby from 4.4.0 to 4.4.1. See merge request dependabot-gitlab/dependabot!637 - (andrejs)
+- bump bootsnap from 1.7.4 to 1.7.5. See merge request dependabot-gitlab/dependabot!631 - (andrejs)
+- bump sentry-sidekiq, sentry-rails and sentry-ruby. See merge request dependabot-gitlab/dependabot!634 - (andrejs)
+- bump dependabot-omnibus from 0.143.5 to 0.143.6. See merge request dependabot-gitlab/dependabot!626 - (andrejs)
+- bump dependabot-omnibus from 0.143.4 to 0.143.5. See merge request dependabot-gitlab/dependabot!624 - (andrejs)
+- bump dependabot-omnibus from 0.143.3 to 0.143.4. See merge request dependabot-gitlab/dependabot!621 - (andrejs)
+
+### 📦🛠️ Development dependency updates
+
+- bump rubocop from 1.14.0 to 1.15.0. See merge request dependabot-gitlab/dependabot!672 - (andrejs)
+- bump webmock from 3.12.2 to 3.13.0. See merge request dependabot-gitlab/dependabot!666 - (andrejs)
+- bump faker from 2.17.0 to 2.18.0. See merge request dependabot-gitlab/dependabot!668 - (andrejs)
+- bump rubocop-performance from 1.11.2 to 1.11.3. See merge request dependabot-gitlab/dependabot!643 - (andrejs)
+- bump rubocop-rails from 2.9.1 to 2.10.1. See merge request dependabot-gitlab/dependabot!644 - (andrejs)
+- bump rubocop-performance from 1.11.1 to 1.11.2. See merge request dependabot-gitlab/dependabot!639 - (andrejs)
+- bump rubocop from 1.13.0 to 1.14.0. See merge request dependabot-gitlab/dependabot!638 - (andrejs)
+- bump rubocop-performance from 1.11.0 to 1.11.1. See merge request dependabot-gitlab/dependabot!627 - (andrejs)
+- bump reek from 6.0.3 to 6.0.4. See merge request dependabot-gitlab/dependabot!622 - (andrejs)
+- bump rubocop-rspec from 2.2.0 to 2.3.0. See merge request dependabot-gitlab/dependabot!623 - (andrejs)
+
+### 🛠️ Chore
+
+- upload reports to gcs. See merge request dependabot-gitlab/dependabot!664 - (andrejs)
+- Update chart version and commands prefix. See merge request dependabot-gitlab/dependabot!650 - (andrejs)
+- keep latest allure report for specific branch pipeline. See merge request dependabot-gitlab/dependabot!640 - (andrejs)
+- add allure links to mr descriptions. See merge request dependabot-gitlab/dependabot!630 - (andrejs)
+- add allure report publisher job. See merge request dependabot-gitlab/dependabot!629 - (andrejs)
+- fix regex for current version detection in dependabot-standalone. See merge request dependabot-gitlab/dependabot!619 - (andrejs)
+
+### 📄 Documentation updates
+
+- add explicit links to dependabot.yml configuration options. See merge request dependabot-gitlab/dependabot!663 - (andrejs)
+- add table of contents and improve docs. See merge request dependabot-gitlab/dependabot!660 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.3.10](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.3.10...v0.4.0)
+
 ## [v0.3.10 - 2021-04-24](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🔬 Improvements
