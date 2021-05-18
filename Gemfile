@@ -12,7 +12,7 @@ gem "lograge", "~> 0.11.2"
 gem "mongoid", "~> 7.3"
 gem "puma", "~> 5.3"
 gem "rails", "~> 6.1.3"
-gem "rails-healthcheck", "~> 1.3"
+gem "rails-healthcheck", "~> 1.4"
 gem "semantic_range", "~> 3.0"
 gem "sentry-rails", "~> 4.4", require: false
 gem "sentry-ruby", "~> 4.4", require: false
