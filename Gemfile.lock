@@ -62,11 +62,10 @@ GEM
       zeitwerk (~> 2.3)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
-    allure-rspec (2.13.9)
-      allure-ruby-commons (= 2.13.9)
+    allure-rspec (2.13.10)
+      allure-ruby-commons (= 2.13.10)
       rspec-core (>= 3.8, < 4)
-      ruby2_keywords (~> 0.0.2)
-    allure-ruby-commons (2.13.9)
+    allure-ruby-commons (2.13.10)
       mime-types (>= 3.3, < 4)
       oj (>= 3.10, < 4)
       require_all (>= 2, < 4)
@@ -291,7 +290,7 @@ GEM
     octokit (4.21.0)
       faraday (>= 0.9)
       sawyer (~> 0.8.0, >= 0.5.3)
-    oj (3.11.4)
+    oj (3.11.5)
     pandoc-ruby (2.1.4)
     parallel (1.20.1)
     parseconfig (1.0.8)
@@ -520,7 +519,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  allure-rspec (~> 2.13.9)
+  allure-rspec (~> 2.13.10)
   anyway_config (~> 2.1)
   bootsnap (>= 1.4.2)
   dependabot-omnibus (~> 0.147.0)

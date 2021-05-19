@@ -34,7 +34,7 @@ group :development, :test do
 end
 
 group :test do
-  gem "allure-rspec", "~> 2.13.9"
+  gem "allure-rspec", "~> 2.13.10"
   gem "faker", "~> 2.18"
   gem "rack-test", "~> 1.1"
   gem "rspec", "~> 3.10"
