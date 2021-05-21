@@ -1,5 +1,30 @@
 # CHANGELOG
 
+## [v0.4.1 - 2021-05-21](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🐞 Bug Fixes
+
+- Additionally filter gitlab user search results. Closes #86. See merge request dependabot-gitlab/dependabot!682 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump dependabot-omnibus from 0.148.3 to 0.148.6. See merge request dependabot-gitlab/dependabot!679 - (andrejs)
+- bump dependabot-omnibus from 0.148.2 to 0.148.3. See merge request dependabot-gitlab/dependabot!677 - (andrejs)
+- bump dependabot-omnibus from 0.147.0 to 0.148.2. See merge request dependabot-gitlab/dependabot!673 - (andrejs)
+
+### 📦🛠️ Development dependency updates
+
+- Bump allure-report-publisher to 0.2.1. See merge request dependabot-gitlab/dependabot!681 - (andrejs)
+- bump allure-rspec from 2.13.9 to 2.13.10. See merge request dependabot-gitlab/dependabot!674 - (andrejs)
+
+### 🛠️ Chore
+
+- Update allure report publisher. See merge request dependabot-gitlab/dependabot!676 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.4.0](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.4.0...v0.4.1)
+
 ## [v0.4.0 - 2021-05-18](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🔬 Improvements
