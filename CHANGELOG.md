@@ -1,5 +1,24 @@
 # CHANGELOG
 
+## [v0.4.2 - 2021-05-27](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 📦 Dependency updates
+
+- bump bundler version and deps. See merge request dependabot-gitlab/dependabot!695 - (andrejs)
+- bump dependabot-omnibus from 0.148.10 to 0.149.2. See merge request dependabot-gitlab/dependabot!690 - (andrejs)
+- bump sentry-ruby, sentry-rails and sentry-sidekiq. See merge request dependabot-gitlab/dependabot!692 - (andrejs)
+- bump dependabot-omnibus from 0.148.6 to 0.148.10. See merge request dependabot-gitlab/dependabot!686 - (andrejs)
+- bump puma from 5.3.1 to 5.3.2. See merge request dependabot-gitlab/dependabot!683 - (andrejs)
+
+### 📦🛠️ Development dependency updates
+
+- update allure-report-publisher. See merge request dependabot-gitlab/dependabot!689 - (andrejs)
+- bump allure-rspec from 2.13.10 to 2.14.0. See merge request dependabot-gitlab/dependabot!687 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.4.1](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.4.1...v0.4.2)
+
 ## [v0.4.1 - 2021-05-21](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🐞 Bug Fixes
