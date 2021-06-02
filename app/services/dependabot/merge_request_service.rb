@@ -20,6 +20,8 @@ module Dependabot
     # @return [void]
     def call
       log(:info, "Updating following dependencies: #{updated_dependencies_name}")
+      return log(:warn, " closed mr exists, skipping!") if find_mr("closed")
+
       mr ? update_mr : create_mr
       accept_mr
 
@@ -121,14 +123,9 @@ module Dependabot
 
     # Get existing mr
     #
-    # @return [<Gitlab::ObjectifiedHash, nil>]
+    # @return [Gitlab::ObjectifiedHash]
     def mr
-      @mr ||= Gitlab::MergeRequest::Finder.call(
-        project: fetcher.source.repo,
-        source_branch: source_branch,
-        target_branch: fetcher.source.branch,
-        state: "opened"
-      )
+      @mr ||= find_mr("opened")
     end
 
     # Automatically rebase MR
@@ -167,6 +164,18 @@ module Dependabot
                                   .where(dependencies: current_dependencies_name, state: "opened")
                                   .not(iid: mr.iid)
                                   .compact
+    end
+
+    # Find existing mr
+    #
+    # @return [Gitlab::ObjectifiedHash]
+    def find_mr(state)
+      Gitlab::MergeRequest::Finder.call(
+        project: fetcher.source.repo,
+        source_branch: source_branch,
+        target_branch: fetcher.source.branch,
+        state: state
+      )
     end
   end
 end
