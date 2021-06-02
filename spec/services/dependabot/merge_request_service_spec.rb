@@ -4,9 +4,14 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
   include_context "with dependabot helper"
 
   let(:project) { Project.new(name: repo, config: dependabot_config) }
+  let(:source_branch) { "dependabot-bundler-.-master-config-2.2.1" }
+  let(:target_branch) { "master" }
   let(:config) { dependabot_config.first }
   let(:current_dependencies_name) { updated_dependencies.map { |dep| "#{dep.name}-#{dep.previous_version}" }.join("/") }
   let(:has_conflicts) { true }
+  let(:existing_mr) { mr }
+  let(:closed_mr) { nil }
+  let(:mr_db) { create_mr(mr.iid, "opened", current_dependencies_name) }
   let(:mr) do
     OpenStruct.new(
       web_url: "mr-url",
@@ -16,8 +21,6 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
       references: OpenStruct.new(short: "!1")
     )
   end
-  let(:existing_mr) { mr }
-  let(:mr_db) { create_mr(mr.iid, "opened", current_dependencies_name) }
 
   def create_mr(iid, state, dependencies)
     MergeRequest.new(
@@ -48,7 +51,19 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
   end
 
   before do
-    allow(Gitlab::MergeRequest::Finder).to receive(:call) { existing_mr }
+    allow(Gitlab::MergeRequest::Finder).to receive(:call).with(
+      project: project.name,
+      source_branch: source_branch,
+      target_branch: fetcher.source.branch,
+      state: "opened"
+    ).and_return(existing_mr)
+    allow(Gitlab::MergeRequest::Finder).to receive(:call).with(
+      project: project.name,
+      source_branch: source_branch,
+      target_branch: fetcher.source.branch,
+      state: "closed"
+    ).and_return(closed_mr)
+
     allow(Gitlab::MergeRequest::Creator).to receive(:call) { mr }
     allow(Gitlab::MergeRequest::Acceptor).to receive(:call).with(repo, mr.iid, merge_when_pipeline_succeeds: true)
     allow(Gitlab::MergeRequest::Closer).to receive(:call)
@@ -99,10 +114,22 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
       )
       expect(Gitlab::MergeRequest::Finder).to have_received(:call).with(
         project: repo,
-        source_branch: "dependabot-bundler-.-master-config-2.2.1",
-        target_branch: "master",
+        source_branch: source_branch,
+        target_branch: target_branch,
         state: "opened"
       )
+    end
+  end
+
+  context "with existing closed merge request" do
+    let(:closed_mr) { mr }
+
+    it "skips mr creation" do
+      aggregate_failures do
+        expect(Gitlab::MergeRequest::Creator).not_to have_received(:call)
+        expect(Gitlab::MergeRequest::Updater).not_to have_received(:call)
+        expect(Gitlab::MergeRequest::Acceptor).not_to have_received(:call)
+      end
     end
   end
 
