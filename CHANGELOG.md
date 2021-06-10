@@ -1,5 +1,37 @@
 # CHANGELOG
 
+## [v0.4.3 - 2021-06-10](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🐞 Bug Fixes
+
+- explicitly indicate closed mr existance. Closes #94. See merge request dependabot-gitlab/dependabot!704 - (andrejs)
+- (docker) Redis container volume. Closes #91. See merge request dependabot-gitlab/dependabot!700 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump dependabot-omnibus from 0.151.1 to 0.152.0. See merge request dependabot-gitlab/dependabot!717 - (andrejs)
+- bump dependabot-omnibus from 0.150.0 to 0.151.1. See merge request dependabot-gitlab/dependabot!713 - (andrejs)
+- bump dependabot-omnibus from 0.149.5 to 0.150.0. See merge request dependabot-gitlab/dependabot!711 - (andrejs)
+- bump sentry-sidekiq from 4.5.0 to 4.5.1. See merge request dependabot-gitlab/dependabot!710 - (andrejs)
+- bump sentry-ruby from 4.5.0 to 4.5.1. See merge request dependabot-gitlab/dependabot!709 - (andrejs)
+- bump sentry-rails from 4.5.0 to 4.5.1. See merge request dependabot-gitlab/dependabot!708 - (andrejs)
+- bump dependabot-omnibus from 0.149.4 to 0.149.5. See merge request dependabot-gitlab/dependabot!706 - (andrejs)
+- bump dependabot-omnibus from 0.149.3 to 0.149.4. See merge request dependabot-gitlab/dependabot!701 - (andrejs)
+- bump dependabot-omnibus from 0.149.2 to 0.149.3. See merge request dependabot-gitlab/dependabot!697 - (andrejs)
+
+### 📦🛠️ Development dependency updates
+
+- bump rubocop-rspec from 2.3.0 to 2.4.0. See merge request dependabot-gitlab/dependabot!718 - (andrejs)
+- bump rubocop from 1.16.0 to 1.16.1. See merge request dependabot-gitlab/dependabot!715 - (andrejs)
+- bump solargraph from 0.41.1 to 0.41.2. See merge request dependabot-gitlab/dependabot!716 - (andrejs)
+- bump codacy-coverage-reporter to 12.1.7. See merge request dependabot-gitlab/dependabot!705 - (andrejs)
+- bump rubocop from 1.15.0 to 1.16.0. See merge request dependabot-gitlab/dependabot!702 - (andrejs)
+- bump solargraph from 0.40.4 to 0.41.1. See merge request dependabot-gitlab/dependabot!699 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.4.2](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.4.2...v0.4.3)
+
 ## [v0.4.2 - 2021-05-27](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 📦 Dependency updates
