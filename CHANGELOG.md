@@ -5,7 +5,7 @@
 ### 🐞 Bug Fixes
 
 - explicitly indicate closed mr existance. Closes #94. See merge request dependabot-gitlab/dependabot!704 - (andrejs)
-- (docker) Redis container volume. Closes #91. See merge request dependabot-gitlab/dependabot!700 - (andrejs)
+- (docker) Redis container volume. Closes #91. See merge request dependabot-gitlab/dependabot!700 - (marek.moscichowski1)
 
 ### 📦 Dependency updates
 
