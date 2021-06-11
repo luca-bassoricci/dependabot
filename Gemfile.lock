@@ -62,10 +62,10 @@ GEM
       zeitwerk (~> 2.3)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
-    allure-rspec (2.14.0)
-      allure-ruby-commons (= 2.14.0)
+    allure-rspec (2.14.1)
+      allure-ruby-commons (= 2.14.1)
       rspec-core (>= 3.8, < 4)
-    allure-ruby-commons (2.14.0)
+    allure-ruby-commons (2.14.1)
       mime-types (>= 3.3, < 4)
       oj (>= 3.10, < 4)
       require_all (>= 2, < 4)
@@ -524,7 +524,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  allure-rspec (~> 2.14.0)
+  allure-rspec (~> 2.14.1)
   anyway_config (~> 2.1)
   bootsnap (>= 1.4.2)
   dependabot-omnibus (~> 0.152.0)
