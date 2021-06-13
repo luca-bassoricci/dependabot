@@ -2,7 +2,7 @@
 # Runners
 # ======================================================================================================================
 .ruby_runner:
-  image: registry.gitlab.com/dependabot-gitlab/dependabot/ruby:2.6.7-buster-8ad50495
+  image: registry.gitlab.com/dependabot-gitlab/dependabot/ruby:2.6.7-buster-latest
   variables:
     BUNDLE_PATH: vendor/bundle
     BUNDLE_FROZEN: "true"
@@ -90,7 +90,7 @@ variables:
   stage: .pre
   extends: .buildkit_runner
   variables:
-    DOCKER_CONTEXT: docker
+    DOCKER_CONTEXT: .gitlab/ci
     DOCKER_IMAGE: $CI_REGISTRY_IMAGE/ruby
     PUSH: "false"
 

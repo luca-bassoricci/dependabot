@@ -101,7 +101,7 @@ build-ruby-image:
   rules:
     - <<: *mr
       changes:
-        - docker/Dockerfile
+        - .gitlab/ci/Dockerfile
 
 # ======================================================================================================================
 # Static analysis stage
@@ -274,7 +274,7 @@ release-ruby-image:
   rules:
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
       changes:
-        - docker/Dockerfile
+        - .gitlab/ci/Dockerfile
 
 # ======================================================================================================================
 # Deploy Stage
