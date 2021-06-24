@@ -503,7 +503,7 @@ GEM
     yabeda (0.9.0)
       concurrent-ruby
       dry-initializer
-    yabeda-prometheus-mmap (0.1.1)
+    yabeda-prometheus-mmap (0.1.2)
       prometheus-client-mmap
       yabeda (~> 0.5)
     yabeda-puma-plugin (0.6.0)
@@ -559,7 +559,7 @@ DEPENDENCIES
   spring (~> 2.1.1)
   spring-commands-rspec (~> 1.0.4)
   webmock (~> 3.13)
-  yabeda-prometheus-mmap (~> 0.1.1)
+  yabeda-prometheus-mmap (~> 0.1.2)
   yabeda-puma-plugin (~> 0.6.0)
   yabeda-sidekiq (~> 0.8.0)
 
