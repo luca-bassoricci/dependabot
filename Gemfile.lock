@@ -217,7 +217,7 @@ GEM
     excon (0.82.0)
     faker (2.18.0)
       i18n (>= 1.6, < 2)
-    faraday (1.4.2)
+    faraday (1.4.3)
       faraday-em_http (~> 1.0)
       faraday-em_synchrony (~> 1.0)
       faraday-excon (~> 1.1)
@@ -432,7 +432,7 @@ GEM
     sentry-ruby-core (4.5.1)
       concurrent-ruby
       faraday
-    sentry-sidekiq (4.5.1)
+    sentry-sidekiq (4.5.2)
       sentry-ruby-core (~> 4.5.0)
     sidekiq (6.2.1)
       connection_pool (>= 2.2.2)
