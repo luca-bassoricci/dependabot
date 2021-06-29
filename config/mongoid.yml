@@ -7,6 +7,7 @@ development:
       options:
         server_selection_timeout: 1
         connect_timeout: 1
+        retry_writes: <%= "#{ENV['MONGODB_RETRY_WRITES'] || 'true'}" %>
   options:
     app_name: DependabotGitlab
 
@@ -19,6 +20,7 @@ test:
       options:
         server_selection_timeout: 1
         connect_timeout: 1
+        retry_writes: <%= "#{ENV['MONGODB_RETRY_WRITES'] || 'true'}" %>
   options:
     app_name: DependabotGitlab
 
@@ -33,5 +35,6 @@ production:
         password: <%= ENV['MONGODB_PASSWORD'] %>
         server_selection_timeout: 5
         connect_timeout: 5
+        retry_writes: <%= "#{ENV['MONGODB_RETRY_WRITES'] || 'true'}" %>
   options:
     app_name: DependabotGitlab
