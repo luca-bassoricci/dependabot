@@ -2,6 +2,10 @@
 
 ## [v0.4.4 - 2021-07-02](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
+### 🔬 Improvements
+
+- add env MONGODB_RETRY_WRITES to allow disable retryWrites. See merge request dependabot-gitlab/dependabot!754 - (dgropelo)
+
 ### 📦 Dependency updates
 
 - bump dependabot-omnibus from 0.154.1 to 0.154.3. See merge request dependabot-gitlab/dependabot!736 - (andrejs)
