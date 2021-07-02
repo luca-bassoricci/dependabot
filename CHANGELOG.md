@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## [v0.4.4 - 2021-07-02](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 📦 Dependency updates
+
+- bump dependabot-omnibus from 0.154.1 to 0.154.3. See merge request dependabot-gitlab/dependabot!736 - (andrejs)
+- bump dependabot-omnibus from 0.154.0 to 0.154.1. See merge request dependabot-gitlab/dependabot!732 - (andrejs)
+- bump dependabot-omnibus from 0.152.1 to 0.154.0. See merge request dependabot-gitlab/dependabot!729 - (andrejs)
+- bump dependabot-omnibus from 0.152.0 to 0.152.1. See merge request dependabot-gitlab/dependabot!720 - (andrejs)
+
+### 📦🛠️ Development dependency updates
+
+- bump debian from 10.9-slim to 10.10-slim in /.gitlab/ci. See merge request dependabot-gitlab/dependabot!741 - (andrejs)
+- bump rubocop-rails from 2.10.1 to 2.11.0. See merge request dependabot-gitlab/dependabot!737 - (andrejs)
+- bump rubocop from 1.16.1 to 1.17.0. See merge request dependabot-gitlab/dependabot!730 - (andrejs)
+- bump solargraph from 0.42.1 to 0.42.3. See merge request dependabot-gitlab/dependabot!727 - (andrejs)
+- bump allure-rspec from 2.14.0 to 2.14.1. See merge request dependabot-gitlab/dependabot!721 - (andrejs)
+- bump solargraph from 0.41.2 to 0.42.1. See merge request dependabot-gitlab/dependabot!722 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.4.3](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.4.3...v0.4.4)
+
 ## [v0.4.3 - 2021-06-10](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🐞 Bug Fixes
