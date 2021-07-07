@@ -194,7 +194,7 @@ variables:
     name: $CI_REGISTRY_IMAGE:$CURRENT_TAG
     entrypoint: [""]
   services:
-    - name: $GITLAB_MOCK_DOCKER_IMAGE:$CURRENT_TAG
+    - name: $CI_REGISTRY_IMAGE/gitlab-mock:$CURRENT_TAG
       alias: gitlab
   variables:
     SETTINGS__GITLAB_URL: http://gitlab:4567
