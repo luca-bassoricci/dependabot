@@ -2,7 +2,7 @@
 # Runners
 # ======================================================================================================================
 .ruby_runner:
-  image: registry.gitlab.com/dependabot-gitlab/dependabot/ruby:2.6.7-buster-latest
+  image: registry.gitlab.com/dependabot-gitlab/dependabot/ruby:2.7.3-buster-latest
   variables:
     BUNDLE_PATH: vendor/bundle
     BUNDLE_FROZEN: "true"
@@ -19,11 +19,11 @@
     policy: pull
 
 .deploy_runner:
-  image: quay.io/roboll/helmfile:helm3-v0.138.7
+  image: quay.io/roboll/helmfile:helm3-v0.139.9
 
 .buildkit_runner:
   image:
-    name: moby/buildkit:v0.8.2
+    name: moby/buildkit:v0.8.3
     entrypoint: [""]
   tags:
     - docker
