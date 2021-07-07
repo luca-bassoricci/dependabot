@@ -1,8 +1,6 @@
 # Rule definitions
 .mr: &mr
-  if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_NAMESPACE == "dependabot-gitlab"'
-.mr_forked: &mr_forked
-  if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_PROJECT_NAMESPACE !~ /dependabot-gitlab/'
+  if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
 .master: &master
   if: '$CI_COMMIT_BRANCH == "master" && ($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "web")'
 .release: &release
@@ -36,13 +34,6 @@
   - Gemfile
   - Gemfile.lock
 
-.main: &main
-  - *mr
-  - *master
-  - *release
-.fork: &fork
-  - *mr_forked
-
 # ======================================================================================================================
 include:
   - template: Dependency-Scanning.gitlab-ci.yml
@@ -50,54 +41,31 @@ include:
   - template: Container-Scanning.gitlab-ci.yml
   - local: .gitlab/ci/jobs.gitlab-ci.yml
 
+workflow:
+  rules:
+    - *mr
+    - *master
+    - *release
+
 # ======================================================================================================================
 # Pre Stage
 # ======================================================================================================================
 cache-dependencies:
   extends: .cache_dependencies
-  tags:
-    - private
-  rules: *main
-cache-dependencies-fork:
-  extends: .cache_dependencies
-  rules: *fork
 
 build-app-image:
   extends: .build_app_image
-  tags:
-    - private
-  rules: *main
-build-app-image-fork:
-  extends: .build_app_image
-  tags:
-    - docker
-  variables:
-    FORK: "true"
-  rules: *fork
 
 build-mock-image:
   extends: .build_mock_image
-  tags:
-    - private
   rules:
     - *master
     - *release
     - <<: *mr
       changes: *e2e_changes
-build-mock-image-fork:
-  extends: .build_mock_image
-  tags:
-    - docker
-  variables:
-    FORK: "true"
-  rules:
-    - <<: *mr_forked
-      changes: *e2e_changes
 
 build-ruby-image:
   extends: .build_ruby_image
-  tags:
-    - private
   rules:
     - <<: *mr
       changes:
@@ -108,66 +76,28 @@ build-ruby-image:
 # ======================================================================================================================
 rubocop:
   extends: .rubocop
-  tags:
-    - private
-  rules: *main
-rubocop-fork:
-  extends: .rubocop
-  rules: *fork
 
 reek:
   extends: .reek
-  tags:
-    - private
-  rules: *main
-reek-fork:
-  extends: .reek
-  rules: *fork
 
 brakeman:
   extends: .brakeman
-  tags:
-    - private
-  rules: *main
-brakeman-fork:
-  extends: .brakeman
-  rules: *fork
 
 bundle-audit:
   extends: .bundle_audit
-  tags:
-    - private
-  rules: *main
-bundle-audit-fork:
-  extends: .bundle_audit
-  rules: *fork
 
 dependency-scan:
   extends: .dependency_scan
-  tags:
-    - private
   rules:
     - *master
     - <<: *mr
-      changes: *dependency_changes
-dep-scanning-fork:
-  extends: .dependency_scan
-  rules:
-    - <<: *mr_forked
       changes: *dependency_changes
 
 container-scan:
   extends: .container_scanning
-  tags:
-    - private
   rules:
     - *master
     - <<: *mr
-      changes: *docker_changes
-container-scan-fork:
-  extends: .container_scanning
-  rules:
-    - <<: *mr_forked
       changes: *docker_changes
 
 # ======================================================================================================================
@@ -175,28 +105,15 @@ container-scan-fork:
 # ======================================================================================================================
 rspec:
   extends: .rspec
-  tags:
-    - private
-  rules: *main
-rspec-fork:
-  extends: .rspec
-  rules: *fork
 
 e2e:
   extends: .e2e
-  tags:
-    - private
   variables:
     SETTINGS__GITHUB_ACCESS_TOKEN: $GITHUB_ACCESS_TOKEN
   rules:
     - *master
     - *release
     - <<: *mr
-      changes: *e2e_changes
-e2e-fork:
-  extends: .e2e
-  rules:
-    - <<: *mr_forked
       changes: *e2e_changes
 
 # ======================================================================================================================
@@ -206,71 +123,42 @@ coverage-line:
   extends: .coverage_line
   needs:
     - rspec
-  tags:
-    - private
-  rules: *main
-coverage-line-fork:
-  extends: .coverage_line
-  needs:
-    - rspec-fork
-  rules: *fork
 
 coverage-branch:
   extends: .coverage_branch
   needs:
     - rspec
-  tags:
-    - private
-  rules: *main
-coverage-branch-fork:
-  extends: .coverage_branch
-  needs:
-    - rspec-fork
-  rules: *fork
 
 publish-allure-reports:
   extends: .allure_report
   needs:
     - rspec
-  tags:
-    - private
-  rules: *main
 
 # ======================================================================================================================
 # Release Stage
 # ======================================================================================================================
 release-image:
   extends: .release_image
-  tags:
-    - private
   rules:
     - *release
 
 create-gitlab-release:
   extends: .gitlab_release
-  tags:
-    - private
   rules:
     - *release
 
 update-helm-chart:
   extends: .update_chart
-  tags:
-    - private
   rules:
     - *release
 
 update-standalone-repo:
   extends: .update_standalone
-  tags:
-    - private
   rules:
     - *release
 
 release-ruby-image:
   extends: .release_ruby_image
-  tags:
-    - private
   rules:
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
       changes:

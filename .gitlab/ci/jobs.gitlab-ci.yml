@@ -25,6 +25,10 @@
   image:
     name: moby/buildkit:v0.8.2
     entrypoint: [""]
+  tags:
+    - docker
+  variables:
+    PUSH: "true"
   before_script:
     - mkdir -p /root/.docker
     - |
@@ -51,7 +55,6 @@ stages:
   - deploy
 
 variables:
-  GITLAB_MOCK_DOCKER_IMAGE: $CI_REGISTRY_IMAGE/gitlab-mock
   CURRENT_TAG: $CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
   LATEST_TAG: $CI_COMMIT_REF_SLUG-latest
   CODACY_VERSION: "12.1.7"
@@ -75,23 +78,20 @@ variables:
   extends: .buildkit_runner
   variables:
     DOCKER_CONTEXT: "."
-    DOCKER_IMAGE: $CI_REGISTRY_IMAGE
-    PUSH: "true"
 
 .build_mock_image:
   stage: .pre
   extends: .buildkit_runner
   variables:
     DOCKER_CONTEXT: spec/fixture/gitlab
-    DOCKER_IMAGE: $CI_REGISTRY_IMAGE/gitlab-mock
-    PUSH: "true"
+    DOCKER_IMAGE: gitlab-mock
 
 .build_ruby_image:
   stage: .pre
   extends: .buildkit_runner
   variables:
     DOCKER_CONTEXT: .gitlab/ci
-    DOCKER_IMAGE: $CI_REGISTRY_IMAGE/ruby
+    DOCKER_IMAGE: ruby
     PUSH: "false"
 
 .rubocop:
@@ -231,6 +231,13 @@ variables:
       docker tag $CI_REGISTRY_IMAGE:$CURRENT_TAG $RELEASE_IMAGE:latest
       docker push $RELEASE_IMAGE:$RELEASE_VERSION && docker push $RELEASE_IMAGE:latest
 
+.release_ruby_image:
+  stage: release
+  extends: .build_ruby_image
+  variables:
+    CURRENT_TAG: 2.6.7-buster-$CI_COMMIT_SHORT_SHA
+    LATEST_TAG: 2.6.7-buster-latest
+
 .gitlab_release:
   stage: release
   extends: .ruby_runner
@@ -272,11 +279,3 @@ variables:
     GIT_STRATEGY: none
   script:
     - helm uninstall dependabot-gitlab -n dependabot
-
-.release_ruby_image:
-  stage: release
-  extends: .build_ruby_image
-  variables:
-    CURRENT_TAG: 2.6.7-buster-$CI_COMMIT_SHORT_SHA
-    LATEST_TAG: 2.6.7-buster-latest
-    PUSH: "true"
