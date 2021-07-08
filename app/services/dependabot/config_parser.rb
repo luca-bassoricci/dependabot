@@ -44,7 +44,7 @@ module Dependabot
           **branch_options(configuration),
           **commit_message_options(configuration),
           **filter_options(configuration),
-          cron: Cron::Schedule.call(configuration[:schedule])
+          cron: Cron::Schedule.call(**configuration[:schedule])
         }.compact
       end
     end

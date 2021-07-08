@@ -62,7 +62,8 @@ build-mock-image:
     - *master
     - *release
     - <<: *mr
-      changes: *e2e_changes
+      when: manual
+      allow_failure: true
 
 build-ruby-image:
   extends: .build_ruby_image
@@ -108,13 +109,14 @@ rspec:
 
 e2e:
   extends: .e2e
+  needs:
+    - build-mock-image
   variables:
     SETTINGS__GITHUB_ACCESS_TOKEN: $GITHUB_ACCESS_TOKEN
   rules:
     - *master
     - *release
-    - <<: *mr
-      changes: *e2e_changes
+    - *mr
 
 # ======================================================================================================================
 # Reporting
