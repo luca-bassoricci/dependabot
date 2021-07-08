@@ -69,20 +69,22 @@ Rails.application.configure do
   # config.active_record.database_resolver = ActiveRecord::Middleware::DatabaseSelector::Resolver
   # config.active_record.database_resolver_context = ActiveRecord::Middleware::DatabaseSelector::Resolver::Session
 
-  unless AppConfig.standalone?
-    # Use redis for caching
-    config.cache_store = :redis_cache_store,
-                         {
-                           url: ENV["REDIS_URL"],
-                           password: ENV["REDIS_PASSWORD"],
-                           expires_in: 24.hours,
-                           namespace: "cache",
-                           read_timeout: 0.2,
-                           write_timeout: 0.2,
-                           reconnect_attempts: 1,
-                           error_handler: lambda do |method:, _returning:, exception:|
-                             Sentry.capture_exception(exception, tags: { method: method })
-                           end
-                         }
-  end
+  # Use redis for caching
+  config.cache_store = if AppConfig.standalone?
+                         [:memory_store, { size: 64.megabytes }]
+                       else
+                         [:redis_cache_store,
+                          {
+                            url: ENV["REDIS_URL"],
+                            password: ENV["REDIS_PASSWORD"],
+                            expires_in: 24.hours,
+                            namespace: "cache",
+                            read_timeout: 0.2,
+                            write_timeout: 0.2,
+                            reconnect_attempts: 1,
+                            error_handler: lambda do |method:, _returning:, exception:|
+                              Sentry.capture_exception(exception, tags: { method: method })
+                            end
+                          }]
+                       end
 end
