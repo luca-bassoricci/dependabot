@@ -3,8 +3,8 @@
 class ApplicationService
   include ApplicationHelper
 
-  def self.call(*args)
-    new(*args).call
+  def self.call(*args, **kwargs)
+    new(*args, **kwargs).call
   end
 
   delegate :logger, to: :Rails
