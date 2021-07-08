@@ -8,11 +8,14 @@ class DependabotConfigContract < Dry::Validation::Contract
     required(:updates).array(:hash) do
       required(:"package-ecosystem").filled(:string)
       required(:directory).filled(:string)
-      required(:schedule).hash do
-        required(:interval).filled(:string)
 
-        optional(:time).value(:string)
-        optional(:timezone).value(:string)
+      unless AppConfig.standalone?
+        required(:schedule).hash do
+          required(:interval).filled(:string)
+
+          optional(:time).value(:string)
+          optional(:timezone).value(:string)
+        end
       end
 
       optional(:"commit-message").hash do
