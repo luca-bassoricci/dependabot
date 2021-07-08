@@ -16,9 +16,9 @@ updates:
       - dependency-name: rspec
         versions: ["3.x", "4.x"]
     reviewers:
-      - andrcuns
+      - john_smith
     assignees:
-      - andrcuns
+      - john_smith
     open-pull-requests-limit: 10
     labels:
       - dependency

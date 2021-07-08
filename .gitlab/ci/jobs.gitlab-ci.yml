@@ -25,8 +25,6 @@
   image:
     name: moby/buildkit:v0.8.3
     entrypoint: [""]
-  tags:
-    - docker
   variables:
     PUSH: "true"
   before_script:
@@ -201,7 +199,7 @@ variables:
     SETTINGS__GITLAB_ACCESS_TOKEN: e2e-test
     SETTINGS__STANDALONE: "true"
     SETTINGS__LOG_LEVEL: "debug"
-    RAILS_ENV: test
+    RAILS_ENV: production
     GIT_STRATEGY: none
   script:
     - cd /home/dependabot/app && bundle exec rake 'dependabot:update[test-repo,bundler,/]'
