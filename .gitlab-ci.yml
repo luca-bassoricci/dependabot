@@ -110,6 +110,7 @@ rspec:
 e2e:
   extends: .e2e
   needs:
+    - build-app-image
     - build-mock-image
   variables:
     SETTINGS__GITHUB_ACCESS_TOKEN: $GITHUB_ACCESS_TOKEN
