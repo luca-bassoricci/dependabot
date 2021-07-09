@@ -44,7 +44,7 @@ module Dependabot
           **branch_options(configuration),
           **commit_message_options(configuration),
           **filter_options(configuration),
-          cron: Cron::Schedule.call(**configuration[:schedule])
+          **schedule_options(configuration)
         }.compact
       end
     end
@@ -132,6 +132,16 @@ module Dependabot
         allow: transform_filter_options(opts[:allow]) || [{ dependency_type: "direct" }],
         ignore: transform_filter_options(opts[:ignore]) || []
       }
+    end
+
+    # Cron options
+    #
+    # @param [Hash<Symbol, Object>] opts
+    # @return [Hash<Symbol, String>]
+    def schedule_options(opts)
+      return {} unless opts[:schedule]
+
+      { cron: Cron::Schedule.call(**opts[:schedule]) }
     end
 
     # Transform key names
