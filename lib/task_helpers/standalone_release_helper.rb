@@ -18,6 +18,7 @@ class StandaloneReleaseHelper
 
   def update
     log(:info, "Updating dependabot-standalone image version")
+
     gitlab.edit_file(
       PROJECT,
       CI_FILE,
@@ -25,6 +26,7 @@ class StandaloneReleaseHelper
       updated_gitlab_ci,
       "dependency: Update dependabot-gitlab version to #{version}"
     )
+    gitlab.create_tag(PROJECT, version, "master")
   end
 
   private
