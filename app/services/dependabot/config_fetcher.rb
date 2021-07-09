@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module Dependabot
+  class MissingConfigurationError < StandardError; end
+
   class ConfigFetcher < ApplicationService
     # @param [String] project_name
     # @param [Boolean] update_cache
@@ -17,7 +19,15 @@ module Dependabot
     def call
       branch = AppConfig.config_branch || Gitlab::DefaultBranch.call(project_name)
       config = Rails.cache.fetch("#{project_name}-#{branch}-config", expires_in: 24.hours, force: update_cache) do
-        ConfigParser.call(Gitlab::Config::Fetcher.call(project_name, branch))
+        raw_config = Gitlab::Config::Fetcher.call(project_name, branch)
+        unless raw_config
+          raise(
+            MissingConfigurationError,
+            "#{AppConfig.config_filename} not present in #{project_name}'s branch #{branch}"
+          )
+        end
+
+        ConfigParser.call(raw_config)
       end
 
       find_by ? config_entry(config) : config
