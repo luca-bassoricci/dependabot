@@ -1,5 +1,45 @@
 # CHANGELOG
 
+## [v0.4.5 - 2021-07-09](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🔬 Improvements
+
+- option to override branch of dependabot.yml configuration file. See merge request dependabot-gitlab/dependabot!777 - (andrejs)
+- use memory cache for standalone mode. See merge request dependabot-gitlab/dependabot!776 - (andrejs)
+- remove schedule validation in dependabot.yml for standalone mode. See merge request dependabot-gitlab/dependabot!775 - (andrejs)
+
+### 🐞 Bug Fixes
+
+- Properly handle missing schedule key in dependabot.yml. See merge request dependabot-gitlab/dependabot!778 - (andrejs)
+- deprecation warning fixes. See merge request dependabot-gitlab/dependabot!773 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump sentry-sidekiq from 4.6.0 to 4.6.1. See merge request dependabot-gitlab/dependabot!772 - (andrejs)
+- bump sentry-ruby from 4.6.0 to 4.6.1. See merge request dependabot-gitlab/dependabot!771 - (andrejs)
+- bump sentry-rails from 4.6.0 to 4.6.1. See merge request dependabot-gitlab/dependabot!770 - (andrejs)
+- bump sentry-sidekiq, sentry-rails and sentry-ruby. See merge request dependabot-gitlab/dependabot!761 - (andrejs)
+
+### 📦🛠️ Development dependency updates
+
+- bump rubocop-performance from 1.11.3 to 1.11.4. See merge request dependabot-gitlab/dependabot!765 - (andrejs)
+- bump git from 1.8.1 to 1.9.1. See merge request dependabot-gitlab/dependabot!766 - (andrejs)
+- update ci helm, buildkit and ruby images. See merge request dependabot-gitlab/dependabot!768 - (andrejs)
+- bump rubocop from 1.18.2 to 1.18.3. See merge request dependabot-gitlab/dependabot!764 - (andrejs)
+- bump rubocop-rails from 2.11.0 to 2.11.2. See merge request dependabot-gitlab/dependabot!763 - (andrejs)
+- bump rubocop from 1.17.0 to 1.18.2. See merge request dependabot-gitlab/dependabot!762 - (andrejs)
+
+### 🛠️ Chore
+
+- tag dependabot-standalone version updates. See merge request dependabot-gitlab/dependabot!779 - (andrejs)
+- Update gitlab mock ruby base image. See merge request dependabot-gitlab/dependabot!774 - (andrejs)
+- add fallback to master-cache for docker builds. See merge request dependabot-gitlab/dependabot!769 - (andrejs)
+- remove private infrastructure usage. See merge request dependabot-gitlab/dependabot!767 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.4.4](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.4.4...v0.4.5)
+
 ## [v0.4.4 - 2021-07-02](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🔬 Improvements
