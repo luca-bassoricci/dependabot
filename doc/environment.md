@@ -9,6 +9,8 @@
 token set in gitlab webhook configuration will be ignored
 * `SETTINGS__DEPENDABOT_URL` - url application can be reached on, example: `https://dependabot-gitlab.com`. This url will be used to automatically
 add necessary webhooks to project
+* `SETTINGS__CONFIG_FILENAME` - custom configuration file location, default: `.gitlab/dependabot.yml`
+* `SETTINGS__CONFIG_BRANCH` - custom branch to fetch `dependabot.yml`, project default branch if not configured
 
 ## Private registry credentials
 
