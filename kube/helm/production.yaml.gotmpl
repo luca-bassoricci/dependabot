@@ -10,7 +10,7 @@ projects:
   - dependabot-gitlab/dependabot
   - dependabot-gitlab/dependency-test
 env:
-  sentryDsn: {{ requiredEnv "SENTRY_DSN" }}
+  sentryDsn: {{ requiredEnv "DEPENDABOT_SENTRY_DSN" }}
   dependabotUrl: {{ requiredEnv "DEPENDABOT_URL" }}
   commandsPrefix: "@dependabot-bot"
 credentials:
