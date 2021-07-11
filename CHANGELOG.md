@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## [v0.5.0 - 2021-07-11](https://gitlab.com/dependabot-gitlab/dependabot/-/releases) *BREAKING*
+
+### 🔬 Improvements
+
+- [BREAKING] check for unsupported keys in dependabot.yml. Closes #82. See merge request dependabot-gitlab/dependabot!781 - (andrejs)
+
+### 🐞 Bug Fixes
+
+- update handling of missing dependabot.yml config file. See merge request dependabot-gitlab/dependabot!780 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.4.5](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.4.5...v0.5.0)
+
 ## [v0.4.5 - 2021-07-09](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🔬 Improvements
