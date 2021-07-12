@@ -1,21 +1,5 @@
-ARG ZLIB_VERSION=1:1.2.11.dfsg-1
-ARG CA_CERTIFICATES_VERSION=20200601*
-ARG GNUPG_VERSION=2.2.12-1*
-ARG BUILD_ESSENTIAL_VERSION=12.6
-ARG READLINE_VERSION=7.0-5
-
 FROM debian:10.10-slim as buster
 FROM buster as ruby-install
-
-ARG ZLIB_VERSION
-ARG CA_CERTIFICATES_VERSION
-ARG GNUPG_VERSION
-ARG BUILD_ESSENTIAL_VERSION
-ARG READLINE_VERSION
-
-ARG LIBFFI_VERSION=3.2.1-9
-ARG CURL_VERSION=7.64.0-4*
-ARG OPENSSL_VERSION=1.1.1d-0*
 
 ARG RUBY_MINOR_VERSION=2.7
 ARG RUBY_VERSION=2.7.3
@@ -29,13 +13,13 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN set -eux; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
-      build-essential=${BUILD_ESSENTIAL_VERSION} \
-      libffi-dev=${LIBFFI_VERSION} \
-      zlib1g-dev=${ZLIB_VERSION} \
-      curl=${CURL_VERSION} \
-      ca-certificates=${CA_CERTIFICATES_VERSION} \
-      libssl-dev=${OPENSSL_VERSION} \
-      libreadline-dev=${READLINE_VERSION}; \
+      build-essential \
+      libffi-dev \
+      zlib1g-dev \
+      curl \
+      ca-certificates \
+      libssl-dev \
+      libreadline-dev; \
     rm -rf /var/lib/apt/lists/*
 
 # Set environment
@@ -76,15 +60,6 @@ RUN set -eux; \
 
 FROM buster
 
-ARG BUILD_ESSENTIAL_VERSION
-ARG ZLIB_VERSION
-ARG CA_CERTIFICATES_VERSION
-ARG GNUPG_VERSION
-ARG READLINE_VERSION
-
-ARG SSH_CLIENT=1:7.9p1*
-ARG GIT_VERSION=1:2.20.1-2*
-
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Set environment
@@ -97,13 +72,14 @@ ENV BUNDLE_SILENCE_ROOT_WARNING=1
 RUN set -eux; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
-      build-essential=${BUILD_ESSENTIAL_VERSION} \
-      git=${GIT_VERSION} \
-      zlib1g-dev=${ZLIB_VERSION} \
-      ca-certificates=${CA_CERTIFICATES_VERSION} \
-      gnupg2=${GNUPG_VERSION} \
-      libreadline-dev=${READLINE_VERSION} \
-      openssh-client=${SSH_CLIENT}; \
+      build-essential \
+      curl \
+      git \
+      zlib1g-dev \
+      ca-certificates \
+      gnupg2 \
+      libreadline-dev \
+      openssh-client; \
     rm -rf /var/lib/apt/lists/* /tmp/*
 
 COPY --from=ruby-install /usr/local/ruby /usr/local/ruby
