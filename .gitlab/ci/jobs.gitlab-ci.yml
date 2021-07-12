@@ -235,6 +235,7 @@ variables:
   variables:
     CURRENT_TAG: 2.7.3-buster-$CI_COMMIT_SHORT_SHA
     LATEST_TAG: 2.7.3-buster-latest
+    PUSH: "true"
 
 .gitlab_release:
   stage: release
