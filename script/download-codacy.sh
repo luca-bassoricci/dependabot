@@ -6,7 +6,10 @@ set -e
 
 EXECUTABLE="codacy-coverage-reporter-${CODACY_VERSION}"
 
-[ -f "$EXECUTABLE" ] && exit
+if [ -f "$EXECUTABLE" ]; then
+  echo "$EXECUTABLE is already present"
+  exit
+fi
 
-curl -Ls -o "$EXECUTABLE" "https://dl.bintray.com/codacy/Binaries/${CODACY_VERSION}/codacy-coverage-reporter-linux"
+curl -L -o "$EXECUTABLE" "https://github.com/codacy/codacy-coverage-reporter/releases/download/${CODACY_VERSION}/codacy-coverage-reporter-linux"
 chmod +x "$EXECUTABLE"

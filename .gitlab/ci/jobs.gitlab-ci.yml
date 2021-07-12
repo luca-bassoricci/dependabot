@@ -1,6 +1,20 @@
 # ======================================================================================================================
 # Runners
 # ======================================================================================================================
+.gem_cache: &gem_cache
+  key:
+    files:
+      - Gemfile.lock
+  paths:
+    - vendor/bundle
+  policy: pull
+
+.codacy_cache: &codacy_cache
+  key: codacy-coverage-reporter-$CODACY_VERSION
+  paths:
+    - codacy-coverage-reporter-$CODACY_VERSION
+  policy: pull
+
 .ruby_runner:
   image: registry.gitlab.com/dependabot-gitlab/dependabot/ruby:2.7.3-buster-latest
   variables:
@@ -10,13 +24,7 @@
   before_script:
     - bundle install
   cache:
-    key:
-      files:
-        - Gemfile.lock
-    paths:
-      - vendor/bundle
-      - codacy-coverage-reporter-$CODACY_VERSION
-    policy: pull
+    - *gem_cache
 
 .deploy_runner:
   image: quay.io/roboll/helmfile:helm3-v0.139.9
@@ -55,7 +63,7 @@ stages:
 variables:
   CURRENT_TAG: $CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
   LATEST_TAG: $CI_COMMIT_REF_SLUG-latest
-  CODACY_VERSION: "12.1.7"
+  CODACY_VERSION: "12.2.0"
   DEPENDENCY_SCANNING_DISABLED: "true"
   SAST_DISABLED: "true"
   CONTAINER_SCANNING_DISABLED: "true"
@@ -69,7 +77,10 @@ variables:
   script:
     - ./script/download-codacy.sh
   cache:
-    policy: pull-push
+    - <<: *gem_cache
+      policy: pull-push
+    - <<: *codacy_cache
+      policy: pull-push
 
 .build_app_image:
   stage: .pre
@@ -143,6 +154,9 @@ variables:
     - bundle exec rspec --format documentation --format RspecJunitFormatter --out tmp/rspec.xml
   after_script:
     - ./codacy-coverage-reporter-$CODACY_VERSION report -r coverage/coverage.xml
+  cache:
+    - *gem_cache
+    - *codacy_cache
   artifacts:
     reports:
       cobertura: coverage/coverage.xml
