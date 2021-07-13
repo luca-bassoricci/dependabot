@@ -41,7 +41,7 @@ describe Dependabot::MergeRequestRecreator, epic: :services, feature: :dependabo
   end
 
   it "recreates merge request" do
-    described_class.call(repo, mr.iid)
+    described_class.call(project_name: repo, mr_iid: mr.iid)
 
     expect(Dependabot::MergeRequestService).to have_received(:call).with(
       project: project,
