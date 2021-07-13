@@ -18,10 +18,11 @@ class MergeRequestRecreationJob < ApplicationJob
     @discussion_id = discussion_id
 
     reply_status(":warning: `dependabot` is recreating merge request. All changes will be overwritten! :warning:")
-    Dependabot::MergeRequestRecreator.call(project_name, mr_iid)
+    Dependabot::MergeRequestRecreator.call(project_name: project_name, mr_iid: mr_iid)
     reply_status(":white_check_mark: `dependabot` successfuly recreated merge request!")
   rescue StandardError => e
-    reply_status(":x: `dependabot` failed recreating merge request.\n`#{e.message}`")
+    log_error(e)
+    reply_status(":x: `dependabot` failed recreating merge request.\n\n```#{e.message}```")
   end
 
   private

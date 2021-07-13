@@ -18,7 +18,7 @@ describe MergeRequestRecreationJob, epic: :jobs do
     it "performs enqued job" do
       perform_enqueued_jobs { job.perform_later(project_name, mr_iid, discussion_id) }
 
-      expect(Dependabot::MergeRequestRecreator).to have_received(:call).with(project_name, mr_iid)
+      expect(Dependabot::MergeRequestRecreator).to have_received(:call).with(project_name: project_name, mr_iid: mr_iid)
     end
 
     it "notifies recreate in progress" do
@@ -54,7 +54,7 @@ describe MergeRequestRecreationJob, epic: :jobs do
         project_name: project_name,
         mr_iid: mr_iid,
         discussion_id: discussion_id,
-        note: ":x: `dependabot` failed recreating merge request.\n`error message`"
+        note: ":x: `dependabot` failed recreating merge request.\n\n```error message```"
       )
     end
   end

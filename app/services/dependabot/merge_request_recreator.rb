@@ -3,7 +3,7 @@
 module Dependabot
   # :reek:InstanceVariableAssumption
   class MergeRequestRecreator < ApplicationService
-    def initialize(project_name, mr_iid)
+    def initialize(project_name:, mr_iid:)
       @project_name = project_name
       @mr_iid = mr_iid
     end
