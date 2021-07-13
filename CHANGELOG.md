@@ -1,5 +1,31 @@
 # CHANGELOG
 
+## [v0.5.1 - 2021-07-13](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🐞 Bug Fixes
+
+- remove duplicate error message. See merge request dependabot-gitlab/dependabot!793 - (andrejs)
+- update incorrect error message reply when trying to recreate up to date mr. See merge request dependabot-gitlab/dependabot!791 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump dependabot-omnibus from 0.156.4 to 0.156.5. See merge request dependabot-gitlab/dependabot!784 - (andrejs)
+
+### 📦🛠️ Development dependency updates
+
+- bump solargraph from 0.42.3 to 0.42.4. See merge request dependabot-gitlab/dependabot!785 - (andrejs)
+- bump rubocop-rails from 2.11.2 to 2.11.3. See merge request dependabot-gitlab/dependabot!782 - (andrejs)
+
+### 🛠️ Chore
+
+- add code quality job. See merge request dependabot-gitlab/dependabot!789 - (andrejs)
+- improve ci cache. See merge request dependabot-gitlab/dependabot!787 - (andrejs)
+- simplify ci ruby image. See merge request dependabot-gitlab/dependabot!788 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.5.0](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.5.0...v0.5.1)
+
 ## [v0.5.0 - 2021-07-11](https://gitlab.com/dependabot-gitlab/dependabot/-/releases) *BREAKING*
 
 ### 🔬 Improvements
