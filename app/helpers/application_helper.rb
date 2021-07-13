@@ -14,8 +14,8 @@ module ApplicationHelper
   # @return [void]
   def log_error(error)
     Rails.logger.tap do |logger|
-      logger.error { "#{error}: #{error.message}" }
-      logger.debug { error.backtrace&.join("\n") }
+      logger.error { error.message }
+      logger.debug { error.backtrace.join("\n") } if error.backtrace
     end
   end
 
