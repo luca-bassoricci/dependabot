@@ -34,27 +34,26 @@
   - Gemfile
   - Gemfile.lock
 
+# Main rule
+.main: &main
+  - *mr
+  - *master
+  - *release
+
 # ======================================================================================================================
 include:
-  - template: Dependency-Scanning.gitlab-ci.yml
-  - template: Security/SAST.gitlab-ci.yml
-  - template: Container-Scanning.gitlab-ci.yml
   - local: .gitlab/ci/jobs.gitlab-ci.yml
-
-workflow:
-  rules:
-    - *mr
-    - *master
-    - *release
 
 # ======================================================================================================================
 # Pre Stage
 # ======================================================================================================================
 cache-dependencies:
   extends: .cache_dependencies
+  rules: *main
 
 build-app-image:
   extends: .build_app_image
+  rules: *main
 
 build-mock-image:
   extends: .build_mock_image
@@ -77,15 +76,19 @@ build-ruby-image:
 # ======================================================================================================================
 rubocop:
   extends: .rubocop
+  rules: *main
 
 reek:
   extends: .reek
+  rules: *main
 
 brakeman:
   extends: .brakeman
+  rules: *main
 
 bundle-audit:
   extends: .bundle_audit
+  rules: *main
 
 dependency-scan:
   extends: .dependency_scan
@@ -101,11 +104,23 @@ container-scan:
     - <<: *mr
       changes: *docker_changes
 
+code-quality:
+  extends: .code_quality
+  rules:
+    - *master
+    - *mr
+
 # ======================================================================================================================
 # Test Stage
 # ======================================================================================================================
 rspec:
   extends: .rspec
+  needs:
+    - reek
+    - rubocop
+    - brakeman
+    - bundle-audit
+  rules: *main
 
 e2e:
   extends: .e2e
@@ -126,16 +141,19 @@ coverage-line:
   extends: .coverage_line
   needs:
     - rspec
+  rules: *main
 
 coverage-branch:
   extends: .coverage_branch
   needs:
     - rspec
+  rules: *main
 
 publish-allure-reports:
   extends: .allure_report
   needs:
     - rspec
+  rules: *main
 
 # ======================================================================================================================
 # Release Stage
