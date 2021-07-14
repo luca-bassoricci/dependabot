@@ -5,11 +5,12 @@ module Dependabot
     # @param [Array<Dependabot::DependencyFile>] dependency_files
     # @param [Dependabot::Source] source
     # @param [String] package_manager
-    def initialize(dependency_files:, source:, package_manager:, repo_contents_path:)
+    def initialize(dependency_files:, source:, package_manager:, repo_contents_path:, reject_external_code:)
       @dependency_files = dependency_files
       @source = source
       @package_manager = package_manager
       @repo_contents_path = repo_contents_path
+      @reject_external_code = reject_external_code
     end
 
     # Get parsed dependencies from files
@@ -20,12 +21,17 @@ module Dependabot
         dependency_files: dependency_files,
         source: source,
         credentials: Credentials.call,
-        repo_contents_path: repo_contents_path
+        repo_contents_path: repo_contents_path,
+        reject_external_code: reject_external_code
       ).parse
     end
 
     private
 
-    attr_reader :dependency_files, :source, :package_manager, :repo_contents_path
+    attr_reader :dependency_files,
+                :source,
+                :package_manager,
+                :repo_contents_path,
+                :reject_external_code
   end
 end

@@ -36,7 +36,7 @@ describe Dependabot::UpdateChecker, epic: :services, feature: :dependabot do
     args = {
       dependency: dependency,
       dependency_files: fetcher.files,
-      credentials: Dependabot::Credentials.call
+      credentials: [*Dependabot::Credentials.call, *dependabot_config.first[:registries]]
     }
     args[:requirements_update_strategy] = versioning_strategy if versioning_strategy != :lockfile_only
     args

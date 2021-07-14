@@ -58,8 +58,9 @@ module Dependabot
       @dependencies ||= Dependabot::FileParser.call(
         source: fetcher.source,
         dependency_files: fetcher.files,
+        repo_contents_path: repo_contents_path,
         package_manager: config[:package_manager],
-        repo_contents_path: repo_contents_path
+        reject_external_code: config[:reject_external_code]
       )
     end
 

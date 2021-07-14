@@ -9,7 +9,8 @@ describe Dependabot::FileParser, epic: :services, feature: :dependabot do
     {
       dependency_files: fetcher.files,
       source: source,
-      repo_contents_path: nil
+      repo_contents_path: nil,
+      reject_external_code: true
     }
   end
 
