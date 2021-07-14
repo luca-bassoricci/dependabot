@@ -59,8 +59,7 @@ module Dependabot
         source: fetcher.source,
         dependency_files: fetcher.files,
         repo_contents_path: repo_contents_path,
-        package_manager: config[:package_manager],
-        reject_external_code: config[:reject_external_code]
+        config: config
       )
     end
 
