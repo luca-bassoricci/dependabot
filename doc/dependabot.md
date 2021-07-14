@@ -23,6 +23,13 @@ To [authenticate](https://docs.gitlab.com/ee/user/packages/maven_repository/#aut
 
 If it is required to use packages from different project package registries, make sure that gitlab access token has access to these projects as well.
 
+## schedule
+
+Unlike [github native](https://docs.github.com/en/code-security/supply-chain-security/keeping-your-dependencies-updated-automatically/configuration-options-for-dependency-updates#scheduleinterval), `schedule.interval` supports 2 different daily interval types:
+
+* `daily` - runs every day
+* `weekday` - runs on weekdays, Mon-Fri
+
 ## allow/ignore
 
 Multiple global allow options will be combined. Following options will result in updating only direct production dependencies:
