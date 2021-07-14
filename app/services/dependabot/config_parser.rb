@@ -6,11 +6,12 @@ module Dependabot
   class InvalidConfigurationError < StandardError
     def self.format(result)
       result.errors.group_by(&:path).map do |path, messages|
-        "#{path.drop(1).join('.')}: #{messages.map(&:text).join('; ')}"
+        "key '#{path.join('.')}' #{messages.map(&:dump).join('; ')}"
       end.join("\n")
     end
   end
 
+  # rubocop:disable Metrics/ClassLength
   class ConfigParser < ApplicationService
     # @return [Hash<String, String>]
     PACKAGE_ECOSYSTEM_MAPPING = {
@@ -36,10 +37,13 @@ module Dependabot
     #
     # @return [Array<Hash>]
     def call
-      validate_config
+      validate_dependabot_config(DependabotConfigContract, yml)
+      validate_dependabot_config(UpdatesConfigContract, { updates: yml[:updates] })
 
       yml[:updates].map do |configuration|
         {
+          **registries_options(configuration),
+          **insecure_code_execution_options(configuration),
           **general_options(configuration),
           **branch_options(configuration),
           **commit_message_options(configuration),
@@ -54,8 +58,13 @@ module Dependabot
     # @return [String] dependabot configuration file
     attr_reader :config
 
-    def validate_config
-      result = DependabotConfigContract.new.call(yml)
+    # Validate config schema
+    #
+    # @param [Dry::Validation::Contract] contract
+    # @param [Hash] config
+    # @return [void]
+    def validate_dependabot_config(contract, conf)
+      result = contract.new.call(conf)
       return if result.success?
 
       raise(InvalidConfigurationError, InvalidConfigurationError.format(result))
@@ -66,6 +75,31 @@ module Dependabot
     # @return [Hash<Symbol, Object>]
     def yml
       @yml ||= YAML.safe_load(config, symbolize_names: true)
+    end
+
+    # Allowed registries options
+    #
+    # @param [Hash] opts
+    # @return [Array<Hash>]
+    def registries_options(opts)
+      allowed = opts[:registries] || "*"
+      defined_registries = yml[:registries] || {}
+      registries = allowed == "*" ? defined_registries.values : allowed.map { |reg| defined_registries[reg.to_sym] }
+
+      {
+        registries: RegistriesParser.call(registries: registries)
+      }
+    end
+
+    # Insecure code execution options
+    #
+    # @param [Hash] opts
+    # @return [Hash]
+    def insecure_code_execution_options(opts)
+      ext_execution = opts[:"insecure-external-code-execution"]
+      return { reject_external_code: true } if yml[:registries] && ext_execution.nil?
+
+      { reject_external_code: ext_execution.nil? ? false : ext_execution != "allow" }
     end
 
     # Branch related options
@@ -167,4 +201,5 @@ module Dependabot
       end
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end

@@ -9,6 +9,9 @@ detectors:
   FeatureEnvy:
     enabled: false
 
+  NilCheck:
+    enabled: false
+
   NestedIterators:
     max_allowed_nesting: 2
     ignore_iterators:

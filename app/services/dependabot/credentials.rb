@@ -17,11 +17,8 @@ module Dependabot
     def credentials
       [
         github_credentials,
-        gitlab_credentials,
-        maven_credentials,
-        docker_credentials,
-        npm_registry
-      ].flatten.compact
+        gitlab_credentials
+      ].compact
     end
 
     private
@@ -54,47 +51,6 @@ module Dependabot
         "username" => "x-access-token",
         "password" => CredentialsConfig.gitlab_access_token
       }
-    end
-
-    # Get maven repository credentials
-    #
-    # @return [Hash]
-    def maven_credentials
-      CredentialsConfig.maven_repos&.map do |repository|
-        {
-          "type" => "maven_repository",
-          "url" => repository["url"],
-          "username" => repository["username"],
-          "password" => repository["password"]
-        }.compact
-      end
-    end
-
-    # Get docker registry credentials
-    #
-    # @return [Hash]
-    def docker_credentials
-      CredentialsConfig.docker_registries&.map do |registry|
-        {
-          "type" => "docker_registry",
-          "registry" => registry["registry"],
-          "username" => registry["username"],
-          "password" => registry["password"]
-        }
-      end
-    end
-
-    # Get npm registry credentials
-    #
-    # @return [Hash]
-    def npm_registry
-      CredentialsConfig.npm_registries&.map do |registry|
-        {
-          "type" => "npm_registry",
-          "registry" => registry["registry"],
-          "token" => registry["token"]
-        }
-      end
     end
   end
 end

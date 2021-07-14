@@ -78,16 +78,25 @@ RSpec.shared_context("with dependabot helper") do
         cron: "00 02 * * sun Europe/Riga",
         branch_name_separator: "-",
         branch_name_prefix: "dependabot",
+        allow: allow_conf,
+        ignore: ignore_conf,
+        rebase_strategy: "auto",
+        auto_merge: true,
+        versioning_strategy: :lockfile_only,
+        reject_external_code: true,
         commit_message_options: {
           prefix: "dep",
           prefix_development: "bundler-dev",
           include_scope: "scope"
         },
-        allow: allow_conf,
-        ignore: ignore_conf,
-        rebase_strategy: "auto",
-        auto_merge: true,
-        versioning_strategy: :lockfile_only
+        registries: [
+          {
+            "type" => "docker_registry",
+            "registry" => "https://registry.hub.docker.com",
+            "username" => "octocat",
+            "password" => "password"
+          }
+        ]
       }
     ]
   end

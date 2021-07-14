@@ -30,7 +30,7 @@ describe Dependabot::ProjectCreator, integration: true, epic: :services, feature
         saved_project = Project.find_by(name: repo)
         aggregate_failures do
           expect(saved_project.name).to eq(repo)
-          expect(saved_project.symbolized_config).to eq(dependabot_config)
+          expect(saved_project.symbolized_config).to eq(dependabot_config.map(&:deep_symbolize_keys))
           expect(saved_project.webhook_id).to eq(hook_id)
         end
       end
@@ -43,7 +43,7 @@ describe Dependabot::ProjectCreator, integration: true, epic: :services, feature
 
         described_class.call(repo)
         aggregate_failures do
-          expect(project.reload.symbolized_config).to eq(dependabot_config)
+          expect(project.reload.symbolized_config).to eq(dependabot_config.map(&:deep_symbolize_keys))
           expect(Gitlab::Hooks::Updater).to have_received(:call).with(repo, branch, hook_id)
           expect(Gitlab::Hooks::Creator).not_to have_received(:call)
           expect(Gitlab::Hooks::Finder).not_to have_received(:call)
@@ -55,7 +55,7 @@ describe Dependabot::ProjectCreator, integration: true, epic: :services, feature
 
         described_class.call(repo)
         aggregate_failures do
-          expect(project.reload.symbolized_config).to eq(dependabot_config)
+          expect(project.reload.symbolized_config).to eq(dependabot_config.map(&:deep_symbolize_keys))
           expect(Gitlab::Hooks::Updater).to have_received(:call).with(repo, branch, hook_id)
           expect(Gitlab::Hooks::Creator).not_to have_received(:call)
         end

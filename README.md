@@ -83,10 +83,11 @@ Make sure `dependabot url` property is not set, so same project doesn't end up w
 ## dependabot.yml
 
 Repository must contain `.gitlab/dependabot.yml` configuration for dependabot updates to work.
-Most of the options are ported and function the same way as in Github documentation.
+`dependabot-gitlab` strives to achieve parity with all possible Github native options.
+Some of the options can have slightly different behavior which is described in the documentation linked below.
 
 * Github documentation: [configuration options](https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates)
-* Additional `dependabot-gitlab` options: [configuration options](doc/dependabot.md)
+* Additional `dependabot-gitlab` specific options: [configuration options](doc/dependabot.md)
 
 # Adding projects
 
