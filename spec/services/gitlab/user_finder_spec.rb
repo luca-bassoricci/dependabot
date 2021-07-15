@@ -25,7 +25,7 @@ describe Gitlab::UserFinder, epic: :services, feature: :gitlab do
   context "with non existing user" do
     let(:usernames) { %w[non-existing] }
 
-    it "returns array with ids" do
+    it "returns nil" do
       expect(user_finder_return).to be_nil
     end
   end
