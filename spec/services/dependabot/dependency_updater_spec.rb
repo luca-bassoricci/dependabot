@@ -32,9 +32,8 @@ describe Dependabot::DependencyUpdater, epic: :services, feature: :dependabot do
       .with(
         source: fetcher.source,
         dependency_files: fetcher.files,
-        package_manager: package_manager,
         repo_contents_path: repo_contents_path,
-        reject_external_code: true
+        config: config
       )
       .and_return([dependency])
     allow(Dependabot::UpdateChecker).to receive(:call)
