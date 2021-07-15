@@ -1,5 +1,41 @@
 # CHANGELOG
 
+## [v0.6.0 - 2021-07-15](https://gitlab.com/dependabot-gitlab/dependabot/-/releases) *BREAKING*
+
+## BREAKING CHANGES
+
+Registries configuration is moved to dependabot.yml. [documentation](doc/dependabot.md#registries) file.
+If registries configuration is present, option [insecure-external-code-execution](https://docs.github.com/en/code-security/supply-chain-security/keeping-your-dependencies-updated-automatically/configuration-options-for-dependency-updates#insecure-external-code-execution) has to be explicitly set to `allow` in order to allow for external code execution for certain package managers.
+
+### 🚀 New features
+
+- [BREAKING] implement registry configuration via dependabot.yml file. Closes #96 and #89. See merge request dependabot-gitlab/dependabot!783 - (andrejs)
+
+### 🔬 Improvements
+
+- add custom error message for unexpected external code error. See merge request dependabot-gitlab/dependabot!798 - (andrejs)
+- add weekday option to schedule configuration. Closes #97. See merge request dependabot-gitlab/dependabot!794 - (andrejs)
+
+### 🐞 Bug Fixes
+
+- pass registries to file_parser. See merge request dependabot-gitlab/dependabot!797 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump dependabot-omnibus from 0.156.5 to 0.156.8. See merge request dependabot-gitlab/dependabot!799 - (andrejs)
+
+### 📦🛠️ Development dependency updates
+
+- bump allure-rspec from 2.14.1 to 2.14.2. See merge request dependabot-gitlab/dependabot!800 - (andrejs)
+
+### 🛠️ Chore
+
+- bump helm chart version. See merge request dependabot-gitlab/dependabot!795 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.5.1](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.5.1...v0.6.0)
+
 ## [v0.5.1 - 2021-07-13](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🐞 Bug Fixes
