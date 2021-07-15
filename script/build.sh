@@ -22,7 +22,6 @@ buildctl-daemonless.sh build \
   --local dockerfile="$DOCKER_CONTEXT" \
   --opt build-arg:COMMIT_SHA="$CI_COMMIT_SHA" \
   --opt build-arg:PROJECT_URL="$CI_PROJECT_URL" \
-  --import-cache type=registry,ref="$CACHE:master-latest" \
   --import-cache type=registry,ref="$CACHE:$LATEST_TAG" \
   --export-cache type=registry,mode=max,ref="$CACHE:$LATEST_TAG" \
   --output type=image,\"name="$IMAGE:$CURRENT_TAG,$IMAGE:$LATEST_TAG"\",push="$PUSH"
