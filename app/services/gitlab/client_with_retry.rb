@@ -4,9 +4,12 @@ module Gitlab
   class ClientWithRetry
     RETRYABLE_ERRORS = [
       # gitlab might often fail to accept mr due to pipeline not starting fast enough
+      Gitlab::Error::MethodNotAllowed,
       Gitlab::Error::NotAcceptable,
       Gitlab::Error::BadGateway
     ].freeze
+
+    delegate :log, to: :ApplicationHelper
 
     def initialize
       @max_retries = 2
@@ -35,8 +38,10 @@ module Gitlab
 
       begin
         yield
-      rescue *RETRYABLE_ERRORS
+      rescue *RETRYABLE_ERRORS => e
         retry_attempt += 1
+
+        log(:warn, "Gitlab request failed with: '#{e}'. Retrying...")
         retry_attempt <= @max_retries ? retry : raise
       end
     end
