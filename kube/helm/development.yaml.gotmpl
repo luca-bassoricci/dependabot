@@ -11,15 +11,7 @@ credentials:
   gitlab_auth_token: {{ requiredEnv "GITLAB_HOOKS_AUTH_TOKEN" }}
 registriesCredentials:
   DOCKERHUB_TOKEN: test-token
-redis:
-  usePassword: true
-  password: {{ requiredEnv "REDIS_PASSWORD" }}
 mongodb:
-  auth:
-    rootPassword: {{ requiredEnv "MONGODB_ROOT_PASSWORD" }}
-    password: {{ requiredEnv "MONGODB_PASSWORD" }}
-    username: dependabot
-    database: dependabot
   strategyType: Recreate
 env:
   commandsPrefix: "@dependabot-bot"

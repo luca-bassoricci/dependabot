@@ -20,8 +20,9 @@ credentials:
 registriesCredentials:
   GITLAB_DOCKER_REGISTRY_TOKEN: {{ requiredEnv "GITLAB_DOCKER_REGISTRY_TOKEN" }}
 redis:
-  usePassword: true
-  password: {{ requiredEnv "REDIS_PASSWORD" }}
+  auth:
+    usePassword: true
+    password: {{ requiredEnv "REDIS_PASSWORD" }}
 mongodb:
   auth:
     rootPassword: {{ requiredEnv "MONGODB_ROOT_PASSWORD" }}
