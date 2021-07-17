@@ -106,15 +106,43 @@ Endpoint `api/project` can receive POST request with json `{"project":"dependabo
 
 ### Rake task
 
-`dependabot:register[project]` - manually register repository where `project` is repository name with namespace, ex: `dependabot-gitlab/dependabot`, repository must have valid dependabot config file
+[register](#register) rake task
 
 # Rake tasks
 
-Additional rake tasks exist for manual interaction with dependency updates
+## register
 
-`dependabot:update[project,package_manager,directory]` - trigger dependency update where `project` is repository full name and `package_manager` is `package_ecosystem` parameter like `bundler` and directory is path where dependency files are stored, usually `/`
+Manually register project for updates. Repository must have valid dependabot config file
+
+```shell
+bundle exec rake 'dependabot:register[project]'
+```
+
+`project` - project full path, example: `dependabot-gitlab/dependabot`
+
+## update
+
+Trigger dependency update for single project and single package managed
+
+  ```shell
+  bundle exec rake 'dependabot:update[project,package_ecosystem,directory]'
+  ```
+
+* `project` - project full path, example: `dependabot-gitlab/dependabot`
+* `package_manager` - `package-ecosystem` parameter like `bundler`
+* `directory` - directory is path where dependency files are stored, usually `/`
 
 This task is used to provide standalone use capability
+
+## validate
+
+Validate `dependabot.yml` configuration file
+
+```shell
+bundle exec rake 'dependabot:validate[project]'
+```
+
+`project` - project full path, example: `dependabot-gitlab/dependabot`
 
 # UI
 

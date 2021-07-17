@@ -20,6 +20,17 @@ namespace :dependabot do # rubocop:disable Metrics/BlockLength
     end
   end
 
+  desc "validate config file"
+  task(:validate, [:project] => :environment) do |_task, args|
+    ApplicationHelper.log(:info, "Validating config '#{AppConfig.config_filename}'")
+    Dependabot::ConfigFetcher.call(args[:project], update_cache: true)
+
+    ApplicationHelper.log(:info, "Configuration is valid")
+  rescue Dependabot::InvalidConfigurationError => e
+    ApplicationHelper.log(:error, "Configuration not valid: #{e}")
+    exit(1)
+  end
+
   desc "worker healthcheck"
   task(check_sidekiq: :environment) do
     ApplicationHelper.log(:debug, "Checking if sidekiq is operational.", "Healthcheck")
