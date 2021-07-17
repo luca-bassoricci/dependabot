@@ -46,10 +46,10 @@ class UpdatesConfigContract < Dry::Validation::Contract
       end
 
       optional(:registries) { filled? > array? | eql?("*") }
-      optional(:assignees).filled(:array)
-      optional(:reviewers).filled(:array)
+      optional(:assignees).array(:str?)
+      optional(:reviewers).array(:str?)
       optional(:labels).array(:str?)
-      optional(:milestone).value(:string)
+      optional(:milestone).filled(:string)
       optional(:vendor).filled(:bool?)
       optional(:"open-pull-requests-limit").filled(:integer)
       optional(:"rebase-strategy").filled(:string)
