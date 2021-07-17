@@ -129,7 +129,7 @@ Trigger dependency update for single project and single package managed
   ```
 
 * `project` - project full path, example: `dependabot-gitlab/dependabot`
-* `package_manager` - `package-ecosystem` parameter like `bundler`
+* `package_ecosystem` - `package-ecosystem` parameter like `bundler`
 * `directory` - directory is path where dependency files are stored, usually `/`
 
 This task is used to provide standalone use capability
