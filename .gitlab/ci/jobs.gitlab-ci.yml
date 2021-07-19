@@ -43,7 +43,7 @@ include:
     - docker
   variables:
     PUSH: "true"
-    CACHE_FALLBACK_KEY: $CI_JOB_NAME-$CI_DEFAULT_BRANCH
+    CACHE_FALLBACK_KEY: $CI_JOB_NAME-$CI_DEFAULT_BRANCH-2
     BUILDKIT_CACHE_PATH: buildkit-cache
   cache:
     key: $CI_JOB_NAME-$CI_COMMIT_REF_SLUG
