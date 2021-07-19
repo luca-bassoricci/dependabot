@@ -43,6 +43,12 @@ include:
     - docker
   variables:
     PUSH: "true"
+    CACHE_FALLBACK_KEY: $CI_JOB_NAME-$CI_DEFAULT_BRANCH
+    BUILDKIT_CACHE_PATH: buildkit-cache
+  cache:
+    key: $CI_JOB_NAME-$CI_COMMIT_REF_SLUG
+    paths:
+      - $BUILDKIT_CACHE_PATH
   before_script:
     - mkdir -p $HOME/.docker
     - |
