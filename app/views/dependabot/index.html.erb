@@ -48,6 +48,7 @@
           <th>Job description</th>
           <th>Cron</th>
           <th>Last execution</th>
+          <th>Last execution errors</th>
         </tr>
       </thead>
 
@@ -58,6 +59,7 @@
             <td><%= job.description %></td>
             <td><%= job.cron %></td>
             <td><%= job.last_enqueue_time %></td>
+            <td><%= errors(job) %></td>
           </tr>
         <% end %>
       </tbody>

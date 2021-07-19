@@ -12,4 +12,10 @@ module DependabotHelper
 
     Rails.root.join("tmp", "repo-contents", project_name, Time.zone.now.strftime("%d-%m-%Y-%H-%M-%S"))
   end
+
+  def errors(job)
+    JobErrors.find(name: execution_context_name(job.args.first)).to_json
+  rescue Mongoid::Errors::DocumentNotFound
+    nil
+  end
 end
