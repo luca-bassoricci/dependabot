@@ -22,7 +22,7 @@ class MergeRequestRecreationJob < ApplicationJob
     reply_status(":white_check_mark: `dependabot` successfuly recreated merge request!")
   rescue StandardError => e
     log_error(e)
-    reply_status(":x: `dependabot` failed recreating merge request.\n\n```#{e.message}```")
+    reply_status(":x: `dependabot` failed recreating merge request.\n\n```\n#{e.message}\n```")
   end
 
   private
