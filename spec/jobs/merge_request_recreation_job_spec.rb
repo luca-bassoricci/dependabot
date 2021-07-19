@@ -54,7 +54,7 @@ describe MergeRequestRecreationJob, epic: :jobs do
         project_name: project_name,
         mr_iid: mr_iid,
         discussion_id: discussion_id,
-        note: ":x: `dependabot` failed recreating merge request.\n\n```error message```"
+        note: ":x: `dependabot` failed recreating merge request.\n\n```\nerror message\n```"
       )
     end
   end
