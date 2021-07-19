@@ -19,6 +19,14 @@ module ApplicationHelper
     end
   end
 
+  # Save dependency update error
+  #
+  # @param [StandardError] error
+  # @return [void]
+  def capture_error(error)
+    UpdateFailures.call.save_error(error)
+  end
+
   # Log tagged message with dependency context
   #
   # @param [Symbol] level
@@ -27,7 +35,7 @@ module ApplicationHelper
   # @return [void]
   def log(level, message, tag = nil)
     logger = proc { Rails.logger.send(level, message) }
-    tags = [Thread.current[:context], tag].compact
+    tags = [execution_context, tag].compact
     tags.empty? ? logger.call : Rails.logger.tagged(tags, &logger)
   end
 
@@ -38,5 +46,27 @@ module ApplicationHelper
     Sidekiq::Cron::Job.all.select { |job| job.name.match?(/^#{project}:.*/) }
   end
 
-  module_function :gitlab, :log, :log_error
+  # Current execution context - project_name + package_ecosystem + directory
+  #
+  # @return [String]
+  def execution_context
+    Thread.current[:context]
+  end
+
+  # Get execution context name
+  #
+  # @param [Hash] job_args
+  # @return [String]
+  def execution_context_name(args)
+    context = args.values_at("project_name", "package_ecosystem", "directory")
+    context.pop if context.last == "/"
+
+    context.join("=>")
+  end
+
+  module_function :gitlab,
+                  :log,
+                  :log_error,
+                  :execution_context,
+                  :execution_context_name
 end

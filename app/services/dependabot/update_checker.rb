@@ -29,6 +29,7 @@ module Dependabot
       updated_dependency
     rescue StandardError => e
       log_error(e)
+      capture_error(e)
       nil
     end
 

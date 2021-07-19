@@ -11,8 +11,12 @@ class DependencyUpdateJob < ApplicationJob
   def perform(args)
     validate_args(args)
     save_job_context(args)
+    UpdateFailures.call.reset_errors
 
     Dependabot::UpdateService.call(args)
+  rescue StandardError => e
+    capture_error(e)
+    raise
   end
 
   # Validate arguments
