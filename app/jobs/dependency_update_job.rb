@@ -2,7 +2,8 @@
 
 class DependencyUpdateJob < ApplicationJob
   queue_as :default
-  sidekiq_options retry: 2
+
+  sidekiq_options retry: AppConfig.sidekiq_retry
 
   # Perform dependency updates and merge request creation
   #

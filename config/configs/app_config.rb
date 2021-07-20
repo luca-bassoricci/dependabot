@@ -9,5 +9,13 @@ class AppConfig < ApplicationConfig
               config_branch: nil,
               standalone: false,
               log_level: "info",
-              commands_prefix: "$dependabot"
+              commands_prefix: "$dependabot",
+              update_retry: 2
+
+  # Configurable sidekiq retry
+  #
+  # @return [Numeric, Boolean]
+  def sidekiq_retry
+    update_retry.is_a?(Numeric) ? update_retry : update_retry == "true"
+  end
 end
