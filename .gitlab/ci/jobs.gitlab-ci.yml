@@ -264,8 +264,8 @@ variables:
   stage: release
   extends: .build_ruby_image
   variables:
-    CURRENT_TAG: 2.7.3-buster-$CI_COMMIT_SHORT_SHA
-    LATEST_TAG: 2.7.3-buster-latest
+    CURRENT_TAG: 2.7.4-buster-$CI_COMMIT_SHORT_SHA
+    LATEST_TAG: 2.7.4-buster-latest
     PUSH: "true"
 
 .gitlab_release:
