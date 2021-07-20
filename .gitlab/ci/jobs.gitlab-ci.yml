@@ -37,18 +37,16 @@ include:
 
 .buildkit_runner:
   image:
-    name: moby/buildkit:v0.9.0-rootless
+    name: moby/buildkit:v0.9.0
     entrypoint: [""]
+  services:
+    - name: moby/buildkit:v0.9.0
+      alias: buildkit
+      command: ["--addr", "tcp://0.0.0.0:1234"]
   tags:
     - docker
   variables:
     PUSH: "true"
-    BUILDKIT_CACHE_PATH: buildkit-cache
-  cache:
-    key: $CI_JOB_NAME-$CI_COMMIT_REF_SLUG
-    paths:
-      - $BUILDKIT_CACHE_PATH
-  retry: 2
   before_script:
     - mkdir -p $HOME/.docker
     - |
