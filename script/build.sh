@@ -16,12 +16,12 @@ fi
 
 log "Building image: $IMAGE:$CURRENT_TAG"
 
-buildctl-daemonless.sh build \
+buildctl --addr tcp://buildkit:1234 build \
   --frontend=dockerfile.v0 \
   --local context="$DOCKER_CONTEXT" \
   --local dockerfile="$DOCKER_CONTEXT" \
   --opt build-arg:COMMIT_SHA="$CI_COMMIT_SHA" \
   --opt build-arg:PROJECT_URL="$CI_PROJECT_URL" \
-  --import-cache type=local,src="$BUILDKIT_CACHE_PATH" \
-  --export-cache type=local,mode=max,dest="$BUILDKIT_CACHE_PATH" \
+  --import-cache type=registry,ref="$CACHE:$LATEST_TAG" \
+  --export-cache type=registry,mode=max,ref="$CACHE:$LATEST_TAG" \
   --output type=image,\"name="$IMAGE:$CURRENT_TAG,$IMAGE:$LATEST_TAG"\",push="$PUSH"
