@@ -13,6 +13,7 @@ env:
   sentryDsn: {{ requiredEnv "DEPENDABOT_SENTRY_DSN" }}
   dependabotUrl: {{ requiredEnv "DEPENDABOT_URL" }}
   commandsPrefix: "@dependabot-bot"
+  updateRetry: "false"
 credentials:
     gitlab_access_token: {{ requiredEnv "GITLAB_ACCESS_TOKEN" }}
     github_access_token: {{ requiredEnv "GITHUB_ACCESS_TOKEN" }}
