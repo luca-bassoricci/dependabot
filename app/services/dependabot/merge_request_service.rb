@@ -68,7 +68,8 @@ module Dependabot
         state: "opened",
         auto_merge: config[:auto_merge],
         dependencies: current_dependencies_name,
-        main_dependency: name
+        main_dependency: name,
+        branch: source_branch
       )
 
       close_superseeded_mrs
@@ -79,9 +80,13 @@ module Dependabot
     # @return [void]
     def close_superseeded_mrs
       superseeded_mrs.each do |existing_mr|
-        Gitlab::MergeRequest::Closer.call(project.name, existing_mr.iid)
+        name = project.name
+
+        Gitlab::MergeRequest::Closer.call(name, existing_mr.iid)
+        Gitlab::BranchRemover.call(project.name, existing_mr.branch)
         Gitlab::MergeRequest::Commenter.call(
-          project.name, existing_mr.iid,
+          name,
+          existing_mr.iid,
           "This merge request has been superseeded by #{mr.web_url}"
         )
         existing_mr.update_attributes!(state: "closed")
