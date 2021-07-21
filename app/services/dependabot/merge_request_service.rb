@@ -44,17 +44,22 @@ module Dependabot
         updated_files: updated_files,
         config: config
       )
-      mr ? log(:info, "  created merge request: #{mr.web_url}") : log(:error, " failed to create merge request")
-      return if AppConfig.standalone? || !mr
+      log(:info, "  created merge request: #{mr.web_url}")
+      persist_mr
+    rescue Gitlab::Error => e # rescue in case mr is created but failed to add approvers/reviewers
+      raise unless mr
 
-      save_mr
-      close_superseeded_mrs
+      log_error(e)
+      capture_error(e)
+      persist_mr
     end
 
     # Persist merge request
     #
     # @return [void]
-    def save_mr
+    def persist_mr
+      return if AppConfig.standalone?
+
       MergeRequest.create!(
         project: project,
         iid: mr.iid,
@@ -65,6 +70,8 @@ module Dependabot
         dependencies: current_dependencies_name,
         main_dependency: name
       )
+
+      close_superseeded_mrs
     end
 
     # Close superseeded merge requests
