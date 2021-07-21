@@ -11,7 +11,7 @@ module Dependabot
     # Create or update mr's for dependencies
     #
     # @return [void]
-    def call
+    def call # rubocop:disable Metrics/MethodLength
       fetch_config
 
       Semaphore.synchronize do
@@ -19,14 +19,15 @@ module Dependabot
         update_dependencies
       end
     rescue Octokit::TooManyRequests
-      log(:error, "github API rate limit exceeded! See: https://developer.github.com/v3/#rate-limiting")
+      raise(<<~ERR)
+        github API rate limit exceeded! See: https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting
+      ERR
     rescue Dependabot::UnexpectedExternalCode
       raise(<<~ERR)
         Unexpected external code execution detected.
         Option 'insecure-external-code-execution' must be set to 'allow' for package_ecosystem '#{package_ecosystem}'
       ERR
     ensure
-      # TODO: See if it's possible to update core with pulling in to already cloned repo to not clone new copy each time
       FileUtils.rm_r(repo_contents_path, force: true, secure: true) if repo_contents_path
     end
 
