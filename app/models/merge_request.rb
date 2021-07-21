@@ -10,6 +10,7 @@ class MergeRequest
   field :auto_merge, type: Boolean
   field :dependencies, type: String
   field :main_dependency, type: String
+  field :branch, type: String
 
   belongs_to :project
 end

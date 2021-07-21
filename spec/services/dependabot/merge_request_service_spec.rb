@@ -22,7 +22,7 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
     )
   end
 
-  def create_mr(iid, state, dependencies)
+  def create_mr(iid, state, dependencies, branch = "some-branch")
     MergeRequest.new(
       project: project,
       iid: iid,
@@ -30,7 +30,8 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
       directory: config[:directory],
       state: state,
       auto_merge: config[:auto_merge],
-      dependencies: dependencies
+      dependencies: dependencies,
+      branch: branch
     )
   end
 
@@ -218,24 +219,30 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
 
   context "with newer merge request" do
     let(:existing_mr) { nil }
-    let(:superseeded_mr) { create_mr(Faker::Number.unique.number(digits: 10), "opened", current_dependencies_name) }
+    let(:superseeded_mr) do
+      create_mr(Faker::Number.unique.number(digits: 10), "opened", current_dependencies_name, "superseeded-branch")
+    end
 
     before do
+      allow(Gitlab::BranchRemover).to receive(:call)
+
       create_mr(Faker::Number.unique.number(digits: 10), "closed", current_dependencies_name).save!
       create_mr(Faker::Number.unique.number(digits: 10), "opened", "test1").save!
       superseeded_mr.save!
     end
 
-    it "old mr is closed" do
+    it "old mr is closed and branch removed" do
       aggregate_failures do
         expect(service_return).to eq(mr)
         expect(Gitlab::MergeRequest::Closer).to have_received(:call).with(project.name, superseeded_mr.iid).once
-        expect(superseeded_mr.reload.state).to eq("closed")
         expect(Gitlab::MergeRequest::Commenter).to have_received(:call).with(
           project.name,
           superseeded_mr.iid,
           "This merge request has been superseeded by #{mr.web_url}"
         ).once
+        expect(Gitlab::BranchRemover).to have_received(:call).with(project.name, superseeded_mr.branch)
+
+        expect(superseeded_mr.reload.state).to eq("closed")
       end
     end
   end
