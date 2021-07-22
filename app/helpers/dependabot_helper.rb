@@ -14,7 +14,7 @@ module DependabotHelper
   end
 
   def errors(job)
-    JobErrors.find(name: execution_context_name(job.args.first)).to_json
+    JobErrors.find_by(name: execution_context_name(job.args.first)).run_errors.join("\n")
   rescue Mongoid::Errors::DocumentNotFound
     nil
   end
