@@ -22,9 +22,14 @@ module Dependabot
       log(:info, "Updating following dependencies: #{updated_dependencies_name}")
       return log(:warn, " closed mr exists, skipping!") if find_mr("closed")
 
-      mr ? update_mr : create_mr
-      accept_mr
+      if create_mr
+        persist_mr
+        close_superseeded_mrs
+      else
+        update_mr
+      end
 
+      accept_mr
       mr
     end
 
@@ -43,15 +48,19 @@ module Dependabot
         updated_dependencies: updated_dependencies,
         updated_files: updated_files,
         config: config
-      )
+      ) || return # dependabot-core returns nil if branch && mr exists and nothing was created
+
       log(:info, "  created merge request: #{mr.web_url}")
-      persist_mr
+      mr
+    rescue Gitlab::Error::Conflict
+      # dependabot-core will try to create mr in the edge case when mr exists without the branch
+      nil
     rescue Gitlab::Error => e # rescue in case mr is created but failed to add approvers/reviewers
       raise unless mr
 
       log_error(e)
       capture_error(e)
-      persist_mr
+      mr
     end
 
     # Persist merge request
@@ -71,14 +80,14 @@ module Dependabot
         main_dependency: name,
         branch: source_branch
       )
-
-      close_superseeded_mrs
     end
 
     # Close superseeded merge requests
     #
     # @return [void]
     def close_superseeded_mrs
+      return if AppConfig.standalone?
+
       superseeded_mrs.each do |existing_mr|
         name = project.name
 
