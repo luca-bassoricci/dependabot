@@ -12,6 +12,7 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
   let(:existing_mr) { mr }
   let(:closed_mr) { nil }
   let(:mr_db) { create_mr(mr.iid, "opened", current_dependencies_name) }
+  let(:create_mr_return) { mr }
   let(:mr) do
     OpenStruct.new(
       web_url: "mr-url",
@@ -65,7 +66,7 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
       state: "closed"
     ).and_return(closed_mr)
 
-    allow(Gitlab::MergeRequest::Creator).to receive(:call) { mr }
+    allow(Gitlab::MergeRequest::Creator).to receive(:call) { create_mr_return }
     allow(Gitlab::MergeRequest::Acceptor).to receive(:call).with(repo, mr.iid, merge_when_pipeline_succeeds: true)
     allow(Gitlab::MergeRequest::Closer).to receive(:call)
     allow(Gitlab::MergeRequest::Updater).to receive(:call)
@@ -106,18 +107,14 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
   end
 
   context "with existing merge request" do
+    let(:create_mr_return) { nil }
+
     it "gets updated" do
       expect(service_return).to eq(mr)
       expect(Gitlab::MergeRequest::Updater).to have_received(:call).with(
         fetcher: fetcher,
         updated_files: updated_files,
         merge_request: mr
-      )
-      expect(Gitlab::MergeRequest::Finder).to have_received(:call).with(
-        project: repo,
-        source_branch: source_branch,
-        target_branch: target_branch,
-        state: "opened"
       )
     end
   end
@@ -135,6 +132,7 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
   end
 
   context "without conflicts and no rebase" do
+    let(:create_mr_return) { nil }
     let(:has_conflicts) { false }
 
     before do
@@ -153,6 +151,7 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
   end
 
   context "without conflicts and auto rebase" do
+    let(:create_mr_return) { nil }
     let(:has_conflicts) { false }
 
     before do
@@ -171,6 +170,7 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
   end
 
   context "with conflicts and no rebase" do
+    let(:create_mr_return) { nil }
     let(:has_conflicts) { true }
 
     before do
@@ -189,6 +189,7 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
   end
 
   context "with conflicts and auto rebase" do
+    let(:create_mr_return) { nil }
     let(:has_conflicts) { true }
 
     before do
