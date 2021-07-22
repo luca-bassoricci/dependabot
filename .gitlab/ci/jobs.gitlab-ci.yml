@@ -156,7 +156,7 @@ variables:
   stage: test
   extends: .ruby_runner
   services:
-    - name: bitnami/redis:6.0-debian-10
+    - name: bitnami/redis:6.2-debian-10
       alias: redis
     - name: bitnami/mongodb:4.4-debian-10
       alias: mongodb
