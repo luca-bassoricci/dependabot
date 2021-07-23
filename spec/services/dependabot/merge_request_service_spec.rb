@@ -247,4 +247,50 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
       end
     end
   end
+
+  context "with gitlab error on creation" do
+    let(:response_mock) do
+      OpenStruct.new(
+        code: 500,
+        parsed_response: "Failure",
+        request: OpenStruct.new(base_uri: "gitlab.com", path: "/merge_request")
+      )
+    end
+
+    before do
+      allow(Gitlab::MergeRequest::Creator).to receive(:call).and_raise(gitlab_error)
+    end
+
+    context "with conflict error" do
+      let(:gitlab_error) { Gitlab::Error::Conflict.new(response_mock) }
+
+      it "rescues error and performs mr update" do
+        expect(service_return).to eq(mr)
+
+        expect(Gitlab::MergeRequest::Updater).to have_received(:call)
+      end
+    end
+
+    context "with gitlab error and created mr" do
+      let(:gitlab_error) { Gitlab::Error::NotFound.new(response_mock) }
+
+      it "rescues error and returns mr" do
+        expect(service_return).to eq(mr)
+
+        expect(Gitlab::MergeRequest::Updater).not_to have_received(:call)
+      end
+    end
+
+    context "with gitlab error and not created mr" do
+      let(:gitlab_error) { Gitlab::Error::ServiceUnavailable.new(response_mock) }
+
+      before do
+        allow(Gitlab::MergeRequest::Finder).to receive(:call).and_return(nil)
+      end
+
+      it "raises initial error" do
+        expect { service_return }.to raise_error(Gitlab::Error::ServiceUnavailable)
+      end
+    end
+  end
 end

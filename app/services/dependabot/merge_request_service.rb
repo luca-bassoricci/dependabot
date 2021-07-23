@@ -52,7 +52,7 @@ module Dependabot
 
       log(:info, "  created merge request: #{mr.web_url}")
       mr
-    rescue Gitlab::Error => e
+    rescue Gitlab::Error::ResponseError => e
       # dependabot-core will try to create mr in the edge case when mr exists without the branch
       return if e.is_a?(Gitlab::Error::Conflict)
       # rescue in case mr is created but failed to add approvers/reviewers
