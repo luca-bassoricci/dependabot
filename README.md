@@ -58,6 +58,33 @@ docker-compose -f docker-compose.yml -f docker-compose-prod.yml up
 
 # Configuration
 
+Following configuration options are supported:
+
+| option                             | dependabot         | dependabot-standalone |
+|------------------------------------|--------------------|-----------------------|
+| `package-ecosystem`                | :white_check_mark: | :white_check_mark:    |
+| `directory`                        | :white_check_mark: | :white_check_mark:    |
+| `schedule.interval`                | :white_check_mark: | :x:                   |
+| `schedule.day`                     | :white_check_mark: | :x:                   |
+| `schedule.time`                    | :white_check_mark: | :x:                   |
+| `schedule.timezone`                | :white_check_mark: | :x:                   |
+| `allow`                            | :white_check_mark: | :white_check_mark:    |
+| `ignore`                           | :white_check_mark: | :white_check_mark:    |
+| `assignees`                        | :white_check_mark: | :white_check_mark:    |
+| `reviewers`                        | :white_check_mark: | :white_check_mark:    |
+| `commit-message`                   | :white_check_mark: | :white_check_mark:    |
+| `insecure-external-code-execution` | :white_check_mark: | :white_check_mark:    |
+| `labels`                           | :white_check_mark: | :white_check_mark:    |
+| `milestone`                        | :white_check_mark: | :white_check_mark:    |
+| `open-pull-requests-limit`         | :white_check_mark: | :white_check_mark:    |
+| `pull-request-branch-name`         | :white_check_mark: | :white_check_mark:    |
+| `rebase-strategy`                  | :white_check_mark: | :white_check_mark:    |
+| `registries`                       | :white_check_mark: | :white_check_mark:    |
+| `reviewers`                        | :white_check_mark: | :white_check_mark:    |
+| `target-branch`                    | :white_check_mark: | :white_check_mark:    |
+| `vendor`                           | :white_check_mark: | :white_check_mark:    |
+| `versioning-strategy`              | :white_check_mark: | :white_check_mark:    |
+
 ## Application
 
 ### Helm chart
