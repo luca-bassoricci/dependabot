@@ -14,8 +14,8 @@ module Gitlab
       #
       # @return [String]
       def call
-        log(:info, "Fetching configuration for #{project_name} from #{branch}")
         Rails.cache.fetch("#{project_name}-#{branch}-configuration", expires_in: 24.hours, force: update_cache) do
+          log(:info, "Fetching configuration for #{project_name} from #{branch}")
           gitlab.file_contents(project_name, AppConfig.config_filename, branch)
         end
       rescue Error::NotFound
