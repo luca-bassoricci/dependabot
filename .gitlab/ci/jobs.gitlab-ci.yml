@@ -7,6 +7,19 @@ include:
 # ======================================================================================================================
 # Runners
 # ======================================================================================================================
+.docker_credentials: &docker_credentials
+  - |
+    mkdir -p $HOME/.docker
+    cat <<- EOF > $HOME/.docker/config.json
+    {
+      "auths": {
+        "$DOCKER_REGISTRY": {
+          "auth": "$(echo -n $DOCKER_CREDENTIALS | base64)"
+        }
+      }
+    }
+    EOF
+
 .gem_cache: &gem_cache
   key:
     files:
@@ -40,22 +53,31 @@ include:
     name: moby/buildkit:v0.9.0
     entrypoint: [""]
   variables:
+    DOCKER_CREDENTIALS: $CI_REGISTRY_USER:$CI_REGISTRY_PASSWORD
+    DOCKER_REGISTRY: registry.gitlab.com
     PUSH: "true"
   before_script:
-    - mkdir -p $HOME/.docker
-    - |
-      cat <<- EOF > $HOME/.docker/config.json
-      {
-        "auths": {
-          "registry.gitlab.com": {
-            "auth": "$(echo -n $CI_REGISTRY_USER:$CI_REGISTRY_PASSWORD | base64)"
-          }
-        }
-      }
-      EOF
+    - *docker_credentials
   script:
     - script/build.sh
   retry: 2
+
+.docker_runner:
+  image: docker:20.10.5
+  services:
+    - docker:20.10.5-dind
+  variables:
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: /certs
+    DOCKER_CERT_PATH: /certs/client
+    DOCKER_TLS_VERIFY: 1
+    DOCKER_BUILDKIT: 1
+    DOCKER_CREDENTIALS: $DOCKERHUB_USERNAME:$DOCKERHUB_PASSWORD
+    DOCKER_REGISTRY: https://index.docker.io/v1/
+  before_script:
+    - *docker_credentials
+    - apk -qq update && apk -qq add grep
+    - while ! test -f "$DOCKER_CERT_PATH/ca.pem"; do sleep 2; done
 
 # ======================================================================================================================
 # Global
@@ -232,28 +254,15 @@ variables:
 
 .release_image:
   stage: release
-  image: docker:20.10.5
-  services:
-    - docker:20.10.5-dind
+  extends: .docker_runner
   variables:
     RELEASE_IMAGE: docker.io/andrcuns/dependabot-gitlab
-    DOCKER_HOST: tcp://docker:2376
-    DOCKER_TLS_CERTDIR: /certs
-    DOCKER_CERT_PATH: /certs/client
-    DOCKER_TLS_VERIFY: 1
-    DOCKER_BUILDKIT: 1
-  before_script:
-    - while ! test -f "$DOCKER_CERT_PATH/ca.pem"; do sleep 2; done
-    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
   script:
-    - |
-      apk -qq update && apk -qq add grep
-      export RELEASE_VERSION=$(echo $CI_COMMIT_TAG | grep -oP 'v\K[0-9.]+')
-    - |
-      docker pull $CI_REGISTRY_IMAGE:$CURRENT_TAG
-      docker tag $CI_REGISTRY_IMAGE:$CURRENT_TAG $RELEASE_IMAGE:$RELEASE_VERSION
-      docker tag $CI_REGISTRY_IMAGE:$CURRENT_TAG $RELEASE_IMAGE:latest
-      docker push $RELEASE_IMAGE:$RELEASE_VERSION && docker push $RELEASE_IMAGE:latest
+    - export RELEASE_VERSION=$(echo $CI_COMMIT_TAG | grep -oP 'v\K[0-9.]+')
+    - docker pull $CI_REGISTRY_IMAGE:$CURRENT_TAG
+    - docker tag $CI_REGISTRY_IMAGE:$CURRENT_TAG $RELEASE_IMAGE:$RELEASE_VERSION
+    - docker tag $CI_REGISTRY_IMAGE:$CURRENT_TAG $RELEASE_IMAGE:latest
+    - docker push $RELEASE_IMAGE:$RELEASE_VERSION && docker push $RELEASE_IMAGE:latest
 
 .release_ruby_image:
   stage: release
