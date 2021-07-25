@@ -39,12 +39,6 @@ include:
   image:
     name: moby/buildkit:v0.9.0
     entrypoint: [""]
-  services:
-    - name: moby/buildkit:v0.9.0
-      alias: buildkit
-      command: ["--addr", "tcp://0.0.0.0:1234"]
-  tags:
-    - docker
   variables:
     PUSH: "true"
   before_script:
@@ -61,6 +55,7 @@ include:
       EOF
   script:
     - script/build.sh
+  retry: 2
 
 # ======================================================================================================================
 # Global

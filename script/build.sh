@@ -16,7 +16,7 @@ fi
 
 log "Building image: $IMAGE:$CURRENT_TAG"
 
-buildctl --addr tcp://buildkit:1234 build \
+buildctl-daemonless.sh build \
   --frontend=dockerfile.v0 \
   --local context="$DOCKER_CONTEXT" \
   --local dockerfile="$DOCKER_CONTEXT" \
@@ -24,4 +24,5 @@ buildctl --addr tcp://buildkit:1234 build \
   --opt build-arg:PROJECT_URL="$CI_PROJECT_URL" \
   --export-cache type=inline \
   --import-cache type=registry,ref="$IMAGE:$LATEST_TAG" \
+  --import-cache type=registry,ref="$IMAGE:master-latest" \
   --output type=image,\"name="$IMAGE:$CURRENT_TAG,$IMAGE:$LATEST_TAG"\",push="$PUSH"
