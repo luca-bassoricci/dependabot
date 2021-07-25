@@ -1,5 +1,55 @@
 # CHANGELOG
 
+## [v0.7.0 - 2021-07-25](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🔬 Improvements
+
+- remove superseeded mr branches. See merge request dependabot-gitlab/dependabot!820 - (andrejs)
+- add update job retry configuration. See merge request dependabot-gitlab/dependabot!812 - (andrejs)
+- save dependency update run errors. See merge request dependabot-gitlab/dependabot!808 - (andrejs)
+- configuration validation rake task. See merge request dependabot-gitlab/dependabot!807 - (andrejs)
+- retry on 'method not allowed' gitlab errors. See merge request dependabot-gitlab/dependabot!803 - (andrejs)
+
+### 🐞 Bug Fixes
+
+- do not cache registries configuration. See merge request dependabot-gitlab/dependabot!836 - (andrejs)
+- use tagged logger for logging errors. See merge request dependabot-gitlab/dependabot!833 - (andrejs)
+- correctly handle errors on mr creation. See merge request dependabot-gitlab/dependabot!831 - (andrejs)
+- correctly fetch last run errors. See merge request dependabot-gitlab/dependabot!823 - (andrejs)
+- properly raise error on github api rate limit exceeded. See merge request dependabot-gitlab/dependabot!821 - (andrejs)
+- persist mrs if it was created but gitlab request failed. See merge request dependabot-gitlab/dependabot!818 - (andrejs)
+- properly wrap error message in mr recreate response. See merge request dependabot-gitlab/dependabot!810 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump yabeda-prometheus-mmap from 0.1.2 to 0.2.0. See merge request dependabot-gitlab/dependabot!822 - (andrejs)
+- bump dependabot-omnibus from 0.156.8 to 0.156.9. See merge request dependabot-gitlab/dependabot!813 - (andrejs)
+- bump mongoid from 7.3.0 to 7.3.1. See merge request dependabot-gitlab/dependabot!806 - (andrejs)
+
+### 📦🛠️ Development dependency updates
+
+- bump allure-rspec from 2.14.2 to 2.14.3. See merge request dependabot-gitlab/dependabot!835 - (andrejs)
+- bump rubocop from 1.18.3 to 1.18.4. See merge request dependabot-gitlab/dependabot!830 - (andrejs)
+- bump ruby version for CI runners. See merge request dependabot-gitlab/dependabot!817 - (andrejs)
+- bump buildkit version. See merge request dependabot-gitlab/dependabot!809 - (andrejs)
+
+### 🛠️ Chore
+
+- simplify error handling for mr create. See merge request dependabot-gitlab/dependabot!826 - (andrejs)
+- refactor merge request service. See merge request dependabot-gitlab/dependabot!824 - (andrejs)
+- update dev redis container version. See merge request dependabot-gitlab/dependabot!825 - (andrejs)
+- update ruby version in CI image. See merge request dependabot-gitlab/dependabot!816 - (andrejs)
+- update redis values in helm chart. See merge request dependabot-gitlab/dependabot!804 - (andrejs)
+- bump chart version. See merge request dependabot-gitlab/dependabot!802 - (andrejs)
+
+### 📄 Documentation updates
+
+- add supported configuration options table. See merge request dependabot-gitlab/dependabot!832 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.6.0](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.6.0...v0.7.0)
+
 ## [v0.6.0 - 2021-07-15](https://gitlab.com/dependabot-gitlab/dependabot/-/releases) *BREAKING*
 
 ## BREAKING CHANGES
