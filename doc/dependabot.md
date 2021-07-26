@@ -49,12 +49,17 @@ allow:
 
 ## rebase-strategy
 
-Because gitlab doesn't emit webhook when repository can no longer be merged due to conflict, this option will only have any
-effect when scheduled jobs run. The rebase will not happen as soon as repository got conflicts.
+Rebase strategy supports 2 options:
+
+* `auto` - automatically recreate MR's with conflicts. Any manual changes will be overridden
+* `all` - automatically rebase all existing outdated MR's or recreate MR's with conflicts
+* `none` - do not perform automatic rebase or recreate
 
 ```yml
 rebase-strategy: auto
 ```
+
+If webhooks for deployed version are configured, when dependency update MR is merged, update of other open MR's of same package ecosystem is triggered
 
 ## auto-merge
 

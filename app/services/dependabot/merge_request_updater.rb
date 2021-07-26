@@ -2,10 +2,11 @@
 
 module Dependabot
   # :reek:InstanceVariableAssumption
-  class MergeRequestRecreator < ApplicationService
-    def initialize(project_name:, mr_iid:)
+  class MergeRequestUpdater < ApplicationService
+    def initialize(project_name:, mr_iid:, recreate: true)
       @project_name = project_name
       @mr_iid = mr_iid
+      @recreate = recreate
     end
 
     # Trigger merge request recreation
@@ -18,7 +19,7 @@ module Dependabot
           project: project,
           config: config,
           updated_dependency: updated_dependency,
-          recreate: true
+          recreate: recreate
         }
       end
       Dependabot::MergeRequestService.call(args)
@@ -28,7 +29,7 @@ module Dependabot
 
     private
 
-    attr_reader :project_name, :mr_iid
+    attr_reader :project_name, :mr_iid, :recreate
 
     # Get cloned repository path
     #
@@ -60,7 +61,7 @@ module Dependabot
       @config ||= Dependabot::ConfigFetcher.call(
         project_name,
         find_by: {
-          package_manager: mr.package_manager,
+          package_manager: mr.package_ecosystem,
           directory: mr.directory
         }
       )

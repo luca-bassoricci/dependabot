@@ -40,8 +40,8 @@ detectors:
       - HooksController#create
 
   BooleanParameter:
-    exclude:
-      - Config
+    enabled: false
+
   UncommunicativeVariableName:
     accept:
       - _

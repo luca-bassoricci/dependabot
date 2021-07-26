@@ -6,7 +6,6 @@ module Dependabot
     # @param [Project] project
     # @param [Hash] config
     # @param [Dependabot::UpdatedDependency] updated_dependency
-    # :reek:BooleanParameter
     def initialize(fetcher:, project:, config:, updated_dependency:, recreate: false)
       @fetcher = fetcher
       @project = project
@@ -72,7 +71,7 @@ module Dependabot
       MergeRequest.create!(
         project: project,
         iid: mr.iid,
-        package_manager: config[:package_manager],
+        package_ecosystem: config[:package_ecosystem],
         directory: config[:directory],
         state: "opened",
         auto_merge: config[:auto_merge],
@@ -91,7 +90,7 @@ module Dependabot
       superseeded_mrs.each do |existing_mr|
         name = project.name
 
-        Gitlab::MergeRequest::Closer.call(name, existing_mr.iid)
+        Gitlab::MergeRequest::Closer.call(name, existing_mr.iid) # TODO: Remove in few releases
         Gitlab::BranchRemover.call(project.name, existing_mr.branch)
         Gitlab::MergeRequest::Commenter.call(
           name,
@@ -102,18 +101,34 @@ module Dependabot
       end
     end
 
-    # Rebase existing mr if it has conflicts
+    # Update existing merge request
     #
     # @return [void]
     def update_mr
       return log(:info, " merge request #{mr.references.short} doesn't require updating") unless update_mr?
+      return rebase_mr if !mr["has_conflicts"] && rebase_all?
 
+      recreate_mr
+    end
+
+    # Recreate existing mr
+    #
+    # @return [void]
+    def recreate_mr
       Gitlab::MergeRequest::Updater.call(
         fetcher: fetcher,
         updated_files: updated_files,
         merge_request: mr
       )
-      log(:info, "  updated merge request #{mr.references.short}")
+      log(:info, "  recreated merge request #{mr.references.short}")
+    end
+
+    # Rebase merge request
+    #
+    # @return [void]
+    def rebase_mr
+      gitlab.rebase_merge_request(project.name, mr.iid)
+      log(:info, "  rebased merge request #{mr.references.short}")
     end
 
     # Accept merge request and set to merge automatically
@@ -149,18 +164,25 @@ module Dependabot
       @mr ||= find_mr("opened")
     end
 
-    # Automatically rebase MR
+    # Automatically rebase MRs with conflicts only
     #
     # @return [Boolean]
     def rebase?
       config[:rebase_strategy] == "auto"
     end
 
+    # Automatically rebase all mr's
+    #
+    # @return [Boolean]
+    def rebase_all?
+      config[:rebase_strategy] == "all"
+    end
+
     # Check if mr should be updated
     #
     # @return [Boolean]
     def update_mr?
-      recreate || (rebase? && mr["has_conflicts"])
+      recreate || rebase_all? || (rebase? && mr["has_conflicts"])
     end
 
     # All dependencies to be updated with new versions

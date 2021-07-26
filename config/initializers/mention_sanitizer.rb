@@ -7,7 +7,6 @@ module Dependabot
   class PullRequestCreator
     class MessageBuilder
       class MetadataPresenter
-        # :reek:BooleanParameter
         def sanitize_links_and_mentions(text, unsafe: false)
           LinkAndMentionSanitizer
             .new(github_redirection_service: github_redirection_service)

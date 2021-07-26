@@ -10,7 +10,7 @@ describe MergeRequestRecreationJob, epic: :jobs do
   let(:discussion_id) { "discussion-id" }
 
   before do
-    allow(Dependabot::MergeRequestRecreator).to receive(:call)
+    allow(Dependabot::MergeRequestUpdater).to receive(:call)
     allow(Gitlab::MergeRequest::DiscussionReplier).to receive(:call)
   end
 
@@ -18,7 +18,10 @@ describe MergeRequestRecreationJob, epic: :jobs do
     it "performs enqued job" do
       perform_enqueued_jobs { job.perform_later(project_name, mr_iid, discussion_id) }
 
-      expect(Dependabot::MergeRequestRecreator).to have_received(:call).with(project_name: project_name, mr_iid: mr_iid)
+      expect(Dependabot::MergeRequestUpdater).to have_received(:call).with(
+        project_name: project_name,
+        mr_iid: mr_iid
+      )
     end
 
     it "notifies recreate in progress" do
@@ -46,7 +49,7 @@ describe MergeRequestRecreationJob, epic: :jobs do
 
   context "with unsuccessful trigger" do
     it "notifies recreate failed" do
-      allow(Dependabot::MergeRequestRecreator).to receive(:call).and_raise("error message")
+      allow(Dependabot::MergeRequestUpdater).to receive(:call).and_raise("error message")
 
       perform_enqueued_jobs { job.perform_later(project_name, mr_iid, discussion_id) }
 
