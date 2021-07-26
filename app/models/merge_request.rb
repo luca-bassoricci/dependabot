@@ -4,7 +4,7 @@ class MergeRequest
   include Mongoid::Document
 
   field :iid, type: Integer
-  field :package_manager, type: String
+  field :package_ecosystem, type: String
   field :directory, type: String
   field :state, type: String
   field :auto_merge, type: Boolean

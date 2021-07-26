@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Dependabot::MergeRequestRecreator, epic: :services, feature: :dependabot, integration: true do
+describe Dependabot::MergeRequestUpdater, epic: :services, feature: :dependabot, integration: true do
   include_context "with dependabot helper"
   include_context "with webmock"
 
@@ -12,7 +12,7 @@ describe Dependabot::MergeRequestRecreator, epic: :services, feature: :dependabo
     MergeRequest.new(
       project: project,
       iid: 1,
-      package_manager: config[:package_manager],
+      package_ecosystem: config[:package_ecosystem],
       directory: config[:directory],
       main_dependency: updated_dependency.name
     )

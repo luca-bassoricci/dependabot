@@ -16,7 +16,7 @@ describe Webhooks::PipelineEventHandler, integration: true, epic: :services, fea
       project: project,
       iid: mr_iid,
       auto_merge: auto_merge,
-      package_manager: "bundler",
+      package_ecosystem: "bundler",
       state: "opened",
       dependencies: "test"
     )

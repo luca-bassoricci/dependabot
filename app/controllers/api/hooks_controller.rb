@@ -47,8 +47,9 @@ module Api
       return unless %w[close merge].include?(args.dig(:object_attributes, :action))
 
       Webhooks::MergeRequestEventHandler.call(
-        args.dig(:project, :path_with_namespace),
-        args.dig(:object_attributes, :iid)
+        project_name: args.dig(:project, :path_with_namespace),
+        mr_iid: args.dig(:object_attributes, :iid),
+        action: args.dig(:object_attributes, :action)
       )
     end
 
