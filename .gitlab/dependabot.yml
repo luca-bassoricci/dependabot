@@ -10,7 +10,7 @@ updates:
       prefix-development: "development-dependency"
     assignees:
       - andrcuns
-    rebase-strategy: "auto"
+    rebase-strategy: "all"
   - package-ecosystem: docker
     directory: "/"
     schedule:
