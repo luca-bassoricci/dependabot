@@ -49,7 +49,7 @@ allow:
 
 ## rebase-strategy
 
-Rebase strategy supports 2 options:
+Rebase strategy supports 3 options:
 
 * `auto` - automatically recreate MR's with conflicts. Any manual changes will be overridden
 * `all` - automatically rebase all existing outdated MR's or recreate MR's with conflicts
