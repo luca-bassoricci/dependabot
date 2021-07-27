@@ -17,7 +17,7 @@ module Webhooks
       log(:info, "Setting merge request !#{mr.iid} state to closed!")
       mr.update_attributes!(state: "closed")
 
-      return { closed_merge_request: true } unless merged?
+      return { closed_merge_request: true } if !merged? || config&.fetch(:rebase_strategy) == "none"
 
       log(:info, "Triggering open mr update for #{project_name}=>#{mr.package_ecosystem}=>#{mr.directory}")
       trigger_update
@@ -49,6 +49,15 @@ module Webhooks
     # @return [<MergeRequest, nil>]
     def mr
       @mr ||= project.merge_requests.find_by(iid: mr_iid, state: "opened")
+    end
+
+    # Config entry for particular ecosystem and directory
+    #
+    # @return [Hash]
+    def config
+      @config ||= project.symbolized_config.find do |entry|
+        entry[:package_ecosystem] == mr.package_ecosystem && entry[:directory] == mr.directory
+      end
     end
 
     # Merge requests to update

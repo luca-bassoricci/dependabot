@@ -6,7 +6,7 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
   include_context "with dependabot helper"
 
   let(:config) { dependabot_config.first }
-  let(:args) { { project_name: repo, mr_iid: 1, action: "close" } }
+  let(:args) { { project_name: repo, mr_iid: 1, action: action } }
   let(:project) { Project.new(name: repo, config: dependabot_config) }
   let(:merge_request) do
     MergeRequest.new(
@@ -47,7 +47,9 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
     merge_request.save!
   end
 
-  context "without update trigger" do
+  context "with mr close action" do
+    let(:action) { "close" }
+
     it "closes saved mr" do
       result = described_class.call(**args)
 
@@ -62,18 +64,33 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
     end
   end
 
-  context "with update trigger" do
+  context "with mr merge action" do
+    ActiveJob::Base.queue_adapter = :test
+
+    let(:action) { "merge" }
+
     before do
       open_merge_request.save!
       other_open_merge_request.save!
     end
 
-    it "closes saved mr and triggers update of open mrs for same package_ecosystem" do
-      ActiveJob::Base.queue_adapter = :test
+    context "with auto-rebase enabled" do
+      it "closes saved mr and triggers update of open mrs for same package_ecosystem" do
+        expect { described_class.call(**args) }.to have_enqueued_job(MergeRequestUpdateJob)
+          .on_queue("hooks")
+          .with(repo, open_merge_request.iid)
+      end
+    end
 
-      expect { described_class.call(**args, action: "merge") }.to have_enqueued_job(MergeRequestUpdateJob)
-        .on_queue("hooks")
-        .with(repo, open_merge_request.iid)
+    context "with auto-rebase disabled" do
+      before do
+        project.config.first[:rebase_strategy] = "none"
+        project.save!
+      end
+
+      it "skips update for auto-rebase: none option" do
+        expect { described_class.call(**args) }.not_to have_enqueued_job(MergeRequestUpdateJob)
+      end
     end
   end
 end
