@@ -22,7 +22,7 @@ module Dependabot
           recreate: recreate
         }
       end
-      Dependabot::MergeRequestService.call(args)
+      Dependabot::MergeRequestService.call(**args)
     ensure
       FileUtils.rm_r(repo_contents_path, force: true, secure: true) if repo_contents_path
     end
