@@ -19,9 +19,8 @@ module Webhooks
 
       return { closed_merge_request: true } if !merged? || config&.fetch(:rebase_strategy) == "none"
 
-      log(:info, "Triggering open mr update for #{project_name}=>#{mr.package_ecosystem}=>#{mr.directory}")
-      trigger_update
-      { update_triggered: true, closed_merge_request: true }
+      triggered = trigger_update
+      { update_triggered: triggered, closed_merge_request: true }
     rescue Mongoid::Errors::DocumentNotFound
       nil
     end
@@ -62,7 +61,7 @@ module Webhooks
 
     # Merge requests to update
     #
-    # @return [Array<MergeRequest>]
+    # @return [Mongoid::Criteria]
     def updateable_mrs
       @updateable_mrs ||= project.merge_requests.where(
         state: "opened",
@@ -75,12 +74,14 @@ module Webhooks
     #
     # @return [void]
     def trigger_update
-      # TODO: remove in a few releases
-      return unless mr.package_ecosystem
+      return false if updateable_mrs.empty?
 
+      log(:info, "Triggering open mr update for #{project_name}=>#{mr.package_ecosystem}=>#{mr.directory}")
       updateable_mrs.each do |merge_request|
         MergeRequestUpdateJob.perform_later(project_name, merge_request.iid)
       end
+
+      true
     end
   end
 end
