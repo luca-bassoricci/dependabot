@@ -4,6 +4,8 @@ FROM dependabot AS local
 
 ENV BUNDLE_PATH=/vendor/bundle
 
+USER root
+
 RUN apt-get update; \
     apt-get install -y --no-install-recommends supervisor=3.3.1-1.1; \
     rm -rf /var/lib/apt/lists/* /tmp/*
