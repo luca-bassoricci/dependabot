@@ -1,6 +1,6 @@
 ARG SINATRA_VERSION=2.1.0
 
-FROM registry.gitlab.com/dependabot-gitlab/dependabot/ruby:2.7.3-buster-latest as gitlab
+FROM registry.gitlab.com/dependabot-gitlab/dependabot/ruby:2.7.4-buster-latest as gitlab
 
 LABEL maintainer="andrejs.cunskis@gmail.com"
 
