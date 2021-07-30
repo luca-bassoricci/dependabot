@@ -3,7 +3,7 @@
 describe Dependabot::MergeRequestService, integration: true, epic: :services, feature: :dependabot do
   include_context "with dependabot helper"
 
-  let(:gitlab) { instance_double("Gitlab::Client", rebase_merge_request: nil) }
+  let(:gitlab) { instance_double("Gitlab::Client", rebase_merge_request: nil, accept_merge_request: nil) }
 
   let(:project) { Project.new(name: repo, config: dependabot_config) }
   let(:source_branch) { "dependabot-bundler-.-master-config-2.2.1" }
@@ -70,7 +70,6 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
     ).and_return(closed_mr)
 
     allow(Gitlab::MergeRequest::Creator).to receive(:call) { create_mr_return }
-    allow(Gitlab::MergeRequest::Acceptor).to receive(:call).with(repo, mr.iid, merge_when_pipeline_succeeds: true)
     allow(Gitlab::MergeRequest::Closer).to receive(:call)
     allow(Gitlab::MergeRequest::Updater).to receive(:call)
     allow(Gitlab::MergeRequest::Commenter).to receive(:call)
@@ -101,7 +100,7 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
     it "gets auto merged in standalone mode" do
       service_return
 
-      expect(Gitlab::MergeRequest::Acceptor).to have_received(:call).with(
+      expect(gitlab).to have_received(:accept_merge_request).with(
         repo,
         mr.iid,
         merge_when_pipeline_succeeds: true
@@ -129,7 +128,7 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
       aggregate_failures do
         expect(Gitlab::MergeRequest::Creator).not_to have_received(:call)
         expect(Gitlab::MergeRequest::Updater).not_to have_received(:call)
-        expect(Gitlab::MergeRequest::Acceptor).not_to have_received(:call)
+        expect(gitlab).not_to have_received(:accept_merge_request)
       end
     end
   end
@@ -253,7 +252,7 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
 
     it "merge request is not set to be merged automatically" do
       expect(service_return).to eq(mr)
-      expect(Gitlab::MergeRequest::Acceptor).not_to have_received(:call)
+      expect(gitlab).not_to have_received(:accept_merge_request)
     end
   end
 

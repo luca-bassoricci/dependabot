@@ -60,7 +60,7 @@ module Webhooks
       log(:info, "Removing project: #{project_name}")
       Project.find_by(name: project_name).destroy
     rescue Mongoid::Errors::DocumentNotFound
-      logger.error { "Project #{project_name} doesn't exist!" }
+      log(:error, "Project #{project_name} doesn't exist!")
     end
 
     # Delete dependency update jobs

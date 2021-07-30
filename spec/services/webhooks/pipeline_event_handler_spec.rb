@@ -3,6 +3,8 @@
 describe Webhooks::PipelineEventHandler, integration: true, epic: :services, feature: :webhooks do
   include_context "with dependabot helper"
 
+  let(:gitlab) { instance_double("Gitlab::Client", accept_merge_request: nil) }
+
   let(:project_name) { repo }
   let(:auto_merge) { true }
   let(:merge_status) { "can_be_merged" }
@@ -30,13 +32,13 @@ describe Webhooks::PipelineEventHandler, integration: true, epic: :services, fea
     project.save!
     merge_request.save!
 
-    allow(Gitlab::MergeRequest::Acceptor).to receive(:call)
+    allow(Gitlab::Client).to receive(:new) { gitlab }
   end
 
   context "with actionable conditions" do
     it "accepts merge request" do
       expect(event_result).to eq({ merge_request_accepted: true })
-      expect(Gitlab::MergeRequest::Acceptor).to have_received(:call).with(project_name, mr_iid)
+      expect(gitlab).to have_received(:accept_merge_request).with(project_name, mr_iid)
     end
   end
 
