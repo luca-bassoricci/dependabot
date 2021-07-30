@@ -34,7 +34,8 @@ module Webhooks
     #
     # @return [Hash]
     def rebase
-      Gitlab::MergeRequest::Rebaser.call(project_name, mr_iid)
+      log(:info, "Rebasing mr !#{mr_iid}")
+      gitlab.rebase_merge_request(project_name, mr_iid)
       reply_status(":white_check_mark: `dependabot` successfully triggered merge request rebase!")
       { rebase_in_progress: true }
     rescue StandardError => e

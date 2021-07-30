@@ -50,7 +50,7 @@ module Webhooks
     #
     # @return [Hash]
     def accept
-      Gitlab::MergeRequest::Acceptor.call(project_name, mr_iid)
+      gitlab.accept_merge_request(project_name, mr_iid)
       log(:info, "Accepted merge request !#{mr_iid}")
 
       { merge_request_accepted: true }

@@ -196,7 +196,7 @@ module Dependabot
       return unless strategy
 
       VERSIONING_STRATEGIES.fetch(strategy) do |el|
-        logger.error("Unsupported versioning-strategy #{el}")
+        log(:error, "Unsupported versioning-strategy #{el}")
         nil
       end
     end

@@ -16,7 +16,7 @@ module Gitlab
       #
       # @return [void]
       def call
-        logger.debug { "Posting #{comment} on mr #{mr_iid}" }
+        log(:debug, "Posting #{comment} on mr #{mr_iid}")
         gitlab.create_merge_request_note(project, mr_iid, comment)
       end
 

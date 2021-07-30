@@ -13,6 +13,7 @@ module ApplicationHelper
   # @param [StndardError] error
   # @return [void]
   def log_error(error)
+    Sentry.capture_exception(error)
     log(:error, error.message)
     log(:debug, error.backtrace.join("\n")) if error.backtrace
   end

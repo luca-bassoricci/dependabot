@@ -5,6 +5,8 @@ describe Webhooks::CommentEventHandler, epic: :services, feature: :webhooks do
 
   subject(:action) { described_class.call(discussion_id, command, project, mr_iid) }
 
+  let(:gitlab) { instance_double("Gitlab::Client", rebase_merge_request: nil) }
+
   let(:discussion_id) { "11r4" }
   let(:project) { "dependabot/test" }
   let(:mr_iid) { 1 }
@@ -12,7 +14,7 @@ describe Webhooks::CommentEventHandler, epic: :services, feature: :webhooks do
   let(:job) { MergeRequestRecreationJob }
 
   before do
-    allow(Gitlab::MergeRequest::Rebaser).to receive(:call)
+    allow(Gitlab::Client).to receive(:new) { gitlab }
     allow(Gitlab::MergeRequest::DiscussionReplier).to receive(:call)
   end
 
@@ -22,7 +24,6 @@ describe Webhooks::CommentEventHandler, epic: :services, feature: :webhooks do
     it "skips action" do
       aggregate_failures do
         expect(action).to be_nil
-        expect(Gitlab::MergeRequest::Rebaser).not_to have_received(:call)
       end
     end
   end
@@ -33,7 +34,7 @@ describe Webhooks::CommentEventHandler, epic: :services, feature: :webhooks do
     it "triggers merge request rebase" do
       aggregate_failures do
         expect(action).to eq({ rebase_in_progress: true })
-        expect(Gitlab::MergeRequest::Rebaser).to have_received(:call).with(project, mr_iid)
+        expect(gitlab).to have_received(:rebase_merge_request).with(project, mr_iid)
       end
     end
 
@@ -49,7 +50,7 @@ describe Webhooks::CommentEventHandler, epic: :services, feature: :webhooks do
     end
 
     it "notifies trigger unsuccessful" do
-      allow(Gitlab::MergeRequest::Rebaser).to receive(:call).and_raise("error message")
+      allow(gitlab).to receive(:rebase_merge_request).and_raise("error message")
 
       aggregate_failures do
         expect(action).to eq({ rebase_in_progress: false })
