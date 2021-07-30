@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   root "dependabot#index"
 
   mount Sidekiq::Web => "/sidekiq"
-  mount Yabeda::Prometheus::Exporter => "/metrics"
+  mount Yabeda::Prometheus::Exporter => "/metrics" if AppConfig.metrics
 
   namespace :api, defaults: { format: :json } do
     resources :hooks, only: [:create]

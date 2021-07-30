@@ -22,8 +22,10 @@ environment ENV.fetch("RAILS_ENV", "development")
 pidfile ENV.fetch("PIDFILE", "tmp/pids/server.pid")
 
 # Yabeda metrics
-activate_control_app
-plugin :yabeda
+if AppConfig.metrics
+  activate_control_app
+  plugin :yabeda
+end
 
 # Specifies the number of `workers` to boot in clustered mode.
 # Workers are forked web server processes. If using threads and workers together
