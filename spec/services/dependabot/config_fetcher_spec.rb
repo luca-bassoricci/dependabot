@@ -18,8 +18,8 @@ describe Dependabot::ConfigFetcher, epic: :services, feature: :configuration do
     end
 
     it "fetches single entry of config from default branch" do
-      expect(described_class.call(project, find_by: { package_manager: "bundler" })).to eq(
-        dependabot_config.find { |entry| entry[:package_manager] == "bundler" }
+      expect(described_class.call(project, find_by: { package_ecosystem: "bundler" })).to eq(
+        dependabot_config.find { |entry| entry[:package_ecosystem] == "bundler" }
       )
     end
   end
