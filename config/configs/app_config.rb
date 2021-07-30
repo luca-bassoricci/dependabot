@@ -10,7 +10,8 @@ class AppConfig < ApplicationConfig
               standalone: false,
               log_level: "info",
               commands_prefix: "$dependabot",
-              update_retry: 2
+              update_retry: 2,
+              metrics: true
 
   # Configurable sidekiq retry
   #

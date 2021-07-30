@@ -8,7 +8,7 @@ redis_conf = {
 logger = DependabotLogger.logger
 
 Sidekiq.configure_server do |config|
-  Yabeda::Prometheus::Exporter.start_metrics_server!
+  Yabeda::Prometheus::Exporter.start_metrics_server! if AppConfig.metrics
 
   config.logger = logger
   config.redis = redis_conf
