@@ -61,7 +61,7 @@ module Dependabot
       @config ||= Dependabot::ConfigFetcher.call(
         project_name,
         find_by: {
-          package_manager: mr.package_ecosystem,
+          package_ecosystem: mr.package_ecosystem,
           directory: mr.directory
         }
       )
