@@ -21,7 +21,12 @@ mongodb:
 
 env:
   commandsPrefix: "@dependabot-bot"
-  updateRetry: "false"
+  updateRetry: false
+  metrics: false
+
+project_registration:
+  mode: "automatic"
+  cron: "0 0 1 1 *"
 
 web:
   startupProbe:
