@@ -9,9 +9,7 @@ projects:
   - dependabot-gitlab/dependency-test
 
 credentials:
-  gitlab_access_token: {{ requiredEnv "GITLAB_ACCESS_TOKEN" }}
-  github_access_token: {{ requiredEnv "GITHUB_ACCESS_TOKEN" }}
-  gitlab_auth_token: {{ requiredEnv "GITLAB_HOOKS_AUTH_TOKEN" }}
+  gitlab_access_token: {{ requiredEnv "GITLAB_ACCESS_TOKEN_TEST" }}
 
 registriesCredentials:
   DOCKERHUB_TOKEN: test-token
