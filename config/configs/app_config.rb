@@ -5,13 +5,20 @@ class AppConfig < ApplicationConfig
 
   attr_config :dependabot_url,
               gitlab_url: "https://gitlab.com",
-              config_filename: ".gitlab/dependabot.yml",
-              config_branch: nil,
               standalone: false,
               log_level: "info",
+              # mr command prefix
               commands_prefix: "$dependabot",
+              # update job retry amount
               update_retry: 2,
-              metrics: true
+              # config file
+              config_filename: ".gitlab/dependabot.yml",
+              config_branch: nil,
+              # /metrics endpoint
+              metrics: true,
+              # project registration
+              project_registration: "manual",
+              project_registration_cron: "0 5 * * *"
 
   # Configurable sidekiq retry
   #

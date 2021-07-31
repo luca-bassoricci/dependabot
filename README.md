@@ -120,12 +120,17 @@ Some of the options can have slightly different behavior which is described in t
 
 ## Automatically
 
-If gitlab webhook is configured, project will be added automatically once dependabot.yml configuration file is created or updates in the repository's default branch.
-Project is removed from dependabot instance if dependabot.yml file is deleted from repository.
+### Project registration job
+
+It is possible to enable project registration job, which will periodically scan for projects to register. [Configuration options](doc/environment.md#project_registration)
 
 ## Manually
 
-If webhooks are not configured, projects have to be added manually.
+### Project webhook
+
+If project webhook was added manually beforehand, project will be registered once `.dependabot.yml` configuration file is pushed to repository.
+
+Project is removed from dependabot instance if dependabot.yml file is deleted from repository.
 
 ### API
 
