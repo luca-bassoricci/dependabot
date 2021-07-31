@@ -9,4 +9,5 @@ require "sentry-sidekiq"
 Sentry.init do |config|
   config.enabled_environments = ["production"]
   config.traces_sample_rate = 0.5
+  config.release = "dependabot-gitlab@#{ENV['VERSION']}"
 end

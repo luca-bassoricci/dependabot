@@ -35,9 +35,13 @@ RUN SETTINGS__GITLAB_ACCESS_TOKEN=token RAILS_ENV=production \
 
 ARG COMMIT_SHA
 ARG PROJECT_URL
+ARG VERSION
+
+ENV VERSION=$VERSION
 
 LABEL maintainer="andrejs.cunskis@gmail.com" \
       vcs-ref=$COMMIT_SHA \
-      vcs-url=$PROJECT_URL
+      vcs-url=$PROJECT_URL \
+      version=$VERSION
 
 ENTRYPOINT [ "bundle", "exec" ]
