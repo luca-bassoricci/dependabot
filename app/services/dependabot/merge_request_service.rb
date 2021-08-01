@@ -106,9 +106,9 @@ module Dependabot
     # @return [void]
     def update_mr
       return log(:info, " merge request #{mr.references.short} doesn't require updating") unless update_mr?
-      return rebase_mr if !mr["has_conflicts"] && rebase_all?
+      return recreate_mr if recreate || mr["has_conflicts"]
 
-      recreate_mr
+      rebase_mr
     end
 
     # Recreate existing mr
