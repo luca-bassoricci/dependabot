@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Api::ProjectController, epic: :controllers do
+describe Api::Project::AddsController, epic: :controllers do
   include_context "with rack_test"
 
   let(:project_name) { "dependabot-gitlab/dependabot" }
@@ -12,7 +12,7 @@ describe Api::ProjectController, epic: :controllers do
   end
 
   it "creates project and jobs", integration: true do
-    post_json("/api/project", { project: project_name })
+    post_json("/api/project/add", { project: project_name })
 
     aggregate_failures do
       expect(last_response.status).to eq(200)
@@ -22,7 +22,7 @@ describe Api::ProjectController, epic: :controllers do
   end
 
   it "handles incorrect request" do
-    post_json("/api/project", {})
+    post_json("/api/project/add", {})
 
     expect(last_response.status).to eq(400)
   end

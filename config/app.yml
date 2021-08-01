@@ -1,2 +1,3 @@
 test:
   dependabot_url: "https://dependabot-gitlab.com"
+  project_registration: "system_hook"
