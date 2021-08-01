@@ -9,23 +9,5 @@ Sentry.init do |config|
   config.release = "dependabot-gitlab@#{ENV['VERSION']}"
   config.skip_rake_integration = true
   config.logger = DependabotLogger.logger
-  config.traces_sampler = lambda do |sampling_context|
-    transaction_context = sampling_context[:transaction_context]
-    op = transaction_context[:op]
-    transaction_name = transaction_context[:name]
-
-    case op
-    when /request/
-      case transaction_name
-      when /healthcheck/
-        0.0
-      else
-        1.0
-      end
-    when /sidekiq/
-      1.0
-    else
-      0.0
-    end
-  end
+  config.traces_sample_rate = 0.3
 end
