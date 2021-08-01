@@ -5,6 +5,7 @@
 # Supported by
 
 [![jetbrains](images/jetbrains.png)](https://www.jetbrains.com/?from=dependabot-gitlab)
+[![gitlab foss](images/gitlab.png)](https://about.gitlab.com/solutions/open-source/)
 [![DigitalOcean Referral Badge](https://web-platforms.sfo2.digitaloceanspaces.com/WWW/Badge%203.svg)](https://www.digitalocean.com/?refcode=ad4b9edb881f&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge)
 
 ---
