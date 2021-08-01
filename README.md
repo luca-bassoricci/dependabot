@@ -124,6 +124,17 @@ Some of the options can have slightly different behavior which is described in t
 
 It is possible to enable project registration job, which will periodically scan for projects to register. [Configuration options](doc/environment.md#project_registration)
 
+### System hook
+
+If [project registration option](doc/environment.md#project_registration) is set to `system_hook`, endpoint `api/project/registration` endpoint is enabled which listens for following [system hook](https://docs.gitlab.com/ee/system_hooks/system_hooks.html) events to automatically register projects:
+
+* `project_create`
+* `project_destroy`
+* `project_rename`
+* `project_transfer`
+
+Additionally option `SETTINGS__PROJECT_REGISTRATION_NAMESPACE` can restrict namespaces allowed to automatically register projects
+
 ## Manually
 
 ### Project webhook
@@ -134,7 +145,7 @@ Project is removed from dependabot instance if dependabot.yml file is deleted fr
 
 ### API
 
-Endpoint `api/project` can receive POST request with json `{"project":"dependabot-gitlab/dependabot"}` to add update jobs for project manually. Project must have a valid dependabot configuration file.
+Endpoint `api/project/add` can receive POST request with json `{"project":"dependabot-gitlab/dependabot"}` to add update jobs for project manually.
 
 ### Rake task
 

@@ -27,5 +27,7 @@ add necessary webhooks to project
 
 * `SETTINGS__PROJECT_REGISTRATION`
   * `manual` - default value which disables automated project registration
+  * `system_hook` - enable `api/project/registration` endpoint for system webhook configuration
   * `automatic` - creates a cron job which automatically scans all projects where user associated with used gitlab access token has at least developer role and adds project if `dependabot.yml` configuration file is present
 * `SETTINGS__PROJECT_REGISTRATION_CRON` - cron expression for project registration job in `automatic` mode, default: `0 5 * * *`
+* `SETTINGS__PROJECT_REGISTRATION_NAMESPACE` - regex pattern of namespaces allowed to be registered automatically
