@@ -24,3 +24,30 @@ Redis.exists_returns_integer = true
 
 # Reduce verbose output of activejob
 ActiveJob::Base.logger = Logger.new(IO::NULL)
+
+# Log healthcheck start/stop to debug level
+# :reek:InstanceVariableAssumption
+# :reek:RepeatedConditional
+# :reek:TooManyStatements
+module Sidekiq
+  class JobLogger
+    def call(_item, queue)
+      start = ::Process.clock_gettime(::Process::CLOCK_MONOTONIC)
+      healthcheck = queue.start_with?("healthcheck-")
+
+      healthcheck ? @logger.debug("start") : @logger.info("start")
+
+      yield
+
+      with_elapsed_time_context(start) do
+        healthcheck ? @logger.debug("done") : @logger.info("done")
+      end
+    rescue Exception # rubocop:disable Lint/RescueException
+      with_elapsed_time_context(start) do
+        healthcheck ? @logger.debug("fail") : @logger.info("fail")
+      end
+
+      raise
+    end
+  end
+end
