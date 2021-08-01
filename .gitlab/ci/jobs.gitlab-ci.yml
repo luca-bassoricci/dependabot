@@ -148,10 +148,12 @@ variables:
 .brakeman:
   stage: static analysis
   extends: brakeman-sast
+  needs: []
 
 .bundle_audit:
   stage: static analysis
   extends: bundler-audit-dependency_scanning
+  needs: []
 
 .dependency_scan:
   stage: static analysis
