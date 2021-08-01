@@ -2,6 +2,11 @@
 
 **This software is Work in Progress: features will appear and disappear, API will be changed, your feedback is always welcome!**
 
+# Supported by
+
+[![jetbrains](images/jetbrains.png)](https://www.jetbrains.com/?from=dependabot-gitlab)
+[![DigitalOcean Referral Badge](https://web-platforms.sfo2.digitaloceanspaces.com/WWW/Badge%203.svg)](https://www.digitalocean.com/?refcode=ad4b9edb881f&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge)
+
 ---
 
 Application providing automated dependency updates based on [dependabot-core](https://github.com/dependabot/dependabot-core)
@@ -197,7 +202,3 @@ Index page of application, like `http://localhost:3000/` will display a table wi
 * Setup [pre-commit](https://pre-commit.com/) hooks with `pre-commit install`
 * Make change and make sure tests pass with `bundle exec rspec` (some tests require instance of mongodb and redis which can be started via `docker-compose -f docker-compose.yml up` command)
 * Submit merge request
-
-# Supported by
-
-[![jetbrains](images/jetbrains.png)](https://www.jetbrains.com/?from=dependabot-gitlab)
