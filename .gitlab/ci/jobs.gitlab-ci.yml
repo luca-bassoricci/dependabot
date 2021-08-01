@@ -46,7 +46,7 @@ include:
     - *gem_cache
 
 .deploy_runner:
-  image: quay.io/roboll/helmfile:helm3-v0.139.9
+  image: quay.io/roboll/helmfile:helm3-v0.140.0
 
 .buildkit_runner:
   image:
