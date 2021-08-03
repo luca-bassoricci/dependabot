@@ -18,7 +18,7 @@ class AppConfig < ApplicationConfig
               metrics: true,
               # project registration
               project_registration: "manual",
-              project_registration_cron: "0 5 * * *",
+              project_registration_cron: "0 6 * * *",
               project_registration_namespace: nil
 
   # Configurable sidekiq retry
