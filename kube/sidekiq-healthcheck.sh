@@ -1,3 +1,3 @@
 #!/bin/bash
 
-bundle exec rake "dependabot:check_sidekiq"
+SIDEKIQ_HEALTHCHECK=true bundle exec rake "dependabot:check_sidekiq"

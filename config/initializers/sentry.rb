@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+return if ENV["SIDEKIQ_HEALTHCHECK"]
+
 require "sentry-ruby"
 require "sentry-rails"
 require "sentry-sidekiq"
