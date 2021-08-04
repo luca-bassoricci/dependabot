@@ -7,6 +7,7 @@ class AppConfig < ApplicationConfig
               gitlab_url: "https://gitlab.com",
               standalone: false,
               log_level: "info",
+              create_project_hook: true,
               # mr command prefix
               commands_prefix: "$dependabot",
               # update job retry amount

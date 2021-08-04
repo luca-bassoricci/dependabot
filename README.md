@@ -110,8 +110,7 @@ If `env.dependabotUrl` in helm values or `SETTINGS__DEPENDABOT_URL` is not set, 
 * `Comments`
 * `Pipeline events`
 
-It is possible to set up system hooks on Gitlab instance level as well.
-Make sure `dependabot url` property is not set, so same project doesn't end up with 2 identical webhooks configured.
+It is possible to set up system hooks on Gitlab instance level as well. Make sure `SETTINGS__CREATE_PROJECT_HOOK` is set to `false` so project specific hooks are not created automatically.
 
 ## dependabot.yml
 
@@ -130,6 +129,10 @@ Some of the options can have slightly different behavior which is described in t
 
 It is possible to enable project registration job, which will periodically scan for projects to register. [Configuration options](doc/environment.md#project_registration)
 
+Since the job tries to register all of the projects where user associated with the access token used has at least developer access, it might be necessary to disable hook created, because it requires maintainer level access. `SETTINGS_CREATE_PROJECT_HOOK` must be set to `false` in this case.
+
+Additionally option `SETTINGS__PROJECT_REGISTRATION_NAMESPACE` can restrict namespaces allowed to automatically register projects.
+
 ### System hook
 
 If [project registration option](doc/environment.md#project_registration) is set to `system_hook`, endpoint `api/project/registration` endpoint is enabled which listens for following [system hook](https://docs.gitlab.com/ee/system_hooks/system_hooks.html) events to automatically register projects:
@@ -139,7 +142,7 @@ If [project registration option](doc/environment.md#project_registration) is set
 * `project_rename`
 * `project_transfer`
 
-Additionally option `SETTINGS__PROJECT_REGISTRATION_NAMESPACE` can restrict namespaces allowed to automatically register projects
+Additionally option `SETTINGS__PROJECT_REGISTRATION_NAMESPACE` can restrict namespaces allowed to automatically register projects.
 
 ## Manually
 

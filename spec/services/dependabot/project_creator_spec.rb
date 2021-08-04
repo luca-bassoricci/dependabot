@@ -36,6 +36,18 @@ describe Dependabot::ProjectCreator, integration: true, epic: :services, feature
       end
     end
 
+    context "with hook creation disabled" do
+      include_context "with config helper"
+
+      it "skips hook creation" do
+        with_env("SETTINGS__CREATE_PROJECT_HOOK" => "false") do
+          described_class.call(repo)
+
+          expect(Project.find_by(name: repo).webhook_id).to be_nil
+        end
+      end
+    end
+
     context "with existing project" do
       it "updates existing project and hook" do
         project.webhook_id = hook_id
