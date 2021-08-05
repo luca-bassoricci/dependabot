@@ -6,5 +6,6 @@ class DependabotConfigContract < Dry::Validation::Contract
     required(:updates).filled(:array)
 
     optional(:registries).hash
+    optional(:fork).filled(:bool?)
   end
 end

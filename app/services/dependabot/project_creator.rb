@@ -21,31 +21,6 @@ module Dependabot
 
     attr_reader :project_name
 
-    # Existing project
-    #
-    # @return [Project]
-    def project
-      @project ||= Project.where(name: project_name).first || Project.new(name: project_name)
-    end
-
-    # Dependabot configuration
-    #
-    # @return [Array]
-    def config
-      @config ||= begin
-        return nil unless Gitlab::Config::Checker.call(project_name, default_branch)
-
-        ConfigFetcher.call(project_name, update_cache: true)
-      end
-    end
-
-    # Project default branch
-    #
-    # @return [String]
-    def default_branch
-      @default_branch ||= Gitlab::DefaultBranch.call(project_name)
-    end
-
     # Save webhook if dependabot url is configured
     #
     # @return [void]
@@ -66,7 +41,49 @@ module Dependabot
     # @return [void]
     def save_project
       project.config = config if config
+      project.forked_from_id = forked_from_id if forked_from_id
+      project.project_id = gitlab_project.id
+
       project.tap(&:save!)
+    end
+
+    # Existing project
+    #
+    # @return [Project]
+    def project
+      @project ||= Project.where(name: project_name).first || Project.new(name: project_name)
+    end
+
+    # Dependabot configuration
+    #
+    # @return [Array]
+    def config
+      @config ||= begin
+        return nil unless Gitlab::Config::Checker.call(project_name, default_branch)
+
+        ConfigFetcher.call(project_name, update_cache: true)
+      end
+    end
+
+    # Gitlab project
+    #
+    # @return [Gitlab::ObjectifiedHash]
+    def gitlab_project
+      @gitlab_project ||= gitlab.project(project_name)
+    end
+
+    # Project default branch
+    #
+    # @return [String]
+    def default_branch
+      @default_branch ||= gitlab_project.default_branch
+    end
+
+    # Parent project id if exists
+    #
+    # @return [Integer]
+    def forked_from_id
+      @forked_from_id ||= gitlab_project.dig(:forked_from_project, :id)
     end
   end
 end

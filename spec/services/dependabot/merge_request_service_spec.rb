@@ -5,7 +5,7 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
 
   let(:gitlab) { instance_double("Gitlab::Client", rebase_merge_request: nil, accept_merge_request: nil) }
 
-  let(:project) { Project.new(name: repo, config: dependabot_config) }
+  let(:project) { Project.new(name: repo, config: dependabot_config, forked_from_id: 1) }
   let(:source_branch) { "dependabot-bundler-.-master-config-2.2.1" }
   let(:target_branch) { "master" }
   let(:config) { dependabot_config.first }
@@ -84,16 +84,37 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
       allow(AppConfig).to receive(:standalone).and_return(true)
     end
 
-    it "gets created" do
-      aggregate_failures do
-        expect(service_return).to eq(mr)
-        expect(mr_db.dependencies).to eq(MergeRequest.find_by(iid: mr.iid).dependencies)
-        expect(Gitlab::MergeRequest::Creator).to have_received(:call).with(
-          fetcher: fetcher,
-          updated_dependencies: updated_dependencies,
-          updated_files: updated_files,
-          config: dependabot_config.first
-        )
+    context "without fork" do
+      it "gets created in same project" do
+        aggregate_failures do
+          expect(service_return).to eq(mr)
+          expect(mr_db.dependencies).to eq(MergeRequest.find_by(iid: mr.iid).dependencies)
+          expect(Gitlab::MergeRequest::Creator).to have_received(:call).with(
+            fetcher: fetcher,
+            updated_dependencies: updated_dependencies,
+            updated_files: updated_files,
+            config: dependabot_config.first,
+            target_project_id: nil
+          )
+        end
+      end
+    end
+
+    context "with fork" do
+      before { config[:fork] = true }
+
+      it "gets created in same project" do
+        aggregate_failures do
+          expect(service_return).to eq(mr)
+          expect(mr_db.dependencies).to eq(MergeRequest.find_by(iid: mr.iid).dependencies)
+          expect(Gitlab::MergeRequest::Creator).to have_received(:call).with(
+            fetcher: fetcher,
+            updated_dependencies: updated_dependencies,
+            updated_files: updated_files,
+            config: dependabot_config.first,
+            target_project_id: 1
+          )
+        end
       end
     end
 

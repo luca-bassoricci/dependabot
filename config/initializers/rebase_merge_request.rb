@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# TODO: remove once gitlab gem is updated
+#
 class Gitlab::Client # rubocop:disable Style/ClassAndModuleChildren
   module MergeRequests
     # Rebase a merge request.
