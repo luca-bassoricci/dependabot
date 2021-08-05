@@ -118,7 +118,7 @@ module Dependabot
     #
     # @param [Hash<Symbol, Object>] opts
     # @return [Hash<Symbol, Object>]
-    def general_options(opts)
+    def general_options(opts) # rubocop:disable Metrics/MethodLength
       package_ecosystem = opts[:"package-ecosystem"]
 
       {
@@ -135,7 +135,8 @@ module Dependabot
         open_merge_requests_limit: opts[:"open-pull-requests-limit"] || 5,
         rebase_strategy: opts[:"rebase-strategy"] || "auto",
         auto_merge: opts[:"auto-merge"],
-        versioning_strategy: versioning_strategy(opts[:"versioning-strategy"])
+        versioning_strategy: versioning_strategy(opts[:"versioning-strategy"]),
+        fork: yml[:fork]
       }
     end
 

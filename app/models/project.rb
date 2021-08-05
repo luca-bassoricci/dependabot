@@ -4,6 +4,8 @@ class Project
   include Mongoid::Document
 
   field :name, type: String
+  field :project_id, type: Integer
+  field :forked_from_id, type: Integer
   field :config, type: Array, default: []
   field :webhook_id, type: Integer
 

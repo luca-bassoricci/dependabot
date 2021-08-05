@@ -46,7 +46,8 @@ module Dependabot
         fetcher: fetcher,
         updated_dependencies: updated_dependencies,
         updated_files: updated_files,
-        config: config
+        config: config,
+        target_project_id: config[:fork] ? project.forked_from_id : nil
       ) || return # dependabot-core returns nil if branch && mr exists and nothing was created
 
       log(:info, "  created merge request: #{mr.web_url}")

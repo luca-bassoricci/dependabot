@@ -6,6 +6,7 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
   include_context "with dependabot helper"
   include_context "with webmock"
 
+  let(:gitlab) { instance_double("Gitlab::client", project: OpenStruct.new(default_branch: branch)) }
   let(:rspec) { "rspec" }
   let(:branch) { "master" }
   let(:project) { Project.new(name: repo) }
@@ -50,7 +51,7 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
   before do
     stub_gitlab
 
-    allow(Gitlab::DefaultBranch).to receive(:call).with(repo) { branch }
+    allow(Gitlab).to receive(:client) { gitlab }
     allow(Gitlab::Config::Fetcher).to receive(:call).with(repo, branch, update_cache: false) { raw_config }
     allow(Dependabot::FileFetcher).to receive(:call).with(repo, dependabot_config.first, nil) { fetcher }
     allow(Dependabot::DependencyUpdater).to receive(:call)

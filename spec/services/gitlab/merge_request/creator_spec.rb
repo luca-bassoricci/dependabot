@@ -6,7 +6,8 @@ describe Gitlab::MergeRequest::Creator, epic: :services, feature: :gitlab do
       fetcher: fetcher,
       updated_dependencies: updated_dependencies,
       updated_files: updated_files,
-      config: config
+      config: config,
+      target_project_id: 1
     )
   end
 
@@ -68,6 +69,7 @@ describe Gitlab::MergeRequest::Creator, epic: :services, feature: :gitlab do
         credentials: Dependabot::Credentials.call,
         github_redirection_service: "github.com",
         pr_message_footer: footer,
+        target_project_id: 1,
         **mr_params
       }
     )

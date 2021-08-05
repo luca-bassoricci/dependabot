@@ -4,6 +4,7 @@ describe Dependabot::MergeRequestUpdater, epic: :services, feature: :dependabot,
   include_context "with dependabot helper"
   include_context "with webmock"
 
+  let(:gitlab) { instance_double("Gitlab::client", project: OpenStruct.new(default_branch: branch)) }
   let(:branch) { "master" }
   let(:project) { Project.new(name: repo) }
   let(:config) { dependabot_config.first }
@@ -21,7 +22,7 @@ describe Dependabot::MergeRequestUpdater, epic: :services, feature: :dependabot,
   before do
     stub_gitlab
 
-    allow(Gitlab::DefaultBranch).to receive(:call).with(repo) { branch }
+    allow(Gitlab).to receive(:client) { gitlab }
     allow(Gitlab::Config::Fetcher).to receive(:call).with(repo, branch, update_cache: false) { raw_config }
     allow(Dependabot::FileFetcher).to receive(:call).with(repo, config, nil) { fetcher }
     allow(Dependabot::DependencyUpdater).to receive(:call)

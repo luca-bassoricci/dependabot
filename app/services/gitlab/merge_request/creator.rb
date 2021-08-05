@@ -15,11 +15,12 @@ module Gitlab
       # @param [Array<Dependabot::Dependency>] updated_dependencies
       # @param [Array<Dependabot::DependencyFile>] updated_files
       # @param [Hash] mr_options
-      def initialize(fetcher:, updated_dependencies:, updated_files:, config:)
+      def initialize(fetcher:, updated_dependencies:, updated_files:, config:, target_project_id:)
         @fetcher = fetcher
         @updated_dependencies = updated_dependencies
         @updated_files = updated_files
         @config = config
+        @target_project_id = target_project_id
       end
 
       # Create merge request
@@ -34,13 +35,18 @@ module Gitlab
           credentials: Dependabot::Credentials.call,
           github_redirection_service: "github.com",
           pr_message_footer: AppConfig.standalone ? nil : message_footer,
+          target_project_id: target_project_id,
           **mr_options
         ).create
       end
 
       private
 
-      attr_reader :fetcher, :updated_dependencies, :updated_files, :config
+      attr_reader :fetcher,
+                  :updated_dependencies,
+                  :updated_files,
+                  :config,
+                  :target_project_id
 
       # Get assignee ids
       #

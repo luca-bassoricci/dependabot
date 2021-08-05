@@ -17,13 +17,16 @@ module Dependabot
     #
     # @return [Hash<Symbol, Object>]
     def call
-      branch = AppConfig.config_branch || Gitlab::DefaultBranch.call(project_name)
-      raw_config = Gitlab::Config::Fetcher.call(project_name, branch, update_cache: update_cache)
-      unless raw_config
-        raise(
-          MissingConfigurationError,
-          "#{AppConfig.config_filename} not present in #{project_name}'s branch #{branch}"
-        )
+      raw_config = Rails.cache.fetch("#{project_name}-configuration", expires_in: 24.hours, force: update_cache) do
+        branch = AppConfig.config_branch || gitlab.project(project_name).default_branch
+        Gitlab::Config::Fetcher.call(project_name, branch, update_cache: update_cache).tap do |raw|
+          next if raw
+
+          raise(
+            MissingConfigurationError,
+            "#{AppConfig.config_filename} not present in #{project_name}'s branch #{branch}"
+          )
+        end
       end
 
       config = ConfigParser.call(raw_config)
