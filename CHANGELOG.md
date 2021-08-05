@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## [v0.8.1 - 2021-08-05](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🔬 Improvements
+
+- add support for update-types parameter in ignore rule. See merge request dependabot-gitlab/dependabot!885 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.8.0](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.8.0...v0.8.1)
+
 ## [v0.8.0 - 2021-08-05](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🚀 New features
