@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "dependabot/config/ignore_condition"
+
 module Dependabot
   class RuleHandler
     # @return [Hash<String, Proc>] handlers for type allow rules
@@ -53,7 +55,7 @@ module Dependabot
     #
     # @return [Boolean]
     def ignored?
-      ignore.any? { |rule| matches_name?(rule) && matches_versions?(rule[:versions]) }
+      ignore.any? { |rule| matches_name?(rule) && matches_versions?(rule) }
     end
 
     # Global allow rules
@@ -81,13 +83,17 @@ module Dependabot
 
     # Matches defined dependency version or range
     #
-    # @param [Array] versions
+    # @param [Array] hash
     # @return [Boolean]
-    def matches_versions?(versions)
-      return true unless versions
+    def matches_versions?(rule)
+      versions = Dependabot::Config::IgnoreCondition
+                 .new(rule.slice(:dependency_name, :versions, :update_types))
+                 .ignored_versions(dependency, rule[:dependency_type] == "security")
+
+      return true if versions.empty?
 
       versions.any? do |version|
-        SemanticRange.satisfies(checker.latest_version.to_s, version)
+        SemanticRange.satisfies(checker.latest_version.to_s, version, loose: true)
       end
     end
 

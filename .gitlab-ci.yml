@@ -128,7 +128,7 @@ e2e:
     - build-app-image
     - build-mock-image
   variables:
-    SETTINGS__GITHUB_ACCESS_TOKEN: $GITHUB_ACCESS_TOKEN
+    SETTINGS__GITHUB_ACCESS_TOKEN: $GITHUB_ACCESS_TOKEN_TEST
   rules:
     - *master
     - *release

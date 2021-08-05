@@ -59,10 +59,28 @@ describe Dependabot::RuleHandler, epic: :services, feature: :dependabot do
     it { is_expected.to be_falsey }
   end
 
-  context "when dependency is ignored" do
+  context "when dependency is ignored with versions" do
     let(:ignore_conf) { [{ dependency_name: "config", versions: ["~> 2"] }] }
 
     it { is_expected.to be_falsey }
+  end
+
+  context "when dependency minor version is ignored with update-types" do
+    let(:ignore_conf) { [{ dependency_name: "config", update_types: ["version-update:semver-minor"] }] }
+
+    it { is_expected.to be_falsey }
+  end
+
+  context "when dependency patch version is ignored with update-types" do
+    let(:ignore_conf) { [{ dependency_name: "config", update_types: ["version-update:semver-patch"] }] }
+
+    it { is_expected.to be_truthy }
+  end
+
+  context "when dependency major version is ignored with update-types" do
+    let(:ignore_conf) { [{ dependency_name: "config", update_types: ["version-update:semver-major"] }] }
+
+    it { is_expected.to be_truthy }
   end
 
   context "when only production dependencies are allowed" do

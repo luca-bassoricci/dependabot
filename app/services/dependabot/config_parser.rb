@@ -187,7 +187,8 @@ module Dependabot
         {
           dependency_name: opt[:"dependency-name"],
           dependency_type: opt[:"dependency-type"],
-          versions: opt[:versions]
+          versions: opt[:versions],
+          update_types: opt[:"update-types"]
         }.compact
       end
     end
