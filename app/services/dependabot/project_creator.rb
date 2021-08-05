@@ -57,6 +57,8 @@ module Dependabot
       return project.webhook_id = Gitlab::Hooks::Updater.call(project_name, default_branch, hook_id) if hook_id
 
       project.webhook_id = Gitlab::Hooks::Creator.call(project_name, default_branch)
+    rescue Gitlab::Error::Forbidden => e
+      log_error(e)
     end
 
     # Save project
