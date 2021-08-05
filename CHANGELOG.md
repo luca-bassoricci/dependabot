@@ -1,5 +1,69 @@
 # CHANGELOG
 
+## [v0.8.0 - 2021-08-05](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🚀 New features
+
+- project registration via system hooks. See merge request dependabot-gitlab/dependabot!869 - (andrejs)
+- cron job to automatically scan projects to register. See merge request dependabot-gitlab/dependabot!854 - (andrejs)
+- rebase/recreate other open mrs after merging dependency updates. Closes #52. See merge request dependabot-gitlab/dependabot!841 - (andrejs)
+
+### 🔬 Improvements
+
+- add create project hook config option. See merge request dependabot-gitlab/dependabot!886 - (andrejs)
+- make metrics server configurable. See merge request dependabot-gitlab/dependabot!865 - (andrejs)
+
+### 🐞 Bug Fixes
+
+- rescue forbidden error on hook creation. See merge request dependabot-gitlab/dependabot!887 - (andrejs)
+- always recreate mr on recreate command. See merge request dependabot-gitlab/dependabot!873 - (andrejs)
+- set sidekiq initialization to be first. See merge request dependabot-gitlab/dependabot!864 - (andrejs)
+- fix 'recreate' command. See merge request dependabot-gitlab/dependabot!863 - (andrejs)
+- correctly pass arguments to MergeRequestService. See merge request dependabot-gitlab/dependabot!851 - (andrejs)
+- log auto-rebase triggered only if mrs exist. See merge request dependabot-gitlab/dependabot!850 - (andrejs)
+- do not trigger updates for merged mr if auto-rebase is disabled. See merge request dependabot-gitlab/dependabot!846 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump dependabot-omnibus from 0.157.1 to 0.158.0. See merge request dependabot-gitlab/dependabot!882 - (andrejs)
+- bump mongoid from 7.3.1 to 7.3.2. See merge request dependabot-gitlab/dependabot!883 - (andrejs)
+- bump bootsnap from 1.7.6 to 1.7.7. See merge request dependabot-gitlab/dependabot!879 - (andrejs)
+- bump sentry-rails from 4.6.3 to 4.6.4. See merge request dependabot-gitlab/dependabot!857 - (andrejs)
+- bump sentry-ruby from 4.6.3 to 4.6.4. See merge request dependabot-gitlab/dependabot!858 - (andrejs)
+- bump sentry-sidekiq from 4.6.3 to 4.6.4. See merge request dependabot-gitlab/dependabot!859 - (andrejs)
+- bump puma from 5.3.2 to 5.4.0. See merge request dependabot-gitlab/dependabot!856 - (andrejs)
+- bump bootsnap from 1.7.5 to 1.7.6. See merge request dependabot-gitlab/dependabot!847 - (andrejs)
+- bump dependabot-omnibus from 0.156.9 to 0.157.1. See merge request dependabot-gitlab/dependabot!848 - (andrejs)
+- bump sentry-rails from 4.6.1 to 4.6.3. See merge request dependabot-gitlab/dependabot!842 - (andrejs)
+- bump sentry-ruby from 4.6.1 to 4.6.3. See merge request dependabot-gitlab/dependabot!843 - (andrejs)
+- bump sentry-sidekiq from 4.6.1 to 4.6.3. See merge request dependabot-gitlab/dependabot!844 - (andrejs)
+
+### 📦🛠️ Development dependency updates
+
+- update helmfile version. See merge request dependabot-gitlab/dependabot!878 - (andrejs)
+- bump reek from 6.0.4 to 6.0.5. See merge request dependabot-gitlab/dependabot!875 - (andrejs)
+- bump dependabot-gitlab/dependabot/ruby from 2.7.3-buster-latest to 2.7.4-buster-latest in /spec/fixture/gitlab. See merge request dependabot-gitlab/dependabot!853 - (andrejs)
+- bump solargraph from 0.42.4 to 0.43.0. See merge request dependabot-gitlab/dependabot!845 - (andrejs)
+
+### 🛠️ Chore
+
+- set different default cron value for registration job. See merge request dependabot-gitlab/dependabot!881 - (andrejs)
+- start brakeman and bundle-autid right away. See merge request dependabot-gitlab/dependabot!876 - (andrejs)
+- log healthcheck job to debug level. See merge request dependabot-gitlab/dependabot!872 - (andrejs)
+- revert sampler changes for sentry. See merge request dependabot-gitlab/dependabot!871 - (andrejs)
+- sentry configuration improvements. See merge request dependabot-gitlab/dependabot!870 - (andrejs)
+- use different gitlab token for dev environment deploy. See merge request dependabot-gitlab/dependabot!868 - (andrejs)
+- include app version in docker image. See merge request dependabot-gitlab/dependabot!867 - (andrejs)
+- update deployment chart. See merge request dependabot-gitlab/dependabot!866 - (andrejs)
+- refactor and simplify code. See merge request dependabot-gitlab/dependabot!862 - (andrejs)
+- fix local Dockerfile stage. See merge request dependabot-gitlab/dependabot!852 - (andrejs)
+- move logging statement for config fetching inside cache block. See merge request dependabot-gitlab/dependabot!840 - (andrejs)
+- extract docker runner definition. See merge request dependabot-gitlab/dependabot!839 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.7.0](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.7.0...v0.8.0)
+
 ## [v0.7.0 - 2021-07-25](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🔬 Improvements
