@@ -1,7 +1,12 @@
 # frozen_string_literal: true
 
 describe Gitlab::ProjectFinder, integration: true, epic: :services, feature: :gitlab do
-  let(:gitlab) { instance_double("Gitlab::Client", projects: projects) }
+  let(:gitlab) do
+    instance_double(
+      "Gitlab::Client",
+      projects: instance_double("Gitlab::PaginatedResponse", auto_paginate: projects)
+    )
+  end
 
   let(:existing_project) { OpenStruct.new(path_with_namespace: random_name, default_branch: "main") }
   let(:no_config_project) { OpenStruct.new(path_with_namespace: random_name, default_branch: "main") }
@@ -30,6 +35,6 @@ describe Gitlab::ProjectFinder, integration: true, epic: :services, feature: :gi
 
   it "returns unregistered projects with present configuration" do
     expect(described_class.call).to eq([new_project.path_with_namespace])
-    expect(gitlab).to have_received(:projects).with(min_access_level: 30)
+    expect(gitlab).to have_received(:projects).with(min_access_level: 30, per_page: 100)
   end
 end
