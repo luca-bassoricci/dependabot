@@ -63,7 +63,7 @@ module Dependabot
       @config ||= begin
         return nil unless Gitlab::Config::Checker.call(project_name, default_branch)
 
-        ConfigFetcher.call(project_name, update_cache: true)
+        ConfigFetcher.call(project_name, update_cache: !project_registration_context?)
       end
     end
 
@@ -86,6 +86,13 @@ module Dependabot
     # @return [Integer]
     def forked_from_id
       @forked_from_id ||= gitlab_project.to_h.dig(:forked_from_project, :id)
+    end
+
+    # Check creation is running from project registration context
+    #
+    # @return [Boolean]
+    def project_registration_context?
+      Sidekiq::Context.current[:class] == "ProjectRegistrationJob"
     end
 
     alias_method :validate_project_exists, :gitlab_project

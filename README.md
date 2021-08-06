@@ -129,7 +129,9 @@ Some of the options can have slightly different behavior which is described in t
 
 It is possible to enable project registration job, which will periodically scan for projects to register. [Configuration options](doc/environment.md#project_registration)
 
-Since the job tries to register all of the projects where user associated with the access token used has at least developer access, it might be necessary to disable hook created, because it requires maintainer level access. `SETTINGS_CREATE_PROJECT_HOOK` must be set to `false` in this case.
+The job will also update dependency update jobs if configuration in `dependabot.yml` has changed and remove dependency updates for projects that no longer have the configuration.
+
+Since the job tries to register all of the projects where user associated with the access token used has at least developer access, it might be necessary to disable hook creation, because it requires maintainer level access. `SETTINGS_CREATE_PROJECT_HOOK` must be set to `false` in this case.
 
 Additionally option `SETTINGS__PROJECT_REGISTRATION_NAMESPACE` can restrict namespaces allowed to automatically register projects.
 

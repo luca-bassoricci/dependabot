@@ -1,3 +1,3 @@
---force-color
+--force-color --profile
 --format documentation
 --require rails_helper

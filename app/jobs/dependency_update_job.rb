@@ -11,13 +11,15 @@ class DependencyUpdateJob < ApplicationJob
   # @return [void]
   def perform(args)
     validate_args(args)
-    save_job_context(args)
+    set_execution_context(args)
     UpdateFailures.call.reset_errors
 
     Dependabot::UpdateService.call(args)
   rescue StandardError => e
     capture_error(e)
     raise
+  ensure
+    set_execution_context(nil)
   end
 
   # Validate arguments
@@ -28,16 +30,5 @@ class DependencyUpdateJob < ApplicationJob
     blank_keys = args.select { |_key, value| value.blank? }.keys
 
     raise(ArgumentError, "#{blank_keys} must not be blank") unless blank_keys.empty?
-  end
-
-  # Save context for tagged logger
-  #
-  # @param [Hash] args
-  # @return [void]
-  def save_job_context(args)
-    context = args.values_at("project_name", "package_ecosystem", "directory")
-    context.pop if context.last == "/"
-
-    Thread.current[:context] = context.join("=>")
   end
 end
