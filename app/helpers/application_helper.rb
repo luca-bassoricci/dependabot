@@ -40,16 +40,25 @@ module ApplicationHelper
 
   # All project cron jobs
   #
+  # @param [String] project_name
   # @return [Array<Sidekiq::Cron::Job>]
-  def all_project_jobs(project)
-    Sidekiq::Cron::Job.all.select { |job| job.name.match?(/^#{project}:.*/) }
+  def all_project_jobs(project_name)
+    Sidekiq::Cron::Job.all.select { |job| job.name.match?(/^#{project_name}:.*/) }
   end
 
-  # Current execution context - project_name + package_ecosystem + directory
+  # Current dependency update execution context - project_name + package_ecosystem + directory
   #
   # @return [String]
   def execution_context
     Thread.current[:context]
+  end
+
+  # Set dependency update execution context
+  #
+  # @param [Hash] args
+  # @return [void]
+  def set_execution_context(args) # rubocop:disable Naming/AccessorMethodName
+    Thread.current[:context] = execution_context_name(args)
   end
 
   # Get execution context name
@@ -57,6 +66,8 @@ module ApplicationHelper
   # @param [Hash] job_args
   # @return [String]
   def execution_context_name(args)
+    return unless args
+
     context = args.values_at("project_name", "package_ecosystem", "directory")
     context.pop if context.last == "/"
 

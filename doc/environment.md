@@ -14,7 +14,7 @@ token set in gitlab webhook configuration will be ignored
 
 * `SETTINGS__DEPENDABOT_URL` - url application can be reached on, example: `https://dependabot-gitlab.com`. This url will be used to automatically
 add necessary webhooks to project
-* `SETTINGS__CREATE_PROJECT_HOOK` - enable or disable automated hook creation, default `false`. This can be useful if the user associated with used access token, does not have maintainer role
+* `SETTINGS__CREATE_PROJECT_HOOK` - enable or disable automated hook creation, default `true`. This can be useful if the user associated with used access token, does not have maintainer role
 
 ### Configuration
 
