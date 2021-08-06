@@ -13,6 +13,8 @@ module Dependabot
     #
     # @return [Array] response info
     def call
+      validate_project_exists
+
       save_webhook
       save_project
     end
@@ -85,5 +87,7 @@ module Dependabot
     def forked_from_id
       @forked_from_id ||= gitlab_project.to_h.dig(:forked_from_project, :id)
     end
+
+    alias_method :validate_project_exists, :gitlab_project
   end
 end

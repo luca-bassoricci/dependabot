@@ -65,6 +65,10 @@ Style/FrozenStringLiteralComment:
   EnforcedStyle: always
   SafeAutoCorrect: true
 
+Style/Alias:
+  Enabled: true
+  EnforcedStyle: prefer_alias_method
+
 Rails/HasManyOrHasOneDependent:
   Enabled: false
 
