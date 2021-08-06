@@ -13,7 +13,7 @@ class ProjectRegistrationJob < ApplicationJob
     return log(:info, "No new unregistered projects found, quitting!") if projects.empty?
 
     projects.each do |project_name|
-      log(:info, "  Registering project '#{project_name}'")
+      log(:info, "  registering project '#{project_name}'")
       project = Dependabot::ProjectCreator.call(project_name)
       Cron::JobSync.call(project)
     end
