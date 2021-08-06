@@ -8,7 +8,7 @@ module Webhooks
     def initialize(project_name, commits)
       @project_name = project_name
       @commits = commits
-      @config_filename = AppConfig.config_filename
+      @config_filename = DependabotConfig.config_filename
     end
 
     # Create or delete dependency update jobs

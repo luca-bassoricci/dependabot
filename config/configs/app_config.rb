@@ -12,9 +12,6 @@ class AppConfig < ApplicationConfig
               commands_prefix: "$dependabot",
               # update job retry amount
               update_retry: 2,
-              # config file
-              config_filename: ".gitlab/dependabot.yml",
-              config_branch: nil,
               # /metrics endpoint
               metrics: true,
               # project registration

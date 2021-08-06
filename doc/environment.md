@@ -20,6 +20,8 @@ add necessary webhooks to project
 
 * `SETTINGS__CONFIG_FILENAME` - custom configuration file location, default: `.gitlab/dependabot.yml`
 * `SETTINGS__CONFIG_BRANCH` - custom branch to fetch `dependabot.yml`, project default branch if not configured
+* `SETTINGS__BRANCH_NAME_SEPARATOR` - override default value of branch name separator
+* `SETTINGS__OPEN_PULL_REQUEST_LIMIT` - override default value of open pull requests
 
 ### Update jobs
 

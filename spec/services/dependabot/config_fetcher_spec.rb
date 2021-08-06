@@ -29,7 +29,7 @@ describe Dependabot::ConfigFetcher, epic: :services, feature: :configuration do
     let(:branch) { "custom_branch" }
 
     before do
-      allow(AppConfig).to receive(:config_branch) { branch }
+      allow(DependabotConfig).to receive(:config_branch) { branch }
     end
 
     it "fetches config from configured branch" do
