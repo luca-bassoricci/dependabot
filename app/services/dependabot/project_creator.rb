@@ -83,7 +83,7 @@ module Dependabot
     #
     # @return [Integer]
     def forked_from_id
-      @forked_from_id ||= gitlab_project.dig(:forked_from_project, :id)
+      @forked_from_id ||= gitlab_project.to_h.dig(:forked_from_project, :id)
     end
   end
 end
