@@ -1,11 +1,14 @@
 # frozen_string_literal: true
 
 describe Dependabot::ProjectRegistration, integration: true, epic: :services, feature: :dependabot do
+  include_context "with config helper"
+
+  let(:cron) { "0/15 * * * *" }
   let(:job_name) { "Project Registration" }
   let(:job_args) do
     {
       name: job_name,
-      cron: AppConfig.project_registration_cron,
+      cron: cron,
       class: "ProjectRegistrationJob",
       active_job: true,
       description: "Automatically register projects for update"
@@ -14,8 +17,10 @@ describe Dependabot::ProjectRegistration, integration: true, epic: :services, fe
   let(:registration_job) { Sidekiq::Cron::Job.new(**job_args) }
   let(:created_job) { Sidekiq::Cron::Job.find(job_name) }
 
-  before do
-    allow(AppConfig).to receive(:project_registration) { mode }
+  around do |example|
+    with_env("SETTINGS__PROJECT_REGISTRATION" => mode, "SETTINGS__PROJECT_REGISTRATION_CRON" => cron) do
+      example.run
+    end
   end
 
   after do
@@ -77,12 +82,14 @@ describe Dependabot::ProjectRegistration, integration: true, epic: :services, fe
     context "with existing job and unchanged cron" do
       before do
         Sidekiq::Cron::Job.create(**job_args)
+
+        allow(Sidekiq::Cron::Job).to receive(:create).and_call_original
       end
 
       it "does not update existing job" do
         described_class.call
 
-        expect(job_params(created_job)).to eq(job_params(registration_job))
+        expect(Sidekiq::Cron::Job).not_to have_received(:create)
       end
     end
 
