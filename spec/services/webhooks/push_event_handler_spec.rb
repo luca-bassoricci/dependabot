@@ -41,7 +41,7 @@ describe Webhooks::PushEventHandler, integration: true, epic: :services, feature
     end
 
     it "removes project" do
-      described_class.call(repo, commits(removed: [AppConfig.config_filename]))
+      described_class.call(repo, commits(removed: [DependabotConfig.config_filename]))
 
       aggregate_failures do
         expect(job).to have_received(:destroy)
@@ -52,7 +52,7 @@ describe Webhooks::PushEventHandler, integration: true, epic: :services, feature
 
   context "with config update" do
     it "triggers dependency update" do
-      described_class.call(repo, commits(modified: [AppConfig.config_filename]))
+      described_class.call(repo, commits(modified: [DependabotConfig.config_filename]))
 
       aggregate_failures do
         expect(Dependabot::ProjectCreator).to have_received(:call).with(repo)

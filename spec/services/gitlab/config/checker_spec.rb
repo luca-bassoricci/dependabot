@@ -10,7 +10,7 @@ describe Gitlab::Config::Checker, epic: :services, feature: :gitlab do
 
   before do
     allow(Gitlab).to receive(:client) { gitlab }
-    allow(gitlab).to receive(:get_file).with(project_name, AppConfig.config_filename, branch) { file }
+    allow(gitlab).to receive(:get_file).with(project_name, DependabotConfig.config_filename, branch) { file }
   end
 
   it { is_expected.to eq(true) }

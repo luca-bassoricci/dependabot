@@ -109,8 +109,10 @@ module Dependabot
     def branch_options(opts)
       {
         branch: opts[:"target-branch"],
-        branch_name_separator: opts.dig(:"pull-request-branch-name", :separator) || "-",
-        branch_name_prefix: opts.dig(:"pull-request-branch-name", :prefix) || "dependabot"
+        branch_name_prefix: opts.dig(:"pull-request-branch-name", :prefix) || "dependabot",
+        branch_name_separator: opts.dig(
+          :"pull-request-branch-name", :separator
+        ) || DependabotConfig.branch_name_separator
       }
     end
 
@@ -132,7 +134,7 @@ module Dependabot
         assignees: opts[:assignees],
         reviewers: opts[:reviewers],
         custom_labels: opts[:labels],
-        open_merge_requests_limit: opts[:"open-pull-requests-limit"] || 5,
+        open_merge_requests_limit: opts[:"open-pull-requests-limit"] || DependabotConfig.open_pull_request_limit,
         rebase_strategy: opts[:"rebase-strategy"] || "auto",
         auto_merge: opts[:"auto-merge"],
         versioning_strategy: versioning_strategy(opts[:"versioning-strategy"]),

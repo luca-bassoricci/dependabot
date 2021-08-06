@@ -15,7 +15,7 @@ module Gitlab
       # @return [String]
       def call
         log(:info, "Fetching configuration for #{project_name} from #{branch}")
-        gitlab.file_contents(project_name, AppConfig.config_filename, branch)
+        gitlab.file_contents(project_name, DependabotConfig.config_filename, branch)
       rescue Error::NotFound
         nil
       end
