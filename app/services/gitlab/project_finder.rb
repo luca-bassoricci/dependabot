@@ -8,7 +8,7 @@ module Gitlab
     #
     # @return [Array<String>]
     def call
-      projects = gitlab.projects(min_access_level: 30)
+      projects = gitlab.projects(min_access_level: 30, per_page: 100).auto_paginate
       log(:debug, "Fetched #{projects.length} projects")
 
       projects
