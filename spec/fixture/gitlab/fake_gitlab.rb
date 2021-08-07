@@ -7,7 +7,7 @@ require "sinatra/namespace"
 require "json"
 
 class FakeGitlab < Sinatra::Base
-  REPO_URL = "/projects/test-repo"
+  REPO_URL = "/projects/:project_id"
   REF = "88b0f12ab"
 
   register Sinatra::Namespace
@@ -28,13 +28,16 @@ class FakeGitlab < Sinatra::Base
       [200, [file("responses/dependabot.yml")]]
     end
 
-    get "#{REPO_URL}/repository/files/*" do |file|
+    get "#{REPO_URL}/repository/files/*" do |_project, file|
       [200, [file("responses/#{file.include?('dependabot') ? 'dependabot.yml' : file}.json")]]
     end
 
     # branches
-    get "#{REPO_URL}/repository/branches/:name" do
-      params["name"] == "master" ? [200, [{ commit: { id: REF } }.to_json]] : [404, [[].to_json]]
+    get "#{REPO_URL}/repository/branches/:name" do |_project, branch|
+      next [200, [{ commit: { id: REF } }.to_json]] if branch == "master"
+      next [200, [[].to_json]] if branch.include?("dependabot-omnibus")
+
+      [404, [[].to_json]]
     end
 
     post "#{REPO_URL}/repository/branches" do
@@ -48,8 +51,8 @@ class FakeGitlab < Sinatra::Base
 
     # merge requests
     get "#{REPO_URL}/merge_requests" do
-      body = if params["source_branch"].match?("dependabot-bundler-sinatra")
-               [JSON.parse(file("responses/merge_request_sinatra.json"))]
+      body = if params["source_branch"].match?("dependabot-bundler-dependabot-omnibus") && params["state"] != "closed"
+               [JSON.parse(file("responses/merge_request_dependabot_omnibus.json"))]
              else
                []
              end
@@ -58,10 +61,10 @@ class FakeGitlab < Sinatra::Base
     end
 
     post "#{REPO_URL}/merge_requests" do
-      body = if params["source_branch"].match?("dependabot-bundler-sinatra")
-               file("responses/merge_request_sinatra.json")
+      body = if params["source_branch"].match?("dependabot-bundler-dependabot-omnibus")
+               file("responses/merge_request_dependabot_omnibus.json")
              else
-               file("responses/merge_request_config.json")
+               file("responses/merge_request_rubocop.json")
              end
       [200, [body]]
     end
@@ -70,7 +73,7 @@ class FakeGitlab < Sinatra::Base
       [200, [[].to_json]]
     end
 
-    put "/projects/:id/merge_requests/:iid/merge" do
+    put "#{REPO_URL}/merge_requests/:iid/merge" do
       [200, [[].to_json]]
     end
 
