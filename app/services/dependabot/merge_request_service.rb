@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module Dependabot
+  # :reek:TooManyInstanceVariables
+  # :reek:InstanceVariableAssumption
   class MergeRequestService < ApplicationService # rubocop:disable Metrics/ClassLength
     # @param [Dependabot::FileFetchers::Base] fetcher
     # @param [Project] project
@@ -25,6 +27,7 @@ module Dependabot
         persist_mr
         close_superseeded_mrs
       else
+        log(:info, "  updating merge request #{mr.web_url}")
         update_mr
       end
 
@@ -47,7 +50,7 @@ module Dependabot
         updated_dependencies: updated_dependencies,
         updated_files: updated_files,
         config: config,
-        target_project_id: config[:fork] ? project.forked_from_id : nil
+        target_project_id: target_project_id
       ) || return # dependabot-core returns nil if branch && mr exists and nothing was created
 
       log(:info, "  created merge request: #{mr.web_url}")
@@ -67,7 +70,7 @@ module Dependabot
     #
     # @return [void]
     def persist_mr
-      return if AppConfig.standalone?
+      return if AppConfig.standalone || target_project_id
 
       MergeRequest.create!(
         project: project,
@@ -86,7 +89,7 @@ module Dependabot
     #
     # @return [void]
     def close_superseeded_mrs
-      return if AppConfig.standalone?
+      return if AppConfig.standalone || target_project_id
 
       superseeded_mrs.each do |existing_mr|
         name = project.name
@@ -116,27 +119,29 @@ module Dependabot
     #
     # @return [void]
     def recreate_mr
+      return log(:info, " merge request recreation not supported for forked projects") if target_project_id
+
       Gitlab::MergeRequest::Updater.call(
         fetcher: fetcher,
         updated_files: updated_files,
         merge_request: mr
       )
-      log(:info, "  recreated merge request #{mr.references.short}")
+      log(:info, "  recreated merge request #{mr.web_url}")
     end
 
     # Rebase merge request
     #
     # @return [void]
     def rebase_mr
-      gitlab.rebase_merge_request(project.name, mr.iid)
-      log(:info, "  rebased merge request #{mr.references.short}")
+      gitlab.rebase_merge_request(mr.project_id, mr.iid)
+      log(:info, "  rebased merge request #{mr.web_url}")
     end
 
     # Accept merge request and set to merge automatically
     #
     # @return [void]
     def accept_mr
-      return unless AppConfig.standalone
+      return unless AppConfig.standalone || !target_project_id
       return unless mr && config[:auto_merge]
 
       gitlab.accept_merge_request(project.name, mr.iid, merge_when_pipeline_succeeds: true)
@@ -156,6 +161,15 @@ module Dependabot
         separator: config[:branch_name_separator],
         prefix: config[:branch_name_prefix]
       ).new_branch_name
+    end
+
+    # Target project id
+    #
+    # @return [Integer]
+    def target_project_id
+      return @target_project_id if defined?(@target_project_id)
+
+      @target_project_id = config[:fork] ? project.forked_from_id : nil
     end
 
     # Get existing mr
@@ -215,7 +229,7 @@ module Dependabot
     # @return [Gitlab::ObjectifiedHash]
     def find_mr(state)
       Gitlab::MergeRequest::Finder.call(
-        project: fetcher.source.repo,
+        project: target_project_id || fetcher.source.repo,
         source_branch: source_branch,
         target_branch: fetcher.source.branch,
         state: state
