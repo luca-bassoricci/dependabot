@@ -70,10 +70,6 @@ Following configuration options are supported:
 |------------------------------------|--------------------|-----------------------|
 | `package-ecosystem`                | :white_check_mark: | :white_check_mark:    |
 | `directory`                        | :white_check_mark: | :white_check_mark:    |
-| `schedule.interval`                | :white_check_mark: | :x:                   |
-| `schedule.day`                     | :white_check_mark: | :x:                   |
-| `schedule.time`                    | :white_check_mark: | :x:                   |
-| `schedule.timezone`                | :white_check_mark: | :x:                   |
 | `allow`                            | :white_check_mark: | :white_check_mark:    |
 | `ignore`                           | :white_check_mark: | :white_check_mark:    |
 | `assignees`                        | :white_check_mark: | :white_check_mark:    |
@@ -85,11 +81,16 @@ Following configuration options are supported:
 | `open-pull-requests-limit`         | :white_check_mark: | :white_check_mark:    |
 | `pull-request-branch-name`         | :white_check_mark: | :white_check_mark:    |
 | `rebase-strategy`                  | :white_check_mark: | :white_check_mark:    |
-| `registries`                       | :white_check_mark: | :white_check_mark:    |
 | `reviewers`                        | :white_check_mark: | :white_check_mark:    |
 | `target-branch`                    | :white_check_mark: | :white_check_mark:    |
 | `vendor`                           | :white_check_mark: | :white_check_mark:    |
 | `versioning-strategy`              | :white_check_mark: | :white_check_mark:    |
+| `registries`                       | :white_check_mark: | :white_check_mark:    |
+| `schedule.interval`                | :white_check_mark: | :x:                   |
+| `schedule.day`                     | :white_check_mark: | :x:                   |
+| `schedule.time`                    | :white_check_mark: | :x:                   |
+| `schedule.timezone`                | :white_check_mark: | :x:                   |
+| `fork`                             | :white_check_mark: | :x:                   |
 
 ## Application
 
