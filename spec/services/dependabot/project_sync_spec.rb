@@ -10,6 +10,7 @@ describe Dependabot::ProjectSync, integration: true, epic: :services, feature: :
     )
   end
 
+  let(:cron) { "0 1 * * * UTC" }
   let(:project_name) { random_name }
   let(:project) { OpenStruct.new(path_with_namespace: project_name, default_branch: "main") }
   let(:projects) { [project] }
@@ -17,18 +18,20 @@ describe Dependabot::ProjectSync, integration: true, epic: :services, feature: :
     [
       {
         package_ecosystem: "npm",
-        directory: "/"
+        directory: "/",
+        cron: cron
       },
       {
         package_ecosystem: "bundler",
-        directory: "/"
+        directory: "/",
+        cron: cron
       }
     ]
   end
   let(:jobs) do
     [
-      Sidekiq::Cron::Job.new(name: "#{project_name}:npm:/"),
-      Sidekiq::Cron::Job.new(name: "#{project_name}:bundler:/")
+      Sidekiq::Cron::Job.new(name: "#{project_name}:bundler:/", cron: cron),
+      Sidekiq::Cron::Job.new(name: "#{project_name}:npm:/", cron: cron)
     ]
   end
 

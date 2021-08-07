@@ -83,10 +83,16 @@ module Dependabot
     # @param [Array] config
     # @return [Boolean]
     def jobs_synced?(project_name, config)
-      cron_jobs = all_project_jobs(project_name).map(&:name).sort
-      configured_jobs = config.map { |conf| "#{project_name}:#{conf[:package_ecosystem]}:#{conf[:directory]}" }.sort
+      cron_jobs = all_project_jobs(project_name).map { |job| { name: job.name, cron: job.cron } }
 
-      cron_jobs == configured_jobs
+      configured_jobs = config.map do |conf|
+        {
+          name: "#{project_name}:#{conf[:package_ecosystem]}:#{conf[:directory]}",
+          cron: conf[:cron]
+        }
+      end
+
+      cron_jobs.sort_by { |job| job[:name] } == configured_jobs.sort_by { |job| job[:name] }
     end
 
     # Register project
