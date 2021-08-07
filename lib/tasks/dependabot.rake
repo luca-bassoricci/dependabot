@@ -20,6 +20,11 @@ namespace :dependabot do # rubocop:disable Metrics/BlockLength
     end
   end
 
+  desc "remove dependency update for repository"
+  task(:remove, [:project] => :environment) do |_task, args|
+    Dependabot::ProjectRemover.call(args[:project])
+  end
+
   desc "validate config file"
   task(:validate, [:project] => :environment) do |_task, args|
     ApplicationHelper.log(:info, "Validating config '#{AppConfig.config_filename}'")

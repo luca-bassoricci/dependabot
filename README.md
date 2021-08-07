@@ -174,6 +174,16 @@ bundle exec rake 'dependabot:register[project]'
 
 `project` - project full path, example: `dependabot-gitlab/dependabot`
 
+## remove
+
+Manually remove project.
+
+```shell
+bundle exec rake 'dependabot:remove[project]'
+```
+
+`project` - project full path, example: `dependabot-gitlab/dependabot`
+
 ## update
 
 Trigger dependency update for single project and single package managed
