@@ -85,7 +85,7 @@ module Dependabot
     #
     # @return [Integer]
     def forked_from_id
-      @forked_from_id ||= gitlab_project.to_h.dig(:forked_from_project, :id)
+      @forked_from_id ||= gitlab_project.to_h.dig("forked_from_project", "id")
     end
 
     # Check creation is running from project registration context
