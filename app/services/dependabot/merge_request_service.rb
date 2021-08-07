@@ -27,7 +27,6 @@ module Dependabot
         persist_mr
         close_superseeded_mrs
       else
-        log(:info, "  updating merge request #{mr.web_url}")
         update_mr
       end
 
@@ -109,7 +108,7 @@ module Dependabot
     #
     # @return [void]
     def update_mr
-      return log(:info, " merge request #{mr.references.short} doesn't require updating") unless update_mr?
+      return log(:info, " merge request #{mr.web_url} doesn't require updating") unless update_mr?
       return recreate_mr if recreate || mr["has_conflicts"]
 
       rebase_mr
@@ -145,7 +144,7 @@ module Dependabot
       return unless mr && config[:auto_merge]
 
       gitlab.accept_merge_request(project.name, mr.iid, merge_when_pipeline_succeeds: true)
-      log(:info, "  accepted merge request #{mr.references.short}")
+      log(:info, "  accepted merge request")
     rescue Gitlab::Error::MethodNotAllowed, Gitlab::Error::NotAcceptable => e
       log(:error, " failed to accept merge request: #{e.message}")
     end
