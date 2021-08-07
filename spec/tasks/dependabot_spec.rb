@@ -44,6 +44,20 @@ describe "rake", epic: :tasks do # rubocop:disable RSpec/DescribeClass
     end
   end
 
+  describe "dependabot:remove", integration: true do
+    let(:project_name) { "test-project" }
+
+    before do
+      allow(Dependabot::ProjectRemover).to receive(:call)
+    end
+
+    it "removes project" do
+      task.invoke(project_name)
+
+      expect(Dependabot::ProjectRemover).to have_received(:call).with(project_name)
+    end
+  end
+
   describe "dependabot:check_sidekiq" do
     before do
       allow(Sidekiq).to receive(:configure_client)
