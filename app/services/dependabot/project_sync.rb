@@ -49,7 +49,7 @@ module Dependabot
       proj = saved_project(project_name)
       conf = config(project)
 
-      return log(:info, "Project '#{project_name}' has no dependabot.yml, skipping") if !proj && !conf
+      return log(:info, "Project '#{project_name}' has no #{config_file}, skipping") if !proj && !conf
       return register_project(project_name, "not added for updates, registering") if !proj && conf
       return remove_project(project_name) if proj && !conf
       return register_project(project_name, "jobs out of sync, updating") unless jobs_synced?(project_name, conf)
@@ -112,8 +112,15 @@ module Dependabot
     # @param [String] project_name
     # @return [void]
     def remove_project(project_name)
-      log(:info, "dependabot.yml removed for '#{project_name}', removing from dependency updates")
+      log(:info, "#{config_file} removed for '#{project_name}', removing from dependency updates")
       ProjectRemover.call(project_name)
+    end
+
+    # Config filename
+    #
+    # @return [String]
+    def config_file
+      @config_file ||= DependabotConfig.config_filename
     end
   end
 end
