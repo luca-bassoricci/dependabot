@@ -21,7 +21,8 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
       iid: Faker::Number.unique.number(digits: 10),
       sha: "5f92cc4d9939",
       has_conflicts: has_conflicts,
-      references: OpenStruct.new(short: "!1")
+      references: OpenStruct.new(short: "!1"),
+      project_id: 1
     )
   end
 
@@ -80,15 +81,10 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
   context "with new merge request" do
     let(:existing_mr) { nil }
 
-    before do
-      allow(AppConfig).to receive(:standalone).and_return(true)
-    end
-
     context "without fork" do
       it "gets created in same project" do
         aggregate_failures do
           expect(service_return).to eq(mr)
-          expect(mr_db.dependencies).to eq(MergeRequest.find_by(iid: mr.iid).dependencies)
           expect(Gitlab::MergeRequest::Creator).to have_received(:call).with(
             fetcher: fetcher,
             updated_dependencies: updated_dependencies,
@@ -101,19 +97,36 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
     end
 
     context "with fork" do
-      before { config[:fork] = true }
+      let(:target_project_id) { 1 }
 
-      it "gets created in same project" do
+      before do
+        config[:fork] = true
+
+        allow(Gitlab::MergeRequest::Finder).to receive(:call).with(
+          project: target_project_id,
+          source_branch: source_branch,
+          target_branch: fetcher.source.branch,
+          state: "closed"
+        ).and_return(closed_mr)
+        allow(Gitlab::MergeRequest::Finder).to receive(:call).with(
+          project: target_project_id,
+          source_branch: source_branch,
+          target_branch: fetcher.source.branch,
+          state: "opened"
+        ).and_return(existing_mr)
+      end
+
+      it "gets created in forked project" do
         aggregate_failures do
           expect(service_return).to eq(mr)
-          expect(mr_db.dependencies).to eq(MergeRequest.find_by(iid: mr.iid).dependencies)
           expect(Gitlab::MergeRequest::Creator).to have_received(:call).with(
             fetcher: fetcher,
             updated_dependencies: updated_dependencies,
             updated_files: updated_files,
             config: dependabot_config.first,
-            target_project_id: 1
+            target_project_id: target_project_id
           )
+          expect(gitlab).not_to have_received(:accept_merge_request)
         end
       end
     end
@@ -204,7 +217,7 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
 
     it "triggers merge request rebase" do
       expect(service_return).to eq(mr)
-      expect(gitlab).to have_received(:rebase_merge_request).with(project.name, mr.iid)
+      expect(gitlab).to have_received(:rebase_merge_request).with(mr.project_id, mr.iid)
       expect(Gitlab::MergeRequest::Updater).not_to have_received(:call)
     end
   end

@@ -142,6 +142,15 @@ module Dependabot
       end
       # rubocop:enable Metrics/ParameterLists
 
+      def merge_request_exists?
+        gitlab_client_for_source.merge_requests(
+          target_project_id || source.repo,
+          source_branch: branch_name,
+          target_branch: source.branch || default_branch,
+          state: "all"
+        ).any?
+      end
+
       def create_merge_request
         gitlab_client_for_source.create_merge_request(
           source.repo,
@@ -154,6 +163,17 @@ module Dependabot
           labels: labeler.labels_for_pr.join(","),
           milestone_id: milestone,
           target_project_id: target_project_id
+        )
+      end
+
+      def add_approvers_to_merge_request(merge_request)
+        approvers_hash = approvers.keys.map { |k| [k.to_sym, approvers[k]] }.to_h
+
+        gitlab_client_for_source.edit_merge_request_approvers(
+          merge_request.project_id,
+          merge_request.iid,
+          approver_ids: approvers_hash[:approvers],
+          approver_group_ids: approvers_hash[:group_approvers]
         )
       end
     end

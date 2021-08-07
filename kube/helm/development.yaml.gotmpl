@@ -5,9 +5,6 @@ image:
 service:
   type: LoadBalancer
 
-projects:
-  - dependabot-gitlab/dependency-test
-
 credentials:
   gitlab_access_token: {{ requiredEnv "GITLAB_ACCESS_TOKEN_TEST" }}
 
@@ -21,10 +18,6 @@ env:
   commandsPrefix: "@dependabot-bot"
   updateRetry: false
   metrics: false
-
-project_registration:
-  mode: "automatic"
-  cron: "0 0 1 1 *"
 
 web:
   startupProbe:
