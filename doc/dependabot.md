@@ -1,5 +1,15 @@
 # dependabot.yml configuration options
 
+## fork
+
+It is possible to update dependencies from a forked project and create merge requests back to target project in order to not expose CI environment variables to updated dependencies right away.
+
+For this option to work, project must be a fork and option must be present on top level of configuration file:
+
+```yml
+fork: true
+```
+
 ## registries
 
 `dependabot-gitlab` supports registries just like the github native version: [configuring private registries](https://docs.github.com/en/code-security/supply-chain-security/keeping-your-dependencies-updated-automatically/configuration-options-for-dependency-updates#configuration-options-for-private-registries)
