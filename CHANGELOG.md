@@ -1,5 +1,39 @@
 # CHANGELOG
 
+## [v0.8.2 - 2021-08-07](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🚀 New features
+
+- allow MR creation from forked project. See merge request dependabot-gitlab/dependabot!890 - (andrejs)
+
+### 🔬 Improvements
+
+- check for cron updates on project sync. See merge request dependabot-gitlab/dependabot!898 - (andrejs)
+- allow global overrides for branch name seperator and open pull request limit. Closes #107. See merge request dependabot-gitlab/dependabot!896 - (andrejs)
+
+### 🐞 Bug Fixes
+
+- paginate response when fetching projects for registration. See merge request dependabot-gitlab/dependabot!895 - (andrejs)
+- convert ObjectifiedHash to Hash to avoid warnings. See merge request dependabot-gitlab/dependabot!892 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump dependabot-omnibus from 0.158.0 to 0.159.0. See merge request dependabot-gitlab/dependabot!888 - (andrejs)
+
+### 📦🛠️ Development dependency updates
+
+- bump webmock from 3.13.0 to 3.14.0. See merge request dependabot-gitlab/dependabot!889 - (andrejs)
+
+### 🛠️ Chore
+
+- add full config path to log. See merge request dependabot-gitlab/dependabot!899 - (andrejs)
+- improve project registration spec and logging. See merge request dependabot-gitlab/dependabot!894 - (andrejs)
+- check gitlab project exists when registering. See merge request dependabot-gitlab/dependabot!893 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.8.1](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.8.1...v0.8.2)
+
 ## [v0.8.1 - 2021-08-05](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🔬 Improvements
