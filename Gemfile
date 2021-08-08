@@ -8,6 +8,7 @@ gem "anyway_config", "~> 2.1"
 gem "bootsnap", ">= 1.4.2", require: false
 gem "dependabot-omnibus", "~> 0.159.0"
 gem "dry-validation", "~> 1.6"
+gem "gitlab", github: "narkoz/gitlab"
 gem "lograge", "~> 0.11.2"
 gem "mongoid", "~> 7.3"
 gem "puma", "~> 5.4"
