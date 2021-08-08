@@ -69,7 +69,7 @@ class FakeGitlab < Sinatra::Base
       [200, [body]]
     end
 
-    put "#{REPO_URL}/merge_requests/:iid/approvers" do
+    post "#{REPO_URL}/merge_requests/:iid/approval_rules" do
       [200, [[].to_json]]
     end
 
