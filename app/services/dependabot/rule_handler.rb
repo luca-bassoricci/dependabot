@@ -92,7 +92,7 @@ module Dependabot
 
       return true if versions.empty?
 
-      versions.any? do |version|
+      versions.map { |ver| ver.tr("a", "x") }.any? do |version|
         SemanticRange.satisfies(checker.latest_version.to_s, version, loose: true)
       end
     end
