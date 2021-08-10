@@ -81,7 +81,6 @@ Following configuration options are supported:
 | `open-pull-requests-limit`         | :white_check_mark: | :white_check_mark:    |
 | `pull-request-branch-name`         | :white_check_mark: | :white_check_mark:    |
 | `rebase-strategy`                  | :white_check_mark: | :white_check_mark:    |
-| `reviewers`                        | :white_check_mark: | :white_check_mark:    |
 | `target-branch`                    | :white_check_mark: | :white_check_mark:    |
 | `vendor`                           | :white_check_mark: | :white_check_mark:    |
 | `versioning-strategy`              | :white_check_mark: | :white_check_mark:    |
