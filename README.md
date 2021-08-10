@@ -64,7 +64,16 @@ docker-compose -f docker-compose.yml -f docker-compose-prod.yml up
 
 # Configuration
 
-Following configuration options are supported:
+## dependabot.yml
+
+Repository must contain `.gitlab/dependabot.yml` configuration for dependabot updates to work.
+`dependabot-gitlab` strives to achieve parity with all possible Github native options.
+Some of the options can have slightly different behavior which is described in the documentation linked below.
+
+* Github documentation: [configuration options](https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates)
+* Additional `dependabot-gitlab` specific options: [configuration options](doc/dependabot.md)
+
+Following configuration options are currently supported:
 
 | option                             | dependabot         | dependabot-standalone |
 |------------------------------------|--------------------|-----------------------|
@@ -111,15 +120,6 @@ If `env.dependabotUrl` in helm values or `SETTINGS__DEPENDABOT_URL` is not set, 
 * `Pipeline events`
 
 It is possible to set up system hooks on Gitlab instance level as well. Make sure `SETTINGS__CREATE_PROJECT_HOOK` is set to `false` so project specific hooks are not created automatically.
-
-## dependabot.yml
-
-Repository must contain `.gitlab/dependabot.yml` configuration for dependabot updates to work.
-`dependabot-gitlab` strives to achieve parity with all possible Github native options.
-Some of the options can have slightly different behavior which is described in the documentation linked below.
-
-* Github documentation: [configuration options](https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates)
-* Additional `dependabot-gitlab` specific options: [configuration options](doc/dependabot.md)
 
 # Adding projects
 
