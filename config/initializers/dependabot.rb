@@ -173,7 +173,7 @@ module Dependabot
           merge_request.project_id,
           merge_request.iid,
           name: "Dependency updates",
-          approvals_required: 1,
+          approvals_required: 0,
           user_ids: approvers_hash[:approvers],
           group_ids: approvers_hash[:group_approvers]
         )
