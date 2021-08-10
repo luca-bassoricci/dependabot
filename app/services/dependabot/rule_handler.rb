@@ -87,7 +87,7 @@ module Dependabot
     # @return [Boolean]
     def matches_versions?(rule)
       versions = Dependabot::Config::IgnoreCondition
-                 .new(rule.slice(:dependency_name, :versions, :update_types))
+                 .new(**rule.slice(:dependency_name, :versions, :update_types))
                  .ignored_versions(dependency, rule[:dependency_type] == "security")
 
       return true if versions.empty?
