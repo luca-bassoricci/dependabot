@@ -21,6 +21,8 @@ updates:
     ignore:
       - dependency-name: rspec
         versions: ["3.x", "4.x"]
+      - dependency-name: "faker"
+        update-types: ["version-update:semver-major"]
     reviewers:
       - john_smith
     assignees:
