@@ -6,7 +6,12 @@ RSpec.shared_context("with dependabot helper") do
   let(:package_manager) { "bundler" }
   let(:raw_config) { File.read("spec/fixture/gitlab/responses/dependabot.yml") }
   let(:allow_conf) { [{ dependency_type: "direct" }] }
-  let(:ignore_conf) { [{ dependency_name: "rspec", versions: ["3.x", "4.x"] }] }
+  let(:ignore_conf) do
+    [
+      { dependency_name: "rspec", versions: ["3.x", "4.x"] },
+      { dependency_name: "faker", update_types: ["version-update:semver-major"] }
+    ]
+  end
 
   let(:source) do
     Dependabot::Source.new(

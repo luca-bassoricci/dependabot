@@ -5,9 +5,6 @@ describe Dependabot::ConfigParser, epic: :services, feature: :configuration do
 
   include_context "with dependabot helper"
 
-  let(:allow_conf) { [{ dependency_type: "direct" }] }
-  let(:ignore_conf) { [{ dependency_name: "rspec", versions: ["3.x", "4.x"] }] }
-
   context "with valid configuration and registries" do
     let(:config_yml) do
       <<~YAML
