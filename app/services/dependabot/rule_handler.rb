@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "dependabot/config/ignore_condition"
+require "dependabot/config/update_config"
 
 module Dependabot
   class RuleHandler
@@ -22,11 +22,24 @@ module Dependabot
       @versioning_strategy = config[:versioning_strategy]
     end
 
-    # Is dependency updateable
+    # Ignored versions for dependency
+    #
+    # @param [Dependabot::Dependency] dependency
+    # @param [Array] ignore
+    # @return [Array]
+    def self.ignored_versions(dependency, ignore)
+      ignore_conditions = ignore.map { |ic| Dependabot::Config::IgnoreCondition.new(**ic) }
+
+      Dependabot::Config::UpdateConfig.new(ignore_conditions: ignore_conditions).ignored_versions_for(dependency)
+    end
+
+    # Check if dependency matches allowed rules
     #
     # @return [Boolean]
-    def update?
-      allowed? && !ignored?
+    def allowed?
+      return checker.vulnerable? || global_rules.all? { |rule| matches_type?(rule) } if dependency_rules.empty?
+
+      dependency_rules.any? { |rule| matches_name?(rule) && matches_type?(rule) }
     end
 
     private
@@ -41,22 +54,6 @@ module Dependabot
     attr_reader :ignore
     # @return [Symbol]
     attr_reader :versioning_strategy
-
-    # Check if dependency matches allowed rules
-    #
-    # @return [Boolean]
-    def allowed?
-      return checker.vulnerable? || global_rules.all? { |rule| matches_type?(rule) } if dependency_rules.empty?
-
-      dependency_rules.any? { |rule| matches_name?(rule) && matches_type?(rule) }
-    end
-
-    # Check if dependency matches ignore rules
-    #
-    # @return [Boolean]
-    def ignored?
-      ignore.any? { |rule| matches_name?(rule) && matches_versions?(rule) }
-    end
 
     # Global allow rules
     #
@@ -79,22 +76,6 @@ module Dependabot
     # @return [Boolean]
     def matches_name?(rule)
       dependency.name.match?((rule[:dependency_name]))
-    end
-
-    # Matches defined dependency version or range
-    #
-    # @param [Array] hash
-    # @return [Boolean]
-    def matches_versions?(rule)
-      versions = Dependabot::Config::IgnoreCondition
-                 .new(**rule.slice(:dependency_name, :versions, :update_types))
-                 .ignored_versions(dependency, rule[:dependency_type] == "security")
-
-      return true if versions.empty?
-
-      versions.map { |ver| ver.tr("a", "x") }.any? do |version|
-        SemanticRange.satisfies(checker.latest_version.to_s, version, loose: true)
-      end
     end
 
     # Dependency specific allow rules
