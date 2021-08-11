@@ -133,6 +133,7 @@ module Dependabot
         milestone: opts[:milestone],
         assignees: opts[:assignees],
         reviewers: opts[:reviewers],
+        approvers: opts[:approvers],
         custom_labels: opts[:labels],
         open_merge_requests_limit: opts[:"open-pull-requests-limit"] || DependabotConfig.open_pull_request_limit,
         rebase_strategy: opts[:"rebase-strategy"] || "auto",

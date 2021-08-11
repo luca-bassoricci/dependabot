@@ -81,3 +81,14 @@ In standalone mode this feature is not guaranteed to work due to gitlab limitati
 started with delay after merge request was created, trying to accept and auto merge might fail with `Method Not Allowed` error.
 
 In service mode, merge request is accepted based on event sent on pipeline completion asynchronously instead of relying on gitlab's `merge_when_pipeline_succeeds` option.
+
+## approvers
+
+In addition to setting merge request [reviewer](https://docs.gitlab.com/ee/user/project/merge_requests/getting_started.html#reviewer) via `reviewers` keyword, `approvers` keyword also exists.
+
+This create optional [approval rule](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/) with users from the list.
+
+```yml
+approvers:
+  - dependabot-gitlab
+```

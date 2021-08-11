@@ -17,7 +17,9 @@ describe Gitlab::MergeRequest::Creator, epic: :services, feature: :gitlab do
   let(:pr_creator) { instance_double("Dependabot::PullRequestCreator", create: mr) }
   let(:config) { dependabot_config.first }
   let(:mr) { OpenStruct.new(web_url: "mr-url") }
-  let(:users) { [10] }
+  let(:assignees) { [10] }
+  let(:reviewers) { [11] }
+  let(:approvers) { [12] }
   let(:mr_opt_keys) do
     %i[
       custom_labels
@@ -29,8 +31,8 @@ describe Gitlab::MergeRequest::Creator, epic: :services, feature: :gitlab do
   end
   let(:mr_params) do
     {
-      assignees: users,
-      reviewers: { approvers: users },
+      assignees: assignees,
+      reviewers: { reviewers: reviewers, approvers: approvers },
       label_language: true,
       **config.select { |key, _value| mr_opt_keys.include?(key) }
     }
@@ -54,7 +56,9 @@ describe Gitlab::MergeRequest::Creator, epic: :services, feature: :gitlab do
   before do
     stub_gitlab
 
-    allow(Gitlab::UserFinder).to receive(:call).with(config[:assignees]) { users }
+    allow(Gitlab::UserFinder).to receive(:call).with(config[:assignees]) { assignees }
+    allow(Gitlab::UserFinder).to receive(:call).with(config[:reviewers]) { reviewers }
+    allow(Gitlab::UserFinder).to receive(:call).with(config[:approvers]) { approvers }
     allow(Dependabot::PullRequestCreator).to receive(:new) { pr_creator }
   end
 
