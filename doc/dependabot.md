@@ -50,13 +50,6 @@ allow:
   - dependency-type: production
 ```
 
-`dependency-name` accepts regex expression for matching name in allow and ignore configuration
-
-```yml
-allow:
-  - dependency-name: "^react\w+"
-```
-
 ## rebase-strategy
 
 Rebase strategy supports 3 options:

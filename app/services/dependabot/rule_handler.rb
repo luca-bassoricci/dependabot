@@ -75,7 +75,7 @@ module Dependabot
     # @param [Hash<Symbol, String>] rule
     # @return [Boolean]
     def matches_name?(rule)
-      dependency.name.match?((rule[:dependency_name]))
+      Dependabot::Config::UpdateConfig.wildcard_match?(rule[:dependency_name], dependency.name)
     end
 
     # Dependency specific allow rules
