@@ -14,7 +14,6 @@ gem "mongoid", "~> 7.3"
 gem "puma", "~> 5.4"
 gem "rails", "~> 6.1.4"
 gem "rails-healthcheck", "~> 1.4"
-gem "semantic_range", "~> 3.0"
 gem "sentry-rails", "~> 4.6", require: false
 gem "sentry-ruby", "~> 4.6", require: false
 gem "sentry-sidekiq", "~> 4.6", require: false
