@@ -62,6 +62,13 @@ module Gitlab
         @reviewers ||= Gitlab::UserFinder.call(config[:reviewers])
       end
 
+      # Get approver ids
+      #
+      # @return [Array<Number>]
+      def approvers
+        @approvers ||= Gitlab::UserFinder.call(config[:approvers])
+      end
+
       # Merge request specific options from config
       #
       # @return [Hash]
@@ -69,7 +76,7 @@ module Gitlab
         @mr_options ||= {
           label_language: true,
           assignees: assignees,
-          reviewers: reviewers ? { approvers: reviewers } : {},
+          reviewers: { approvers: approvers, reviewers: reviewers }.compact,
           **config.select { |key, _value| MR_OPTIONS.include?(key) }
         }
       end

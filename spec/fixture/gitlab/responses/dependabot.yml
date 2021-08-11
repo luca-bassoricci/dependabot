@@ -23,10 +23,12 @@ updates:
         versions: ["3.x", "4.x"]
       - dependency-name: "faker"
         update-types: ["version-update:semver-major"]
+    assignees:
+      - john_doe
     reviewers:
       - john_smith
-    assignees:
-      - john_smith
+    approvers:
+      - "jane_smith"
     open-pull-requests-limit: 10
     labels:
       - dependency

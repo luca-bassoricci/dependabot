@@ -162,21 +162,26 @@ module Dependabot
           assignee_ids: assignees,
           labels: labeler.labels_for_pr.join(","),
           milestone_id: milestone,
-          target_project_id: target_project_id
+          target_project_id: target_project_id,
+          reviewer_ids: approvers_hash[:reviewers]
         )
       end
 
       def add_approvers_to_merge_request(merge_request)
-        approvers_hash = approvers.keys.map { |k| [k.to_sym, approvers[k]] }.to_h
-
         gitlab_client_for_source.create_merge_request_level_rule(
           merge_request.project_id,
           merge_request.iid,
-          name: "Dependency updates",
+          name: "dependency-updates",
           approvals_required: 0,
           user_ids: approvers_hash[:approvers],
           group_ids: approvers_hash[:group_approvers]
         )
+      end
+
+      private
+
+      def approvers_hash
+        @approvers_hash ||= approvers.keys.map { |k| [k.to_sym, approvers[k]] }.to_h
       end
     end
   end
