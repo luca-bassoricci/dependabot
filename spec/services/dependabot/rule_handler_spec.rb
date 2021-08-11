@@ -6,7 +6,7 @@ describe Dependabot::RuleHandler, epic: :services, feature: :dependabot do
       dependency: dependency,
       checker: checker,
       config: config
-    ).update?
+    ).allowed?
   end
 
   include_context "with webmock"
@@ -27,6 +27,15 @@ describe Dependabot::RuleHandler, epic: :services, feature: :dependabot do
   before do
     allow(checker).to receive(:vulnerable?).and_return(false)
     allow(checker).to receive(:latest_version) { Gem::Version.new(latest_version) }
+  end
+
+  it "returns ignored versions for dependency" do
+    ignored_versions = described_class.ignored_versions(
+      dependency,
+      [{ dependency_name: "config", update_types: ["version-update:semver-major"] }]
+    )
+
+    expect(ignored_versions).to eq([">= 3.a"])
   end
 
   context "when only direct dependencies are allowed" do
@@ -57,30 +66,6 @@ describe Dependabot::RuleHandler, epic: :services, feature: :dependabot do
     let(:allow_conf) { [{ dependency_name: "rspec" }] }
 
     it { is_expected.to be_falsey }
-  end
-
-  context "when dependency is ignored with versions" do
-    let(:ignore_conf) { [{ dependency_name: "config", versions: ["~> 2"] }] }
-
-    it { is_expected.to be_falsey }
-  end
-
-  context "when dependency minor version is ignored with update-types" do
-    let(:ignore_conf) { [{ dependency_name: "config", update_types: ["version-update:semver-minor"] }] }
-
-    it { is_expected.to be_falsey }
-  end
-
-  context "when dependency patch version is ignored with update-types" do
-    let(:ignore_conf) { [{ dependency_name: "config", update_types: ["version-update:semver-patch"] }] }
-
-    it { is_expected.to be_truthy }
-  end
-
-  context "when dependency major version is ignored with update-types" do
-    let(:ignore_conf) { [{ dependency_name: "config", update_types: ["version-update:semver-major"] }] }
-
-    it { is_expected.to be_truthy }
   end
 
   context "when only production dependencies are allowed" do

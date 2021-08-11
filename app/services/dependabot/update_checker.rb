@@ -16,17 +16,22 @@ module Dependabot
       @repo_contents_path = repo_contents_path
     end
 
+    # :reek:TooManyStatements
+
     # Get updated dependencies
     #
     # @return [Array<Dependabot::Dependency>]
     def call
-      return skipped unless rule_handler.update?
+      return skipped unless rule_handler.allowed?
 
       log(:info, "Fetching info for #{dependency.name}")
       return up_to_date if checker.up_to_date?
       return update_impossible if requirements_to_unlock == :update_not_possible
 
       updated_dependency
+    rescue Dependabot::AllVersionsIgnored
+      log(:info, "  skipping '#{name}' update due to ignored versions: #{checker.ignored_versions}")
+      nil
     rescue StandardError => e
       log_error(e)
       capture_error(e)
@@ -64,7 +69,7 @@ module Dependabot
     #
     # @return [nil]
     def skipped
-      log(:debug, "Skipping #{name} due to allow/ignore rules")
+      log(:debug, "Skipping '#{name}' due to allow rules")
       nil
     end
 
@@ -80,7 +85,7 @@ module Dependabot
     #
     # @return [nil]
     def update_impossible
-      log(:info, "  update for #{name} is impossible")
+      log(:info, "  update for '#{name}' is impossible")
       nil
     end
 
@@ -115,9 +120,12 @@ module Dependabot
         args = {
           dependency: dependency,
           dependency_files: dependency_files,
-          credentials: [*Credentials.call, *config[:registries]]
+          credentials: [*Credentials.call, *config[:registries]],
+          ignored_versions: RuleHandler.ignored_versions(dependency, config[:ignore]),
+          raise_on_ignored: true
         }
         args[:requirements_update_strategy] = versioning_strategy if versioning_strategy && !lockfile_only?
+
         Dependabot::UpdateCheckers.for_package_manager(dependency.package_manager).new(**args)
       end
     end

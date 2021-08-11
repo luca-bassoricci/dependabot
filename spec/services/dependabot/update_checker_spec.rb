@@ -36,7 +36,9 @@ describe Dependabot::UpdateChecker, epic: :services, feature: :dependabot do
     args = {
       dependency: dependency,
       dependency_files: fetcher.files,
-      credentials: [*Dependabot::Credentials.call, *dependabot_config.first[:registries]]
+      credentials: [*Dependabot::Credentials.call, *dependabot_config.first[:registries]],
+      ignored_versions: [],
+      raise_on_ignored: true
     }
     args[:requirements_update_strategy] = versioning_strategy if versioning_strategy != :lockfile_only
     args
@@ -57,7 +59,7 @@ describe Dependabot::UpdateChecker, epic: :services, feature: :dependabot do
       checker: checker,
       config: config
     ).and_return(rule_handler)
-    allow(rule_handler).to receive(:update?) { can_update }
+    allow(rule_handler).to receive(:allowed?) { can_update }
 
     allow(Dependabot::Bundler::UpdateChecker).to receive(:new).with(checker_args) { checker }
     allow(checker).to receive(:vulnerable?) { vulnerable }
@@ -67,6 +69,15 @@ describe Dependabot::UpdateChecker, epic: :services, feature: :dependabot do
     allow(checker).to receive(:can_update?).with(requirements_to_unlock: :all) { can_update_all_unlock }
     allow(checker).to receive(:can_update?).with(requirements_to_unlock: :none) { can_update_none_unlock }
     allow(checker).to receive(:latest_version) { Gem::Version.new(latest_version) }
+  end
+
+  context "when update version is ignored" do
+    before do
+      allow(checker).to receive(:ignored_versions).and_return([">= 2.0"])
+      allow(checker).to receive(:up_to_date?).and_raise(Dependabot::AllVersionsIgnored)
+    end
+
+    it { is_expected.to be_nil }
   end
 
   context "when nothing to update" do
