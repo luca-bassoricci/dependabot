@@ -1,5 +1,38 @@
 # CHANGELOG
 
+## [v0.9.0 - 2021-08-12](https://gitlab.com/dependabot-gitlab/dependabot/-/releases) *BREAKING*
+
+### 🔬 Improvements
+
+- [BREAKING] allow passing reviewers and approvers separately. See merge request dependabot-gitlab/dependabot!915 - (andrejs)
+- move ignore conditions to update checker. Closes #88. See merge request dependabot-gitlab/dependabot!912 - (andrejs)
+- add rake task for project removal. See merge request dependabot-gitlab/dependabot!901 - (andrejs)
+
+### 🐞 Bug Fixes
+
+- do not set required approvals by default. See merge request dependabot-gitlab/dependabot!910 - (andrejs)
+- correctly pass keyword args for rule handler. See merge request dependabot-gitlab/dependabot!909 - (andrejs)
+- update setting reviewers. See merge request dependabot-gitlab/dependabot!905 - (andrejs)
+- pass correct project id for forked mrs. See merge request dependabot-gitlab/dependabot!903 - (andrejs)
+- correctly fetch id of forked_from project. See merge request dependabot-gitlab/dependabot!900 - (andrejs)
+
+### 🛠️ Chore
+
+- use dependabot wildcard matcher to compare dependency-name. See merge request dependabot-gitlab/dependabot!914 - (andrejs)
+- remove semantic_range gem. See merge request dependabot-gitlab/dependabot!913 - (andrejs)
+- add ignored dependency to e2e test. See merge request dependabot-gitlab/dependabot!911 - (andrejs)
+- update gitlab mock with approval rules endpoint. See merge request dependabot-gitlab/dependabot!906 - (andrejs)
+- update e2e tests with proper mocked responses. See merge request dependabot-gitlab/dependabot!904 - (andrejs)
+
+### 📄 Documentation updates
+
+- remove duplicate option from table. See merge request dependabot-gitlab/dependabot!908 - (andrejs)
+- document option for fork workflow. See merge request dependabot-gitlab/dependabot!902 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.8.2](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.8.2...v0.9.0)
+
 ## [v0.8.2 - 2021-08-07](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🚀 New features
