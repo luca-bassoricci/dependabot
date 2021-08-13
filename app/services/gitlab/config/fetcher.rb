@@ -16,7 +16,8 @@ module Gitlab
       def call
         log(:info, "Fetching configuration for #{project_name} from #{branch}")
         gitlab.file_contents(project_name, DependabotConfig.config_filename, branch)
-      rescue Error::NotFound
+      rescue Error::NotFound, Error::BadRequest => e
+        log_error(e) if e.is_a?(Error::BadRequest)
         nil
       end
 
