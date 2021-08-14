@@ -10,7 +10,7 @@ releases:
   - name: dependabot-gitlab
     namespace: dependabot
     chart: andrcuns/dependabot-gitlab
-    version: 0.0.64
+    version: 0.0.70
     installed: true
     values:
       - {{ requiredEnv "CI_ENVIRONMENT_SLUG" }}.yaml.gotmpl

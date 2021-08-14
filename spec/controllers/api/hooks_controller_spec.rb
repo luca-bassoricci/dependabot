@@ -2,7 +2,6 @@
 
 describe Api::HooksController, type: :config, epic: :controllers do
   include_context "with rack_test"
-  include_context "with config helper"
 
   context "with successful response" do
     let(:project) { Project.new(name: "project") }

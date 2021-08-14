@@ -2,22 +2,25 @@
 
 ENV["RAILS_ENV"] ||= "test"
 ENV["SETTINGS__LOG_LEVEL"] ||= "fatal"
+ENV["SETTINGS__PROJECT_REGISTRATION"] ||= "system_hook"
 
 require_relative "simplecov_helper"
 require_relative "webmock_helper"
 require_relative "dependabot_helper"
 require_relative "rack_helper"
-require_relative "config_helper"
 require_relative "rake_helper"
 require_relative "../config/environment"
 
 require "rspec-sidekiq"
 require "rspec/rails"
 require "allure-rspec"
+require "anyway/testing/helpers"
 
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 
 RSpec.configure do |config|
+  include Anyway::Testing::Helpers
+
   # Remove this line to enable support for ActiveRecord
   config.use_active_record = false
 
@@ -43,6 +46,20 @@ RSpec.configure do |config|
   config.order = :random
 
   config.formatter = AllureRspecFormatter
+
+  config.around do |example|
+    env = {
+      "SETTINGS__GITLAB_ACCESS_TOKEN" => "test_token",
+      "SETTINGS__DEPENDABOT_URL" => "https://dependabot-gitlab.com"
+    }
+
+    AppConfig.instance_variable_set(:@instance, nil)
+    CredentialsConfig.instance_variable_set(:@instance, nil)
+
+    with_env(env) do
+      example.run
+    end
+  end
 end
 
 RSpec::Sidekiq.configure do |config|
