@@ -1,5 +1,30 @@
 # CHANGELOG
 
+## [v0.9.1 - 2021-08-14](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🔬 Improvements
+
+- add rescue for BadRequest responses from gitlab when registering projects. See merge request dependabot-gitlab/dependabot!921 - (@rapgru)
+
+### 📦 Dependency updates
+
+- bump sentry-sidekiq from 4.6.4 to 4.6.5. See merge request dependabot-gitlab/dependabot!918 - (andrejs)
+- bump sentry-ruby from 4.6.4 to 4.6.5. See merge request dependabot-gitlab/dependabot!917 - (andrejs)
+- bump sentry-rails from 4.6.4 to 4.6.5. See merge request dependabot-gitlab/dependabot!916 - (andrejs)
+
+### 📦🛠️ Development dependency updates
+
+- bump reek from 6.0.5 to 6.0.6. See merge request dependabot-gitlab/dependabot!919 - (andrejs)
+- bump rubocop from 1.18.4 to 1.19.0. See merge request dependabot-gitlab/dependabot!920 - (andrejs)
+
+### 🛠️ Chore
+
+- simplify configuration loading. See merge request dependabot-gitlab/dependabot!922 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.9.0](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.9.0...v0.9.1)
+
 ## [v0.9.0 - 2021-08-12](https://gitlab.com/dependabot-gitlab/dependabot/-/releases) *BREAKING*
 
 ### 🔬 Improvements
