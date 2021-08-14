@@ -3,6 +3,7 @@
 module Dependabot
   # :reek:TooManyInstanceVariables
   # :reek:InstanceVariableAssumption
+  # :reek:RepeatedConditional
   class MergeRequestService < ApplicationService # rubocop:disable Metrics/ClassLength
     # @param [Dependabot::FileFetchers::Base] fetcher
     # @param [Project] project
@@ -140,10 +141,10 @@ module Dependabot
     #
     # @return [void]
     def accept_mr
-      return unless AppConfig.standalone || !target_project_id
+      return unless AppConfig.standalone || target_project_id
       return unless mr && config[:auto_merge]
 
-      gitlab.accept_merge_request(project.name, mr.iid, merge_when_pipeline_succeeds: true)
+      gitlab.accept_merge_request(mr.project_id, mr.iid, merge_when_pipeline_succeeds: true)
       log(:info, "  accepted merge request")
     rescue Gitlab::Error::MethodNotAllowed, Gitlab::Error::NotAcceptable => e
       log(:error, " failed to accept merge request: #{e.message}")
