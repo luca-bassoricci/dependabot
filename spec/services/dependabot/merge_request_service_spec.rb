@@ -81,6 +81,22 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
   context "with new merge request" do
     let(:existing_mr) { nil }
 
+    context "with standalone mode" do
+      around do |example|
+        with_env("SETTINGS__STANDALONE" => "true") { example.run }
+      end
+
+      it "mr is automerged immediatelly" do
+        service_return
+
+        expect(gitlab).to have_received(:accept_merge_request).with(
+          mr.project_id,
+          mr.iid,
+          merge_when_pipeline_succeeds: true
+        )
+      end
+    end
+
     context "without fork" do
       it "gets created in same project" do
         aggregate_failures do
@@ -92,6 +108,7 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
             config: dependabot_config.first,
             target_project_id: nil
           )
+          expect(gitlab).not_to have_received(:accept_merge_request)
         end
       end
     end
@@ -126,19 +143,9 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
             config: dependabot_config.first,
             target_project_id: target_project_id
           )
-          expect(gitlab).not_to have_received(:accept_merge_request)
+          expect(gitlab).to have_received(:accept_merge_request)
         end
       end
-    end
-
-    it "gets auto merged in standalone mode" do
-      service_return
-
-      expect(gitlab).to have_received(:accept_merge_request).with(
-        repo,
-        mr.iid,
-        merge_when_pipeline_succeeds: true
-      )
     end
   end
 
