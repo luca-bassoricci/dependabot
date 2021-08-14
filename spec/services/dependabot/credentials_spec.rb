@@ -3,8 +3,6 @@
 describe Dependabot::Credentials, type: :config, epic: :services, feature: :credentials do
   subject(:credentials) { described_class.new.credentials }
 
-  include_context "with config helper"
-
   let(:gitlab_token) { "test_token" }
   let(:github_token) { nil }
 

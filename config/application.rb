@@ -25,10 +25,6 @@ module DependabotGitlab
       config.log_level = AppConfig.log_level
     end
 
-    config.anyway_config.default_config_path = lambda { |name|
-      Rails.root.join("#{ENV['APP_CONFIG'] || 'config'}/#{name}.yml")
-    }
-
     config.after_initialize do
       Dependabot::ProjectRegistration.call if Sidekiq.server?
     end
