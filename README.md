@@ -94,11 +94,11 @@ Following configuration options are currently supported:
 | `vendor`                           | :white_check_mark: | :white_check_mark:    |
 | `versioning-strategy`              | :white_check_mark: | :white_check_mark:    |
 | `registries`                       | :white_check_mark: | :white_check_mark:    |
+| `fork`                             | :white_check_mark: | :white_check_mark:    |
 | `schedule.interval`                | :white_check_mark: | :x:                   |
 | `schedule.day`                     | :white_check_mark: | :x:                   |
 | `schedule.time`                    | :white_check_mark: | :x:                   |
 | `schedule.timezone`                | :white_check_mark: | :x:                   |
-| `fork`                             | :white_check_mark: | :x:                   |
 
 ## Application
 
