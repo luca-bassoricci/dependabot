@@ -60,6 +60,18 @@ module Dependabot
       @config = config_entry
     end
 
+    # Project
+    #
+    # @return [Project]
+    def project
+      return Project.find_by(name: project_name) unless AppConfig.standalone
+
+      Project.new(
+        name: project_name,
+        forked_from_id: config[:fork] ? gitlab.project(project_name).to_h.dig("forked_from_project", "id") : nil
+      )
+    end
+
     # Package manager name
     #
     # @return [String]
@@ -121,7 +133,7 @@ module Dependabot
     # @return [Gitlab::ObjectifiedHash]
     def create_mr(updated_dependency)
       Dependabot::MergeRequestService.call(
-        project: AppConfig.standalone ? Project.new(name: project_name) : Project.find_by(name: project_name),
+        project: project,
         fetcher: fetcher,
         config: config,
         updated_dependency: updated_dependency

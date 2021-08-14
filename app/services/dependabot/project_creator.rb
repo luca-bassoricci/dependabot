@@ -42,8 +42,7 @@ module Dependabot
     #
     # @return [void]
     def save_project
-      project.config = config if config
-      project.forked_from_id = forked_from_id if forked_from_id
+      project.config = config || []
       project.project_id = gitlab_project.id
 
       project.tap(&:save!)
@@ -53,7 +52,11 @@ module Dependabot
     #
     # @return [Project]
     def project
-      @project ||= Project.where(name: project_name).first || Project.new(name: project_name)
+      @project ||= begin
+        Project.find_by(name: project_name)
+      rescue Mongoid::Errors::DocumentNotFound
+        Project.new(name: project_name, forked_from_id: forked_from_id)
+      end
     end
 
     # Dependabot configuration

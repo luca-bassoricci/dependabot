@@ -64,14 +64,37 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
       .and_return([updated_config, updated_rspec])
 
     allow(Dependabot::MergeRequestService).to receive(:call)
-
-    project.save!
   end
 
-  it "runs dependency update for repository" do
-    dependency_updater.call({ "project_name" => repo, "package_ecosystem" => package_manager, "directory" => "/" })
+  context "with deployed version" do
+    before do
+      project.save!
+    end
 
-    expect(Dependabot::MergeRequestService).to have_received(:call).with(rspec_mr_args)
-    expect(Dependabot::MergeRequestService).to have_received(:call).with(config_mr_args)
+    it "runs dependency update for repository" do
+      dependency_updater.call({ "project_name" => repo, "package_ecosystem" => package_manager, "directory" => "/" })
+
+      expect(Dependabot::MergeRequestService).to have_received(:call).with(rspec_mr_args)
+      expect(Dependabot::MergeRequestService).to have_received(:call).with(config_mr_args)
+    end
+  end
+
+  context "with standalone version" do
+    around do |example|
+      with_env("SETTINGS__STANDALONE" => "true") { example.run }
+    end
+
+    it "runs dependency update for repository" do
+      dependency_updater.call({ "project_name" => repo, "package_ecosystem" => package_manager, "directory" => "/" })
+
+      expect(Dependabot::MergeRequestService).to have_received(:call)
+        .with(
+          hash_including({ **rspec_mr_args.slice(:fetcher, :config, :updated_dependency), project: kind_of(Project) })
+        )
+      expect(Dependabot::MergeRequestService).to have_received(:call)
+        .with(
+          hash_including({ **config_mr_args.slice(:fetcher, :config, :updated_dependency), project: kind_of(Project) })
+        )
+    end
   end
 end
