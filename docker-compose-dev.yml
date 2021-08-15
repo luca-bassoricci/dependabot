@@ -9,7 +9,7 @@ services:
       - redis
       - mongodb
     environment:
-      BUNDLE_PATH: /code/vendor/bundle
+      BUNDLE_PATH: /home/dependabot/app/vendor/bundle
       RAILS_ENV: development
       REDIS_URL: redis://redis:6379
       MONGODB_URL: mongodb:27017
@@ -17,8 +17,8 @@ services:
       SETTINGS__GITLAB_ACCESS_TOKEN: dev
       SETTINGS__GITHUB_ACCESS_TOKEN:
     volumes:
-      - ./:/code
-      - gems:/code/vendor/bundle
+      - ./:/home/dependabot/app
+      - gems:/home/dependabot/app/vendor/bundle
     ports:
       - 3000:3000
     command: script/entrypoint.sh

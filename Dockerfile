@@ -2,15 +2,15 @@ FROM dependabot/dependabot-core:0.159.0 AS dependabot
 
 FROM dependabot AS local
 
-ENV BUNDLE_PATH=/vendor/bundle
-
 USER root
 
 RUN apt-get update; \
     apt-get install -y --no-install-recommends supervisor=3.3.1-1.1; \
     rm -rf /var/lib/apt/lists/* /tmp/*
 
-WORKDIR /code
+WORKDIR /home/dependabot/app
+
+ENV BUNDLE_PATH=vendor/bundle
 
 ENTRYPOINT [ "/bin/bash", "-c" ]
 
