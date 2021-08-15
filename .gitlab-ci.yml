@@ -153,7 +153,12 @@ publish-allure-reports:
   extends: .allure_report
   needs:
     - rspec
-  rules: *main
+  rules:
+    - if: '$CI_PROJECT_ROOT_NAMESPACE != "dependabot-gitlab"'
+      when: never
+    - *mr
+    - *master
+    - *release
 
 # ======================================================================================================================
 # Release Stage
