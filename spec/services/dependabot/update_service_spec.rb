@@ -52,8 +52,10 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
     stub_gitlab
 
     allow(Gitlab).to receive(:client) { gitlab }
-    allow(Gitlab::Config::Fetcher).to receive(:call).with(repo, branch, update_cache: false) { raw_config }
-    allow(Dependabot::FileFetcher).to receive(:call).with(repo, dependabot_config.first, nil) { fetcher }
+    allow(Dependabot::FileFetcher).to receive(:call).with(repo, config, nil) { fetcher }
+    allow(Dependabot::ConfigFetcher).to receive(:call)
+      .with(repo, find_by: { package_ecosystem: package_manager, directory: "/" })
+      .and_return(config)
     allow(Dependabot::DependencyUpdater).to receive(:call)
       .with(
         project_name: repo,
