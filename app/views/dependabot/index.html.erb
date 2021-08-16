@@ -49,6 +49,7 @@
           <th>Cron</th>
           <th>Last execution</th>
           <th>Last execution errors</th>
+          <th>Actions</th>
         </tr>
       </thead>
 
@@ -60,6 +61,9 @@
             <td><%= job.cron %></td>
             <td><%= job.last_enqueue_time %></td>
             <td><%= errors(job) %></td>
+            <td>
+              <%= button_to "Execute", project_execute_path(job.name), method: "put", title: "Execute job now"  %>
+            </td>
           </tr>
         <% end %>
       </tbody>

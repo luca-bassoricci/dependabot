@@ -5,6 +5,7 @@ require "sidekiq/cron/web"
 
 Rails.application.routes.draw do
   root "dependabot#index"
+  put "/projects/:project_name/execute", to: "project#execute", as: "project_execute"
 
   mount Sidekiq::Web => "/sidekiq"
   mount Yabeda::Prometheus::Exporter => "/metrics" if AppConfig.metrics
