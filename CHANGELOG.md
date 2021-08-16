@@ -1,5 +1,30 @@
 # CHANGELOG
 
+## [v0.9.2 - 2021-08-16](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🔬 Improvements
+
+- add an easy way to execute a job. See merge request dependabot-gitlab/dependabot!929 - (@jerbob92)
+- add support for forked mrs for standalone mode. See merge request dependabot-gitlab/dependabot!923 - (andrejs)
+
+### 🐞 Bug Fixes
+
+- do not run auto-merge immediately for deployed version. See merge request dependabot-gitlab/dependabot!924 - (andrejs)
+
+### 📦🛠️ Development dependency updates
+
+- bump rspec-rails from 5.0.1 to 5.0.2. See merge request dependabot-gitlab/dependabot!925 - (andrejs)
+
+### 🛠️ Chore
+
+- skip allure report generation for forks. See merge request dependabot-gitlab/dependabot!928 - (andrejs)
+- fix rspec random failure. See merge request dependabot-gitlab/dependabot!927 - (andrejs)
+- local development improvements. See merge request dependabot-gitlab/dependabot!926 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.9.1](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.9.1...v0.9.2)
+
 ## [v0.9.1 - 2021-08-14](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🔬 Improvements
