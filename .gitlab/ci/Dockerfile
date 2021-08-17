@@ -1,4 +1,4 @@
-FROM debian:10.10-slim as buster
+FROM debian:11.0-slim as buster
 FROM buster as ruby-install
 
 ARG RUBY_MINOR_VERSION=2.7
