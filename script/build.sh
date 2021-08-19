@@ -8,10 +8,8 @@ function log() {
 
 if [ -z "$DOCKER_IMAGE" ]; then
   IMAGE="$CI_REGISTRY_IMAGE"
-  CACHE="$CI_REGISTRY_IMAGE/cache"
 else
   IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE"
-  CACHE="$CI_REGISTRY_IMAGE/cache/$DOCKER_IMAGE"
 fi
 
 log "Building image: $IMAGE:$CURRENT_TAG"
