@@ -45,7 +45,7 @@ RSpec.configure do |config|
 
   config.order = :random
 
-  config.formatter = AllureRspecFormatter
+  config.formatter = AllureRspecFormatter if ENV["GENERATE_ALLURE_REPORT"]
 
   config.around do |example|
     env = {
