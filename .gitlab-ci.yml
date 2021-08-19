@@ -120,7 +120,12 @@ rspec:
     - rubocop
     - brakeman
     - bundle-audit
-  rules: *main
+  rules:
+    - *mr
+    - *release
+    - <<: *master
+      variables:
+        GENERATE_ALLURE_REPORT: "true"
 
 e2e:
   extends: .e2e
@@ -129,10 +134,7 @@ e2e:
     - build-mock-image
   variables:
     SETTINGS__GITHUB_ACCESS_TOKEN: $GITHUB_ACCESS_TOKEN_TEST
-  rules:
-    - *master
-    - *release
-    - *mr
+  rules: *main
 
 # ======================================================================================================================
 # Reporting
@@ -156,9 +158,7 @@ publish-allure-reports:
   rules:
     - if: '$CI_PROJECT_ROOT_NAMESPACE != "dependabot-gitlab"'
       when: never
-    - *mr
     - *master
-    - *release
 
 # ======================================================================================================================
 # Release Stage
