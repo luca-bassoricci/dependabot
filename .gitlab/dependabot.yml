@@ -4,7 +4,6 @@ updates:
     directory: "/"
     schedule:
       interval: daily
-      time: "17:00"
     commit-message:
       prefix: "dependency"
       prefix-development: "development-dependency"
@@ -15,7 +14,6 @@ updates:
     directory: "/"
     schedule:
       interval: daily
-      time: "17:15"
     commit-message:
       prefix: "dependency"
     assignees:
