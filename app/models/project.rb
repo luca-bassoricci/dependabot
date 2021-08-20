@@ -3,7 +3,10 @@
 class Project
   include Mongoid::Document
 
+  unalias_attribute :id
+
   field :name, type: String
+  field :id, type: Integer
   field :project_id, type: Integer
   field :forked_from_id, type: Integer
   field :config, type: Array, default: []
