@@ -182,7 +182,8 @@ module Dependabot
     def schedule_options(opts)
       return {} unless opts[:schedule]
 
-      { cron: Cron::Schedule.call(project: project, **opts[:schedule]) }
+      entry = "#{project}-#{opts[:"package-ecosystem"]}-#{opts[:directory]}"
+      { cron: Cron::Schedule.call(entry: entry, **opts[:schedule]) }
     end
 
     # Transform key names

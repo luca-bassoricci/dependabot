@@ -9,12 +9,13 @@ module Cron
   class Schedule < ApplicationService
     INTERVALS = %w[daily weekday weekly monthly].freeze
 
+    # @param [String] entry
     # @param [String] interval
     # @param [String] day
     # @param [String] time
     # @param [String] timezone
-    def initialize(project:, interval:, day: nil, time: nil, timezone: nil)
-      @project = project
+    def initialize(entry:, interval:, day: nil, time: nil, timezone: nil)
+      @entry = entry
       @interval = INTERVALS.include?(interval) ? interval : "daily"
       @day = Date::DAYNAMES.map(&:downcase).include?(day) ? day[0..2] : nil
       @time = time&.match?(/^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/) ? time : nil
@@ -35,13 +36,13 @@ module Cron
 
     private
 
-    attr_reader :project, :interval, :day, :time, :timezone
+    attr_reader :entry, :interval, :day, :time, :timezone
 
     # Random number generator
     #
     # @return [Random]
     def random
-      @random ||= Random.new(Digest::MD5.hexdigest(project).to_i(16))
+      @random ||= Random.new(Digest::MD5.hexdigest(entry).to_i(16))
     end
 
     # Get random time based on project name
@@ -49,7 +50,7 @@ module Cron
     # @return [String]
     def random_time
       hour = random.rand(0..23)
-      minute = random.rand(0..59).yield_self { |min| min <= 9 ? "0#{minute}" : minute }
+      minute = random.rand(0..59)
 
       "#{hour}:#{minute}"
     end
