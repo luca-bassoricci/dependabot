@@ -30,11 +30,11 @@ describe Dependabot::ConfigParser, epic: :services, feature: :configuration do
     end
 
     it "returns parsed configuration" do
-      expect(parser.call(File.read("spec/fixture/gitlab/responses/dependabot.yml"))).to eq(dependabot_config)
+      expect(parser.call(File.read("spec/fixture/gitlab/responses/dependabot.yml"), repo)).to eq(dependabot_config)
     end
 
     it "returns parsed configuration with explicitly allowed registries" do
-      expect(parser.call(config_yml).first[:registries]).to eq(
+      expect(parser.call(config_yml, repo).first[:registries]).to eq(
         [{
           "type" => "npm_registry",
           "registry" => "https://npm.pkg.github.com",
@@ -44,7 +44,7 @@ describe Dependabot::ConfigParser, epic: :services, feature: :configuration do
     end
 
     it "sets reject_external_code: true by default" do
-      expect(parser.call(config_yml).first[:reject_external_code]).to eq(true)
+      expect(parser.call(config_yml, repo).first[:reject_external_code]).to eq(true)
     end
   end
 
@@ -61,7 +61,7 @@ describe Dependabot::ConfigParser, epic: :services, feature: :configuration do
     end
 
     it "sets reject_external_code: false by default" do
-      expect(parser.call(config_yml).first[:reject_external_code]).to eq(false)
+      expect(parser.call(config_yml, repo).first[:reject_external_code]).to eq(false)
     end
   end
 
@@ -90,7 +90,7 @@ describe Dependabot::ConfigParser, epic: :services, feature: :configuration do
     end
 
     it "throws invalid configuration error" do
-      expect { parser.call(config_yml) }.to raise_error(
+      expect { parser.call(config_yml, repo) }.to raise_error(
         Dependabot::InvalidConfigurationError, /#{invalid_config_error}/
       )
     end

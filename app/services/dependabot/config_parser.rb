@@ -29,8 +29,9 @@ module Dependabot
     }.freeze
 
     # @param [String] config dependabot.yml configuration file
-    def initialize(config)
+    def initialize(config, project)
       @config = config
+      @project = project
     end
 
     # Parse dependabot configuration
@@ -57,6 +58,8 @@ module Dependabot
 
     # @return [String] dependabot configuration file
     attr_reader :config
+    # @return [String] project name
+    attr_reader :project
 
     # Validate config schema
     #
@@ -179,7 +182,7 @@ module Dependabot
     def schedule_options(opts)
       return {} unless opts[:schedule]
 
-      { cron: Cron::Schedule.call(**opts[:schedule]) }
+      { cron: Cron::Schedule.call(project: project, **opts[:schedule]) }
     end
 
     # Transform key names
