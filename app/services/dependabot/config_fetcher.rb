@@ -30,7 +30,7 @@ module Dependabot
         end
       end
 
-      config = ConfigParser.call(raw_config)
+      config = ConfigParser.call(raw_config, project_name)
       find_by ? config_entry(config) : config
     end
 

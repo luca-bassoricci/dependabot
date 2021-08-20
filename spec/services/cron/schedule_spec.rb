@@ -1,11 +1,38 @@
 # frozen_string_literal: true
 
 describe Cron::Schedule, epic: :services, feature: :configuration do
+  subject(:cron) { described_class }
+
+  let(:time) { "2:00" }
+  let(:day) { "sunday" }
+  let(:project_a) { "abcd" }
+  let(:project_b) { "bcda" }
+
   it "parses daily schedule configuration" do
-    expect(described_class.call(interval: "daily", day: "sunday", time: "2:00")).to eq("00 2 * * * UTC")
+    expect(cron.call(project: project_a, interval: "daily", day: day, time: time)).to eq("00 2 * * * UTC")
   end
 
   it "parses monthly schedule configuration" do
-    expect(described_class.call(interval: "monthly", day: "sunday", time: "2:00")).to eq("00 2 1 * * UTC")
+    expect(cron.call(project: project_a, interval: "monthly", day: day, time: time)).to eq("00 2 1 * * UTC")
+  end
+
+  it "generates random cron hour based on project name" do
+    cron_a = cron.call(project: project_a, interval: "daily", day: day)
+    cron_b = cron.call(project: project_b, interval: "daily", day: day)
+
+    cron_a_dup = cron.call(project: project_a, interval: "daily", day: day)
+
+    expect(cron_a).not_to eq(cron_b)
+    expect(cron_a).to eq(cron_a_dup)
+  end
+
+  it "generates random cron day based on project name" do
+    cron_a = cron.call(project: project_a, interval: "weekly", time: "2:00")
+    cron_b = cron.call(project: project_b, interval: "weekly", time: "2:00")
+
+    cron_a_dup = cron.call(project: project_a, interval: "weekly", time: "2:00")
+
+    expect(cron_a).not_to eq(cron_b)
+    expect(cron_a).to eq(cron_a_dup)
   end
 end

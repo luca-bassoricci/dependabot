@@ -35,6 +35,9 @@ If it is required to use packages from different project package registries, mak
 
 ## schedule
 
+If `time` value is not provided, random time value will be set. \
+If `day` value is not provided for `weekly` interval, random day of the week will be set.
+
 Unlike [github native](https://docs.github.com/en/code-security/supply-chain-security/keeping-your-dependencies-updated-automatically/configuration-options-for-dependency-updates#scheduleinterval), `schedule.interval` supports 2 different daily interval types:
 
 * `daily` - runs every day
