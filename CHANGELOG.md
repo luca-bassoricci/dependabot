@@ -1,5 +1,38 @@
 # CHANGELOG
 
+## [v0.9.3 - 2021-08-21](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🚀 New features
+
+- Generate random cron if not provided. See merge request dependabot-gitlab/dependabot!944 - (andrejs)
+
+### 🐞 Bug Fixes
+
+- generate random cron based on full dependency update entry. See merge request dependabot-gitlab/dependabot!945 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump dependabot-omnibus from 0.159.2 to 0.160.0. See merge request dependabot-gitlab/dependabot!937 - (andrejs)
+- bump rails from 6.1.4 to 6.1.4.1. See merge request dependabot-gitlab/dependabot!938 - (andrejs)
+- bump dependabot-omnibus from 0.159.1 to 0.159.2. See merge request dependabot-gitlab/dependabot!933 - (andrejs)
+- bump dependabot-omnibus from 0.159.0 to 0.159.1. See merge request dependabot-gitlab/dependabot!931 - (andrejs)
+
+### 📦🛠️ Development dependency updates
+
+- bump allure-rspec from 2.14.3 to 2.14.5. See merge request dependabot-gitlab/dependabot!940 - (andrejs)
+- bump rubocop from 1.19.0 to 1.19.1. See merge request dependabot-gitlab/dependabot!939 - (andrejs)
+- bump rubocop-performance from 1.11.4 to 1.11.5. See merge request dependabot-gitlab/dependabot!934 - (andrejs)
+- bump debian from 10.10-slim to 11.0-slim in /.gitlab/ci. See merge request dependabot-gitlab/dependabot!932 - (andrejs)
+
+### 🛠️ Chore
+
+- add mongoid migrations. See merge request dependabot-gitlab/dependabot!946 - (andrejs)
+- generate allure test reports for master branch only. See merge request dependabot-gitlab/dependabot!942 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.9.2](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.9.2...v0.9.3)
+
 ## [v0.9.2 - 2021-08-16](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🔬 Improvements
