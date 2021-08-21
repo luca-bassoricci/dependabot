@@ -1,6 +1,7 @@
 **
 
 !app/
+!db
 !public/
 !bin/rails
 !lib/tasks/dependabot.rake
