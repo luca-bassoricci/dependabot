@@ -52,22 +52,29 @@ namespace :dependabot do # rubocop:disable Metrics/BlockLength
 
   desc "check db connection"
   task(check_db: :environment) do
+    include ApplicationHelper
+
     Mongo::Logger.logger = Logger.new($stdout, level: :error)
 
     Mongoid
       .client(:default)
       .database_names
       .present?
+
+    log(:info, "DB connection functional!")
   rescue StandardError => e
-    ApplicationHelper.log(:error, e.message)
+    log(:error, e.message)
     exit(1)
   end
 
   desc "check redis connection"
   task(check_redis: :environment) do
+    include ApplicationHelper
+
     Redis.new(password: ENV["REDIS_PASSWORD"], timeout: 1, reconnect_attempts: 1).ping
+    log(:info, "Redis connection functional!")
   rescue StandardError => e
-    ApplicationHelper.log(:error, e.message)
+    log(:error, e.message)
     exit(1)
   end
 end

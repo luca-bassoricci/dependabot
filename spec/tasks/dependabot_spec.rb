@@ -83,4 +83,26 @@ describe "rake", epic: :tasks do # rubocop:disable RSpec/DescribeClass
       end
     end
   end
+
+  # rubocop:disable RSpec/MessageChain
+  describe "dependabot:check_db" do
+    before do
+      allow(Mongoid).to receive_message_chain("client.database_names.present?")
+    end
+
+    it "passes successfully" do
+      expect { task.execute }.not_to raise_error
+    end
+  end
+
+  describe "dependabot:check_redis" do
+    before do
+      allow(Redis).to receive_message_chain("new.ping")
+    end
+
+    it "passes successfully" do
+      expect { task.execute }.not_to raise_error
+    end
+  end
+  # rubocop:enable RSpec/MessageChain
 end
