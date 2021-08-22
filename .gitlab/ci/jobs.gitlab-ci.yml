@@ -2,7 +2,6 @@ include:
   - template: Dependency-Scanning.gitlab-ci.yml
   - template: Security/SAST.gitlab-ci.yml
   - template: Container-Scanning.gitlab-ci.yml
-  - template: Code-Quality.gitlab-ci.yml
 
 # ======================================================================================================================
 # Runners
@@ -166,10 +165,6 @@ variables:
   extends: container_scanning
   variables:
     DOCKER_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
-
-.code_quality:
-  stage: static analysis
-  extends: code_quality
 
 .rspec:
   stage: test
