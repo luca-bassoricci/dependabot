@@ -12,10 +12,20 @@ x-volumes: &service_volumes
     - tmp:/home/dependabot/app/tmp
 
 services:
+  migration:
+    image: andrcuns/dependabot-gitlab:latest
+    depends_on:
+      - mongodb
+    <<: *service_volumes
+    environment:
+      <<: *environment_variables
+    command: rails db:migrate
+
   web:
     image: andrcuns/dependabot-gitlab:latest
     depends_on:
       - redis
+      - migration
     <<: *service_volumes
     environment:
       <<: *environment_variables
@@ -35,6 +45,7 @@ services:
     image: andrcuns/dependabot-gitlab:latest
     depends_on:
       - redis
+      - migration
     <<: *service_volumes
     environment:
       <<: *environment_variables
