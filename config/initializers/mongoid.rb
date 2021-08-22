@@ -11,7 +11,7 @@ mongoid_config = {
   }
 }
 
-if rails_env == "production"
+if Rails.env.production?
   mongoid_config[:options].tap do |options|
     options[:server_selection_timeout] = 5
     options[:connect_timeout] = 5
@@ -22,5 +22,5 @@ end
 
 Mongoid.configure do |config|
   config.app_name = "DependabotGitlab"
-  config.clients.default = ENV["MONGODB_URI"] ? { uri: ENV["MONGODB_URI"] } : mongoid_config
+  config.clients.default = (Rails.env.production? && ENV["MONGODB_URI"]) ? { uri: ENV["MONGODB_URI"] } : mongoid_config # rubocop:disable Style/TernaryParentheses
 end
