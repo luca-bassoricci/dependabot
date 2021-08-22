@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## [v0.9.5 - 2021-08-22](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🛠️ Chore
+
+- add tasks to check mongodb and redis connections. See merge request dependabot-gitlab/dependabot!950 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.9.4](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.9.4...v0.9.5)
+
 ## [v0.9.4 - 2021-08-22](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🐞 Bug Fixes
