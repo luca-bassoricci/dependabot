@@ -16,6 +16,7 @@ projects:
 env:
   sentryDsn: {{ requiredEnv "DEPENDABOT_SENTRY_DSN" }}
   dependabotUrl: {{ requiredEnv "DEPENDABOT_URL" }}
+  mongoDbUri: {{ requiredEnv "MONGODB_URI" }}
   commandsPrefix: "@dependabot-bot"
   updateRetry: false
   metrics: false
@@ -34,9 +35,4 @@ redis:
     password: {{ requiredEnv "REDIS_PASSWORD" }}
 
 mongodb:
-  auth:
-    rootPassword: {{ requiredEnv "MONGODB_ROOT_PASSWORD" }}
-    password: {{ requiredEnv "MONGODB_PASSWORD" }}
-    username: dependabot
-    database: dependabot
-  strategyType: Recreate
+  enabled: false
