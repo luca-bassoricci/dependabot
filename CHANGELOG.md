@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## [v0.9.4 - 2021-08-22](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🐞 Bug Fixes
+
+- add db folder to final image. See merge request dependabot-gitlab/dependabot!948 - (andrejs)
+
+### 🛠️ Chore
+
+- add migration service to docker-compose. See merge request dependabot-gitlab/dependabot!949 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.9.3](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.9.3...v0.9.4)
+
 ## [v0.9.3 - 2021-08-21](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🚀 New features
