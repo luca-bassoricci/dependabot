@@ -1,6 +1,27 @@
 # Configuration environment variables
 
-## App configuration
+## Databases
+
+### MongoDb
+
+Following environment variables are used for database connection configuration:
+
+`MONGODB_URI` - all configuration options in a single uri parameter
+
+or
+
+`MONGODB_URL` - mongodb instance url
+`MONGODB_USER` - mongodb username
+`MONGODB_PASSWORD` - user password
+`MONGODB_DATABASE` - database name
+`MONGODB_RETRY_WRITES` - retry writes parameter, `true` by default
+
+### Redis
+
+`REDIS_URL` - redis instance url
+`REDIS_PASSWORD` - redis password
+
+## Application
 
 ### Access
 
