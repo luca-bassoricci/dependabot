@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## [v0.9.6 - 2021-08-23](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🔬 Improvements
+
+- allow configuring mongodb connection with uri parameter. See merge request dependabot-gitlab/dependabot!953 - (andrejs)
+
+### 🛠️ Chore
+
+- remove code-quality job from CI. See merge request dependabot-gitlab/dependabot!959 - (andrejs)
+- move deployed app to mongodb atlas. See merge request dependabot-gitlab/dependabot!958 - (andrejs)
+- cleanup .dockerignore. See merge request dependabot-gitlab/dependabot!956 - (andrejs)
+- use mongodb uri for production only. See merge request dependabot-gitlab/dependabot!955 - (andrejs)
+- add succesful log message to db and redis check. See merge request dependabot-gitlab/dependabot!951 - (andrejs)
+
+### 📄 Documentation updates
+
+- document env variables used for db connections. See merge request dependabot-gitlab/dependabot!957 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.9.5](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.9.5...v0.9.6)
+
 ## [v0.9.5 - 2021-08-22](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🛠️ Chore
