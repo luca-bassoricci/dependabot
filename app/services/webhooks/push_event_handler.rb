@@ -13,7 +13,7 @@ module Webhooks
 
     # Create or delete dependency update jobs
     #
-    # @return [Project] <description>
+    # @return [Project]
     def call
       return unless modified_config? || deleted_config?
       return clean if deleted_config?

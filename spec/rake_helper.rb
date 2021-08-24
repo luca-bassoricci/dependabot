@@ -10,4 +10,8 @@ RSpec.shared_context "with rake helper" do
   before(:all) do # rubocop:disable RSpec/BeforeAfterAll
     Rails.application.load_tasks
   end
+
+  after do
+    task.reenable
+  end
 end

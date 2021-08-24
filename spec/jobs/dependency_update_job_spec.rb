@@ -5,16 +5,26 @@ describe DependencyUpdateJob, epic: :jobs, integration: true do
 
   subject(:job) { described_class }
 
+  let(:project) { Project.new(name: args[:project_name]) }
+  let(:update_job) do
+    UpdateJob.find_by(
+      project_id: project._id,
+      package_ecosystem: args[:package_ecosystem],
+      directory: args[:directory]
+    )
+  end
   let(:args) do
     {
-      "project_name" => Faker::Alphanumeric.unique.alpha(number: 15),
-      "package_ecosystem" => "bundler",
-      "directory" => "/"
+      project_name: Faker::Alphanumeric.unique.alpha(number: 15),
+      package_ecosystem: "bundler",
+      directory: "/"
     }
   end
 
   before do
     allow(Dependabot::UpdateService).to receive(:call)
+
+    project.save!
   end
 
   context "without errors" do
@@ -24,10 +34,13 @@ describe DependencyUpdateJob, epic: :jobs, integration: true do
         .on_queue("default")
     end
 
-    it "performs enqued job" do
+    it "performs enqued job and saves last enqued time" do
       perform_enqueued_jobs { job.perform_later(args) }
 
-      expect(Dependabot::UpdateService).to have_received(:call).with(args)
+      aggregate_failures do
+        expect(Dependabot::UpdateService).to have_received(:call).with(args)
+        expect(update_job.last_executed).not_to be_nil
+      end
     end
   end
 
@@ -36,17 +49,11 @@ describe DependencyUpdateJob, epic: :jobs, integration: true do
       allow(Dependabot::UpdateService).to receive(:call).and_raise(StandardError.new("Some error!"))
     end
 
-    it "raises error on blank argument" do
-      expect { job.perform_now({ "directory" => "/", "package_ecosystem" => nil, "project_name" => "" }) }.to(
-        raise_error(ArgumentError, '["package_ecosystem", "project_name"] must not be blank')
-      )
-    end
-
     it "saves run errors" do
-      saved_errors = -> { JobErrors.where(name: ApplicationHelper.execution_context_name(args)).first&.run_errors }
-
-      expect { job.perform_now(args) }.to raise_error(StandardError, "Some error!")
-      expect(saved_errors.call).to eq(["Some error!"])
+      aggregate_failures do
+        expect { job.perform_now(args) }.to raise_error(StandardError, "Some error!")
+        expect(update_job.run_errors).to eq(["Some error!"])
+      end
     end
   end
 end

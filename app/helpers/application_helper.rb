@@ -34,7 +34,7 @@ module ApplicationHelper
   # @return [void]
   def log(level, message, tag = nil)
     logger = proc { Rails.logger.send(level, message) }
-    tags = [execution_context, tag].compact
+    tags = [execution_context&.fetch(:name), tag].compact
     tags.empty? ? logger.call : Rails.logger.tagged(tags, &logger)
   end
 
@@ -53,30 +53,8 @@ module ApplicationHelper
     Thread.current[:context]
   end
 
-  # Set dependency update execution context
-  #
-  # @param [Hash] args
-  # @return [void]
-  def set_execution_context(args) # rubocop:disable Naming/AccessorMethodName
-    Thread.current[:context] = execution_context_name(args)
-  end
-
-  # Get execution context name
-  #
-  # @param [Hash] job_args
-  # @return [String]
-  def execution_context_name(args)
-    return unless args
-
-    context = args.values_at("project_name", "package_ecosystem", "directory")
-    context.pop if context.last == "/"
-
-    context.join("=>")
-  end
-
   module_function :gitlab,
                   :log,
                   :log_error,
-                  :execution_context,
-                  :execution_context_name
+                  :execution_context
 end

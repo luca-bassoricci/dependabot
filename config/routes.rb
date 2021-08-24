@@ -4,11 +4,11 @@ require "sidekiq/web"
 require "sidekiq/cron/web"
 
 Rails.application.routes.draw do
-  root "dependabot#index"
-  put "/projects/:project_name/execute", to: "project#execute", as: "project_execute"
-
   mount Sidekiq::Web => "/sidekiq"
   mount Yabeda::Prometheus::Exporter => "/metrics" if AppConfig.metrics
+
+  root "dependabot#index"
+  put "/jobs/:id/execute", to: "job#execute", as: "job_execute"
 
   namespace :api, defaults: { format: :json } do
     resources :hooks, only: [:create]

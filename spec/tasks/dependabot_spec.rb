@@ -25,6 +25,12 @@ describe "rake", epic: :tasks do # rubocop:disable RSpec/DescribeClass
         "directory" => args[:directory]
       )
     end
+
+    it "raises error on blank argument" do
+      expect { task.invoke(*args.values[0..1]) }.to(
+        raise_error(ArgumentError, "[:directory] must not be blank")
+      )
+    end
   end
 
   describe "dependabot:register", integration: true do
@@ -70,7 +76,7 @@ describe "rake", epic: :tasks do # rubocop:disable RSpec/DescribeClass
       let(:healthcheck_return) { FileUtils.touch(HealthcheckConfig.filename) }
 
       it "passes successfully" do
-        expect { task.execute }.not_to raise_error
+        expect { task.invoke }.not_to raise_error
       end
     end
 
@@ -79,7 +85,7 @@ describe "rake", epic: :tasks do # rubocop:disable RSpec/DescribeClass
       let(:healthcheck_return) { true }
 
       it "fails" do
-        expect { task.execute }.to raise_error(SystemExit)
+        expect { task.invoke }.to raise_error(SystemExit)
       end
     end
   end
@@ -91,7 +97,7 @@ describe "rake", epic: :tasks do # rubocop:disable RSpec/DescribeClass
     end
 
     it "passes successfully" do
-      expect { task.execute }.not_to raise_error
+      expect { task.invoke }.not_to raise_error
     end
   end
 
@@ -101,7 +107,7 @@ describe "rake", epic: :tasks do # rubocop:disable RSpec/DescribeClass
     end
 
     it "passes successfully" do
-      expect { task.execute }.not_to raise_error
+      expect { task.invoke }.not_to raise_error
     end
   end
   # rubocop:enable RSpec/MessageChain

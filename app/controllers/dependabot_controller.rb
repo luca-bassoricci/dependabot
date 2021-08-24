@@ -2,6 +2,6 @@
 
 class DependabotController < ApplicationController
   def index
-    @jobs = Sidekiq::Cron::Job.all.select { |job| job.klass == "DependencyUpdateJob" }
+    @projects = Project.not(config: [])
   end
 end

@@ -5,7 +5,7 @@ module Dependabot
   class UpdateService < ApplicationService
     # @param [Hash<String, Object>] args
     def initialize(args)
-      @project_name, @package_ecosystem, @directory = args.values_at("project_name", "package_ecosystem", "directory")
+      @project_name, @package_ecosystem, @directory = args.values_at(:project_name, :package_ecosystem, :directory)
     end
 
     # Create or update mr's for dependencies
@@ -41,7 +41,7 @@ module Dependabot
     def repo_contents_path
       return @repo_contents_path if defined?(@repo_contents_path)
 
-      @repo_contents_path = DependabotHelper.repo_contents_path(project_name, config)
+      @repo_contents_path = DependabotCoreHelper.repo_contents_path(project_name, config)
     end
 
     # Fetch config for project
