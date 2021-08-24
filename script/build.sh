@@ -12,16 +12,19 @@ else
   IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE"
 fi
 
+if [ -z "$FORK" ]; then
+  COMMAND="buildctl --addr tcp://buildkit-service.gitlab.svc.cluster.local:1234"
+else
+  COMMAND="buildctl-daemonless.sh"
+fi
+
 log "Building image: $IMAGE:$CURRENT_TAG"
 
-buildctl-daemonless.sh build \
+$COMMAND build \
   --frontend=dockerfile.v0 \
   --local context="$DOCKER_CONTEXT" \
   --local dockerfile="$DOCKER_CONTEXT" \
   --opt build-arg:COMMIT_SHA="$CI_COMMIT_SHA" \
   --opt build-arg:PROJECT_URL="$CI_PROJECT_URL" \
   --opt build-arg:VERSION="$CURRENT_TAG" \
-  --export-cache type=inline \
-  --import-cache type=registry,ref="$IMAGE:$LATEST_TAG" \
-  --import-cache type=registry,ref="$IMAGE:master-latest" \
   --output type=image,\"name="$IMAGE:$CURRENT_TAG,$IMAGE:$LATEST_TAG"\",push="$PUSH"

@@ -5,6 +5,10 @@
   if: '$CI_COMMIT_BRANCH == "master" && ($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "web")'
 .release: &release
   if: '$CI_COMMIT_TAG =~ /^v[0-9.]+$/ && $CI_PIPELINE_SOURCE == "push"'
+.fork: &fork
+  if: '$CI_PROJECT_ROOT_NAMESPACE != "dependabot-gitlab"'
+  variables:
+    FORK: "true"
 .prod_deploy: &prod_deploy
   if: '$CI_COMMIT_BRANCH == "master" && ($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "web")'
   changes:
@@ -53,20 +57,41 @@ cache-dependencies:
 
 build-app-image:
   extends: .build_app_image
-  rules: *main
+  tags:
+    - buildkit
+  rules:
+    - <<: *fork
+      when: never
+    - *mr
+    - *master
+    - *release
+build-app-image-fork:
+  extends: .build_app_image
+  rules:
+    - *fork
 
 build-mock-image:
   extends: .build_mock_image
+  tags:
+    - buildkit
   rules:
+    - <<: *fork
+      when: never
     - *master
     - *release
     - <<: *mr
       when: manual
       allow_failure: true
+build-mock-image-fork:
+  extends: .build_mock_image
+  rules:
+    - *fork
 
 build-ruby-image:
   extends: .build_ruby_image
   rules:
+    - <<: *fork
+      when: never
     - <<: *mr
       changes:
         - .gitlab/ci/Dockerfile
@@ -150,7 +175,7 @@ publish-allure-reports:
   needs:
     - rspec
   rules:
-    - if: '$CI_PROJECT_ROOT_NAMESPACE != "dependabot-gitlab"'
+    - <<: *fork
       when: never
     - *master
 
