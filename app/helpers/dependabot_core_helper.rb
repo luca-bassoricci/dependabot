@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module DependabotHelper
+module DependabotCoreHelper
   # Unique project and package manager specific repo content path
   #
   # @param [String] project_name
@@ -11,11 +11,5 @@ module DependabotHelper
     return unless config[:vendor] || Dependabot::Utils.always_clone_for_package_manager?(config[:package_manager])
 
     Rails.root.join("tmp", "repo-contents", project_name, Time.zone.now.strftime("%d-%m-%Y-%H-%M-%S"))
-  end
-
-  def errors(job)
-    JobErrors.find_by(name: execution_context_name(job.args.first)).run_errors.join("\n")
-  rescue Mongoid::Errors::DocumentNotFound
-    nil
   end
 end

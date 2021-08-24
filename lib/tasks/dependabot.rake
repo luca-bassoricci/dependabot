@@ -3,6 +3,9 @@
 namespace :dependabot do # rubocop:disable Metrics/BlockLength
   desc "update project dependencies"
   task(:update, %i[project package_ecosystem directory] => :environment) do |_task, args|
+    blank_keys = %i[project package_ecosystem directory].reject { |key| args[key] }
+    raise(ArgumentError, "#{blank_keys} must not be blank") unless blank_keys.empty?
+
     DependencyUpdateJob.perform_now(
       "project_name" => args[:project],
       "package_ecosystem" => args[:package_ecosystem],

@@ -41,32 +41,37 @@
   </style>
 
   <body>
-    <table class="blueTable">
-      <thead>
-        <tr>
-          <th>Job name</th>
-          <th>Job description</th>
-          <th>Cron</th>
-          <th>Last execution</th>
-          <th>Last execution errors</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
+    <h1>Projects</h1>
+    <% @projects.each do |project| %>
+      <h2><%= link_to_if project.web_url, project.name, project.web_url %></h2>
 
-      <tbody>
-        <% @jobs.each do |job| %>
+      <table class="blueTable">
+        <thead>
           <tr>
-            <td><%= job.name %></td>
-            <td><%= job.description %></td>
-            <td><%= job.cron %></td>
-            <td><%= job.last_enqueue_time %></td>
-            <td><%= errors(job) %></td>
-            <td>
-              <%= button_to "Execute", project_execute_path(job.name), method: "put", title: "Execute job now"  %>
-            </td>
+            <th>Package ecosystem</th>
+            <th>Directory</th>
+            <th>Cron</th>
+            <th>Last executed</th>
+            <th>Last execution errors</th>
+            <th>Actions</th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+        </thead>
+
+        <tbody>
+          <% project.update_jobs.each do |job| %>
+            <tr>
+              <td><%= job.package_ecosystem %></td>
+              <td><%= job.directory %></td>
+              <td><%= job.cron %></td>
+              <td><%= job.last_executed&.to_formatted_s(:long) %>
+              <td><%= job.run_errors.join("\n") %></td>
+              <td>
+                <%= button_to "Execute", job_execute_path(job.id), method: "put", title: "Execute job now" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
   </body>
 </html>

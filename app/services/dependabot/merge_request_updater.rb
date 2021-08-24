@@ -37,7 +37,7 @@ module Dependabot
     def repo_contents_path
       return @repo_contents_path if defined?(@repo_contents_path)
 
-      @repo_contents_path = DependabotHelper.repo_contents_path(project_name, config)
+      @repo_contents_path = DependabotCoreHelper.repo_contents_path(project_name, config)
     end
 
     # Find project
