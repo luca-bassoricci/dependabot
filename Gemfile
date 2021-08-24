@@ -18,7 +18,7 @@ gem "rails-healthcheck", "~> 1.4"
 gem "sentry-rails", "~> 4.6", require: false
 gem "sentry-ruby", "~> 4.6", require: false
 gem "sentry-sidekiq", "~> 4.6", require: false
-gem "sidekiq", "~> 6.2.1"
+gem "sidekiq", "~> 6.2.2"
 gem "sidekiq-cron", "~> 1.2"
 gem "yabeda-prometheus-mmap", "~> 0.2.0"
 gem "yabeda-puma-plugin", "~> 0.6.0"
