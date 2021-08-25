@@ -1,5 +1,24 @@
 # CHANGELOG
 
+## [v0.9.7 - 2021-08-25](https://gitlab.com/dependabot-gitlab/dependabot/-/releases) *BREAKING*
+
+### 🐞 Bug Fixes
+
+- do not count closed mrs towards configured limit. See merge request dependabot-gitlab/dependabot!967 - (andrejs)
+- Revert "Merge branch 'dependabot-bundler-sidekiq-6.2.2' into 'master'". See merge request dependabot-gitlab/dependabot!963 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump sidekiq from 6.2.1 to 6.2.2. See merge request dependabot-gitlab/dependabot!961 - (andrejs)
+
+### 📦🛠️ Development dependency updates
+
+- bump faker from 2.18.0 to 2.19.0. See merge request dependabot-gitlab/dependabot!962 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.9.6](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.9.6...v0.9.7)
+
 ## [v0.9.6 - 2021-08-23](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🔬 Improvements
