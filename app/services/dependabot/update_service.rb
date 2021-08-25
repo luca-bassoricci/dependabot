@@ -109,10 +109,12 @@ module Dependabot
     #
     # @return [void]
     def update_security_vulnerabilities
-      all_vulnerable_dependencies.each_with_index do |dep, index|
-        break if index >= 10
+      all_vulnerable_dependencies.reduce(0) do |mr_count, dep|
+        mr_count += 1 if create_mr(dep)
 
-        create_mr(dep)
+        break if mr_count >= 10
+
+        mr_count
       end
     end
 
@@ -120,10 +122,12 @@ module Dependabot
     #
     # @return [void]
     def update_dependencies
-      (all_updated_dependencies - all_vulnerable_dependencies).each_with_index do |dep, index|
-        break if index >= config[:open_merge_requests_limit]
+      (all_updated_dependencies - all_vulnerable_dependencies).reduce(0) do |mr_count, dep|
+        mr_count += 1 if create_mr(dep)
 
-        create_mr(dep)
+        break if mr_count >= config[:open_merge_requests_limit]
+
+        mr_count
       end
     end
 
