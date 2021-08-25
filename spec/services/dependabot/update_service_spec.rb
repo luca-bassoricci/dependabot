@@ -65,7 +65,7 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
       )
       .and_return([updated_config, updated_rspec])
 
-    allow(Dependabot::MergeRequestService).to receive(:call)
+    allow(Dependabot::MergeRequestService).to receive(:call).and_return("mr")
   end
 
   context "with deployed version" do
