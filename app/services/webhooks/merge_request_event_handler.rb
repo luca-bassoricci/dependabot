@@ -15,12 +15,9 @@ module Webhooks
     # @return [void]
     def call
       log(:info, "Setting merge request !#{mr.iid} state to closed!")
-      mr.update_attributes!(state: "closed")
-      Gitlab::MergeRequest::Commenter.call(project_name, mr.iid, comment) if closed?
-      return { closed_merge_request: true } if !merged? || config&.fetch(:rebase_strategy) == "none"
+      return close_mr if !merged? || config&.fetch(:rebase_strategy) == "none"
 
-      triggered = trigger_update
-      { update_triggered: triggered, closed_merge_request: true }
+      update_mrs
     rescue Mongoid::Errors::DocumentNotFound
       nil
     end
@@ -28,6 +25,23 @@ module Webhooks
     private
 
     attr_reader :project_name, :mr_iid, :action
+
+    # Set internal mr state to closed
+    #
+    # @return [Hash]
+    def close_mr
+      mr.update_attributes!(state: "closed")
+      Gitlab::MergeRequest::Commenter.call(project_name, mr.iid, comment) if closed?
+
+      { closed_merge_request: true }
+    end
+
+    # Update open mrs of same package ecosystem
+    #
+    # @return [Hash]
+    def update_mrs
+      { update_triggered: trigger_update, closed_merge_request: true }
+    end
 
     # Check if MR was merged
     #
