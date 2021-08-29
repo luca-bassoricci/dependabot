@@ -16,7 +16,7 @@ module Webhooks
     def call
       log(:info, "Setting merge request !#{mr.iid} state to closed!")
       mr.update_attributes!(state: "closed")
-
+      Gitlab::MergeRequest::Commenter.call(project_name, mr.iid, comment) if closed?
       return { closed_merge_request: true } if !merged? || config&.fetch(:rebase_strategy) == "none"
 
       triggered = trigger_update
@@ -34,6 +34,10 @@ module Webhooks
     # @return [Boolean]
     def merged?
       action == "merge"
+    end
+
+    def closed?
+      action == "close"
     end
 
     # Current project
@@ -82,6 +86,16 @@ module Webhooks
       end
 
       true
+    end
+
+    # Closed mr message
+    #
+    # @return [String]
+    def comment
+      <<~TXT
+        Dependabot won't notify anymore about this release, but will get in touch when a new version is available. \
+        You can also ignore all major, minor, or patch releases for a dependency by adding an [`ignore` condition](https://docs.github.com/en/code-security/supply-chain-security/configuration-options-for-dependency-updates#ignore) with the desired `update_types` to your config file.
+      TXT
     end
   end
 end

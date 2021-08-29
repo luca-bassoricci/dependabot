@@ -41,8 +41,16 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
       dependencies: "test"
     )
   end
+  let(:close_comment) do
+    <<~TXT
+      Dependabot won't notify anymore about this release, but will get in touch when a new version is available. \
+      You can also ignore all major, minor, or patch releases for a dependency by adding an [`ignore` condition](https://docs.github.com/en/code-security/supply-chain-security/configuration-options-for-dependency-updates#ignore) with the desired `update_types` to your config file.
+    TXT
+  end
 
   before do
+    allow(Gitlab::MergeRequest::Commenter).to receive(:call)
+
     project.save!
     merge_request.save!
   end
@@ -50,12 +58,15 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
   context "with mr close action" do
     let(:action) { "close" }
 
-    it "closes saved mr" do
+    it "closes saved mr and adds a comment" do
       result = described_class.call(**args)
 
       aggregate_failures do
         expect(result).to eq({ closed_merge_request: true })
         expect(merge_request.reload.state).to eq("closed")
+        expect(Gitlab::MergeRequest::Commenter).to have_received(:call).with(
+          project.name, merge_request.iid, close_comment
+        )
       end
     end
 
@@ -79,6 +90,7 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
         expect { described_class.call(**args) }.to have_enqueued_job(MergeRequestUpdateJob)
           .on_queue("hooks")
           .with(repo, open_merge_request.iid)
+        expect(Gitlab::MergeRequest::Commenter).not_to have_received(:call)
       end
     end
 
@@ -90,6 +102,7 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
 
       it "skips update for auto-rebase: none option" do
         expect { described_class.call(**args) }.not_to have_enqueued_job(MergeRequestUpdateJob)
+        expect(Gitlab::MergeRequest::Commenter).not_to have_received(:call)
       end
     end
   end
