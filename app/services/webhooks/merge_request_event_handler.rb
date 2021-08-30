@@ -14,10 +14,9 @@ module Webhooks
     #
     # @return [void]
     def call
-      log(:info, "Setting merge request !#{mr.iid} state to closed!")
-      return close_mr if !merged? || config&.fetch(:rebase_strategy) == "none"
-
-      update_mrs
+      return reopen_mr if reopened?
+      return close_mr if closed?
+      return update_mrs if merged?
     rescue Mongoid::Errors::DocumentNotFound
       nil
     end
@@ -26,12 +25,24 @@ module Webhooks
 
     attr_reader :project_name, :mr_iid, :action
 
+    # Reopen closed merge request
+    #
+    # @return [Hash]
+    def reopen_mr
+      log(:info, "Reopening merge request !#{mr(state: 'closed').iid} for project #{project_name}!")
+      mr.update_attributes!(state: "opened")
+      Dependabot::MergeRequestUpdater.call(project.name, mr.iid)
+
+      { reopened_merge_request: true }
+    end
+
     # Set internal mr state to closed
     #
     # @return [Hash]
     def close_mr
+      log(:info, "Setting merge request !#{mr.iid} state to closed for project #{project_name}!")
       mr.update_attributes!(state: "closed")
-      Gitlab::MergeRequest::Commenter.call(project_name, mr.iid, comment) if closed?
+      Gitlab::MergeRequest::Commenter.call(project_name, mr.iid, comment)
 
       { closed_merge_request: true }
     end
@@ -40,16 +51,32 @@ module Webhooks
     #
     # @return [Hash]
     def update_mrs
-      { update_triggered: trigger_update, closed_merge_request: true }
+      log(:info, "Setting merge request !#{mr.iid} state to merged for project #{project_name}!")
+      mr.update_attributes!(state: "merged")
+
+      {
+        update_triggered: config.fetch(:rebase_strategy) == "none" ? false : trigger_update,
+        closed_merge_request: true
+      }
     end
 
-    # Check if MR was merged
+    # Check if reopen event action
+    #
+    # @return [Boolean]
+    def reopened?
+      action == "reopen"
+    end
+
+    # Check if merge event action
     #
     # @return [Boolean]
     def merged?
       action == "merge"
     end
 
+    # Check if close event action
+    #
+    # @return [Boolean]
     def closed?
       action == "close"
     end
@@ -63,9 +90,11 @@ module Webhooks
 
     # Merge request to close
     #
-    # @return [<MergeRequest, nil>]
-    def mr
-      @mr ||= project.merge_requests.find_by(iid: mr_iid, state: "opened")
+    #
+    # @param [String] state
+    # @return [MergeRequest]
+    def mr(state: "opened")
+      @mr ||= project.merge_requests.find_by(iid: mr_iid, state: state)
     end
 
     # Config entry for particular ecosystem and directory
