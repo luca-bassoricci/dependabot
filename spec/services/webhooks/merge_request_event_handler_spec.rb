@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
 describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services, feature: :webhooks do
-  include ActiveJob::TestHelper
-
   include_context "with dependabot helper"
 
   let(:config) { dependabot_config.first }
-  let(:args) { { project_name: repo, mr_iid: 1, action: action } }
+  let(:mr_iid) { 1 }
+  let(:args) { { project_name: repo, mr_iid: mr_iid, action: action } }
   let(:project) { Project.new(name: repo, config: dependabot_config) }
   let(:merge_request) do
     MergeRequest.new(
@@ -41,6 +40,17 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
       dependencies: "test"
     )
   end
+  let(:closed_merge_request) do
+    MergeRequest.new(
+      project: project,
+      directory: config[:directory],
+      iid: 5,
+      package_ecosystem: config[:package_ecosystem],
+      state: "closed",
+      auto_merge: false,
+      dependencies: "test"
+    )
+  end
   let(:close_comment) do
     <<~TXT
       Dependabot won't notify anymore about this release, but will get in touch when a new version is available. \
@@ -49,14 +59,39 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
   end
 
   before do
-    allow(Gitlab::MergeRequest::Commenter).to receive(:call)
+    allow(MergeRequestUpdateJob).to receive(:perform_later)
 
     project.save!
     merge_request.save!
   end
 
+  context "with mr reopen action" do
+    let(:mr_iid) { 5 }
+    let(:action) { "reopen" }
+
+    before do
+      allow(Dependabot::MergeRequestUpdater).to receive(:call)
+
+      closed_merge_request.save!
+    end
+
+    it "reopens closed mr and trigger update" do
+      result = described_class.call(**args)
+
+      aggregate_failures do
+        expect(result).to eq({ reopened_merge_request: true })
+        expect(closed_merge_request.reload.state).to eq("opened")
+        expect(Dependabot::MergeRequestUpdater).to have_received(:call).with(project.name, mr_iid)
+      end
+    end
+  end
+
   context "with mr close action" do
     let(:action) { "close" }
+
+    before do
+      allow(Gitlab::MergeRequest::Commenter).to receive(:call)
+    end
 
     it "closes saved mr and adds a comment" do
       result = described_class.call(**args)
@@ -87,10 +122,12 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
 
     context "with auto-rebase enabled" do
       it "closes saved mr and triggers update of open mrs for same package_ecosystem" do
-        expect { described_class.call(**args) }.to have_enqueued_job(MergeRequestUpdateJob)
-          .on_queue("hooks")
-          .with(repo, open_merge_request.iid)
-        expect(Gitlab::MergeRequest::Commenter).not_to have_received(:call)
+        described_class.call(**args)
+
+        aggregate_failures do
+          expect(MergeRequestUpdateJob).to have_received(:perform_later).with(repo, open_merge_request.iid)
+          expect(merge_request.reload.state).to eq("merged")
+        end
       end
     end
 
@@ -101,8 +138,9 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
       end
 
       it "skips update for auto-rebase: none option" do
-        expect { described_class.call(**args) }.not_to have_enqueued_job(MergeRequestUpdateJob)
-        expect(Gitlab::MergeRequest::Commenter).not_to have_received(:call)
+        aggregate_failures do
+          expect(MergeRequestUpdateJob).not_to have_received(:perform_later)
+        end
       end
     end
   end
