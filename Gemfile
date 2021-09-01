@@ -15,9 +15,9 @@ gem "mongoid_rails_migrations", "~> 1.4"
 gem "puma", "~> 5.4"
 gem "rails", "~> 6.1.4"
 gem "rails-healthcheck", "~> 1.4"
-gem "sentry-rails", "~> 4.6", require: false
-gem "sentry-ruby", "~> 4.6", require: false
-gem "sentry-sidekiq", "~> 4.6", require: false
+gem "sentry-rails", "~> 4.7", require: false
+gem "sentry-ruby", "~> 4.7", require: false
+gem "sentry-sidekiq", "~> 4.7", require: false
 gem "sidekiq", "~> 6.2.2"
 gem "sidekiq-cron", "~> 1.2"
 gem "yabeda-prometheus-mmap", "~> 0.3.0"
