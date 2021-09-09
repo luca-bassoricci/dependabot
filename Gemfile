@@ -52,6 +52,6 @@ group :development do
   gem "git", "~> 1.9", require: false
   gem "semver2", "~> 3.4", require: false
   gem "solargraph", "~> 0.43.0", require: false
-  gem "spring", "~> 2.1.1", require: false
+  gem "spring", "~> 3.0.0", require: false
   gem "spring-commands-rspec", "~> 1.0.4"
 end
