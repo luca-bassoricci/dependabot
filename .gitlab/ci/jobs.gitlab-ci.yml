@@ -27,6 +27,12 @@ include:
     - vendor/bundle
   policy: pull
 
+.tf_cache: &tf_cache
+  key: terraform-${CI_COMMIT_REF_SLUG}
+  paths:
+    - terraform
+  policy: push
+
 .codacy_cache: &codacy_cache
   key: codacy-coverage-reporter-$CODACY_VERSION
   paths:
@@ -44,8 +50,19 @@ include:
   cache:
     - *gem_cache
 
-.deploy_runner:
-  image: quay.io/roboll/helmfile:helm3-v0.140.0
+.terraform:
+  image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
+
+.terraform_runner:
+  extends: .terraform
+  variables:
+    TF_VAR_image_tag: $CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
+  before_script:
+    - export TF_ADDRESS=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${TF_STATE_NAME:-$CI_ENVIRONMENT_NAME}
+    - export TF_VAR_environment=${TF_STATE_NAME:-$CI_ENVIRONMENT_NAME}
+    - cd terraform
+    - gitlab-terraform init
+    - gitlab-terraform plan
 
 .buildkit_runner:
   image:
@@ -166,6 +183,12 @@ variables:
   variables:
     DOCKER_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
 
+.tf_fmt:
+  stage: static analysis
+  extends: .terraform
+  script:
+    - gitlab-terraform fmt -list=true -write=false -diff -check -recursive terraform
+
 .rspec:
   stage: test
   extends: .ruby_runner
@@ -196,6 +219,33 @@ variables:
       - coverage/.resultset.json
       - reports/allure-results
     expire_in: 7 days
+
+.e2e:
+  stage: test
+  image:
+    name: $CI_REGISTRY_IMAGE:$CURRENT_TAG
+    entrypoint: [""]
+  services:
+    - name: $CI_REGISTRY_IMAGE/gitlab-mock:$CURRENT_TAG
+      alias: gitlab
+  variables:
+    SETTINGS__GITLAB_URL: http://gitlab:4567
+    SETTINGS__GITLAB_ACCESS_TOKEN: e2e-test
+    SETTINGS__STANDALONE: "true"
+    SETTINGS__LOG_LEVEL: "debug"
+    RAILS_ENV: production
+    GIT_STRATEGY: none
+  script:
+    - cd /home/dependabot/app && bundle exec rake 'dependabot:update[test-repo,bundler,/]'
+
+.tf_plan:
+  extends: .terraform_runner
+  stage: test
+  script:
+    - gitlab-terraform plan-json
+  artifacts:
+    reports:
+      terraform: terraform/plan.json
 
 .coverage:
   stage: report
@@ -230,24 +280,6 @@ variables:
         --update-pr="comment" \
         --copy-latest \
         --color
-
-.e2e:
-  stage: test
-  image:
-    name: $CI_REGISTRY_IMAGE:$CURRENT_TAG
-    entrypoint: [""]
-  services:
-    - name: $CI_REGISTRY_IMAGE/gitlab-mock:$CURRENT_TAG
-      alias: gitlab
-  variables:
-    SETTINGS__GITLAB_URL: http://gitlab:4567
-    SETTINGS__GITLAB_ACCESS_TOKEN: e2e-test
-    SETTINGS__STANDALONE: "true"
-    SETTINGS__LOG_LEVEL: "debug"
-    RAILS_ENV: production
-    GIT_STRATEGY: none
-  script:
-    - cd /home/dependabot/app && bundle exec rake 'dependabot:update[test-repo,bundler,/]'
 
 .release_image:
   stage: release
@@ -293,20 +325,20 @@ variables:
   script:
     - bundle exec rake "release:standalone[$CI_COMMIT_TAG]"
 
-.deploy:
-  extends: .deploy_runner
+.tf_deploy:
+  extends: .terraform_runner
   stage: deploy
   script:
-    - cd kube/helm
-    - helmfile repos
-    - helmfile apply --context 10
+    - gitlab-terraform apply
+  cache: *tf_cache
 
-.stop:
-  extends: .deploy_runner
+.tf_stop:
+  extends: .terraform_runner
   stage: deploy
   environment:
     action: stop
-  variables:
-    GIT_STRATEGY: none
   script:
-    - helm uninstall dependabot-gitlab -n dependabot
+    - gitlab-terraform destroy
+  cache:
+    <<: *tf_cache
+    policy: pull
