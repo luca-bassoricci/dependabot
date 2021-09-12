@@ -129,6 +129,10 @@ container-scan:
     - <<: *mr
       changes: *docker_changes
 
+terraform-fmt:
+  extends: .tf_fmt
+  rules: *main
+
 # ======================================================================================================================
 # Test Stage
 # ======================================================================================================================
@@ -154,6 +158,20 @@ e2e:
   variables:
     SETTINGS__GITHUB_ACCESS_TOKEN: $GITHUB_ACCESS_TOKEN_TEST
   rules: *main
+
+validate-deploy-production:
+  extends: .tf_plan
+  tags:
+    - deploy
+  variables:
+    TF_STATE_NAME: production
+    TF_VAR_dependabot_url: $DEPENDABOT_URL_PRODUCTION
+    TF_VAR_gitlab_access_token: $GITLAB_ACCESS_TOKEN
+  rules:
+    - <<: *mr
+      changes:
+        - terraform/**/*
+    - *prod_deploy
 
 # ======================================================================================================================
 # Reporting
@@ -213,22 +231,24 @@ release-ruby-image:
 # Deploy Stage
 # ======================================================================================================================
 deploy-production:
-  extends: .deploy
+  extends: .tf_deploy
   tags:
     - deploy
+  needs:
+    - validate-deploy-production
   environment:
     name: production
     url: $DEPENDABOT_URL_PRODUCTION
     on_stop: stop-production
   resource_group: production
   variables:
-    DEPENDABOT_URL: $DEPENDABOT_URL_PRODUCTION
+    TF_VAR_dependabot_url: $DEPENDABOT_URL_PRODUCTION
+    TF_VAR_gitlab_access_token: $GITLAB_ACCESS_TOKEN
   rules:
-    - *release
     - *prod_deploy
 
 deploy-development:
-  extends: .deploy
+  extends: .tf_deploy
   tags:
     - private
   environment:
@@ -236,26 +256,31 @@ deploy-development:
     url: $DEPENDABOT_URL_DEVELOPMENT
     on_stop: stop-development
     auto_stop_in: 1d
+  resource_group: development
+  variables:
+    TF_VAR_gitlab_access_token: $GITLAB_ACCESS_TOKEN_TEST
+    TF_VAR_github_access_token: $GITHUB_ACCESS_TOKEN_TEST
   rules: *dev_deploy
 
 stop-production:
-  extends: .stop
+  extends: .tf_stop
   tags:
     - deploy
   environment:
     name: production
+  variables:
+    TF_VAR_gitlab_access_token: $GITLAB_ACCESS_TOKEN
   rules:
-    - <<: *release
-      when: manual
-      allow_failure: true
     - <<: *prod_deploy
       when: manual
       allow_failure: true
 
 stop-development:
-  extends: .stop
+  extends: .tf_stop
   tags:
     - private
   environment:
     name: development
+  variables:
+    TF_VAR_gitlab_access_token: $GITLAB_ACCESS_TOKEN_TEST
   rules: *dev_deploy
