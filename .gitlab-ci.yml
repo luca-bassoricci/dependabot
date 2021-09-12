@@ -23,6 +23,8 @@
     - Gemfile
     - Gemfile.lock
     - Rakefile
+    - .gitlab/ci/jobs.gitlab-ci.yml
+    - .gitlab-ci.yml
 .dev_deploy: &dev_deploy
   - <<: *mr
     when: manual
