@@ -10,6 +10,9 @@ terraform {
 }
 
 provider "helm" {
+  kubernetes {
+    config_path = var.kubernetes_config
+  }
 }
 
 resource "helm_release" "dependabot" {
