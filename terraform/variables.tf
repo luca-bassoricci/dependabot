@@ -42,3 +42,7 @@ variable "image_tag" {
 variable "environment" {
   default = "development"
 }
+
+variable "kubernetes_config" {
+  default = "~/.kube/config"
+}

@@ -161,8 +161,6 @@ e2e:
 
 validate-deploy-production:
   extends: .tf_plan
-  tags:
-    - deploy
   variables:
     TF_STATE_NAME: production
     TF_VAR_dependabot_url: $DEPENDABOT_URL_PRODUCTION
@@ -232,8 +230,6 @@ release-ruby-image:
 # ======================================================================================================================
 deploy-production:
   extends: .tf_deploy
-  tags:
-    - deploy
   needs:
     - validate-deploy-production
   environment:
@@ -264,8 +260,6 @@ deploy-development:
 
 stop-production:
   extends: .tf_stop
-  tags:
-    - deploy
   environment:
     name: production
   variables:
