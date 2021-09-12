@@ -1,36 +1,44 @@
 version: 2
 updates:
   - package-ecosystem: bundler
-    directory: "/"
+    directory: /
     schedule:
       interval: daily
     commit-message:
-      prefix: "dependency"
-      prefix-development: "development-dependency"
+      prefix: dependency
+      prefix-development: development-dependency
     assignees:
       - andrcuns
-    rebase-strategy: "auto"
+    rebase-strategy: auto
   - package-ecosystem: docker
-    directory: "/"
+    directory: /
     schedule:
       interval: daily
     commit-message:
-      prefix: "dependency"
-    assignees:
-      - andrcuns
-  - package-ecosystem: docker
-    directory: "/spec/fixture/gitlab"
-    schedule:
-      interval: daily
-    commit-message:
-      prefix: "development-dependency"
+      prefix: dependency
     assignees:
       - andrcuns
   - package-ecosystem: docker
-    directory: "/.gitlab/ci"
+    directory: /spec/fixture/gitlab
     schedule:
       interval: daily
     commit-message:
-      prefix: "development-dependency"
+      prefix: development-dependency
+    assignees:
+      - andrcuns
+  - package-ecosystem: docker
+    directory: /.gitlab/ci
+    schedule:
+      interval: daily
+    commit-message:
+      prefix: development-dependency
+    assignees:
+      - andrcuns
+  - package-ecosystem: terraform
+    directory: /terraform
+    schedule:
+      interval: daily
+    commit-message:
+      prefix: development-dependency
     assignees:
       - andrcuns
