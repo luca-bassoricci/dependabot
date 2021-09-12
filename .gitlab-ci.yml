@@ -241,6 +241,7 @@ deploy-production:
   variables:
     TF_VAR_dependabot_url: $DEPENDABOT_URL_PRODUCTION
     TF_VAR_gitlab_access_token: $GITLAB_ACCESS_TOKEN
+    TF_VAR_github_access_token: $GITHUB_ACCESS_TOKEN
   rules:
     - *prod_deploy
 
