@@ -1,29 +1,40 @@
+# Global vars
+variable "kubernetes_config" {
+  default = "~/.kube/config"
+}
+
+variable "do_token" {
+  sensitive = true
+}
+
+# Application vars
 variable "gitlab_access_token" {
   sensitive = true
 }
 
 variable "github_access_token" {
-  default = ""
+  default   = ""
+  sensitive = true
 }
 
 variable "gitlab_hooks_auth_token" {
-  default = ""
+  default   = ""
+  sensitive = true
 }
 
 variable "gitlab_docker_registry_token" {
-  default = ""
+  default   = ""
+  sensitive = true
 }
 
 variable "redis_password" {
-  default = ""
-}
-
-variable "ssl_cert_id" {
-  default = ""
+  default   = ""
+  sensitive = true
 }
 
 variable "sentry_dsn" {
-  default = ""
+  default   = ""
+  sensitive = true
 }
 
 variable "dependabot_url" {
@@ -41,8 +52,4 @@ variable "image_tag" {
 
 variable "environment" {
   default = "development"
-}
-
-variable "kubernetes_config" {
-  default = "~/.kube/config"
 }
