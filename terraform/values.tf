@@ -31,10 +31,7 @@ locals {
         GITLAB_DOCKER_REGISTRY_TOKEN = var.gitlab_docker_registry_token
       }
       service = {
-        port = 443
-        annotations = {
-          "service.beta.kubernetes.io/do-loadbalancer-certificate-id" = var.ssl_cert_id
-        }
+        port = 80
       }
       projects = [
         "dependabot-gitlab/dependabot",
