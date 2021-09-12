@@ -233,8 +233,6 @@ release-ruby-image:
 # ======================================================================================================================
 deploy-production:
   extends: .tf_deploy
-  needs:
-    - validate-deploy-production
   environment:
     name: production
     url: $DEPENDABOT_URL_PRODUCTION
