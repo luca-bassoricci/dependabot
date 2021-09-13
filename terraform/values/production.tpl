@@ -31,3 +31,8 @@ redis:
 
 mongodb:
   enabled: false
+
+worker:
+  livenessProbe:
+    timeoutSeconds: 6
+    failureThreshold: 4
