@@ -24,12 +24,6 @@
     - Gemfile
     - Gemfile.lock
     - Rakefile
-    - .gitlab/ci/jobs.gitlab-ci.yml
-    - .gitlab-ci.yml
-.dev_deploy: &dev_deploy
-  - <<: *mr
-    when: manual
-    allow_failure: true
 
 # Change definitions
 .e2e_changes: &e2e_changes
@@ -40,6 +34,8 @@
 .dependency_changes: &dependency_changes
   - Gemfile
   - Gemfile.lock
+.tf_changes: &tf_changes
+  - terraform/**/*
 
 # Main rule
 .main: &main
@@ -99,27 +95,46 @@ build-ruby-image:
       changes:
         - .gitlab/ci/Dockerfile
 
+terraform-init:
+  extends: .tf_init
+  rules:
+    - <<: *fork
+      when: never
+    - *prod_deploy
+    - <<: *mr
+      changes: *tf_changes
+
 # ======================================================================================================================
 # Static analysis stage
 # ======================================================================================================================
 rubocop:
   extends: .rubocop
+  needs:
+    - cache-dependencies
   rules: *main
 
 reek:
   extends: .reek
+  needs:
+    - cache-dependencies
   rules: *main
 
 brakeman:
   extends: .brakeman
+  needs:
+    - cache-dependencies
   rules: *main
 
 bundle-audit:
   extends: .bundle_audit
+  needs:
+    - cache-dependencies
   rules: *main
 
 dependency-scan:
   extends: .dependency_scan
+  needs:
+    - cache-dependencies
   rules:
     - *master
     - <<: *mr
@@ -127,25 +142,28 @@ dependency-scan:
 
 container-scan:
   extends: .container_scanning
+  needs:
+    - build-app-image
   rules:
+    - <<: *fork
+      when: never
     - *master
     - <<: *mr
       changes: *docker_changes
 
 terraform-fmt:
   extends: .tf_fmt
-  rules: *main
+  needs: []
+  rules:
+    - *master
+    - <<: *mr
+      changes: *tf_changes
 
 # ======================================================================================================================
 # Test Stage
 # ======================================================================================================================
 rspec:
   extends: .rspec
-  needs:
-    - reek
-    - rubocop
-    - brakeman
-    - bundle-audit
   rules:
     - *mr
     - *release
@@ -160,19 +178,23 @@ e2e:
     - build-mock-image
   variables:
     SETTINGS__GITHUB_ACCESS_TOKEN: $GITHUB_ACCESS_TOKEN_TEST
-  rules: *main
+  rules:
+    - <<: *fork
+      when: never
+    - *mr
+    - *master
+    - *release
 
 terraform-build:
   extends: .tf_build
-  variables:
-    TF_STATE_NAME: production
-    TF_VAR_dependabot_url: $DEPENDABOT_URL_PRODUCTION
-    TF_VAR_gitlab_access_token: $GITLAB_ACCESS_TOKEN
+  needs:
+    - terraform-init
   rules:
-    - <<: *mr
-      changes:
-        - terraform/**/*
+    - <<: *fork
+      when: never
     - *prod_deploy
+    - <<: *mr
+      changes: *tf_changes
 
 # ======================================================================================================================
 # Reporting
@@ -204,26 +226,36 @@ publish-allure-reports:
 release-image:
   extends: .release_image
   rules:
+    - <<: *fork
+      when: never
     - *release
 
 create-gitlab-release:
   extends: .gitlab_release
   rules:
+    - <<: *fork
+      when: never
     - *release
 
 update-helm-chart:
   extends: .update_chart
   rules:
+    - <<: *fork
+      when: never
     - *release
 
 update-standalone-repo:
   extends: .update_standalone
   rules:
+    - <<: *fork
+      when: never
     - *release
 
 release-ruby-image:
   extends: .release_ruby_image
   rules:
+    - <<: *fork
+      when: never
     - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
       changes:
         - .gitlab/ci/Dockerfile
@@ -233,50 +265,19 @@ release-ruby-image:
 # ======================================================================================================================
 deploy-production:
   extends: .tf_deploy
-  environment:
-    name: production
-    url: $DEPENDABOT_URL_PRODUCTION
-    on_stop: stop-production
-  resource_group: production
-  variables:
-    TF_VAR_dependabot_url: $DEPENDABOT_URL_PRODUCTION
-    TF_VAR_gitlab_access_token: $GITLAB_ACCESS_TOKEN
-    TF_VAR_github_access_token: $GITHUB_ACCESS_TOKEN
+  dependencies:
+    - terraform-build
   rules:
+    - <<: *fork
+      when: never
     - *prod_deploy
 
-deploy-development:
-  extends: .tf_deploy
-  tags:
-    - private
-  environment:
-    name: development
-    url: $DEPENDABOT_URL_DEVELOPMENT
-    on_stop: stop-development
-    auto_stop_in: 1d
-  resource_group: development
-  variables:
-    TF_VAR_gitlab_access_token: $GITLAB_ACCESS_TOKEN_TEST
-    TF_VAR_github_access_token: $GITHUB_ACCESS_TOKEN_TEST
-  rules: *dev_deploy
-
-stop-production:
+terraform-cleanup:
   extends: .tf_stop
-  environment:
-    name: production
-  variables:
-    TF_VAR_gitlab_access_token: $GITLAB_ACCESS_TOKEN
+  dependencies: []
   rules:
+    - <<: *fork
+      when: never
     - <<: *prod_deploy
       when: manual
       allow_failure: true
-
-stop-development:
-  extends: .tf_stop
-  tags:
-    - private
-  environment:
-    name: development
-  variables:
-    TF_VAR_gitlab_access_token: $GITLAB_ACCESS_TOKEN_TEST
-  rules: *dev_deploy

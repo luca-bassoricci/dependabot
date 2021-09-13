@@ -27,6 +27,12 @@ include:
     - vendor/bundle
   policy: pull
 
+.tf_cache: &tf_cache
+  key: tf-${CI_COMMIT_REF_SLUG}-${TF_STATE_NAME}
+  paths:
+    - terraform/.terraform
+  policy: pull
+
 .codacy_cache: &codacy_cache
   key: codacy-coverage-reporter-$CODACY_VERSION
   paths:
@@ -50,13 +56,17 @@ include:
 .terraform_runner:
   extends: .terraform
   variables:
+    TF_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${TF_STATE_NAME}
+    TF_VAR_dependabot_url: $DEPENDABOT_URL
+    TF_VAR_gitlab_access_token: $GITLAB_ACCESS_TOKEN
+    TF_VAR_github_access_token: $GITHUB_ACCESS_TOKEN
     TF_VAR_image_tag: $CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
+    TF_VAR_environment: $TF_STATE_NAME
   before_script:
-    - export TF_ADDRESS=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${TF_STATE_NAME:-$CI_ENVIRONMENT_NAME}
-    - export TF_VAR_environment=${TF_STATE_NAME:-$CI_ENVIRONMENT_NAME}
     - cd terraform
-    - gitlab-terraform init
-    - gitlab-terraform plan
+  cache:
+    <<: *tf_cache
+    policy: pull
 
 .buildkit_runner:
   image:
@@ -107,6 +117,7 @@ variables:
   SAST_DISABLED: "true"
   CONTAINER_SCANNING_DISABLED: "true"
   CODE_QUALITY_DISABLED: "true"
+  TF_STATE_NAME: production
 
 # ======================================================================================================================
 # Jobs
@@ -143,6 +154,15 @@ variables:
     DOCKER_IMAGE: ruby
     PUSH: "false"
 
+.tf_init:
+  stage: .pre
+  extends: .terraform_runner
+  script:
+    - gitlab-terraform init
+  cache:
+    <<: *tf_cache
+    policy: push
+
 .rubocop:
   stage: static analysis
   extends: .ruby_runner
@@ -158,12 +178,10 @@ variables:
 .brakeman:
   stage: static analysis
   extends: brakeman-sast
-  needs: []
 
 .bundle_audit:
   stage: static analysis
   extends: bundler-audit-dependency_scanning
-  needs: []
 
 .dependency_scan:
   stage: static analysis
@@ -236,10 +254,14 @@ variables:
   extends: .terraform_runner
   stage: test
   script:
+    - gitlab-terraform plan
     - gitlab-terraform plan-json
   artifacts:
     reports:
       terraform: terraform/plan.json
+    paths:
+      - terraform/plan.cache
+    expire_in: 7 days
 
 .coverage:
   stage: report
@@ -322,6 +344,11 @@ variables:
 .tf_deploy:
   extends: .terraform_runner
   stage: deploy
+  environment:
+    name: $TF_STATE_NAME
+    url: $DEPENDABOT_URL
+    on_stop: terraform-cleanup
+  resource_group: $TF_STATE_NAME
   script:
     - gitlab-terraform apply
 
@@ -329,6 +356,9 @@ variables:
   extends: .terraform_runner
   stage: deploy
   environment:
+    name: $TF_STATE_NAME
     action: stop
   script:
+    - gitlab-terraform init
+    - gitlab-terraform plan
     - gitlab-terraform destroy
