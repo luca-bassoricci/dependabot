@@ -27,12 +27,6 @@ include:
     - vendor/bundle
   policy: pull
 
-.tf_cache: &tf_cache
-  key: terraform-${CI_COMMIT_REF_SLUG}
-  paths:
-    - terraform
-  policy: push
-
 .codacy_cache: &codacy_cache
   key: codacy-coverage-reporter-$CODACY_VERSION
   paths:
@@ -238,7 +232,7 @@ variables:
   script:
     - cd /home/dependabot/app && bundle exec rake 'dependabot:update[test-repo,bundler,/]'
 
-.tf_plan:
+.tf_build:
   extends: .terraform_runner
   stage: test
   script:
@@ -330,7 +324,6 @@ variables:
   stage: deploy
   script:
     - gitlab-terraform apply
-  cache: *tf_cache
 
 .tf_stop:
   extends: .terraform_runner
@@ -339,6 +332,3 @@ variables:
     action: stop
   script:
     - gitlab-terraform destroy
-  cache:
-    <<: *tf_cache
-    policy: pull

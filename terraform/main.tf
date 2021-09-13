@@ -13,18 +13,45 @@ terraform {
   }
 }
 
-provider "helm" {
-  kubernetes {
-    config_path = var.kubernetes_config
-  }
-}
-
 locals {
   development = var.environment == "development"
+  release = {
+    name       = "dependabot-gitlab"
+    repository = "https://andrcuns.github.io/charts"
+    chart      = "dependabot-gitlab"
+    version    = "0.0.85"
+
+    lint              = true
+    atomic            = true
+    wait              = true
+    create_namespace  = true
+    dependency_update = true
+
+    namespace = "dependabot"
+  }
 }
 
 provider "digitalocean" {
   token = var.do_token
+}
+
+provider "helm" {
+  kubernetes {
+    host  = data.digitalocean_kubernetes_cluster.dependabot.endpoint
+    token = data.digitalocean_kubernetes_cluster.dependabot.kube_config[0].token
+    cluster_ca_certificate = base64decode(
+      data.digitalocean_kubernetes_cluster.dependabot.kube_config[0].cluster_ca_certificate
+    )
+  }
+}
+
+provider "helm" {
+  alias = "development"
+  kubernetes {}
+}
+
+data "digitalocean_kubernetes_cluster" "dependabot" {
+  name = "dependabot"
 }
 
 resource "digitalocean_domain" "default" {
@@ -61,39 +88,77 @@ resource "digitalocean_record" "www" {
   ]
 }
 
-resource "helm_release" "dependabot" {
-  count = local.development ? 0 : 1
+resource "helm_release" "dependabot-development" {
+  count = local.development ? 1 : 0
 
-  name       = "dependabot-gitlab"
-  repository = "https://andrcuns.github.io/charts"
-  chart      = "dependabot-gitlab"
-  version    = "0.0.85"
+  provider = helm.development
 
-  lint              = true
-  atomic            = true
-  wait              = true
-  create_namespace  = true
-  dependency_update = true
+  name       = local.release.name
+  repository = local.release.repository
+  chart      = local.release.chart
+  version    = local.release.version
 
-  namespace = "dependabot"
+  lint              = local.release.lint
+  atomic            = local.release.atomic
+  wait              = local.release.wait
+  create_namespace  = local.release.create_namespace
+  dependency_update = local.release.dependency_update
+
+  namespace = local.release.namespace
 
   values = [
     templatefile("values/common.tpl", {
-      image_tag           = var.image_tag,
-      gitlab_access_token = var.gitlab_access_token,
+      gitlab_access_token = var.gitlab_access_token
     }),
-    templatefile("values/${var.environment}.tpl", {
+    file("values/development.tpl")
+  ]
+
+  set {
+    name  = "image.tag"
+    value = var.image_tag
+  }
+}
+
+resource "helm_release" "dependabot" {
+  count = local.development ? 0 : 1
+
+  name       = local.release.name
+  repository = local.release.repository
+  chart      = local.release.chart
+  version    = local.release.version
+
+  lint              = local.release.lint
+  atomic            = local.release.atomic
+  wait              = local.release.wait
+  create_namespace  = local.release.create_namespace
+  dependency_update = local.release.dependency_update
+
+  namespace = local.release.namespace
+
+  values = [
+    templatefile("values/common.tpl", {
+      gitlab_access_token = var.gitlab_access_token
+    }),
+    templatefile("values/production.tpl", {
       service_port                 = 443
       github_access_token          = var.github_access_token,
       gitlab_hooks_auth_token      = var.gitlab_hooks_auth_token,
       gitlab_docker_registry_token = var.gitlab_docker_registry_token,
       sentry_dsn                   = var.sentry_dsn,
       dependabot_url               = var.dependabot_url,
-      mongodb_uri                  = var.mongodb_uri,
+      mongodb_host                 = var.mongodb_host
+      mongodb_db_name              = var.mongodb_db_name
+      mongodb_username             = var.mongodb_username,
+      mongodb_password             = var.mongodb_password,
       redis_password               = var.redis_password,
-      ssl_cert_id                  = digitalocean_certificate.default[count.index].uuid
+      ssl_cert_id                  = local.development ? 0 : digitalocean_certificate.default[0].uuid
     })
   ]
+
+  set {
+    name  = "image.tag"
+    value = var.image_tag
+  }
 
   depends_on = [
     digitalocean_certificate.default
