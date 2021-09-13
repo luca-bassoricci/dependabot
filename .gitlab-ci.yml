@@ -263,18 +263,25 @@ release-ruby-image:
 # ======================================================================================================================
 # Deploy Stage
 # ======================================================================================================================
-deploy-production:
+deploy:
   extends: .tf_deploy
   dependencies:
     - terraform-build
+  environment:
+    name: $TF_STATE_NAME
+    url: $DEPENDABOT_URL
+    on_stop: destroy
   rules:
     - <<: *fork
       when: never
     - *prod_deploy
 
-terraform-cleanup:
+destroy:
   extends: .tf_stop
   dependencies: []
+  environment:
+    name: $TF_STATE_NAME
+    action: stop
   rules:
     - <<: *fork
       when: never

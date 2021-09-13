@@ -344,10 +344,6 @@ variables:
 .tf_deploy:
   extends: .terraform_runner
   stage: deploy
-  environment:
-    name: $TF_STATE_NAME
-    url: $DEPENDABOT_URL
-    on_stop: terraform-cleanup
   resource_group: $TF_STATE_NAME
   script:
     - gitlab-terraform apply
@@ -355,9 +351,7 @@ variables:
 .tf_stop:
   extends: .terraform_runner
   stage: deploy
-  environment:
-    name: $TF_STATE_NAME
-    action: stop
+  resource_group: $TF_STATE_NAME
   script:
     - gitlab-terraform init
     - gitlab-terraform plan
