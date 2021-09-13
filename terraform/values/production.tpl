@@ -3,7 +3,6 @@ service:
   annotations:
     service.beta.kubernetes.io/do-loadbalancer-name: "dependabot"
     service.beta.kubernetes.io/do-loadbalancer-certificate-id: "${ssl_cert_id}"
-    service.beta.kubernetes.io/do-loadbalancer-redirect-http-to-https: "true"
     service.beta.kubernetes.io/do-loadbalancer-healthcheck-protocol: "http"
     service.beta.kubernetes.io/do-loadbalancer-healthcheck-path: "/healthcheck"
     service.beta.kubernetes.io/do-loadbalancer-size-slug: "lb-small"
@@ -23,7 +22,7 @@ projects:
 env:
   sentryDsn: ${sentry_dsn}
   dependabotUrl: ${dependabot_url}
-  mongoDbUri: ${mongodb_uri}
+  mongoDbUri: "mongodb+srv://${mongodb_username}:${mongodb_password}@${mongodb_host}/${mongodb_db_name}?retryWrites=true&w=majority&authSource=admin"
 
 redis:
   auth:

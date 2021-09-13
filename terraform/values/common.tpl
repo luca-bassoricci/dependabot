@@ -1,6 +1,5 @@
 image:
   repository: "registry.gitlab.com/dependabot-gitlab/dependabot"
-  tag: ${image_tag}
 
 credentials:
   gitlab_access_token: ${gitlab_access_token}

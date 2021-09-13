@@ -162,8 +162,8 @@ e2e:
     SETTINGS__GITHUB_ACCESS_TOKEN: $GITHUB_ACCESS_TOKEN_TEST
   rules: *main
 
-validate-deploy-production:
-  extends: .tf_plan
+terraform-build:
+  extends: .tf_build
   variables:
     TF_STATE_NAME: production
     TF_VAR_dependabot_url: $DEPENDABOT_URL_PRODUCTION

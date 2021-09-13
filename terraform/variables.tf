@@ -1,49 +1,50 @@
 # Global vars
-variable "kubernetes_config" {
-  default = "~/.kube/config"
-}
-
 variable "do_token" {
   sensitive = true
 }
 
 # Application vars
 variable "gitlab_access_token" {
-  sensitive = true
 }
 
 variable "github_access_token" {
-  default   = ""
-  sensitive = true
+  default = ""
 }
 
 variable "gitlab_hooks_auth_token" {
-  default   = ""
-  sensitive = true
+  default = ""
 }
 
 variable "gitlab_docker_registry_token" {
-  default   = ""
-  sensitive = true
+  default = ""
 }
 
 variable "redis_password" {
-  default   = ""
-  sensitive = true
+  default = ""
 }
 
 variable "sentry_dsn" {
-  default   = ""
-  sensitive = true
+  default = ""
 }
 
 variable "dependabot_url" {
   default = ""
 }
 
-variable "mongodb_uri" {
-  default   = ""
-  sensitive = true
+variable "mongodb_host" {
+  default = "dependabot.ukhoq.mongodb.net"
+}
+
+variable "mongodb_username" {
+  default = "dependabot"
+}
+
+variable "mongodb_password" {
+  default = ""
+}
+
+variable "mongodb_db_name" {
+  default = "dependabot"
 }
 
 variable "image_tag" {
