@@ -1,5 +1,52 @@
 # CHANGELOG
 
+## [v0.10.0 - 2021-09-15](https://gitlab.com/dependabot-gitlab/dependabot/-/releases) *BREAKING*
+
+### 🔬 Improvements
+
+- [BREAKING] store all project and job information in db, improve index page. See merge request dependabot-gitlab/dependabot!960 - (andrejs)
+- allow reopening closed mrs. See merge request dependabot-gitlab/dependabot!977 - (andrejs)
+- comment on closed mrs about ignoring same version update. See merge request dependabot-gitlab/dependabot!975 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump mongoid from 7.3.2 to 7.3.3. See merge request dependabot-gitlab/dependabot!994 - (andrejs)
+- bump sentry-ruby from 4.7.1 to 4.7.2. See merge request dependabot-gitlab/dependabot!988 - (andrejs)
+- bump sentry-rails from 4.7.1 to 4.7.2. See merge request dependabot-gitlab/dependabot!987 - (andrejs)
+- bump sentry-sidekiq from 4.7.1 to 4.7.2. See merge request dependabot-gitlab/dependabot!989 - (andrejs)
+- bump dependabot-omnibus from 0.161.0 to 0.162.0. See merge request dependabot-gitlab/dependabot!986 - (andrejs)
+- pin faraday to 1.7.0. See merge request dependabot-gitlab/dependabot!985 - (andrejs)
+- bump dependabot-omnibus from 0.160.1 to 0.161.0. See merge request dependabot-gitlab/dependabot!979 - (andrejs)
+- bump sentry-rails, sentry-ruby and sentry-sidekiq. See merge request dependabot-gitlab/dependabot!980 - (andrejs)
+- bump yabeda-prometheus-mmap from 0.2.0 to 0.3.0. See merge request dependabot-gitlab/dependabot!974 - (andrejs)
+- bump bootsnap from 1.7.7 to 1.8.1. See merge request dependabot-gitlab/dependabot!973 - (andrejs)
+- bump dependabot-omnibus from 0.160.0 to 0.160.1. See merge request dependabot-gitlab/dependabot!970 - (andrejs)
+- bump sidekiq from 6.2.1 to 6.2.2. See merge request dependabot-gitlab/dependabot!964 - (andrejs)
+- bump yabeda-sidekiq from 0.8.0 to 0.8.1. See merge request dependabot-gitlab/dependabot!965 - (andrejs)
+
+### 📦🛠️ Development dependency updates
+
+- bump rubocop from 1.20.0 to 1.21.0. See merge request dependabot-gitlab/dependabot!1003 - (andrejs)
+- bump rubocop-rails from 2.12.1 to 2.12.2. See merge request dependabot-gitlab/dependabot!995 - (andrejs)
+- bump rubocop-rails from 2.11.3 to 2.12.1. See merge request dependabot-gitlab/dependabot!992 - (andrejs)
+- bump spring from 2.1.1 to 3.0.0. See merge request dependabot-gitlab/dependabot!991 - (andrejs)
+- bump rubocop from 1.19.1 to 1.20.0. See merge request dependabot-gitlab/dependabot!971 - (andrejs)
+
+### 🛠️ Chore
+
+- cache terraform init and build results. See merge request dependabot-gitlab/dependabot!1001 - (andrejs)
+- increase prod worker liveness probe values. See merge request dependabot-gitlab/dependabot!1000 - (andrejs)
+- split development and prod helm releases. See merge request dependabot-gitlab/dependabot!999 - (andrejs)
+- manage digital ocean resources. See merge request dependabot-gitlab/dependabot!998 - (andrejs)
+- use gitlab runners for prod deployment. See merge request dependabot-gitlab/dependabot!997 - (andrejs)
+- add terraform deployment. See merge request dependabot-gitlab/dependabot!993 - (andrejs)
+- refactor mr event main call method. See merge request dependabot-gitlab/dependabot!976 - (andrejs)
+- use external buildkit builder. See merge request dependabot-gitlab/dependabot!966 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.9.7](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.9.7...v0.10.0)
+
 ## [v0.9.7 - 2021-08-25](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🐞 Bug Fixes
