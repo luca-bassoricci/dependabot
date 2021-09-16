@@ -46,7 +46,7 @@ namespace :dependabot do # rubocop:disable Metrics/BlockLength
 
     FileUtils.rm_f(HealthcheckConfig.filename)
     HealthcheckJob.perform_later
-    sleep(0.5)
+    sleep(1)
     File.exist?(HealthcheckConfig.filename) || raise("Healthcheck job failed")
   rescue StandardError => e
     ApplicationHelper.log(:error, e.message, "Healthcheck")

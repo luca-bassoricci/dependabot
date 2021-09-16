@@ -34,5 +34,14 @@ mongodb:
 
 worker:
   livenessProbe:
-    timeoutSeconds: 6
-    failureThreshold: 4
+    failureThreshold: 10
+    periodSeconds: 10
+
+web:
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "300Mi"
+      cpu: "200m"

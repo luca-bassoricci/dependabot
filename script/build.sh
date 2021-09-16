@@ -12,8 +12,8 @@ else
   IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE"
 fi
 
-if [ -z "$FORK" ]; then
-  COMMAND="buildctl --addr tcp://buildkit-service.gitlab.svc.cluster.local:1234"
+if [[ "$FORK" != "true" && "$BUILDKIT_SERVICE" != "" ]]; then
+  COMMAND="buildctl --addr tcp://${BUILDKIT_SERVICE}"
 else
   COMMAND="buildctl-daemonless.sh"
 fi
