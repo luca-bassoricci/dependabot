@@ -39,6 +39,7 @@ class UpdatesConfigContract < Dry::Validation::Contract
       optional(:ignore).array(:hash) do
         required(:"dependency-name").filled(:string)
         optional(:versions).array(:str?)
+        optional(:"update-types").array(:str?)
       end
 
       optional(:"pull-request-branch-name").hash do
@@ -48,6 +49,7 @@ class UpdatesConfigContract < Dry::Validation::Contract
       optional(:registries) { filled? > array? | eql?("*") }
       optional(:assignees).array(:str?)
       optional(:reviewers).array(:str?)
+      optional(:approvers).array(:str?)
       optional(:labels).array(:str?)
       optional(:milestone).filled(:string)
       optional(:vendor).filled(:bool?)
