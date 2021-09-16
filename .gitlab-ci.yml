@@ -164,6 +164,8 @@ terraform-fmt:
 # ======================================================================================================================
 rspec:
   extends: .rspec
+  needs:
+    - cache-dependencies
   rules:
     - *mr
     - *release
@@ -185,8 +187,8 @@ e2e:
     - *master
     - *release
 
-terraform-build:
-  extends: .tf_build
+terraform-validate:
+  extends: .tf_validate
   needs:
     - terraform-init
   rules:
@@ -225,6 +227,7 @@ publish-allure-reports:
 # ======================================================================================================================
 release-image:
   extends: .release_image
+  dependencies: []
   rules:
     - <<: *fork
       when: never
@@ -232,6 +235,7 @@ release-image:
 
 create-gitlab-release:
   extends: .gitlab_release
+  dependencies: []
   rules:
     - <<: *fork
       when: never
@@ -239,6 +243,7 @@ create-gitlab-release:
 
 update-helm-chart:
   extends: .update_chart
+  dependencies: []
   rules:
     - <<: *fork
       when: never
@@ -246,6 +251,7 @@ update-helm-chart:
 
 update-standalone-repo:
   extends: .update_standalone
+  dependencies: []
   rules:
     - <<: *fork
       when: never
@@ -253,6 +259,7 @@ update-standalone-repo:
 
 release-ruby-image:
   extends: .release_ruby_image
+  dependencies: []
   rules:
     - <<: *fork
       when: never
@@ -266,7 +273,7 @@ release-ruby-image:
 deploy:
   extends: .tf_deploy
   dependencies:
-    - terraform-build
+    - terraform-init
   environment:
     name: $TF_STATE_NAME
     url: $DEPENDABOT_URL
