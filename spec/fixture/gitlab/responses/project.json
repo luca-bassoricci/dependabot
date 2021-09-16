@@ -1,5 +1,6 @@
 {
   "id": 3,
   "description": null,
-  "default_branch": "master"
+  "default_branch": "master",
+  "web_url": "https://gitlab.com/project"
 }
