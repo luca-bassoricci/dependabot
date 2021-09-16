@@ -250,18 +250,16 @@ variables:
   script:
     - cd /home/dependabot/app && bundle exec rake 'dependabot:update[test-repo,bundler,/]'
 
-.tf_build:
+.tf_validate:
   extends: .terraform_runner
   stage: test
   script:
+    - gitlab-terraform validate
     - gitlab-terraform plan
     - gitlab-terraform plan-json
   artifacts:
     reports:
       terraform: terraform/plan.json
-    paths:
-      - terraform/plan.cache
-    expire_in: 7 days
 
 .coverage:
   stage: report
@@ -346,6 +344,7 @@ variables:
   stage: deploy
   resource_group: $TF_STATE_NAME
   script:
+    - gitlab-terraform plan
     - gitlab-terraform apply
 
 .tf_stop:
