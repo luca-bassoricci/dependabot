@@ -39,20 +39,6 @@ namespace :dependabot do # rubocop:disable Metrics/BlockLength
     exit(1)
   end
 
-  desc "worker healthcheck"
-  task(check_sidekiq: :environment) do
-    ApplicationHelper.log(:debug, "Checking if sidekiq is operational.", "Healthcheck")
-    Sidekiq::ProcessSet.new.size.positive? || raise("Sidekiq process is not running!")
-
-    FileUtils.rm_f(HealthcheckConfig.filename)
-    HealthcheckJob.perform_later
-    sleep(1)
-    File.exist?(HealthcheckConfig.filename) || raise("Healthcheck job failed")
-  rescue StandardError => e
-    ApplicationHelper.log(:error, e.message, "Healthcheck")
-    exit(1)
-  end
-
   desc "check db connection"
   task(check_db: :environment) do
     include ApplicationHelper

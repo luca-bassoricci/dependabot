@@ -12,7 +12,7 @@ Sidekiq.configure_server do |config|
 
   config.logger = logger
   config.redis = redis_conf
-  config.options[:queues].push(HealthcheckConfig.queue, "hooks", "project_registration")
+  config.options[:queues].push("hooks", "project_registration")
 end
 
 Sidekiq.configure_client do |config|
@@ -33,7 +33,7 @@ module Sidekiq
   class JobLogger
     def call(_item, queue)
       start = ::Process.clock_gettime(::Process::CLOCK_MONOTONIC)
-      healthcheck = queue.start_with?("healthcheck-")
+      healthcheck = queue.start_with?("sidekiq_alive-")
 
       healthcheck ? @logger.debug("start") : @logger.info("start")
 
