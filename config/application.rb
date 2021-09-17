@@ -26,7 +26,17 @@ module DependabotGitlab
     end
 
     config.after_initialize do
-      Dependabot::ProjectRegistration.call if Sidekiq.server?
+      if Sidekiq.server?
+        require "sidekiq_alive"
+
+        SidekiqAlive.setup do |config|
+          config.path = "/healthcheck"
+          config.custom_liveness_probe = proc { Mongoid.default_client.database_names.present? }
+          config.time_to_live = 60
+        end
+
+        Dependabot::ProjectRegistration.call
+      end
     end
   end
 end

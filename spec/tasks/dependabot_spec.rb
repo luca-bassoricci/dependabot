@@ -64,32 +64,6 @@ describe "rake", epic: :tasks do # rubocop:disable RSpec/DescribeClass
     end
   end
 
-  describe "dependabot:check_sidekiq" do
-    before do
-      allow(Sidekiq).to receive(:configure_client)
-      allow(Sidekiq::ProcessSet).to receive(:new).and_return([1])
-      allow(HealthcheckJob).to receive(:perform_later) { healthcheck_return }
-    end
-
-    context "with sidekiq processing job" do
-      let(:task_name) { "dependabot:check_sidekiq" }
-      let(:healthcheck_return) { FileUtils.touch(HealthcheckConfig.filename) }
-
-      it "passes successfully" do
-        expect { task.invoke }.not_to raise_error
-      end
-    end
-
-    context "without sidekiq processing job" do
-      let(:task_name) { "dependabot:check_sidekiq" }
-      let(:healthcheck_return) { true }
-
-      it "fails" do
-        expect { task.invoke }.to raise_error(SystemExit)
-      end
-    end
-  end
-
   # rubocop:disable RSpec/MessageChain
   describe "dependabot:check_db" do
     before do
