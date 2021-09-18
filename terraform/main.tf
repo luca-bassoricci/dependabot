@@ -18,8 +18,8 @@ locals {
   release = {
     name       = "dependabot-gitlab"
     repository = "https://andrcuns.github.io/charts"
-    chart      = "dependabot-gitlab"
-    version    = "0.0.85"
+    version    = "0.0.88"
+    chart      = var.chart
 
     lint              = true
     atomic            = true

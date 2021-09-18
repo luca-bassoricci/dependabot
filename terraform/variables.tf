@@ -54,3 +54,7 @@ variable "image_tag" {
 variable "environment" {
   default = "development"
 }
+
+variable "chart" {
+  default = "dependabot-gitlab"
+}
