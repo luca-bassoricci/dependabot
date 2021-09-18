@@ -1,5 +1,28 @@
 # CHANGELOG
 
+## [v0.10.1 - 2021-09-18](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🔬 Improvements
+
+- use sidekiq_alive for worker healthchecks. See merge request dependabot-gitlab/dependabot!1010 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump bootsnap from 1.8.1 to 1.9.0. See merge request dependabot-gitlab/dependabot!1009 - (andrejs)
+- bump dry-validation from 1.6.0 to 1.7.0. See merge request dependabot-gitlab/dependabot!1002 - (andrejs)
+
+### 🛠️ Chore
+
+- remove yabeda monkey patch. See merge request dependabot-gitlab/dependabot!1012 - (andrejs)
+- tweak sidekiq healthcheck and resource limits. See merge request dependabot-gitlab/dependabot!1008 - (andrejs)
+- add manual deploy option for unrelated changes. See merge request dependabot-gitlab/dependabot!1007 - (andrejs)
+- add web_url to mocked project response. See merge request dependabot-gitlab/dependabot!1006 - (andrejs)
+- improve pipeline speed. See merge request dependabot-gitlab/dependabot!1005 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.10.0](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.10.0...v0.10.1)
+
 ## [v0.10.0 - 2021-09-15](https://gitlab.com/dependabot-gitlab/dependabot/-/releases) *BREAKING*
 
 ### 🔬 Improvements
