@@ -55,7 +55,7 @@ class ChartReleaseHelper
   def commit_changes
     log(:info, "Commit changes")
     git.add([CHART, README])
-    git.commit("Update dependabot-gitlab app version to #{updated_chart['appVersion']}")
+    git.commit("dependabot-gitlab: Update chart to version to #{updated_chart['appVersion']}")
     git.push
   end
 
