@@ -151,7 +151,7 @@ resource "helm_release" "dependabot" {
       mongodb_username             = var.mongodb_username,
       mongodb_password             = var.mongodb_password,
       redis_password               = var.redis_password,
-      ssl_cert_id                  = local.development ? 0 : digitalocean_certificate.default[0].uuid
+      ssl_cert_id                  = digitalocean_certificate.default[0].uuid
     })
   ]
 
