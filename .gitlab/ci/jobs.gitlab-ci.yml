@@ -103,6 +103,7 @@ include:
 # Global
 # ======================================================================================================================
 stages:
+  - build
   - static analysis
   - test
   - report
@@ -133,27 +134,6 @@ variables:
     - <<: *codacy_cache
       policy: pull-push
 
-.build_app_image:
-  stage: .pre
-  extends: .buildkit_runner
-  variables:
-    DOCKER_CONTEXT: "."
-
-.build_mock_image:
-  stage: .pre
-  extends: .buildkit_runner
-  variables:
-    DOCKER_CONTEXT: spec/fixture/gitlab
-    DOCKER_IMAGE: gitlab-mock
-
-.build_ruby_image:
-  stage: .pre
-  extends: .buildkit_runner
-  variables:
-    DOCKER_CONTEXT: .gitlab/ci
-    DOCKER_IMAGE: ruby
-    PUSH: "false"
-
 .tf_init:
   stage: .pre
   extends: .terraform_runner
@@ -162,6 +142,30 @@ variables:
   cache:
     <<: *tf_cache
     policy: push
+
+.build_app_image:
+  stage: build
+  extends: .buildkit_runner
+  needs: []
+  variables:
+    DOCKER_CONTEXT: "."
+
+.build_mock_image:
+  stage: build
+  extends: .buildkit_runner
+  needs: []
+  variables:
+    DOCKER_CONTEXT: spec/fixture/gitlab
+    DOCKER_IMAGE: gitlab-mock
+
+.build_ruby_image:
+  stage: build
+  extends: .buildkit_runner
+  needs: []
+  variables:
+    DOCKER_CONTEXT: .gitlab/ci
+    DOCKER_IMAGE: ruby
+    PUSH: "false"
 
 .rubocop:
   stage: static analysis
@@ -253,6 +257,7 @@ variables:
 .tf_validate:
   extends: .terraform_runner
   stage: test
+  resource_group: $TF_STATE_NAME
   script:
     - gitlab-terraform validate
     - gitlab-terraform plan
