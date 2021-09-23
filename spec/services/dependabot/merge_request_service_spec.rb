@@ -142,7 +142,7 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
             config: dependabot_config.first,
             target_project_id: target_project_id
           )
-          expect(gitlab).to have_received(:accept_merge_request)
+          expect(gitlab).not_to have_received(:accept_merge_request)
         end
       end
     end

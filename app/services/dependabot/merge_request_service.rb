@@ -144,7 +144,7 @@ module Dependabot
     #
     # @return [void]
     def accept_mr
-      return unless AppConfig.standalone || target_project_id
+      return unless AppConfig.standalone
       return unless mr && config[:auto_merge]
 
       gitlab.accept_merge_request(mr.project_id, mr.iid, merge_when_pipeline_succeeds: true)
