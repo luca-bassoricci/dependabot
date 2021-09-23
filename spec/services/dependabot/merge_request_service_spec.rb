@@ -156,7 +156,8 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
       expect(Gitlab::MergeRequest::Updater).to have_received(:call).with(
         fetcher: fetcher,
         updated_files: updated_files,
-        merge_request: mr
+        merge_request: mr,
+        target_project_id: nil
       )
     end
   end

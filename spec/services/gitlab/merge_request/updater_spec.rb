@@ -22,7 +22,7 @@ describe Gitlab::MergeRequest::Updater, epic: :services, feature: :gitlab do
   end
 
   it "performs mr update" do
-    described_class.call(fetcher: fetcher, updated_files: updated_files, merge_request: mr)
+    described_class.call(fetcher: fetcher, updated_files: updated_files, merge_request: mr, target_project_id: nil)
 
     expect(Dependabot::PullRequestUpdater).to have_received(:new).with(
       source: fetcher.source,
@@ -30,7 +30,8 @@ describe Gitlab::MergeRequest::Updater, epic: :services, feature: :gitlab do
       old_commit: mr.sha,
       files: updated_files,
       credentials: Dependabot::Credentials.call,
-      pull_request_number: mr.iid
+      pull_request_number: mr.iid,
+      target_project_id: nil
     )
   end
 end
