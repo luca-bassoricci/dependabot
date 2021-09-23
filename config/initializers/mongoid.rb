@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
+rails_env = ENV["RAILS_ENV"] || "development"
 default_config = {
   clients: {
     default: {
       hosts: [ENV["MONGODB_URL"] || "localhost:27017"],
-      database: ENV["MONGODB_DATABASE"] || "dependabot_gitlab_#{ENV['RAILS_ENV'] || 'development'}",
+      database: ENV["MONGODB_DATABASE"] || "dependabot_gitlab_#{rails_env}",
       options: {
         server_selection_timeout: 1,
         connect_timeout: 1,
@@ -36,5 +37,5 @@ configuration = {
 
 Mongoid.configure do |config|
   config.app_name = "DependabotGitlab"
-  config.load_configuration(configuration.fetch(ENV["RAILS_ENV"], "development"))
+  config.load_configuration(configuration[rails_env])
 end
