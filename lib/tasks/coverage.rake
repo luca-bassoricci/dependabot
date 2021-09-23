@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 desc "Generate coverage from resultset.json"
-task coverage: :environment do
+task :coverage do # rubocop:disable Rails/RakeEnvironment
   require "simplecov"
   require "simplecov-console"
 

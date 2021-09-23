@@ -1,15 +1,10 @@
 # frozen_string_literal: true
 
-require "semver"
-require "git"
-
 # Release helper which generate proper release notes
 # It requires linear repo history with only merges in to main brunch.
 # All commits must be prefixed with one of the category prefixes configured in .gitlab/changelog_config.yml
 #
 class ReleaseHelper
-  include ApplicationHelper
-
   PROJECT_ID = 17_993_652
 
   private_instance_methods :new
@@ -23,13 +18,28 @@ class ReleaseHelper
   # Project release tags
   #
   # @return [Array]
-  def self.release_tags
-    ApplicationHelper.gitlab.tags(PROJECT_ID, search: "^v").map(&:name)
+  def release_tags
+    gitlab.tags(PROJECT_ID, search: "^v").map(&:name)
   end
 
-  delegate :logger, to: Rails
-
   attr_reader :ref_from, :ref_to, :ref_range
+
+  # Gitlab client
+  #
+  # @return [Gitlab::Client]
+  def gitlab
+    @gitlab ||= Gitlab.client(
+      endpoint: "https://gitlab.com/api/v4",
+      private_token: ENV["SETTINGS__GITLAB_ACCESS_TOKEN"]
+    )
+  end
+
+  # Logger instance
+  #
+  # @return [Logger]
+  def logger
+    @logger ||= Logger.new($stdout)
+  end
 
   # Release categories config
   #
@@ -91,7 +101,7 @@ class GitlabReleaseCreator < ReleaseHelper
 
   def initialize(version)
     ref_to = version
-    ref_from = ReleaseHelper.release_tags[1]
+    ref_from = release_tags[1]
 
     super(ref_from, ref_to, "#{ref_from}..#{ref_to}")
   end
@@ -129,7 +139,7 @@ class ReleaseCreator < ReleaseHelper
   private_instance_methods :new
 
   def initialize(version)
-    ref_from = ReleaseHelper.release_tags.first
+    ref_from = release_tags.first
     ref_to = self.class.send(version, ref_from)
 
     super(ref_from, ref_to, "#{ref_from}..HEAD")
@@ -192,7 +202,7 @@ class ReleaseCreator < ReleaseHelper
   #
   # @return [void]
   def update_changelog
-    log(:info, "Updating changelog")
+    logger.info("Updating changelog")
 
     cl = changelog
     breaking = cl.include?("[BREAKING]")
@@ -213,7 +223,7 @@ class ReleaseCreator < ReleaseHelper
   #
   # @return [void]
   def commit_and_tag
-    log(:info, "Comitting changelog")
+    logger.info("Comitting changelog")
     git = Git.init
     git.add("CHANGELOG.md")
     git.commit("Update to #{ref_to}", no_verify: true)
