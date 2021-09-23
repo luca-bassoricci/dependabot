@@ -71,7 +71,6 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
     ).and_return(closed_mr)
 
     allow(Gitlab::MergeRequest::Creator).to receive(:call) { create_mr_return }
-    allow(Gitlab::MergeRequest::Closer).to receive(:call)
     allow(Gitlab::MergeRequest::Updater).to receive(:call)
     allow(Gitlab::MergeRequest::Commenter).to receive(:call)
 
@@ -314,7 +313,6 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
     it "old mr is closed and branch removed" do
       aggregate_failures do
         expect(service_return).to eq(mr)
-        expect(Gitlab::MergeRequest::Closer).to have_received(:call).with(project.name, superseeded_mr.iid).once
         expect(Gitlab::MergeRequest::Commenter).to have_received(:call).with(
           project.name,
           superseeded_mr.iid,
