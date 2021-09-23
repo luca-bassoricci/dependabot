@@ -122,12 +122,11 @@ module Dependabot
     #
     # @return [void]
     def recreate_mr
-      return log(:info, " merge request recreation not supported for forked projects") if target_project_id
-
       Gitlab::MergeRequest::Updater.call(
         fetcher: fetcher,
         updated_files: updated_files,
-        merge_request: mr
+        merge_request: mr,
+        target_project_id: target_project_id
       )
       log(:info, "  recreated merge request #{mr.web_url}")
     end
