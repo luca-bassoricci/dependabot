@@ -11,6 +11,7 @@ class MergeRequest
   field :dependencies, type: String
   field :main_dependency, type: String
   field :branch, type: String
+  field :target_project_id, type: String
 
   belongs_to :project
 end
