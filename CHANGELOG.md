@@ -1,5 +1,41 @@
 # CHANGELOG
 
+## [v0.10.2 - 2021-09-23](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🔬 Improvements
+
+- support recreating forked MRs. See merge request dependabot-gitlab/dependabot!1025 - (andrejs)
+- persist mrs from forked projects. See merge request dependabot-gitlab/dependabot!1023 - (andrejs)
+
+### 🐞 Bug Fixes
+
+- correctly perform migrations. See merge request dependabot-gitlab/dependabot!1028 - (andrejs)
+- correctly monkey patch pr creator and updater. See merge request dependabot-gitlab/dependabot!1026 - (andrejs)
+- do not automerge mrs in forked projects. See merge request dependabot-gitlab/dependabot!1024 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump sentry-sidekiq from 4.7.2 to 4.7.3. See merge request dependabot-gitlab/dependabot!1022 - (andrejs)
+- bump sentry-ruby from 4.7.2 to 4.7.3. See merge request dependabot-gitlab/dependabot!1021 - (andrejs)
+- bump sentry-rails from 4.7.2 to 4.7.3. See merge request dependabot-gitlab/dependabot!1020 - (andrejs)
+- bump dependabot-omnibus from 0.162.0 to 0.162.1. See merge request dependabot-gitlab/dependabot!1015 - (andrejs)
+- bump bootsnap from 1.9.0 to 1.9.1. See merge request dependabot-gitlab/dependabot!1014 - (andrejs)
+- bump puma from 5.4.0 to 5.5.0. See merge request dependabot-gitlab/dependabot!1013 - (andrejs)
+
+### 📦🛠️ Development dependency updates
+
+- bump rubocop-rspec from 2.4.0 to 2.5.0. See merge request dependabot-gitlab/dependabot!1019 - (andrejs)
+- bump solargraph from 0.43.0 to 0.43.1. See merge request dependabot-gitlab/dependabot!1016 - (andrejs)
+
+### 🛠️ Chore
+
+- use load_configuration method for mongoid config. See merge request dependabot-gitlab/dependabot!1027 - (andrejs)
+- add ci build stage. See merge request dependabot-gitlab/dependabot!1018 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.10.1](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.10.1...v0.10.2)
+
 ## [v0.10.1 - 2021-09-18](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🔬 Improvements
