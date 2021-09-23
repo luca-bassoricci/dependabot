@@ -37,7 +37,7 @@ ARG COMMIT_SHA
 ARG PROJECT_URL
 ARG VERSION
 
-ENV VERSION=$VERSION
+ENV APP_VERSION=$VERSION
 
 LABEL maintainer="andrejs.cunskis@gmail.com" \
       vcs-ref=$COMMIT_SHA \
