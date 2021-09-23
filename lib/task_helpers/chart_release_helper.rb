@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
-require "semver"
-require "git"
-
 class ChartReleaseHelper
-  include ApplicationHelper
-
   VER_PATTERN = "%M.%m.%p"
   CHART = "charts/dependabot-gitlab/Chart.yaml"
   README = "charts/dependabot-gitlab/README.md"
@@ -35,8 +30,25 @@ class ChartReleaseHelper
 
   attr_reader :app_version, :path, :repo_name, :git
 
+  # Gitlab client
+  #
+  # @return [Gitlab::Client]
+  def gitlab
+    @gitlab ||= Gitlab.client(
+      endpoint: "https://gitlab.com/api/v4",
+      private_token: ENV["SETTINGS__GITLAB_ACCESS_TOKEN"]
+    )
+  end
+
+  # Logger instance
+  #
+  # @return [Logger]
+  def logger
+    @logger ||= Logger.new($stdout)
+  end
+
   def clone_repo
-    log(:info, "Clone charts repository to #{path}")
+    logger.info("Clone charts repository to #{path}")
     @git = Git.clone("git@github.com:andrcuns/charts.git", repo_name, path: path)
   end
 
@@ -53,14 +65,14 @@ class ChartReleaseHelper
   end
 
   def commit_changes
-    log(:info, "Commit changes")
+    logger.info("Commit changes")
     git.add([CHART, README])
     git.commit("dependabot-gitlab: Update chart to version to #{updated_chart['appVersion']}")
     git.push
   end
 
   def update_chart
-    log(:info, "Update chart version")
+    logger.info("Update chart version")
     update_app_version
     update_chart_version
 

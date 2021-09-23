@@ -1,27 +1,34 @@
 # frozen_string_literal: true
 
+require "gitlab"
+require "semver"
+require "git"
+
 require_relative "../task_helpers/release_helpers"
 require_relative "../task_helpers/chart_release_helper"
 require_relative "../task_helpers/standalone_release_helper"
 
+# rubocop:disable Rails/RakeEnvironment
+
 namespace :release do
   desc "create new release tag and update changelog"
-  task(:app, [:version] => :environment) do |_task, args|
+  task(:app, [:version]) do |_task, args|
     ReleaseCreator.call(args[:version])
   end
 
   desc "create new gitlab release"
-  task(:gitlab, [:version] => :environment) do |_task, args|
+  task(:gitlab, [:version]) do |_task, args|
     GitlabReleaseCreator.call(args[:version])
   end
 
   desc "update helm chart version"
-  task(:chart, [:version] => :environment) do |_task, args|
+  task(:chart, [:version]) do |_task, args|
     ChartReleaseHelper.call(args[:version])
   end
 
   desc "update standalone version"
-  task(:standalone, [:version] => :environment) do |_task, args|
+  task(:standalone, [:version]) do |_task, args|
     StandaloneReleaseHelper.call(args[:version])
   end
 end
+# rubocop:enable Rails/RakeEnvironment

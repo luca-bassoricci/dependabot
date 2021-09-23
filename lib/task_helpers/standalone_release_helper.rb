@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class StandaloneReleaseHelper
-  include ApplicationHelper
-
   IMAGE = "docker.io/andrcuns/dependabot-gitlab"
   CI_FILE = ".gitlab-ci.yml"
   PROJECT = "dependabot-gitlab/dependabot-standalone"
@@ -17,7 +15,7 @@ class StandaloneReleaseHelper
   end
 
   def update
-    log(:info, "Updating dependabot-standalone image version")
+    logger.info("Updating dependabot-standalone image version")
 
     gitlab.edit_file(
       PROJECT,
@@ -32,6 +30,23 @@ class StandaloneReleaseHelper
   private
 
   attr_reader :version
+
+  # Gitlab client
+  #
+  # @return [Gitlab::Client]
+  def gitlab
+    @gitlab ||= Gitlab.client(
+      endpoint: "https://gitlab.com/api/v4",
+      private_token: ENV["SETTINGS__GITLAB_ACCESS_TOKEN"]
+    )
+  end
+
+  # Logger instance
+  #
+  # @return [Logger]
+  def logger
+    @logger ||= Logger.new($stdout)
+  end
 
   # gitlab-ci.yml file contents
   #
