@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## [v0.10.3 - 2021-09-24](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🐞 Bug Fixes
+
+- correctly migrate project_id fields. See merge request dependabot-gitlab/dependabot!1029 - (andrejs)
+
+### 📦🛠️ Development dependency updates
+
+- bump solargraph from 0.43.1 to 0.43.2. See merge request dependabot-gitlab/dependabot!1030 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.10.2](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.10.2...v0.10.3)
+
 ## [v0.10.2 - 2021-09-23](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🔬 Improvements
