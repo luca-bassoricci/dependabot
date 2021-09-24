@@ -18,6 +18,7 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
   let(:mr) do
     OpenStruct.new(
       web_url: "mr-url",
+      id: Faker::Number.unique.number(digits: 10),
       iid: Faker::Number.unique.number(digits: 10),
       sha: "5f92cc4d9939",
       has_conflicts: has_conflicts,
@@ -29,6 +30,7 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
   def create_mr(iid, state, dependencies, branch = "some-branch")
     MergeRequest.new(
       project: project,
+      id: Faker::Number.unique.number(digits: 10),
       iid: iid,
       package_ecosystem: config[:package_ecosystem],
       directory: config[:directory],
