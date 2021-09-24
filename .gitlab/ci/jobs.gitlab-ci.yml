@@ -50,11 +50,8 @@ include:
   cache:
     - *gem_cache
 
-.terraform:
-  image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
-
 .terraform_runner:
-  extends: .terraform
+  image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
   variables:
     TF_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${TF_STATE_NAME}
     TF_VAR_dependabot_url: $DEPENDABOT_URL
@@ -201,9 +198,9 @@ variables:
 
 .tf_fmt:
   stage: static analysis
-  extends: .terraform
+  extends: .terraform_runner
   script:
-    - gitlab-terraform fmt -list=true -write=false -diff -check -recursive terraform
+    - gitlab-terraform fmt
 
 .rspec:
   stage: test
