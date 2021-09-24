@@ -3,6 +3,9 @@
 class MergeRequest
   include Mongoid::Document
 
+  unalias_attribute :id
+
+  field :id, type: Integer
   field :iid, type: Integer
   field :package_ecosystem, type: String
   field :directory, type: String

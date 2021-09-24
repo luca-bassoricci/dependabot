@@ -77,6 +77,7 @@ module Dependabot
 
       MergeRequest.create!(
         project: project,
+        id: mr.id,
         iid: mr.iid,
         package_ecosystem: config[:package_ecosystem],
         directory: config[:directory],
