@@ -79,7 +79,7 @@ GEM
       require_all (>= 2, < 4)
       uuid (>= 2.3, < 3)
     ansi (1.5.0)
-    anyway_config (2.1.0)
+    anyway_config (2.2.1)
       ruby-next-core (>= 0.11.0)
     ast (2.4.2)
     aws-eventstream (1.2.0)
@@ -425,7 +425,7 @@ GEM
       rubocop (>= 1.7.0, < 2.0)
     rubocop-rspec (2.5.0)
       rubocop (~> 1.19)
-    ruby-next-core (0.12.0)
+    ruby-next-core (0.13.1)
     ruby-progressbar (1.11.0)
     ruby2_keywords (0.0.5)
     sawyer (0.8.2)
@@ -538,7 +538,7 @@ PLATFORMS
 
 DEPENDENCIES
   allure-rspec (~> 2.14.5)
-  anyway_config (~> 2.1)
+  anyway_config (~> 2.2)
   bootsnap (>= 1.4.2)
   dependabot-omnibus (~> 0.162.1)
   dry-validation (~> 1.7)
