@@ -11,6 +11,7 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
   let(:branch) { "master" }
   let(:project) { Project.new(name: repo) }
   let(:config) { dependabot_config.first }
+  let(:dependency_name) { nil }
 
   let(:updated_config) do
     Dependabot::UpdatedDependency.new(
@@ -61,7 +62,8 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
         project_name: repo,
         config: config,
         fetcher: fetcher,
-        repo_contents_path: nil
+        repo_contents_path: nil,
+        name: dependency_name
       )
       .and_return([updated_config, updated_rspec])
 
@@ -73,11 +75,28 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
       project.save!
     end
 
-    it "runs dependency update for repository" do
-      dependency_updater.call(project_name: repo, package_ecosystem: package_manager, directory: "/")
+    context "without specific dependency" do
+      it "runs dependency updates for all defined dependencies" do
+        dependency_updater.call(project_name: repo, package_ecosystem: package_manager, directory: "/")
 
-      expect(Dependabot::MergeRequestService).to have_received(:call).with(rspec_mr_args)
-      expect(Dependabot::MergeRequestService).to have_received(:call).with(config_mr_args)
+        expect(Dependabot::MergeRequestService).to have_received(:call).with(rspec_mr_args)
+        expect(Dependabot::MergeRequestService).to have_received(:call).with(config_mr_args)
+      end
+    end
+
+    context "with single specific dependency" do
+      let(:dependency_name) { "rspec" }
+
+      it "runs dependency update for specific dependency" do
+        dependency_updater.call(
+          project_name: repo,
+          package_ecosystem: package_manager,
+          directory: "/",
+          dependency_name: dependency_name
+        )
+
+        expect(Dependabot::MergeRequestService).to have_received(:call).with(rspec_mr_args)
+      end
     end
   end
 

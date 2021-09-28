@@ -5,7 +5,10 @@ module Dependabot
   class UpdateService < ApplicationService
     # @param [Hash<String, Object>] args
     def initialize(args)
-      @project_name, @package_ecosystem, @directory = args.values_at(:project_name, :package_ecosystem, :directory)
+      @project_name = args[:project_name]
+      @package_ecosystem = args[:package_ecosystem]
+      @directory = args[:directory]
+      @dependency_name = args[:dependency_name]
     end
 
     # Create or update mr's for dependencies
@@ -33,7 +36,11 @@ module Dependabot
 
     private
 
-    attr_reader :project_name, :package_ecosystem, :directory, :config
+    attr_reader :project_name,
+                :package_ecosystem,
+                :directory,
+                :config,
+                :dependency_name
 
     # Get cloned repository path
     #
@@ -101,7 +108,8 @@ module Dependabot
         project_name: project_name,
         config: config,
         fetcher: fetcher,
-        repo_contents_path: repo_contents_path
+        repo_contents_path: repo_contents_path,
+        name: dependency_name
       )
     end
 
