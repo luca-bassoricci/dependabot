@@ -156,11 +156,58 @@ Project is removed from dependabot instance if dependabot.yml file is deleted fr
 
 ### API
 
-Endpoint `api/project/add` can receive POST request with json `{"project":"dependabot-gitlab/dependabot"}` to add update jobs for project manually.
+[add project](#add-project)
 
 ### Rake task
 
 [register](#register) rake task
+
+# Api endpoints
+
+## Gitlab webhooks
+
+POST `/api/hooks`
+
+Handle following gitlab event webhooks
+
+* `Push events` - default repository branch
+* `Merge request events`
+* `Comments`
+* `Pipeline events`
+
+## Add project
+
+POST `/api/project/add`
+
+Add new project or update existing one and sync jobs
+
+```json
+{
+  "project":"dependabot-gitlab/dependabot"
+}
+```
+
+## Notify release
+
+POST `/api/notify_release`
+
+Notifies Dependabot of dependency release. In response, Dependabot will check all projects and update the package.
+
+* `name`: package name
+* [`package-ecosystem`](https://docs.github.com/en/code-security/supply-chain-security/keeping-your-dependencies-updated-automatically/configuration-options-for-dependency-updates#package-ecosystem): value from supported ecosystem.
+
+```json
+{
+  "name":"package-name",
+  "package_ecosystem":"package-ecosystem"
+}
+```
+
+## Healthcheck
+
+GET `/healthcheck`
+
+Check if application is running and responding
 
 # Rake tasks
 
