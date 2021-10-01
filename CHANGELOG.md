@@ -1,5 +1,33 @@
 # CHANGELOG
 
+## [v0.10.4 - 2021-10-01](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🚀 New features
+
+- release notifications endpoint. Closes #28. See merge request dependabot-gitlab/dependabot!1038 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump dependabot-omnibus from 0.162.1 to 0.162.2. See merge request dependabot-gitlab/dependabot!1040 - (andrejs)
+- bump anyway_config from 2.1.0 to 2.2.1. See merge request dependabot-gitlab/dependabot!1039 - (andrejs)
+- bump sidekiq_alive from 2.1.2 to 2.1.4. See merge request dependabot-gitlab/dependabot!1036 - (andrejs)
+
+### 📦🛠️ Development dependency updates
+
+- bump rubocop from 1.21.0 to 1.22.0. See merge request dependabot-gitlab/dependabot!1041 - (andrejs)
+- bump solargraph from 0.43.3 to 0.44.0. See merge request dependabot-gitlab/dependabot!1037 - (andrejs)
+- bump solargraph from 0.43.2 to 0.43.3. See merge request dependabot-gitlab/dependabot!1035 - (andrejs)
+- bump digitalocean/digitalocean from 2.11.1 to 2.12.0 in /terraform. See merge request dependabot-gitlab/dependabot!1034 - (andrejs)
+
+### 🛠️ Chore
+
+- save global merge request id. See merge request dependabot-gitlab/dependabot!1032 - (andrejs)
+- update terraform fmt command. See merge request dependabot-gitlab/dependabot!1031 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.10.3](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.10.3...v0.10.4)
+
 ## [v0.10.3 - 2021-09-24](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🐞 Bug Fixes
