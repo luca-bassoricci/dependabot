@@ -96,17 +96,19 @@ module Dependabot
     def close_superseeded_mrs
       return if AppConfig.standalone
 
-      superseeded_mrs.each do |existing_mr|
-        Gitlab::BranchRemover.call(project.name, existing_mr.branch)
-        existing_mr.update_attributes!(state: "closed")
+      superseeded_mrs.each do |superseeded_mr|
+        Gitlab::BranchRemover.call(project.name, superseeded_mr.branch)
+        superseeded_mr.update_attributes!(state: "closed")
         next if target_project_id
 
         Gitlab::MergeRequest::Commenter.call(
           project.name,
-          existing_mr.iid,
+          superseeded_mr.iid,
           "This merge request has been superseeded by #{mr.web_url}"
         )
       end
+      # close leftover mrs, primarily for forked projects without webhooks
+      existing_mrs.each { |existing_mr| existing_mr.update_attributes!(state: "closed") }
     end
 
     # Update existing merge request
@@ -225,6 +227,16 @@ module Dependabot
                                   .where(dependencies: current_dependencies_name, state: "opened")
                                   .not(iid: mr.iid)
                                   .compact
+    end
+
+    # List of open existing mrs
+    #
+    # @return [Mongoid::Criteria]
+    def existing_mrs
+      @existing_mrs ||= project.merge_requests
+                               .where(main_dependency: name, state: "opened")
+                               .not(iid: mr.iid)
+                               .compact
     end
 
     # Find existing mr
