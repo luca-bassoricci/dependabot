@@ -42,6 +42,8 @@ Features not supported:
 
 dependabot-gitlab is packaged as docker container and it's possible to deploy it via various means described in [Deployment](#Deployment) section.
 
+Deployed version is considered to be the primary and has priority on adding and maintaining features.
+
 # Deployment
 
 ## Helm
@@ -108,7 +110,7 @@ For all configuration options, refer to [chart repository](https://github.com/an
 
 ### Manual
 
-[environment.md](doc/environment.md) describes all possible environment variables for use with `docker-compose` or `standalone` mode
+[environment.md](doc/environment.md) describes all possible environment variables for use with `docker-compose` or `standalone` mode.
 
 ## Webhooks
 
@@ -122,6 +124,9 @@ If `env.dependabotUrl` in helm values or `SETTINGS__DEPENDABOT_URL` is not set, 
 It is possible to set up system hooks on Gitlab instance level as well. Make sure `SETTINGS__CREATE_PROJECT_HOOK` is set to `false` so project specific hooks are not created automatically.
 
 # Adding projects
+
+In order for application to start updating dependencies, projects have to be registered first which will create scheduled dependency update jobs.
+Several ways of adding projects exist.
 
 ## Automatically
 
@@ -211,12 +216,14 @@ Check if application is running and responding
 
 # Rake tasks
 
+Several administrative [rake](https://github.com/ruby/rake) tasks exist which can be executed from app working directory.
+
 ## register
 
 Manually register project for updates. Repository must have valid dependabot config file
 
 ```shell
-bundle exec rake 'dependabot:register[project]'
+/home/dependabot/app$ bundle exec rake 'dependabot:register[project]'
 ```
 
 `project` - project full path, example: `dependabot-gitlab/dependabot`
@@ -226,7 +233,7 @@ bundle exec rake 'dependabot:register[project]'
 Manually remove project.
 
 ```shell
-bundle exec rake 'dependabot:remove[project]'
+/home/dependabot/app$ bundle exec rake 'dependabot:remove[project]'
 ```
 
 `project` - project full path, example: `dependabot-gitlab/dependabot`
@@ -235,9 +242,9 @@ bundle exec rake 'dependabot:remove[project]'
 
 Trigger dependency update for single project and single package managed
 
-  ```shell
-  bundle exec rake 'dependabot:update[project,package_ecosystem,directory]'
-  ```
+```shell
+/home/dependabot/app$ bundle exec rake 'dependabot:update[project,package_ecosystem,directory]'
+```
 
 * `project` - project full path, example: `dependabot-gitlab/dependabot`
 * `package_ecosystem` - `package-ecosystem` parameter like `bundler`
@@ -250,7 +257,7 @@ This task is used to provide standalone use capability
 Validate `dependabot.yml` configuration file
 
 ```shell
-bundle exec rake 'dependabot:validate[project]'
+/home/dependabot/app$ bundle exec rake 'dependabot:validate[project]'
 ```
 
 `project` - project full path, example: `dependabot-gitlab/dependabot`
