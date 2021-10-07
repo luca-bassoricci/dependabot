@@ -2,13 +2,20 @@ terraform {
   backend "http" {}
 
   required_providers {
+
+    google = {
+      source  = "hashicorp/google"
+      version = "~> 3.87"
+    }
+
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.5.0"
+    }
+
     helm = {
       source  = "hashicorp/helm"
       version = "~> 2.3"
-    }
-    digitalocean = {
-      source  = "digitalocean/digitalocean"
-      version = "~> 2.0"
     }
   }
 }
@@ -18,7 +25,7 @@ locals {
   release = {
     name       = "dependabot-gitlab"
     repository = "https://andrcuns.github.io/charts"
-    version    = "0.0.89"
+    version    = "0.0.94"
     chart      = var.chart
 
     lint              = true
@@ -31,17 +38,29 @@ locals {
   }
 }
 
-provider "digitalocean" {
-  token = var.do_token
+data "google_client_config" "default" {
+}
+
+provider "google" {
+  project = "dependabot-gitlab"
+  region  = "us-central1"
+}
+
+provider "kubernetes" {
+  host                   = "https://${google_container_cluster.default.endpoint}"
+  token                  = data.google_client_config.default.access_token
+  cluster_ca_certificate = base64decode(google_container_cluster.default.master_auth[0].cluster_ca_certificate)
+
+  experiments {
+    manifest_resource = true
+  }
 }
 
 provider "helm" {
   kubernetes {
-    host  = data.digitalocean_kubernetes_cluster.dependabot.endpoint
-    token = data.digitalocean_kubernetes_cluster.dependabot.kube_config[0].token
-    cluster_ca_certificate = base64decode(
-      data.digitalocean_kubernetes_cluster.dependabot.kube_config[0].cluster_ca_certificate
-    )
+    host                   = "https://${google_container_cluster.default.endpoint}"
+    token                  = data.google_client_config.default.access_token
+    cluster_ca_certificate = base64decode(google_container_cluster.default.master_auth[0].cluster_ca_certificate)
   }
 }
 
@@ -50,42 +69,64 @@ provider "helm" {
   kubernetes {}
 }
 
-data "digitalocean_kubernetes_cluster" "dependabot" {
-  name = "dependabot"
+resource "google_container_cluster" "default" {
+  name        = "dependabot"
+  description = "Cluster for hosting influxDb and Grafana instance for metrics gathering"
+  location    = "us-central1"
+
+  enable_autopilot = true
+
+  vertical_pod_autoscaling {
+    enabled = true
+  }
 }
 
-resource "digitalocean_domain" "default" {
-  count = local.development ? 0 : 1
-
-  name = "dependabot-gitlab.co"
+resource "google_compute_global_address" "default" {
+  name = "dependabot-static-ip"
 }
 
-resource "digitalocean_certificate" "default" {
-  count = local.development ? 0 : 1
+resource "kubernetes_namespace" "default" {
+  metadata {
+    name = local.release.namespace
+  }
+}
 
-  name = "dependabot-gitlab"
-  type = "lets_encrypt"
+resource "kubernetes_manifest" "backend_config" {
+  manifest = {
+    apiVersion = "cloud.google.com/v1"
+    kind       = "BackendConfig"
+    metadata = {
+      name      = "backendconfig"
+      namespace = local.release.namespace
+    }
 
-  domains = [
-    digitalocean_domain.default[count.index].name
-  ]
+    spec = {
+      healthCheck = {
+        port        = 3000
+        type        = "HTTP"
+        requestPath = "/healthcheck"
+      }
+    }
+  }
 
   depends_on = [
-    digitalocean_domain.default
+    kubernetes_namespace.default
   ]
 }
 
-resource "digitalocean_record" "www" {
-  count = local.development ? 0 : 1
+resource "kubernetes_manifest" "managed_certs" {
+  manifest = {
+    apiVersion = "networking.gke.io/v1"
+    kind       = "ManagedCertificate"
+    metadata = {
+      name      = "managed-cert"
+      namespace = local.release.namespace
+    }
 
-  domain = digitalocean_domain.default[count.index].name
-  type   = "CNAME"
-  name   = "www"
-  value  = "@"
-
-  depends_on = [
-    digitalocean_domain.default
-  ]
+    spec = {
+      domains = [var.dependabot_host]
+    }
+  }
 }
 
 resource "helm_release" "dependabot-development" {
@@ -135,23 +176,26 @@ resource "helm_release" "dependabot" {
 
   namespace = local.release.namespace
 
+  timeout = 600
+
   values = [
     templatefile("values/common.tpl", {
       gitlab_access_token = var.gitlab_access_token
     }),
     templatefile("values/production.tpl", {
-      service_port                 = 443
       github_access_token          = var.github_access_token,
       gitlab_hooks_auth_token      = var.gitlab_hooks_auth_token,
       gitlab_docker_registry_token = var.gitlab_docker_registry_token,
       sentry_dsn                   = var.sentry_dsn,
-      dependabot_url               = var.dependabot_url,
+      dependabot_host              = var.dependabot_host,
       mongodb_host                 = var.mongodb_host
       mongodb_db_name              = var.mongodb_db_name
       mongodb_username             = var.mongodb_username,
       mongodb_password             = var.mongodb_password,
       redis_password               = var.redis_password,
-      ssl_cert_id                  = digitalocean_certificate.default[0].uuid
+      static_ip                    = google_compute_global_address.default.name,
+      backend_config               = kubernetes_manifest.backend_config.manifest.metadata.name
+      managed_certs                = kubernetes_manifest.managed_certs.manifest.metadata.name
     })
   ]
 
@@ -161,6 +205,9 @@ resource "helm_release" "dependabot" {
   }
 
   depends_on = [
-    digitalocean_certificate.default
+    google_container_cluster.default,
+    google_compute_global_address.default,
+    kubernetes_manifest.backend_config,
+    kubernetes_manifest.managed_certs
   ]
 }

@@ -53,8 +53,9 @@ include:
 .terraform_runner:
   image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
   variables:
+    GOOGLE_CLOUD_KEYFILE_JSON: $KEYFILE_DEPENDABOT_GITLAB
     TF_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${TF_STATE_NAME}
-    TF_VAR_dependabot_url: $DEPENDABOT_URL
+    TF_VAR_dependabot_host: $DEPENDABOT_HOST
     TF_VAR_gitlab_access_token: $GITLAB_ACCESS_TOKEN
     TF_VAR_github_access_token: $GITHUB_ACCESS_TOKEN
     TF_VAR_image_tag: $CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
@@ -287,6 +288,7 @@ variables:
   variables:
     GITLAB_AUTH_TOKEN: $GITLAB_ACCESS_TOKEN
     ALLURE_JOB_NAME: rspec
+    GOOGLE_CLOUD_KEYFILE_JSON: $KEYFILE_TEST_REPORTS
   script:
     - |
       allure-report-publisher upload gcs \

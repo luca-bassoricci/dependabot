@@ -278,7 +278,7 @@ deploy:
     - terraform-init
   environment:
     name: $TF_STATE_NAME
-    url: $DEPENDABOT_URL
+    url: https://$DEPENDABOT_HOST
     on_stop: destroy
   rules:
     - <<: *fork
