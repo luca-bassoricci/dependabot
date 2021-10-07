@@ -7,6 +7,3 @@ credentials:
 env:
   commandsPrefix: "@dependabot-bot"
   updateRetry: false
-
-service:
-  type: LoadBalancer

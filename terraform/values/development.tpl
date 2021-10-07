@@ -1,3 +1,6 @@
+service:
+  type: LoadBalancer
+
 mongodb:
   strategyType: Recreate
 

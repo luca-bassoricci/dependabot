@@ -1,8 +1,3 @@
-# Global vars
-variable "do_token" {
-  sensitive = true
-}
-
 # Application vars
 variable "gitlab_access_token" {
 }
@@ -27,7 +22,7 @@ variable "sentry_dsn" {
   default = ""
 }
 
-variable "dependabot_url" {
+variable "dependabot_host" {
   default = ""
 }
 
