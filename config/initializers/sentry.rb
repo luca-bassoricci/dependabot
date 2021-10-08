@@ -11,5 +11,5 @@ Sentry.init do |config|
   config.release = "dependabot-gitlab@#{ENV['VERSION']}"
   config.skip_rake_integration = true
   config.logger = DependabotLogger.logger
-  config.traces_sample_rate = 0.3
+  config.traces_sample_rate = AppConfig.sentry_sample_rate
 end
