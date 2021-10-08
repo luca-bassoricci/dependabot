@@ -2,7 +2,6 @@ service:
   type: ClusterIP
   annotations:
     cloud.google.com/neg: '{"ingress": true}'
-    cloud.google.com/backend-config: '{"default": "${backend_config}"}'
 
 ingress:
   enabled: true

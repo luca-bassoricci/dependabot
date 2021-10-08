@@ -25,7 +25,7 @@ locals {
   release = {
     name       = "dependabot-gitlab"
     repository = "https://andrcuns.github.io/charts"
-    version    = "0.0.94"
+    version    = "0.0.96"
     chart      = var.chart
 
     lint              = true
@@ -89,29 +89,6 @@ resource "kubernetes_namespace" "default" {
   metadata {
     name = local.release.namespace
   }
-}
-
-resource "kubernetes_manifest" "backend_config" {
-  manifest = {
-    apiVersion = "cloud.google.com/v1"
-    kind       = "BackendConfig"
-    metadata = {
-      name      = "backendconfig"
-      namespace = local.release.namespace
-    }
-
-    spec = {
-      healthCheck = {
-        port        = 3000
-        type        = "HTTP"
-        requestPath = "/healthcheck"
-      }
-    }
-  }
-
-  depends_on = [
-    kubernetes_namespace.default
-  ]
 }
 
 resource "kubernetes_manifest" "managed_certs" {
@@ -194,7 +171,6 @@ resource "helm_release" "dependabot" {
       mongodb_password             = var.mongodb_password,
       redis_password               = var.redis_password,
       static_ip                    = google_compute_global_address.default.name,
-      backend_config               = kubernetes_manifest.backend_config.manifest.metadata.name
       managed_certs                = kubernetes_manifest.managed_certs.manifest.metadata.name
     })
   ]
@@ -207,7 +183,6 @@ resource "helm_release" "dependabot" {
   depends_on = [
     google_container_cluster.default,
     google_compute_global_address.default,
-    kubernetes_manifest.backend_config,
     kubernetes_manifest.managed_certs
   ]
 }
