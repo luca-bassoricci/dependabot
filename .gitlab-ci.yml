@@ -54,47 +54,6 @@ cache-dependencies:
   extends: .cache_dependencies
   rules: *main
 
-build-app-image:
-  extends: .build_app_image
-  tags:
-    - buildkit
-  rules:
-    - <<: *fork
-      when: never
-    - *mr
-    - *master
-    - *release
-build-app-image-fork:
-  extends: .build_app_image
-  rules:
-    - *fork
-
-build-mock-image:
-  extends: .build_mock_image
-  tags:
-    - buildkit
-  rules:
-    - <<: *fork
-      when: never
-    - *master
-    - *release
-    - <<: *mr
-      when: manual
-      allow_failure: true
-build-mock-image-fork:
-  extends: .build_mock_image
-  rules:
-    - *fork
-
-build-ruby-image:
-  extends: .build_ruby_image
-  rules:
-    - <<: *fork
-      when: never
-    - <<: *mr
-      changes:
-        - .gitlab/ci/Dockerfile
-
 terraform-init:
   extends: .tf_init
   rules:
@@ -141,22 +100,79 @@ dependency-scan:
     - <<: *mr
       changes: *dependency_changes
 
-container-scan:
-  extends: .container_scanning
+terraform-fmt:
+  extends: .tf_fmt
   needs:
-    - build-app-image
+    - terraform-init
+  rules:
+    - *master
+    - <<: *mr
+      changes: *tf_changes
+
+terraform-validate:
+  extends: .tf_validate
+  needs:
+    - terraform-init
+  rules:
+    - *master
+    - <<: *mr
+      changes: *tf_changes
+
+# ======================================================================================================================
+# Build Stage
+# ======================================================================================================================
+build-app-image:
+  extends: .build_app_image
+  tags:
+    - buildkit
+  rules:
+    - <<: *fork
+      when: never
+    - *mr
+    - *master
+    - *release
+build-app-image-fork:
+  extends: .build_app_image
+  rules:
+    - *fork
+
+build-mock-image:
+  extends: .build_mock_image
+  tags:
+    - buildkit
   rules:
     - <<: *fork
       when: never
     - *master
+    - *release
     - <<: *mr
-      changes: *docker_changes
-
-terraform-fmt:
-  extends: .tf_fmt
-  needs: []
+      when: manual
+      allow_failure: true
+build-mock-image-fork:
+  extends: .build_mock_image
   rules:
-    - *master
+    - *fork
+
+build-ruby-image:
+  extends: .build_ruby_image
+  rules:
+    - <<: *fork
+      when: never
+    - <<: *mr
+      changes:
+        - .gitlab/ci/Dockerfile
+
+terraform-build:
+  extends: .tf_build
+  needs:
+    - terraform-init
+    - terraform-fmt
+    - terraform-validate
+  rules:
+    - <<: *fork
+      when: never
+    - <<: *prod_deploy
+      changes: *deploy_changes
     - <<: *mr
       changes: *tf_changes
 
@@ -188,17 +204,16 @@ e2e:
     - *master
     - *release
 
-terraform-validate:
-  extends: .tf_validate
+container-scan:
+  extends: .container_scanning
   needs:
-    - terraform-init
+    - build-app-image
   rules:
     - <<: *fork
       when: never
-    - <<: *prod_deploy
-      changes: *deploy_changes
+    - *master
     - <<: *mr
-      changes: *tf_changes
+      changes: *docker_changes
 
 # ======================================================================================================================
 # Reporting
