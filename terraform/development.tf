@@ -20,7 +20,11 @@ resource "helm_release" "dependabot-development" {
     templatefile("values/common.tpl", {
       gitlab_access_token = var.gitlab_access_token
     }),
-    file("values/development.tpl")
+    yamlencode({
+      service = { type = "LoadBalancer" }
+      mongodb = { strategyType = "Recreate" }
+      image   = { pullPolicy = "Always" }
+    })
   ]
 
   set {
