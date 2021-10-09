@@ -124,7 +124,7 @@ resource "helm_release" "dependabot" {
         startupProbe = { initialDelaySeconds = 30 }
         resources = {
           requests = {
-            memory = "256Mi"
+            memory = "512Mi"
             cpu    = "250m"
           }
         }
@@ -135,7 +135,7 @@ resource "helm_release" "dependabot" {
         master = {
           resources = {
             requests = {
-              memory = "256Mi"
+              memory = "512Mi"
               cpu    = "250m"
             }
           }
