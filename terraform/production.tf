@@ -103,9 +103,6 @@ resource "helm_release" "dependabot" {
         dependabotUrl = "https://${var.dependabot_host}"
         mongoDbUri : "mongodb+srv://${var.mongodb_username}:${var.mongodb_password}@${var.mongodb_host}/${var.mongodb_db_name}?retryWrites=true&w=majority&authSource=admin"
       }
-      migrationJob = {
-        activeDeadlineSeconds = 300
-      }
     }),
     yamlencode({
       worker = {
@@ -122,6 +119,25 @@ resource "helm_release" "dependabot" {
     yamlencode({
       web = {
         startupProbe = { initialDelaySeconds = 30 }
+        resources = {
+          requests = {
+            memory = "512Mi"
+            cpu    = "250m"
+          }
+        }
+      }
+    }),
+    yamlencode({
+      migrationJob = {
+        activeDeadlineSeconds = 300
+        resources = {
+          requests = {
+            memory = "512Mi"
+            cpu    = "250m"
+          }
+        }
+      }
+      createProjectsJob = {
         resources = {
           requests = {
             memory = "512Mi"
