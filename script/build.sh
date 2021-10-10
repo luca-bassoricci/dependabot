@@ -13,7 +13,7 @@ else
 fi
 
 if [ ! -z "$BUILDKIT_ADDRESS" ]; then
-  COMMAND="buildctl --addr tcp://${BUILDKIT_ADDRESS}"
+  COMMAND="buildctl --addr tcp://${BUILDKIT_ADDRESS} --tlskey ${BUILDKIT_KEY} --tlscert ${BUILDKIT_CERT} --tlscacert ${BUILDKIT_CA}"
 else
   COMMAND="buildctl-daemonless.sh"
 fi
