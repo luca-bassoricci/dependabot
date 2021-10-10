@@ -9,8 +9,6 @@
   if: '$CI_PROJECT_ROOT_NAMESPACE != "dependabot-gitlab"'
   variables:
     FORK: "true"
-.prod_deploy: &prod_deploy
-  if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "web")'
 
 # Change definitions
 .e2e_changes: &e2e_changes
@@ -23,19 +21,6 @@
   - Gemfile.lock
 .tf_changes: &tf_changes
   - terraform/**/*
-.deploy_changes: &deploy_changes
-  - app/**/*
-  - config/**/*
-  - kube/**/*
-  - public/**/*
-  - terraform/**/*
-  - bin/rails
-  - lib/tasks/dependabot.rake
-  - config.ru
-  - Dockerfile
-  - Gemfile
-  - Gemfile.lock
-  - Rakefile
 
 # Main rule
 .main: &main
@@ -59,8 +44,7 @@ terraform-init:
   rules:
     - <<: *fork
       when: never
-    - <<: *prod_deploy
-      changes: *deploy_changes
+    - *master
     - <<: *mr
       changes: *tf_changes
 
@@ -153,8 +137,7 @@ terraform-build:
   rules:
     - <<: *fork
       when: never
-    - <<: *prod_deploy
-      changes: *deploy_changes
+    - *master
     - <<: *mr
       changes: *tf_changes
 
@@ -276,10 +259,7 @@ deploy:
   rules:
     - <<: *fork
       when: never
-    - <<: *prod_deploy
-      changes: *deploy_changes
-    - <<: *prod_deploy
-      when: manual
+    - *master
 
 destroy:
   extends: .tf_stop
@@ -290,6 +270,6 @@ destroy:
   rules:
     - <<: *fork
       when: never
-    - <<: *prod_deploy
+    - <<: *master
       when: manual
       allow_failure: true
