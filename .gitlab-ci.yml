@@ -123,41 +123,23 @@ terraform-validate:
 # ======================================================================================================================
 build-app-image:
   extends: .build_app_image
-  tags:
-    - buildkit
   rules:
-    - <<: *fork
-      when: never
     - *mr
     - *master
     - *release
-build-app-image-fork:
-  extends: .build_app_image
-  rules:
-    - *fork
 
 build-mock-image:
   extends: .build_mock_image
-  tags:
-    - buildkit
   rules:
-    - <<: *fork
-      when: never
     - *master
     - *release
     - <<: *mr
       when: manual
       allow_failure: true
-build-mock-image-fork:
-  extends: .build_mock_image
-  rules:
-    - *fork
 
 build-ruby-image:
   extends: .build_ruby_image
   rules:
-    - <<: *fork
-      when: never
     - <<: *mr
       changes:
         - .gitlab/ci/Dockerfile
@@ -198,8 +180,6 @@ e2e:
   variables:
     SETTINGS__GITHUB_ACCESS_TOKEN: $GITHUB_ACCESS_TOKEN_TEST
   rules:
-    - <<: *fork
-      when: never
     - *mr
     - *master
     - *release
@@ -209,8 +189,6 @@ container-scan:
   needs:
     - build-app-image
   rules:
-    - <<: *fork
-      when: never
     - *master
     - <<: *mr
       changes: *docker_changes
