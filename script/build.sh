@@ -12,8 +12,8 @@ else
   IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE"
 fi
 
-if [ ! -z "$DEPENDABOT_HOST" ]; then
-  COMMAND="buildctl --addr tcp://buildkit.${DEPENDABOT_HOST}:1234"
+if [ ! -z "$BUILDKIT_ADDRESS" ]; then
+  COMMAND="buildctl --addr tcp://${BUILDKIT_ADDRESS}"
 else
   COMMAND="buildctl-daemonless.sh"
 fi
