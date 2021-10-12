@@ -98,7 +98,7 @@ module Dependabot
         pr_name: message.pr_name,
         author_details: author_details,
         labeler: labeler,
-        approvers: reviewers,
+        approvers: reviewers || {},
         assignees: assignees,
         milestone: milestone,
         target_project_id: target_project_id
@@ -165,7 +165,13 @@ module Dependabot
         )
       end
 
+      def annotate_merge_request(merge_request)
+        add_approvers_to_merge_request(merge_request)
+      end
+
       def add_approvers_to_merge_request(merge_request)
+        return unless approvers_hash[:approvers] || approvers_hash[:group_approvers]
+
         gitlab_client_for_source.create_merge_request_level_rule(
           merge_request.project_id,
           merge_request.iid,
