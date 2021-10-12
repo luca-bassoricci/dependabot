@@ -21,6 +21,11 @@ or
 `REDIS_URL` - redis instance url
 `REDIS_PASSWORD` - redis password
 
+### Sentry
+
+* `SENTRY_DSN` - [sentry dsn](https://docs.sentry.io/platforms/ruby/configuration/options/#environment-variables) value
+* `SETTINGS__SENTRY_TRACES_SAMPLE_RATE` - [traces sample rate](https://docs.sentry.io/platforms/ruby/performance/#configure-the-sample-rate), default: 0.0
+
 ## Application
 
 ### Access

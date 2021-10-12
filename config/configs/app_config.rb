@@ -19,7 +19,7 @@ class AppConfig < ApplicationConfig
               project_registration_cron: "0 6 * * *",
               project_registration_namespace: nil,
               # sentry sample rate
-              sentry_sample_rate: 0.0
+              sentry_traces_sample_rate: 0.0
 
   # Configurable sidekiq retry
   #
