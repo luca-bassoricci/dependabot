@@ -1,5 +1,49 @@
 # CHANGELOG
 
+## [v0.10.5 - 2021-10-12](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🔬 Improvements
+
+- Add configurable sentry sample rate. See merge request dependabot-gitlab/dependabot!1053 - (andrejs)
+
+### 🐞 Bug Fixes
+
+- skip adding approvers if no approvers are set. See merge request dependabot-gitlab/dependabot!1064 - (andrejs)
+- properly set closed state for mrs out of sync. See merge request dependabot-gitlab/dependabot!1046 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump dependabot-omnibus from 0.162.2 to 0.163.0. See merge request dependabot-gitlab/dependabot!1050 - (andrejs)
+
+### 📦🛠️ Development dependency updates
+
+- bump debian from 11.0-slim to 11.1-slim in /.gitlab/ci. See merge request dependabot-gitlab/dependabot!1062 - (andrejs)
+- bump hashicorp/google from 3.87.0 to 3.88.0 in /terraform. See merge request dependabot-gitlab/dependabot!1060 - (andrejs)
+- bump rubocop-rails from 2.12.2 to 2.12.3. See merge request dependabot-gitlab/dependabot!1048 - (andrejs)
+- bump rubocop from 1.22.0 to 1.22.1. See merge request dependabot-gitlab/dependabot!1044 - (andrejs)
+- bump allure-rspec from 2.14.5 to 2.15.0. See merge request dependabot-gitlab/dependabot!1045 - (andrejs)
+- bump digitalocean/digitalocean from 2.12.0 to 2.12.1 in /terraform. See merge request dependabot-gitlab/dependabot!1043 - (andrejs)
+
+### 🛠️ Chore
+
+- add http-to-https for prod deployment. See merge request dependabot-gitlab/dependabot!1063 - (andrejs)
+- use buildkit tls keys. See merge request dependabot-gitlab/dependabot!1059 - (andrejs)
+- use buildkit address variable. See merge request dependabot-gitlab/dependabot!1058 - (andrejs)
+- use buildkit host for image building. See merge request dependabot-gitlab/dependabot!1057 - (andrejs)
+- set resources for jobs. See merge request dependabot-gitlab/dependabot!1056 - (andrejs)
+- move ci build stage after static analysis. See merge request dependabot-gitlab/dependabot!1055 - (andrejs)
+- split helm deployment values definition. See merge request dependabot-gitlab/dependabot!1054 - (andrejs)
+- update deployment chart version. See merge request dependabot-gitlab/dependabot!1052 - (andrejs)
+- move production deployment to GCP. See merge request dependabot-gitlab/dependabot!1049 - (andrejs)
+
+### 📄 Documentation updates
+
+- improve main documentation page. See merge request dependabot-gitlab/dependabot!1047 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.10.4](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.10.4...v0.10.5)
+
 ## [v0.10.4 - 2021-10-01](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🚀 New features
