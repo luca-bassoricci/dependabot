@@ -35,6 +35,25 @@ resource "kubernetes_manifest" "managed_certs" {
   }
 }
 
+resource "kubernetes_manifest" "frontend_config" {
+  manifest = {
+    apiVersion = "networking.gke.io/v1beta1"
+    kind       = "FrontendConfig"
+    metadata = {
+      name      = "https-redirect"
+      namespace = local.release.namespace
+    }
+
+    spec = {
+      redirectToHttps = {
+        enabled          = true
+        responseCodeName = "PERMANENT_REDIRECT"
+      }
+    }
+  }
+}
+
+
 resource "helm_release" "dependabot" {
   count = local.development ? 0 : 1
 
@@ -72,6 +91,7 @@ resource "helm_release" "dependabot" {
           "kubernetes.io/ingress.class"                 = "gce"
           "kubernetes.io/ingress.global-static-ip-name" = google_compute_global_address.default.name
           "networking.gke.io/managed-certificates"      = kubernetes_manifest.managed_certs.manifest.metadata.name
+          "networking.gke.io/v1beta1.FrontendConfig"    = kubernetes_manifest.frontend_config.manifest.metadata.name
         }
         hosts = [
           {
@@ -173,6 +193,7 @@ resource "helm_release" "dependabot" {
   depends_on = [
     google_container_cluster.default,
     google_compute_global_address.default,
-    kubernetes_manifest.managed_certs
+    kubernetes_manifest.managed_certs,
+    kubernetes_manifest.frontend_config
   ]
 }
