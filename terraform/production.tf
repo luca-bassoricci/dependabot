@@ -131,7 +131,7 @@ resource "helm_release" "dependabot" {
         resources = {
           requests = {
             memory = "1Gi"
-            cpu    = 1
+            cpu    = "500m"
           }
         }
       }
