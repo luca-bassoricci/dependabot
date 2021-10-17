@@ -1,5 +1,5 @@
-FROM debian:11.1-slim as buster
-FROM buster as ruby-install
+FROM debian:11.1-slim as base
+FROM base as ruby-install
 
 ARG RUBY_MINOR_VERSION=2.7
 ARG RUBY_VERSION=2.7.4
@@ -58,7 +58,7 @@ RUN set -eux; \
       /root/.gem \
       /usr/local/ruby/lib/ruby/gems/${RUBY_MINOR_VERSION}.0/cache/*;
 
-FROM buster
+FROM base
 
 ARG DEBIAN_FRONTEND=noninteractive
 
