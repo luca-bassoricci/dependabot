@@ -40,7 +40,7 @@ include:
   policy: pull
 
 .ruby_runner:
-  image: registry.gitlab.com/dependabot-gitlab/dependabot/ruby:2.7.4-buster-latest
+  image: registry.gitlab.com/dependabot-gitlab/dependabot/ruby:2.7.4-debian-11-latest
   variables:
     BUNDLE_PATH: vendor/bundle
     BUNDLE_FROZEN: "true"
