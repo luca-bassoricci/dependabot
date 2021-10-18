@@ -31,7 +31,7 @@ describe Gitlab::MergeRequest::Updater, epic: :services, feature: :gitlab do
       files: updated_files,
       credentials: Dependabot::Credentials.call,
       pull_request_number: mr.iid,
-      target_project_id: nil
+      provider_metadata: { target_project_id: nil }
     )
   end
 end

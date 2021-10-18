@@ -35,7 +35,7 @@ module Gitlab
           credentials: Dependabot::Credentials.call,
           github_redirection_service: "github.com",
           pr_message_footer: AppConfig.standalone ? nil : message_footer,
-          target_project_id: target_project_id,
+          provider_metadata: { target_project_id: target_project_id },
           **mr_options
         ).create
       end
