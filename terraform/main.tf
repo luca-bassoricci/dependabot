@@ -10,7 +10,7 @@ terraform {
 
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "~> 2.5.0"
+      version = "~> 2.6.0"
     }
 
     helm = {
@@ -50,10 +50,6 @@ provider "kubernetes" {
   host                   = "https://${google_container_cluster.default.endpoint}"
   token                  = data.google_client_config.default.access_token
   cluster_ca_certificate = base64decode(google_container_cluster.default.master_auth[0].cluster_ca_certificate)
-
-  experiments {
-    manifest_resource = true
-  }
 }
 
 provider "helm" {
