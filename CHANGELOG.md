@@ -1,5 +1,32 @@
 # CHANGELOG
 
+## [v0.10.6 - 2021-10-21](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🐞 Bug Fixes
+
+- use configured branch name for project sync. Closes #126. See merge request dependabot-gitlab/dependabot!1074 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump puma from 5.5.1 to 5.5.2. See merge request dependabot-gitlab/dependabot!1066 - (andrejs)
+- bump puma from 5.5.0 to 5.5.1. See merge request dependabot-gitlab/dependabot!1065 - (andrejs)
+
+### 📦🛠️ Development dependency updates
+
+- bump hashicorp/kubernetes from 2.5.1 to 2.6.0 in /terraform. See merge request dependabot-gitlab/dependabot!1073 - (andrejs)
+- bump hashicorp/google from 3.88.0 to 3.89.0 in /terraform. See merge request dependabot-gitlab/dependabot!1072 - (andrejs)
+- bump rubocop-rails from 2.12.3 to 2.12.4. See merge request dependabot-gitlab/dependabot!1068 - (andrejs)
+- bump hashicorp/kubernetes from 2.5.0 to 2.5.1 in /terraform. See merge request dependabot-gitlab/dependabot!1067 - (andrejs)
+
+### 🛠️ Chore
+
+- fix base ruby image name. See merge request dependabot-gitlab/dependabot!1070 - (andrejs)
+- add back buildkit tls certs. See merge request dependabot-gitlab/dependabot!1069 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.10.5](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.10.5...v0.10.6)
+
 ## [v0.10.5 - 2021-10-12](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🔬 Improvements
