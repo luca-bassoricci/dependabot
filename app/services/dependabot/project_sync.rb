@@ -62,7 +62,11 @@ module Dependabot
     # @param [Gitlab::ObjectifiedHash] project
     # @return [<Hash, nil>]
     def config(project)
-      ConfigFetcher.call(project.path_with_namespace, branch: project.default_branch, update_cache: true)
+      ConfigFetcher.call(
+        project.path_with_namespace,
+        branch: DependabotConfig.config_branch || project.default_branch,
+        update_cache: true
+      )
     rescue MissingConfigurationError
       nil
     end
