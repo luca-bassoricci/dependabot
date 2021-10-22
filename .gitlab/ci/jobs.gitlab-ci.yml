@@ -60,11 +60,10 @@ include:
     TF_VAR_github_access_token: $GITHUB_ACCESS_TOKEN
     TF_VAR_image_tag: $CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
     TF_VAR_environment: $TF_STATE_NAME
+    CACHE_FALLBACK_KEY: tf-${CI_DEFAULT_BRANCH}-${TF_STATE_NAME}
   before_script:
     - cd terraform
-  cache:
-    <<: *tf_cache
-    policy: pull
+  cache: *tf_cache
 
 .buildkit_runner:
   image:
@@ -139,7 +138,7 @@ variables:
     - gitlab-terraform init
   cache:
     <<: *tf_cache
-    policy: push
+    policy: pull-push
 
 .build_app_image:
   stage: build
