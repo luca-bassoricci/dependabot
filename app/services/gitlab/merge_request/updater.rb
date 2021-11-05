@@ -25,7 +25,7 @@ module Gitlab
           files: updated_files,
           credentials: Dependabot::Credentials.call,
           pull_request_number: mr.iid,
-          target_project_id: target_project_id
+          provider_metadata: { target_project_id: target_project_id }
         ).update
       end
 
