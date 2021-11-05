@@ -25,21 +25,21 @@ provider "registry.terraform.io/digitalocean/digitalocean" {
 }
 
 provider "registry.terraform.io/hashicorp/google" {
-  version     = "3.89.0"
-  constraints = "~> 3.87"
+  version     = "4.0.0"
+  constraints = "~> 4.0"
   hashes = [
-    "h1:8wOU/o8YYxjtcJMF2y+kvyJFWVjJryM5Aug7FH3WM2c=",
-    "zh:208317c042622a4f761e96cb09871c57d7601ff5f21fc5952567d3940203cd93",
-    "zh:227eb06659d5ecbc679de97ce130e8d7400ed0f04fb9e4d13869057ae2b1113e",
-    "zh:267809935e07e78acfc28f1a0aab03d659c777bff5300ae818d76578eb3f3034",
-    "zh:59c43802370a6e0893be34c50f036f4bc8dbd6a77475846f2c5ea0a2d522dbfa",
-    "zh:66a482ef171381ca5d1d5037216db1688381cd72ba939a416b5c81e61352bac6",
-    "zh:7314db9b6c529dc6d391ca852333229dc79ac2be460dc7410fb73cb038cd0672",
-    "zh:79c051035bc5f0e019e650103109fab17051d1d33bffa4040bae5262820577cb",
-    "zh:79f775b07d070a892fdde9c1eff01fe0a4473be2f8b188aea80ac709ce666352",
-    "zh:7ab4db6ff5cb9ba8b7fbf17b789e9172548ef029a5c48c04cfa1f6c4926aaa88",
-    "zh:9a0589b2e5da783158e81a4cfc611951a6248b456893cdfac3ded041d25ea6b2",
-    "zh:f2a4a0a875ddff79016cb3f7f6705ef263caabb312836f999bfe56decdac673e",
+    "h1:knAWmZ1uR3JYwsm9ZtAMAg3tPMw2wpj+FI6goEv+jm4=",
+    "zh:48fbf905a5c1658b042c7edb0183e9a25dc04257cd5e6d4d870b33a0bc70eda4",
+    "zh:5f7a1579e23f0d187cc9062ec54f30d7336252705d4e0dd9dbd799cebd83429b",
+    "zh:63bb8f094eec5cecf1acbe7026c0ba31126670282dbcfce01477aec6c134a3bd",
+    "zh:7654b20e5dc0ed595f084039e8fd49ff70c11e2ed7b9fcc9c6169f3217845adb",
+    "zh:7bc37430171b2148b2bb835dc2eff967714d2ac515e73784b66c2ddda6d260fa",
+    "zh:84212e750b3a319055ee0dc43ef40a1096fea6793af8d87aecc330ead4e8e9c9",
+    "zh:ac53b6cd95fc024b96dba46e204bbc4963e744c7017f11d454ba49a4a8355ee3",
+    "zh:cc6a4989874fc7a1d3b82f8be761867c85472b37c5656a81cee8385330a5afa2",
+    "zh:d1ffc766f855995b6117f7f40ec02e2404a8474630dbcc38b8355519af1a47f5",
+    "zh:e68183a7c0f1efec3e36931ca06d31060218a9d44379aad5269e9d6fc6e6f47f",
+    "zh:e7c0dbfae422f8ae663c3462d549ac69287038fc880bfad5c58790b82bfde620",
   ]
 }
 
