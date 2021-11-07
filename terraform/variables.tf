@@ -14,6 +14,10 @@ variable "gitlab_docker_registry_token" {
   default = ""
 }
 
+variable "redis_url" {
+  default = ""
+}
+
 variable "redis_password" {
   default = ""
 }
