@@ -33,21 +33,25 @@ module Sidekiq
   class JobLogger
     def call(_item, queue)
       start = ::Process.clock_gettime(::Process::CLOCK_MONOTONIC)
-      healthcheck = queue.start_with?("sidekiq_alive-")
+      level = queue.start_with?("sidekiq_alive-") ? :debug : :info
 
-      healthcheck ? @logger.debug("start") : @logger.info("start")
+      log(level, "start")
 
       yield
 
       with_elapsed_time_context(start) do
-        healthcheck ? @logger.debug("done") : @logger.info("done")
+        log(level, "done")
       end
     rescue Exception # rubocop:disable Lint/RescueException
       with_elapsed_time_context(start) do
-        healthcheck ? @logger.debug("fail") : @logger.info("fail")
+        log(level, "fail")
       end
 
       raise
+    end
+
+    def log(level, message)
+      @logger.public_send(level, message)
     end
   end
 end
