@@ -1,5 +1,29 @@
 # CHANGELOG
 
+## [v0.10.7 - 2021-11-07](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 📦 Dependency updates
+
+- bump dependabot-omnibus from 0.163.0 to 0.164.1. See merge request dependabot-gitlab/dependabot!1086 - (andrejs)
+- bump anyway_config from 2.2.1 to 2.2.2. See merge request dependabot-gitlab/dependabot!1079 - (andrejs)
+
+### 📦🛠️ Development dependency updates
+
+- bump rubocop-performance from 1.11.5 to 1.12.0. See merge request dependabot-gitlab/dependabot!1087 - (andrejs)
+- bump hashicorp/google from 3.89.0 to 4.0.0 in /terraform. See merge request dependabot-gitlab/dependabot!1085 - (andrejs)
+- bump rubocop from 1.22.2 to 1.22.3. See merge request dependabot-gitlab/dependabot!1081 - (andrejs)
+- bump rubocop from 1.22.1 to 1.22.2. See merge request dependabot-gitlab/dependabot!1077 - (andrejs)
+- bump hashicorp/kubernetes from 2.6.0 to 2.6.1 in /terraform. See merge request dependabot-gitlab/dependabot!1076 - (andrejs)
+
+### 🛠️ Chore
+
+- remove custom monkeypatch for fork support. See merge request dependabot-gitlab/dependabot!1071 - (andrejs)
+- improve terraform job caching. See merge request dependabot-gitlab/dependabot!1075 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.10.6](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.10.6...v0.10.7)
+
 ## [v0.10.6 - 2021-10-21](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🐞 Bug Fixes
