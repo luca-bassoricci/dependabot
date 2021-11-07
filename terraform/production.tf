@@ -1,15 +1,3 @@
-resource "google_container_cluster" "default" {
-  name        = "dependabot"
-  description = "Cluster for hosting influxDb and Grafana instance for metrics gathering"
-  location    = "us-central1"
-
-  enable_autopilot = true
-
-  vertical_pod_autoscaling {
-    enabled = true
-  }
-}
-
 resource "google_compute_global_address" "default" {
   name = "dependabot-static-ip"
 }
@@ -70,7 +58,7 @@ resource "helm_release" "dependabot" {
 
   namespace = local.release.namespace
 
-  timeout = 600
+  timeout = 300
 
   values = [
     templatefile("values/common.tpl", {
@@ -120,69 +108,39 @@ resource "helm_release" "dependabot" {
     yamlencode({
       env = {
         sentryDsn     = var.sentry_dsn
+        redisUrl      = var.redis_url
         dependabotUrl = "https://${var.dependabot_host}"
-        mongoDbUri : "mongodb+srv://${var.mongodb_username}:${var.mongodb_password}@${var.mongodb_host}/${var.mongodb_db_name}?retryWrites=true&w=majority&authSource=admin"
+        mongoDbUri    = "mongodb+srv://${var.mongodb_username}:${var.mongodb_password}@${var.mongodb_host}/${var.mongodb_db_name}?retryWrites=true&w=majority&authSource=admin"
       }
     }),
     yamlencode({
       worker = {
-        updateStrategy = { type = "Recreate" }
-        startupProbe   = { initialDelaySeconds = 30 }
-        resources = {
-          requests = {
-            memory = "1Gi"
-            cpu    = "500m"
-          }
+        updateStrategy = {
+          type = "Recreate"
+        }
+        startupProbe = {
+          initialDelaySeconds = 30
         }
       }
     }),
     yamlencode({
       web = {
-        startupProbe = { initialDelaySeconds = 30 }
-        resources = {
-          requests = {
-            memory = "512Mi"
-            cpu    = "250m"
-          }
-        }
-      }
-    }),
-    yamlencode({
-      migrationJob = {
-        activeDeadlineSeconds = 300
-        resources = {
-          requests = {
-            memory = "512Mi"
-            cpu    = "250m"
-          }
-        }
-      }
-      createProjectsJob = {
-        resources = {
-          requests = {
-            memory = "512Mi"
-            cpu    = "250m"
-          }
+        startupProbe = {
+          initialDelaySeconds = 30
         }
       }
     }),
     yamlencode({
       redis = {
-        master = {
-          resources = {
-            requests = {
-              memory = "512Mi"
-              cpu    = "250m"
-            }
-          }
-        }
+        enabled = false
         auth = {
-          usePassword = true
-          password    = var.redis_password
+          password = var.redis_password
         }
       }
-      mongodb = { enabled = false }
-    }),
+      mongodb = {
+        enabled = false
+      }
+    })
   ]
 
   set {
@@ -191,7 +149,6 @@ resource "helm_release" "dependabot" {
   }
 
   depends_on = [
-    google_container_cluster.default,
     google_compute_global_address.default,
     kubernetes_manifest.managed_certs,
     kubernetes_manifest.frontend_config

@@ -25,7 +25,7 @@ locals {
   release = {
     name       = "dependabot-gitlab"
     repository = "https://andrcuns.github.io/charts"
-    version    = "0.0.97"
+    version    = "0.0.103"
     chart      = var.chart
 
     lint              = true
@@ -41,22 +41,27 @@ locals {
 data "google_client_config" "default" {
 }
 
+data "google_container_cluster" "default" {
+  name     = "dependabot"
+  location = "us-central1"
+}
+
 provider "google" {
   project = "dependabot-gitlab"
   region  = "us-central1"
 }
 
 provider "kubernetes" {
-  host                   = "https://${google_container_cluster.default.endpoint}"
+  host                   = "https://${data.google_container_cluster.default.endpoint}"
   token                  = data.google_client_config.default.access_token
-  cluster_ca_certificate = base64decode(google_container_cluster.default.master_auth[0].cluster_ca_certificate)
+  cluster_ca_certificate = base64decode(data.google_container_cluster.default.master_auth[0].cluster_ca_certificate)
 }
 
 provider "helm" {
   kubernetes {
-    host                   = "https://${google_container_cluster.default.endpoint}"
+    host                   = "https://${data.google_container_cluster.default.endpoint}"
     token                  = data.google_client_config.default.access_token
-    cluster_ca_certificate = base64decode(google_container_cluster.default.master_auth[0].cluster_ca_certificate)
+    cluster_ca_certificate = base64decode(data.google_container_cluster.default.master_auth[0].cluster_ca_certificate)
   }
 }
 
