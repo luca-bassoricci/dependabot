@@ -45,22 +45,21 @@ provider "registry.terraform.io/hashicorp/google" {
 }
 
 provider "registry.terraform.io/hashicorp/helm" {
-  version     = "2.3.0"
+  version     = "2.4.0"
   constraints = "~> 2.3"
   hashes = [
-    "h1:mLNIobQGKfv/9kCqe7+41y2K8bC/Kjet4Fzc+ImcZeM=",
-    "h1:qo08yDJAnkE8H2CNuI2fVP2W+J3bOCrXWRvAerQpgc8=",
-    "zh:0c63c0aa9f13ec057971c9ddd0965e062b064c0b2ce9a3d13df41239b8f5af89",
-    "zh:14b4146e56b1c1e5492ce597d03fb993a71039dd701e3886667f7ad3d60afd34",
-    "zh:3882a3a091aeac1d42a01c7654c727a46870185d363454579e707c672a42f430",
-    "zh:3ccb84b23348e2b64ffe273170f686e6927e974060e37b52459ab2395bd59523",
-    "zh:4fb709aeb63dd6dee1e851459ac87c399ddb831ebfe9e28e4c9827c65bb55b67",
-    "zh:6739a4da9510f552b93fa77859f04c20af3a7a40a7f0b0073eb723af36b8156b",
-    "zh:7432b070124a161fe6a32dc6b76fd45100d079fdee917318460a82b80cda5518",
-    "zh:9aa51dc2a649fcaac133dad5c1e148c2e0f675fdf18b1d3b1da53549d8fa3b36",
-    "zh:a9a2abf1fbec56019473c8696d285703218ea0e8f2dc01879e7a391ea8785d57",
-    "zh:b3c25b085b7a7fbc05000303d82c54531987525575ff337e4be6fc152f4200d4",
-    "zh:fa8cb34df7786bbeffcee664eab72aeb15c4f8fba2d9c0b05faca6b3e819cf33",
+    "h1:3gsh0LzdeqhTbSIS0IoJPZ28V5wn6v0+KXy8/iKl6uc=",
+    "zh:0efb5862834e1dfa284e04532da855269d54813d732d9d6e092a3abc85e4a3a5",
+    "zh:3b78d519621948d9788c17186ef58eb89cb1ae6963e3698cf3c79e0a22218563",
+    "zh:642a986a4ef7fc7e47d51e2223761b2cbf494de8210fefa7d4d7e39ed2e7cdac",
+    "zh:64e1d4cb0dbab2982fa4e8bb3acb57788135672d7a44696762abcf70068089fa",
+    "zh:77a90b99fd004bb5854c7b3fb76b9d6e10a693a4f55ac6320d0fd3a09f51802b",
+    "zh:8011a475fe805b04470ca9c4241b840afc6ffdea1fb6cc9ab748d8b71fcd091b",
+    "zh:a17b44191b5ba61933c55b8aba88cfe0199cf66ee901f84350f491205d406b49",
+    "zh:a3b3944d52d3e0901057659abafa8433f04a6433bc88f68e4861e25e76e1fc37",
+    "zh:b01f083a0a816c9ae957bdc8dbe29e1f273d589df2ab60073ace73363d5f9f33",
+    "zh:f18abc2fc46248e8a2beb9e308bd1efe1b6dde23a2371432355ca7b8016a50c5",
+    "zh:f7032cc70ad638595747c9b722d6f0fb57e9e6e1a2efffafdaa08cc01ef55f5b",
   ]
 }
 
