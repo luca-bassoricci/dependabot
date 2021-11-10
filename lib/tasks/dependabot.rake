@@ -66,4 +66,18 @@ namespace :dependabot do # rubocop:disable Metrics/BlockLength
     log(:error, e.message)
     exit(1)
   end
+
+  desc "check pending migrations"
+  task(check_migrations: :environment) do
+    include ApplicationHelper
+
+    migrator = Mongoid::Migrator.new(:up, ["db/migrate"])
+    pending_migrations = migrator.migrations.size - migrator.migrated.size
+    raise("Migrations pending!") unless pending_migrations.zero?
+
+    log(:info, "No migrations are pending!")
+  rescue StandardError => e
+    log(:error, e.message)
+    exit(1)
+  end
 end
