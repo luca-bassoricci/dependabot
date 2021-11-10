@@ -1,5 +1,33 @@
 # CHANGELOG
 
+## [v0.10.8 - 2021-11-10](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🔬 Improvements
+
+- Add rake task for pending migration check. See merge request dependabot-gitlab/dependabot!1098 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump dependabot-omnibus from 0.164.1 to 0.165.0. See merge request dependabot-gitlab/dependabot!1094 - (andrejs)
+- bump sidekiq from 6.3.0 to 6.3.1. See merge request dependabot-gitlab/dependabot!1092 - (andrejs)
+- bump sidekiq from 6.2.2 to 6.3.0. See merge request dependabot-gitlab/dependabot!1088 - (andrejs)
+
+### 📦🛠️ Development dependency updates
+
+- bump hashicorp/helm from 2.4.0 to 2.4.1 in /terraform. See merge request dependabot-gitlab/dependabot!1097 - (andrejs)
+- bump rubocop-rspec from 2.5.0 to 2.6.0. See merge request dependabot-gitlab/dependabot!1095 - (andrejs)
+- bump hashicorp/helm from 2.3.0 to 2.4.0 in /terraform. See merge request dependabot-gitlab/dependabot!1093 - (andrejs)
+
+### 🛠️ Chore
+
+- move production to different cluster. See merge request dependabot-gitlab/dependabot!1091 - (andrejs)
+- bump ci bundler version. See merge request dependabot-gitlab/dependabot!1090 - (andrejs)
+- cleanup sidekiq logger patch. See merge request dependabot-gitlab/dependabot!1089 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.10.7](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.10.7...v0.10.8)
+
 ## [v0.10.7 - 2021-11-07](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 📦 Dependency updates
