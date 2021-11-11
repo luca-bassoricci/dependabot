@@ -25,7 +25,7 @@ locals {
   release = {
     name       = "dependabot-gitlab"
     repository = "https://andrcuns.github.io/charts"
-    version    = "0.0.104"
+    version    = "0.0.103"
     chart      = var.chart
 
     lint              = true
