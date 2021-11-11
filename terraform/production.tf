@@ -8,6 +8,25 @@ resource "kubernetes_namespace" "default" {
   }
 }
 
+resource "kubernetes_manifest" "backend_config" {
+  manifest = {
+    apiVersion = "cloud.google.com/v1"
+    kind       = "BackendConfig"
+    metadata = {
+      name      = "backendconfig"
+      namespace = local.release.namespace
+    }
+
+    spec = {
+      healthCheck = {
+        port        = 3000
+        type        = "HTTP"
+        requestPath = "/healthcheck"
+      }
+    }
+  }
+}
+
 resource "kubernetes_manifest" "managed_certs" {
   manifest = {
     apiVersion = "networking.gke.io/v1"
@@ -68,7 +87,8 @@ resource "helm_release" "dependabot" {
       service = {
         type = "ClusterIP"
         annotations = {
-          "cloud.google.com/neg" = "{\"ingress\": true}"
+          "cloud.google.com/neg"            = "{\"ingress\": true}"
+          "cloud.google.com/backend-config" = "{\"default\": \"${kubernetes_manifest.backend_config.manifest.metadata.name}\"}"
         }
       }
     }),
@@ -132,9 +152,10 @@ resource "helm_release" "dependabot" {
     }),
     yamlencode({
       redis = {
-        enabled = false
+        enabled = true
         auth = {
-          password = var.redis_password
+          usePassword = true
+          password    = var.redis_password
         }
       }
       mongodb = {
