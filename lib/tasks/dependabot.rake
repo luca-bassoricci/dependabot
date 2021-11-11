@@ -60,7 +60,10 @@ namespace :dependabot do # rubocop:disable Metrics/BlockLength
   task(check_redis: :environment) do
     include ApplicationHelper
 
-    Redis.new(password: ENV["REDIS_PASSWORD"], timeout: 1, reconnect_attempts: 1).ping
+    Redis.new(password: ENV["REDIS_PASSWORD"], timeout: 1, reconnect_attempts: 1).tap do |redis|
+      redis.ping
+      redis.close
+    end
     log(:info, "Redis connection functional!")
   rescue StandardError => e
     log(:error, e.message)

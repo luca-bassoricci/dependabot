@@ -18,7 +18,10 @@ Healthcheck.configure do |config|
   }
   config.add_check :redis, lambda {
     begin
-      Redis.new(password: ENV["REDIS_PASSWORD"], timeout: 1, reconnect_attempts: 1).ping
+      Redis.new(password: ENV["REDIS_PASSWORD"], timeout: 1, reconnect_attempts: 1).tap do |redis|
+        redis.ping
+        redis.close
+      end
     rescue StandardError => e
       Rails.logger.error { "[Healthcheck] #{e.message}" }
       raise e
