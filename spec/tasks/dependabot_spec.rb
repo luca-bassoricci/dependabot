@@ -76,8 +76,10 @@ describe "rake", epic: :tasks do # rubocop:disable RSpec/DescribeClass
   end
 
   describe "dependabot:check_redis" do
+    let(:redis) { instance_double("Redis", ping: "PONG", close: nil) }
+
     before do
-      allow(Redis).to receive_message_chain("new.ping")
+      allow(Redis).to receive(:new).and_return(redis)
     end
 
     it "passes successfully" do
