@@ -112,6 +112,7 @@ resource "helm_release" "dependabot" {
     yamlencode({
       projects = [
         "dependabot-gitlab/dependabot",
+        "dependabot-gitlab/chart",
         "dependabot-gitlab/dependency-test",
         "andrcuns/dependency-test-fork"
       ]
