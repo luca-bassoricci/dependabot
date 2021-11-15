@@ -24,8 +24,8 @@ locals {
   development = var.environment == "development"
   release = {
     name       = "dependabot-gitlab"
-    repository = "https://andrcuns.github.io/charts"
-    version    = "0.0.105"
+    repository = "https://dependabot-gitlab.gitlab.io/chart"
+    version    = "0.1.0"
     chart      = var.chart
 
     lint              = true
