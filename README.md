@@ -48,10 +48,10 @@ Deployed version is considered to be the primary and has priority on adding and 
 
 ## Helm
 
-Preferred way of deployment is via [helm](https://helm.sh/) package manager.
+Preferred way of deployment is via [helm](https://helm.sh/) package manager using [dependabot-gitlab](https://gitlab.com/dependabot-gitlab/chart) chart.
 
 ```bash
-helm repo add dependabot https://andrcuns.github.io/charts
+helm repo add dependabot https://dependabot-gitlab.gitlab.io/chart
 helm install dependabot dependabot/dependabot-gitlab --set credentials.gitlab_access_token=$gitlab_access_token
 ```
 
