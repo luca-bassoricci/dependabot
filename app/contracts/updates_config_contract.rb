@@ -43,7 +43,8 @@ class UpdatesConfigContract < Dry::Validation::Contract
       end
 
       optional(:"pull-request-branch-name").hash do
-        required(:separator).filled(:string)
+        optional(:separator).filled(:string)
+        optional(:prefix).filled(:string)
       end
 
       optional(:registries) { filled? > array? | eql?("*") }
