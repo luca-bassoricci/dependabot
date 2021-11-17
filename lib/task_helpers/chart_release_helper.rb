@@ -19,7 +19,12 @@ class ChartReleaseHelper
   # @return [void]
   def update
     logger.info("Updating app version to #{app_version}")
-    gitlab.create_commit(chart_repo, "master", "Update app version to #{app_version}", commit_actions)
+    gitlab.create_commit(
+      chart_repo,
+      "master",
+      "Update app version to #{app_version}\n\nChangelog: feature",
+      commit_actions
+    )
   end
 
   private
