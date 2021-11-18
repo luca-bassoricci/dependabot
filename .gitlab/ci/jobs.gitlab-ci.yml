@@ -334,8 +334,8 @@ variables:
 .update_chart:
   extends: .ruby_runner
   stage: release
-  before_script:
-    - source script/setup-git.sh
+  variables:
+    SETTINGS__GITLAB_ACCESS_TOKEN: $GITLAB_ACCESS_TOKEN
   script:
     - bundle exec rake "release:chart[$CI_COMMIT_TAG]"
 
