@@ -25,7 +25,7 @@ locals {
   release = {
     name       = "dependabot-gitlab"
     repository = "https://dependabot-gitlab.gitlab.io/chart"
-    version    = "0.1.0"
+    version    = "0.2.0"
     chart      = var.chart
 
     lint              = true
@@ -43,7 +43,7 @@ data "google_client_config" "default" {
 
 data "google_container_cluster" "default" {
   name     = "dependabot"
-  location = "us-central1"
+  location = "us-central1-c"
 }
 
 provider "google" {

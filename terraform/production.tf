@@ -25,6 +25,10 @@ resource "kubernetes_manifest" "backend_config" {
       }
     }
   }
+
+  depends_on = [
+    kubernetes_namespace.default
+  ]
 }
 
 resource "kubernetes_manifest" "managed_certs" {
@@ -40,6 +44,10 @@ resource "kubernetes_manifest" "managed_certs" {
       domains = [var.dependabot_host]
     }
   }
+
+  depends_on = [
+    kubernetes_namespace.default
+  ]
 }
 
 resource "kubernetes_manifest" "frontend_config" {
@@ -58,6 +66,10 @@ resource "kubernetes_manifest" "frontend_config" {
       }
     }
   }
+
+  depends_on = [
+    kubernetes_namespace.default
+  ]
 }
 
 
@@ -72,8 +84,8 @@ resource "helm_release" "dependabot" {
   lint              = local.release.lint
   atomic            = local.release.atomic
   wait              = local.release.wait
-  create_namespace  = local.release.create_namespace
   dependency_update = local.release.dependency_update
+  create_namespace  = false
 
   namespace = local.release.namespace
 
@@ -173,6 +185,7 @@ resource "helm_release" "dependabot" {
   depends_on = [
     google_compute_global_address.default,
     kubernetes_manifest.managed_certs,
-    kubernetes_manifest.frontend_config
+    kubernetes_manifest.backend_config,
+    kubernetes_manifest.frontend_config,
   ]
 }

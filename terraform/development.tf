@@ -11,8 +11,8 @@ resource "helm_release" "dependabot-development" {
   lint              = local.release.lint
   atomic            = local.release.atomic
   wait              = local.release.wait
-  create_namespace  = local.release.create_namespace
   dependency_update = local.release.dependency_update
+  create_namespace  = true
 
   namespace = local.release.namespace
 
