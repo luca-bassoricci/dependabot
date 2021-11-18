@@ -1,5 +1,41 @@
 # CHANGELOG
 
+## [v0.10.9 - 2021-11-18](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🐞 Bug Fixes
+
+- allow to set custom branch prefix option. Closes #135. See merge request dependabot-gitlab/dependabot!1118 - (@Infra-Red)
+- close redis connection from healthcheck probes. See merge request dependabot-gitlab/dependabot!1100 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump dependabot-omnibus from 0.166.1 to 0.167.0. See merge request dependabot-gitlab/dependabot!1116 - (andrejs)
+- bump dependabot-omnibus from 0.166.0 to 0.166.1. See merge request dependabot-gitlab/dependabot!1110 - (andrejs)
+- bump sentry-sidekiq, sentry-rails and sentry-ruby. See merge request dependabot-gitlab/dependabot!1106 - (andrejs)
+- bump dependabot-omnibus from 0.165.0 to 0.166.0. See merge request dependabot-gitlab/dependabot!1103 - (andrejs)
+
+### 📦🛠️ Development dependency updates
+
+- bump hashicorp/google from 4.0.0 to 4.1.0 in /terraform. See merge request dependabot-gitlab/dependabot!1113 - (andrejs)
+- bump rubocop from 1.22.3 to 1.23.0. See merge request dependabot-gitlab/dependabot!1114 - (andrejs)
+
+### 🛠️ Chore
+
+- remove gitlab monkeypatch. See merge request dependabot-gitlab/dependabot!1120 - (andrejs)
+- Update chart repo release task. See merge request dependabot-gitlab/dependabot!1119 - (andrejs)
+- Update deployment chart. See merge request dependabot-gitlab/dependabot!1112 - (andrejs)
+- update production deployment. See merge request dependabot-gitlab/dependabot!1102 - (andrejs)
+- revert "Merge branch 'chore-custom-healthcheck' into 'master'". See merge request dependabot-gitlab/dependabot!1101 - (andrejs)
+- add custom healthcheck config to production deployment. See merge request dependabot-gitlab/dependabot!1099 - (andrejs)
+
+### 📄 Documentation updates
+
+- Update chart location in README.md. See merge request dependabot-gitlab/dependabot!1115 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.10.8](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.10.8...v0.10.9)
+
 ## [v0.10.8 - 2021-11-10](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🔬 Improvements
