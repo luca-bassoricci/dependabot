@@ -156,6 +156,7 @@ resource "helm_release" "dependabot" {
         }
         resources = {
           requests = {
+            cpu    = "700m"
             memory = "700Mi"
           }
         }
@@ -168,6 +169,7 @@ resource "helm_release" "dependabot" {
         }
         resources = {
           requests = {
+            cpu    = "100m"
             memory = "300Mi"
           }
         }
