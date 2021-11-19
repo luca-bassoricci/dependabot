@@ -154,12 +154,22 @@ resource "helm_release" "dependabot" {
         startupProbe = {
           initialDelaySeconds = 30
         }
+        resources = {
+          requests = {
+            memory = "700Mi"
+          }
+        }
       }
     }),
     yamlencode({
       web = {
         startupProbe = {
           initialDelaySeconds = 30
+        }
+        resources = {
+          requests = {
+            memory = "300Mi"
+          }
         }
       }
     }),
