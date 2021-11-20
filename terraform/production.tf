@@ -182,6 +182,14 @@ resource "helm_release" "dependabot" {
           usePassword = true
           password    = var.redis_password
         }
+        master = {
+          resources = {
+            requests = {
+              cpu    = "100m"
+              memory = "64Mi"
+            }
+          }
+        }
       }
       mongodb = {
         enabled = false
