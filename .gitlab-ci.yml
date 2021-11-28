@@ -179,18 +179,6 @@ container-scan:
 # ======================================================================================================================
 # Reporting
 # ======================================================================================================================
-coverage-line:
-  extends: .coverage_line
-  needs:
-    - rspec
-  rules: *main
-
-coverage-branch:
-  extends: .coverage_branch
-  needs:
-    - rspec
-  rules: *main
-
 publish-allure-reports:
   extends: .allure_report
   needs:
