@@ -6,7 +6,7 @@ ruby "~> 2.6"
 
 gem "anyway_config", "~> 2.2"
 gem "bootsnap", ">= 1.4.2", require: false
-gem "dependabot-omnibus", "~> 0.169.0"
+gem "dependabot-omnibus", "~> 0.169.1"
 gem "dry-validation", "~> 1.7"
 gem "gitlab", github: "narkoz/gitlab"
 gem "lograge", "~> 0.11.2"
