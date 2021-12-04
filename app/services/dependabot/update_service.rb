@@ -104,13 +104,17 @@ module Dependabot
     #
     # @return [Array<Dependabot::UpdatedDependency>]
     def all_updated_dependencies
-      @all_updated_dependencies ||= Dependabot::DependencyUpdater.call(
-        project_name: project_name,
-        config: config,
-        fetcher: fetcher,
-        repo_contents_path: repo_contents_path,
-        name: dependency_name
-      )
+      @all_updated_dependencies ||= begin
+        dependencies = Dependabot::DependencyUpdater.call(
+          project_name: project_name,
+          config: config,
+          fetcher: fetcher,
+          repo_contents_path: repo_contents_path,
+          name: dependency_name
+        )
+
+        dependency_name ? [dependencies] : dependencies
+      end
     end
 
     # Run updates for vulnerable dependencies

@@ -13,6 +13,7 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
   let(:config) { dependabot_config.first }
   let(:dependency_name) { nil }
 
+  let(:updated_deps) { [updated_config, updated_rspec] }
   let(:updated_config) do
     Dependabot::UpdatedDependency.new(
       name: "config",
@@ -65,7 +66,7 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
         repo_contents_path: nil,
         name: dependency_name
       )
-      .and_return([updated_config, updated_rspec])
+      .and_return(updated_deps)
 
     allow(Dependabot::MergeRequestService).to receive(:call).and_return("mr")
   end
@@ -86,6 +87,7 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
 
     context "with single specific dependency" do
       let(:dependency_name) { "rspec" }
+      let(:updated_deps) { updated_rspec }
 
       it "runs dependency update for specific dependency" do
         dependency_updater.call(
