@@ -2,7 +2,7 @@
 
 module Api
   class NotifyReleaseController < ApplicationController
-    # Add new project or update existing one and schedule jobs
+    # Trigger specific dependency updates
     #
     # @return [void]
     def create
@@ -10,14 +10,7 @@ module Api
       configs = configurations(package_ecosystem)
       return if configs.empty?
 
-      configs.each do |config|
-        log(:info, "Triggering updates for '#{package_ecosystem}' package '#{name}' in '#{config[:project_name]}'")
-        Dependabot::UpdateService.call(
-          dependency_name: name,
-          package_ecosystem: package_ecosystem,
-          **config
-        )
-      end
+      NotifyReleaseJob.perform_later(name, package_ecosystem, configs)
 
       json_response(body: { triggered: true })
     end
