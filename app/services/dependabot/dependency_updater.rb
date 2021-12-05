@@ -48,13 +48,7 @@ module Dependabot
         return
       end
 
-      upd_dependencies = updated_dependencies(dependency)
-      unless upd_dependencies
-        log(:warn, "Nothing to update! Make sure dependencies are not up to date already!")
-        return
-      end
-
-      upd_dependencies
+      updated_dependencies(dependency)
     end
 
     # Dependencies

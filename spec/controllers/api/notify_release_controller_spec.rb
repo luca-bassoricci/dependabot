@@ -22,12 +22,7 @@ describe Api::NotifyReleaseController, epic: :controllers do
   end
 
   before do
-    allow(Dependabot::UpdateService).to receive(:call).with(
-      dependency_name: dependency_name,
-      package_ecosystem: package_ecosystem,
-      directory: dependabot_config.first[:directory],
-      project_name: project_bundler.name
-    )
+    allow(NotifyReleaseJob).to receive(:perform_later)
   end
 
   context "with valid projects" do
@@ -41,11 +36,10 @@ describe Api::NotifyReleaseController, epic: :controllers do
       aggregate_failures do
         expect(last_response.status).to eq(200)
         expect(last_response.body).to eq({ triggered: true }.to_json)
-        expect(Dependabot::UpdateService).to have_received(:call).with(
-          dependency_name: dependency_name,
-          package_ecosystem: package_ecosystem,
-          directory: dependabot_config.first[:directory],
-          project_name: project_bundler.name
+        expect(NotifyReleaseJob).to have_received(:perform_later).with(
+          dependency_name,
+          package_ecosystem,
+          [{ directory: dependabot_config.first[:directory], project_name: project_bundler.name }]
         )
       end
     end
@@ -62,7 +56,7 @@ describe Api::NotifyReleaseController, epic: :controllers do
       aggregate_failures do
         expect(last_response.status).to eq(204)
 
-        expect(Dependabot::UpdateService).not_to have_received(:call)
+        expect(NotifyReleaseJob).not_to have_received(:perform_later)
       end
     end
   end
