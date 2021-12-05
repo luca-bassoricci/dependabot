@@ -13,10 +13,3 @@ repos:
     rev: 2.1.5
     hooks:
       - id: git-check
-  - repo: local
-    hooks:
-      - id: prepare-commit-msg
-        name: Prepare commit message
-        entry: hooks/prepare-commit-msg.rb
-        language: script
-        stages: [prepare-commit-msg]

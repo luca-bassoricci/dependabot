@@ -89,9 +89,20 @@ In service mode, merge request is accepted based on event sent on pipeline compl
 
 In addition to setting merge request [reviewer](https://docs.gitlab.com/ee/user/project/merge_requests/getting_started.html#reviewer) via `reviewers` keyword, `approvers` keyword also exists.
 
-This create optional [approval rule](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/) with users from the list.
+This creates optional [approval rule](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/) with users from the list.
 
 ```yml
 approvers:
   - dependabot-gitlab
+```
+
+## git trailers
+
+It is possible to add custom git trailers to commit messages. For example to include commits in Gitlab built in [changelog](https://docs.gitlab.com/ee/api/repositories.html#add-changelog-data-to-a-changelog-file) generation functionality. Multiple git trailers can be added as array of key value pairs.
+
+```yml
+commit-message:
+  trailers:
+    - changelog: "dependency"
+    - approved-by: "someone"
 ```

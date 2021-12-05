@@ -3,8 +3,6 @@
 # rubocop:disable Metrics/BlockLength
 class UpdatesConfigContract < Dry::Validation::Contract
   params do
-    config.validate_keys = true
-
     required(:updates).array(:hash) do
       required(:"package-ecosystem").filled(:string)
       required(:directory).filled(:string)
@@ -29,6 +27,7 @@ class UpdatesConfigContract < Dry::Validation::Contract
         optional(:prefix).filled(:string)
         optional(:"prefix-development").filled(:string)
         optional(:include).filled(:string)
+        optional(:trailers).array(:hash)
       end
 
       optional(:allow).array(:hash) do

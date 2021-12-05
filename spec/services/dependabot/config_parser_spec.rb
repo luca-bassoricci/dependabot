@@ -77,6 +77,10 @@ describe Dependabot::ConfigParser, epic: :services, feature: :configuration do
             milestone: 4
             ignore:
               - versions: ["3.x", "4.x"]
+            commit-message:
+              prefix: "dep"
+              trailers:
+                - changelog: "dep"
       YAML
     end
     let(:invalid_config_error) do

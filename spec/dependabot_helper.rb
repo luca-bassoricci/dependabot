@@ -93,7 +93,10 @@ RSpec.shared_context("with dependabot helper") do
         commit_message_options: {
           prefix: "dep",
           prefix_development: "bundler-dev",
-          include_scope: "scope"
+          include_scope: "scope",
+          trailers: {
+            changelog: "dep"
+          }
         },
         registries: [
           {

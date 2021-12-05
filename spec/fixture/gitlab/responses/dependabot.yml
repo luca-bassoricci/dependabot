@@ -17,6 +17,8 @@ updates:
       prefix: "dep"
       prefix-development: "bundler-dev"
       include: "scope"
+      trailers:
+        - changelog: "dep"
     milestone: 0.0.1
     ignore:
       - dependency-name: rspec

@@ -158,7 +158,8 @@ module Dependabot
         commit_message_options: {
           prefix: message_options[:prefix],
           prefix_development: message_options[:"prefix-development"],
-          include_scope: message_options[:include]
+          include_scope: message_options[:include],
+          trailers: message_options[:trailers]&.reduce({}, :merge)
         }.compact
       }
     end
