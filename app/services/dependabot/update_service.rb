@@ -113,7 +113,7 @@ module Dependabot
           name: dependency_name
         )
 
-        dependency_name ? [dependencies] : dependencies
+        dependency_name ? [dependencies].compact : dependencies
       end
     end
 

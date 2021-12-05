@@ -40,13 +40,19 @@ module Dependabot
     # Get single updated dependency
     #
     # @param [String] name
-    # @return [Dependabot::UpdatedDependency]
+    # @return [Dependabot::UpdatedDependency, nil]
     def single_dependency
       dependency = dependencies.detect { |dep| dep.name == name }
-      raise("#{name} not found in project dependencies") unless dependency
+      unless dependency
+        log(:warn, "#{name} not found in project dependencies")
+        return
+      end
 
       upd_dependencies = updated_dependencies(dependency)
-      raise("Nothing to update! Make sure dependencies are not up to date already!") unless upd_dependencies
+      unless upd_dependencies
+        log(:warn, "Nothing to update! Make sure dependencies are not up to date already!")
+        return
+      end
 
       upd_dependencies
     end
