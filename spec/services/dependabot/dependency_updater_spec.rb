@@ -65,14 +65,36 @@ describe Dependabot::DependencyUpdater, epic: :services, feature: :dependabot do
       expect(described_class.call(updater_args)).to eq([result])
     end
 
-    it "returns single updated dependency" do
-      expect(described_class.call(**updater_args, name: dependency.name)).to eq(result)
+    it "returns nil if dependency not found" do
+      expect(described_class.call(**updater_args, name: "test")).to be_nil
     end
 
-    it "raises error if dependency not found" do
-      expect { described_class.call(**updater_args, name: "test") }.to raise_error(
-        "test not found in project dependencies"
-      )
+    context "without any dependencies updated" do
+      let(:result) { nil }
+
+      it "returns nil" do
+        expect(described_class.call(**updater_args, name: dependency.name)).to be_nil
+      end
+    end
+  end
+
+  context "with single dependency" do
+    let(:args) { { **updater_args, name: dependency.name } }
+
+    it "returns single updated dependency" do
+      expect(described_class.call(**args)).to eq(result)
+    end
+
+    it "returns nil if dependency not found" do
+      expect(described_class.call(**updater_args, name: "test")).to be_nil
+    end
+
+    context "without any dependencies updated" do
+      let(:result) { nil }
+
+      it "returns nil" do
+        expect(described_class.call(**args)).to be_nil
+      end
     end
   end
 end

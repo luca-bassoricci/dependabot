@@ -10,8 +10,8 @@ module Api
       configs = configurations(package_ecosystem)
       return if configs.empty?
 
-      log(:info, "Triggering updates for '#{package_ecosystem}' package '#{name}'")
       configs.each do |config|
+        log(:info, "Triggering updates for '#{package_ecosystem}' package '#{name}' in '#{config[:project_name]}'")
         Dependabot::UpdateService.call(
           dependency_name: name,
           package_ecosystem: package_ecosystem,
