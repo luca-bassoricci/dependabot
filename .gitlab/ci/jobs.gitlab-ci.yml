@@ -79,7 +79,7 @@ include:
   before_script:
     - *docker_credentials
   script:
-    - script/build.sh
+    - .gitlab/ci/script/build.sh
   retry: 2
 
 .docker_runner:
@@ -128,7 +128,7 @@ variables:
   stage: .pre
   extends: .ruby_runner
   script:
-    - ./script/download-coverage.sh
+    - .gitlab/ci/script/download-coverage.sh
   cache:
     - <<: *gem_cache
       policy: pull-push
@@ -298,11 +298,17 @@ variables:
 
 .gitlab_release:
   stage: release
-  extends: .ruby_runner
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
   variables:
+    RELEASE_NOTES_FILE: release_notes.md
     SETTINGS__GITLAB_ACCESS_TOKEN: $GITLAB_ACCESS_TOKEN
+  before_script:
+    - apk --no-cache add -q jq bash curl grep
   script:
-    - bundle exec rake "release:gitlab[$CI_COMMIT_TAG]"
+    - .gitlab/ci/script/changelog.sh
+  release:
+    tag_name: $CI_COMMIT_TAG
+    description: $RELEASE_NOTES_FILE
 
 .update_chart:
   extends: .ruby_runner

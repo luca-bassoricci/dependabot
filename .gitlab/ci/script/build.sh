@@ -2,9 +2,7 @@
 
 # Build script for image building on CI
 
-function log() {
-  echo -e "\033[1;33m$1\033[0m"
-}
+source "$(dirname "$0")/utils.sh"
 
 if [ -z "$DOCKER_IMAGE" ]; then
   IMAGE="$CI_REGISTRY_IMAGE"

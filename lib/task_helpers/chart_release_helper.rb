@@ -22,7 +22,7 @@ class ChartReleaseHelper
     gitlab.create_commit(
       chart_repo,
       "master",
-      "Update app version to #{app_version}\n\nChangelog: feature",
+      "Update app version to #{app_version}\n\nchangelog: dependency",
       commit_actions
     )
   end
