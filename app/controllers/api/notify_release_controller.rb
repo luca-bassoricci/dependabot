@@ -6,23 +6,35 @@ module Api
     #
     # @return [void]
     def create
-      name, package_ecosystem = params.require(%i[name package_ecosystem])
-      configs = configurations(package_ecosystem)
-      return if configs.empty?
+      @name, @package_ecosystem = params.require(%i[name package_ecosystem])
+      return bad_request if configurations.empty?
 
-      NotifyReleaseJob.perform_later(name, package_ecosystem, configs)
-
+      NotifyReleaseJob.perform_later(name, package_ecosystem, configurations)
       json_response(body: { triggered: true })
     end
 
     private
 
+    attr_reader :name, :package_ecosystem
+
+    # Handle bad request
+    #
+    # @return [void]
+    def bad_request
+      json_response(
+        status: 400,
+        body: {
+          status: 400,
+          error: "No projects with configured '#{package_ecosystem}' found"
+        }
+      )
+    end
+
     # Project configurations
     #
-    # @param [String] package_ecosystem
     # @return [Array<Hash<Symbol, String>>]
-    def configurations(package_ecosystem)
-      ::Project.all.map do |project|
+    def configurations
+      @configurations ||= ::Project.all.map do |project|
         configs = project.config.select { |conf| conf[:package_ecosystem] == package_ecosystem }
         next if configs.empty?
 
