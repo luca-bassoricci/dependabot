@@ -1,5 +1,45 @@
 # CHANGELOG
 
+## [v0.10.10 - 2021-12-05](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
+
+### 🔬 Improvements
+
+- add error response for missing projects on release_notify. See merge request dependabot-gitlab/dependabot!1154 - (andrejs)
+- trigger notify release asynchronously. See merge request dependabot-gitlab/dependabot!1153 - (andrejs)
+
+### 🐞 Bug Fixes
+
+- correctly handle single dependency not present in dependency file. Closes #139. See merge request dependabot-gitlab/dependabot!1152 - (andrejs)
+- correctly handle single dependency update. Closes #138. See merge request dependabot-gitlab/dependabot!1150 - (andrejs)
+
+### 📦 Dependency updates
+
+- bump dependabot-omnibus from 0.169.2 to 0.169.3. See merge request dependabot-gitlab/dependabot!1148 - (andrejs)
+- bump dependabot-omnibus from 0.169.1 to 0.169.2. See merge request dependabot-gitlab/dependabot!1143 - (andrejs)
+- bump dependabot-omnibus from 0.169.0 to 0.169.1. See merge request dependabot-gitlab/dependabot!1141 - (andrejs)
+- bump sentry-sidekiq, sentry-rails and sentry-ruby. See merge request dependabot-gitlab/dependabot!1131 - (andrejs)
+- bump bootsnap from 1.9.1 to 1.9.3. See merge request dependabot-gitlab/dependabot!1133 - (andrejs)
+- bump dependabot-omnibus from 0.167.0 to 0.169.0. See merge request dependabot-gitlab/dependabot!1128 - (andrejs)
+
+### 📦🛠️ Development dependency updates
+
+- bump  from 4.2.0 to 4.2.1 in /terraform. See merge request dependabot-gitlab/dependabot!1151 - (andrejs)
+- bump hashicorp/google from 4.1.0 to 4.2.0 in /terraform. See merge request dependabot-gitlab/dependabot!1147 - (andrejs)
+- bump hashicorp/kubernetes from 2.6.1 to 2.7.0 in /terraform. See merge request dependabot-gitlab/dependabot!1145 - (andrejs)
+- bump spring from 3.0.0 to 3.1.1. See merge request dependabot-gitlab/dependabot!1140 - (andrejs)
+- bump solargraph from 0.44.1 to 0.44.2. See merge request dependabot-gitlab/dependabot!1132 - (andrejs)
+- bump simplecov-cobertura from 1.4.2 to 2.0.0. See merge request dependabot-gitlab/dependabot!1134 - (andrejs)
+- bump solargraph from 0.44.0 to 0.44.1. See merge request dependabot-gitlab/dependabot!1123 - (andrejs)
+
+### 🛠️ Chore
+
+- update chart version to 0.2.0. See merge request dependabot-gitlab/dependabot!1122 - (andrejs)
+- correct chart update setup job. See merge request dependabot-gitlab/dependabot!1121 - (andrejs)
+
+### 👀 Links
+
+[Commits since v0.10.9](https://gitlab.com/dependabot-gitlab/dependabot/-/compare/v0.10.9...v0.10.10)
+
 ## [v0.10.9 - 2021-11-18](https://gitlab.com/dependabot-gitlab/dependabot/-/releases)
 
 ### 🐞 Bug Fixes
