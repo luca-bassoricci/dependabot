@@ -41,12 +41,14 @@ include:
   policy: pull
 
 .ruby_runner:
-  image: registry.gitlab.com/dependabot-gitlab/dependabot/ruby:2.7.4-debian-11-latest
+  image: ruby:2.7-bullseye
   variables:
+    BUNDLER_VERSION: "2.2.32"
     BUNDLE_PATH: vendor/bundle
     BUNDLE_FROZEN: "true"
     BUNDLE_SUPPRESS_INSTALL_USING_MESSAGES: "true"
   before_script:
+    - gem install bundler -v ${BUNDLER_VERSION} --no-document
     - bundle install
   cache:
     - *gem_cache
@@ -156,15 +158,6 @@ variables:
   variables:
     DOCKER_CONTEXT: spec/fixture/gitlab
     DOCKER_IMAGE: gitlab-mock
-
-.build_ruby_image:
-  stage: build
-  extends: .buildkit_runner
-  needs: []
-  variables:
-    DOCKER_CONTEXT: .gitlab/ci
-    DOCKER_IMAGE: ruby
-    PUSH: "false"
 
 .tf_build:
   extends: .terraform_runner
@@ -302,14 +295,6 @@ variables:
     - docker tag $CI_REGISTRY_IMAGE:$CURRENT_TAG $RELEASE_IMAGE:$RELEASE_VERSION
     - docker tag $CI_REGISTRY_IMAGE:$CURRENT_TAG $RELEASE_IMAGE:latest
     - docker push $RELEASE_IMAGE:$RELEASE_VERSION && docker push $RELEASE_IMAGE:latest
-
-.release_ruby_image:
-  stage: release
-  extends: .build_ruby_image
-  variables:
-    CURRENT_TAG: 2.7.4-debian-11-$CI_COMMIT_SHORT_SHA
-    LATEST_TAG: 2.7.4-debian-11-latest
-    PUSH: "true"
 
 .gitlab_release:
   stage: release

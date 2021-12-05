@@ -121,13 +121,6 @@ build-mock-image:
       when: manual
       allow_failure: true
 
-build-ruby-image:
-  extends: .build_ruby_image
-  rules:
-    - <<: *mr
-      changes:
-        - .gitlab/ci/Dockerfile
-
 terraform-build:
   extends: .tf_build
   needs:
@@ -222,16 +215,6 @@ update-standalone-repo:
     - <<: *fork
       when: never
     - *release
-
-release-ruby-image:
-  extends: .release_ruby_image
-  dependencies: []
-  rules:
-    - <<: *fork
-      when: never
-    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
-      changes:
-        - .gitlab/ci/Dockerfile
 
 # ======================================================================================================================
 # Deploy Stage
