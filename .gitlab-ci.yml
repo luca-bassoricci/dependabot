@@ -21,6 +21,22 @@
   - Gemfile.lock
 .tf_changes: &tf_changes
   - terraform/**/*
+.deploy_changes: &deploy_changes
+  - app/**/*
+  - config/**/*
+  - db/**/*
+  - kube/**/*
+  - lib/tasks/dependabot.rake
+  - public/**/*
+  - terraform/**/*
+  - .gitlab/ci/**/*
+  - .gitlab-ci.yml
+  - config.ru
+  - Dockerfile
+  - Gemfile
+  - Gemfile.lock
+  - Rakefile
+
 
 # Main rule
 .main: &main
@@ -230,7 +246,8 @@ deploy:
   rules:
     - <<: *fork
       when: never
-    - *master
+    - <<: *master
+      changes: *deploy_changes
 
 destroy:
   extends: .tf_stop
@@ -242,5 +259,6 @@ destroy:
     - <<: *fork
       when: never
     - <<: *master
+      changes: *deploy_changes
       when: manual
       allow_failure: true

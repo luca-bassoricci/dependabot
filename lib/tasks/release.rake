@@ -11,14 +11,9 @@ require_relative "../task_helpers/standalone_release_helper"
 # rubocop:disable Rails/RakeEnvironment
 
 namespace :release do
-  desc "create new release tag and update changelog"
+  desc "create new release tag"
   task(:app, [:version]) do |_task, args|
     ReleaseCreator.call(args[:version])
-  end
-
-  desc "create new gitlab release"
-  task(:gitlab, [:version]) do |_task, args|
-    GitlabReleaseCreator.call(args[:version])
   end
 
   desc "update helm chart version"

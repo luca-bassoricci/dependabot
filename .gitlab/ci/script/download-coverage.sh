@@ -4,9 +4,7 @@
 
 set -e
 
-function log() {
-  echo -e "\033[1;33m$1\033[0m"
-}
+source "$(dirname "$0")/utils.sh"
 
 EXECUTABLE_CODACY="codacy-coverage-reporter-${CODACY_VERSION}"
 EXECUTABLE_CODECOV="codecov-${CODECOV_VERSION}"

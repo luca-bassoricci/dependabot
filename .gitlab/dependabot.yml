@@ -5,8 +5,8 @@ updates:
     schedule:
       interval: daily
     commit-message:
-      prefix: dependency
-      prefix-development: development-dependency
+      trailers:
+        - changelog: dependency
     assignees:
       - andrcuns
     rebase-strategy: auto
@@ -15,7 +15,8 @@ updates:
     schedule:
       interval: daily
     commit-message:
-      prefix: dependency
+      trailers:
+        - changelog: dependency
     assignees:
       - andrcuns
   - package-ecosystem: docker
@@ -23,7 +24,8 @@ updates:
     schedule:
       interval: daily
     commit-message:
-      prefix: development-dependency
+      trailers:
+        - changelog: development-dependency
     assignees:
       - andrcuns
   - package-ecosystem: docker
@@ -31,7 +33,8 @@ updates:
     schedule:
       interval: daily
     commit-message:
-      prefix: development-dependency
+      trailers:
+        - changelog: development-dependency
     assignees:
       - andrcuns
   - package-ecosystem: terraform
@@ -39,6 +42,7 @@ updates:
     schedule:
       interval: daily
     commit-message:
-      prefix: development-dependency
+      trailers:
+        - changelog: deployment
     assignees:
       - andrcuns

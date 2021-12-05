@@ -22,7 +22,7 @@ class StandaloneReleaseHelper
       CI_FILE,
       "master",
       updated_gitlab_ci,
-      "dependency: Update dependabot-gitlab version to #{version}"
+      "Update dependabot-gitlab version to #{version}\n\nchangelog: dependency"
     )
     gitlab.create_tag(PROJECT, version, "master")
   end
