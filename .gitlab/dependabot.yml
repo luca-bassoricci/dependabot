@@ -28,15 +28,6 @@ updates:
         - changelog: development-dependency
     assignees:
       - andrcuns
-  - package-ecosystem: docker
-    directory: /.gitlab/ci
-    schedule:
-      interval: daily
-    commit-message:
-      trailers:
-        - changelog: development-dependency
-    assignees:
-      - andrcuns
   - package-ecosystem: terraform
     directory: /terraform
     schedule:
