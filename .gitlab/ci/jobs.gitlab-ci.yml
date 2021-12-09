@@ -52,6 +52,7 @@ include:
     - bundle install
   cache:
     - *gem_cache
+  interruptible: true
 
 .terraform_runner:
   image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
@@ -67,6 +68,7 @@ include:
   before_script:
     - cd terraform
   cache: *tf_cache
+  interruptible: true
 
 .buildkit_runner:
   image:
@@ -81,6 +83,7 @@ include:
   script:
     - .gitlab/ci/script/build.sh
   retry: 2
+  interruptible: true
 
 .docker_runner:
   image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:20.10.5
@@ -317,6 +320,7 @@ variables:
     SETTINGS__GITLAB_ACCESS_TOKEN: $GITLAB_ACCESS_TOKEN
   script:
     - bundle exec rake "release:chart[$CI_COMMIT_TAG]"
+  interruptible: false
 
 .update_standalone:
   extends: .ruby_runner
@@ -325,6 +329,7 @@ variables:
     SETTINGS__GITLAB_ACCESS_TOKEN: $GITLAB_ACCESS_TOKEN
   script:
     - bundle exec rake "release:standalone[$CI_COMMIT_TAG]"
+  interruptible: false
 
 .tf_deploy:
   extends: .terraform_runner
@@ -333,6 +338,7 @@ variables:
   script:
     - gitlab-terraform plan
     - gitlab-terraform apply
+  interruptible: false
 
 .tf_stop:
   extends: .terraform_runner
@@ -342,3 +348,4 @@ variables:
     - gitlab-terraform init
     - gitlab-terraform plan
     - gitlab-terraform destroy
+  interruptible: false
