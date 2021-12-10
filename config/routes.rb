@@ -13,8 +13,8 @@ Rails.application.routes.draw do
   namespace :api, defaults: { format: :json } do
     resources :hooks, only: [:create]
     resources :notify_release, only: [:create]
-    namespace :project do
-      resource :add, only: [:create]
+    resources :projects, only: %i[index create show destroy]
+    scope :projects do
       resources :registration, only: [:create] if AppConfig.project_registration == "system_hook"
     end
   end

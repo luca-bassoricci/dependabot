@@ -42,9 +42,9 @@ module Dependabot
     #
     # @return [void]
     def save_project
-      project.config = config || []
       project.id = gitlab_project.id
       project.web_url = gitlab_project.web_url
+      project.config = config if config
 
       project.tap(&:save!)
     end
