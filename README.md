@@ -16,8 +16,8 @@ Application providing automated dependency updates based on [dependabot-core](ht
 
 # Docker image variants
 
-* Release version - `docker.io/andrcuns/dependabot-gitlab:latest`
-* Latest master - `registry.gitlab.com/dependabot-gitlab/dependabot:master-latest`
+- Release version - `docker.io/andrcuns/dependabot-gitlab:latest`
+- Latest master - `registry.gitlab.com/dependabot-gitlab/dependabot:master-latest`
 
 # Usage
 
@@ -28,15 +28,15 @@ It is possible to use app in "standalone" mode without the need to deploy. Proje
 This mode can be used similarly to [dependabot-script](https://github.com/dependabot/dependabot-script), which inspired
 creation of this project. Standalone mode is limited to following features:
 
-* basic dependency updates
-* limited ability of MR automerge
+- basic dependency updates
+- limited ability of MR automerge
 
 Features not supported:
 
-* automatic closure of superseeded merge requests
-* merge request commands
-* webhooks
-* UI with managed project list
+- automatic closure of superseeded merge requests
+- merge request commands
+- webhooks
+- UI with managed project list
 
 ## Service
 
@@ -72,13 +72,13 @@ Repository must contain `.gitlab/dependabot.yml` configuration for dependabot up
 `dependabot-gitlab` strives to achieve parity with all possible Github native options.
 Some of the options can have slightly different behavior which is described in the documentation linked below.
 
-* Github documentation: [configuration options](https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates)
-* Additional `dependabot-gitlab` specific options: [configuration options](doc/dependabot.md)
+- Github documentation: [configuration options](https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates)
+- Additional `dependabot-gitlab` specific options: [configuration options](doc/dependabot.md)
 
 Following configuration options are currently supported:
 
 | option                             | dependabot         | dependabot-standalone |
-|------------------------------------|--------------------|-----------------------|
+| ---------------------------------- | ------------------ | --------------------- |
 | `package-ecosystem`                | :white_check_mark: | :white_check_mark:    |
 | `directory`                        | :white_check_mark: | :white_check_mark:    |
 | `allow`                            | :white_check_mark: | :white_check_mark:    |
@@ -116,10 +116,10 @@ For all configuration options, refer to [chart repository](https://github.com/an
 
 If `env.dependabotUrl` in helm values or `SETTINGS__DEPENDABOT_URL` is not set, following [webhooks](https://docs.gitlab.com/ee/user/project/integrations/webhooks.html) with url `http://{dependabot_host}/api/hooks` and optional secret token have to be created in project manually:
 
-* `Push events` - default repository branch
-* `Merge request events`
-* `Comments`
-* `Pipeline events`
+- `Push events` - default repository branch
+- `Merge request events`
+- `Comments`
+- `Pipeline events`
 
 It is possible to set up system hooks on Gitlab instance level as well. Make sure `SETTINGS__CREATE_PROJECT_HOOK` is set to `false` so project specific hooks are not created automatically.
 
@@ -144,10 +144,10 @@ Additionally option `SETTINGS__PROJECT_REGISTRATION_NAMESPACE` can restrict name
 
 If [project registration option](doc/environment.md#project_registration) is set to `system_hook`, endpoint `api/project/registration` endpoint is enabled which listens for following [system hook](https://docs.gitlab.com/ee/system_hooks/system_hooks.html) events to automatically register projects:
 
-* `project_create`
-* `project_destroy`
-* `project_rename`
-* `project_transfer`
+- `project_create`
+- `project_destroy`
+- `project_rename`
+- `project_transfer`
 
 Additionally option `SETTINGS__PROJECT_REGISTRATION_NAMESPACE` can restrict namespaces allowed to automatically register projects.
 
@@ -175,22 +175,160 @@ POST `/api/hooks`
 
 Handle following gitlab event webhooks
 
-* `Push events` - default repository branch
-* `Merge request events`
-* `Comments`
-* `Pipeline events`
+- `Push events` - default repository branch
+- `Merge request events`
+- `Comments`
+- `Pipeline events`
 
-## Add project
+## List projects
 
-POST `/api/project/add`
+GET `/api/projects`
 
-Add new project or update existing one and sync jobs
+Response:
+
+```json
+[
+  {
+    "id": 1,
+    "name": "dependabot-gitlab/dependabot",
+    "forked_from_id": null,
+    "webhook_id": 1,
+    "web_url": "https://gitlab.com/dependabot-gitlab/dependabot",
+    "config": [
+      {
+        "package_manager": "bundler",
+        "package_ecosystem": "bundler",
+        "directory": "/",
+        "milestone": "0.0.1",
+        "assignees": ["john_doe"],
+        "reviewers": ["john_smith"],
+        "approvers": ["jane_smith"],
+        "custom_labels": ["dependency"],
+        "open_merge_requests_limit": 10,
+        "cron": "00 02 * * sun Europe/Riga",
+        "branch_name_separator": "-",
+        "branch_name_prefix": "dependabot",
+        "allow": [
+          {
+            "dependency_type": "direct"
+          }
+        ],
+        "ignore": [
+          {
+            "dependency_name": "rspec",
+            "versions": ["3.x", "4.x"]
+          },
+          {
+            "dependency_name": "faker",
+            "update_types": ["version-update:semver-major"]
+          }
+        ],
+        "rebase_strategy": "auto",
+        "auto_merge": true,
+        "versioning_strategy": "lockfile_only",
+        "reject_external_code": true,
+        "commit_message_options": {
+          "prefix": "dep",
+          "prefix_development": "bundler-dev",
+          "include_scope": "scope"
+        },
+        "registries": [
+          {
+            "type": "docker_registry",
+            "registry": "https://registry.hub.docker.com",
+            "username": "octocat"
+          }
+        ]
+      }
+    ]
+  }
+]
+```
+
+## Get project
+
+GET `/api/projects/:id`
+
+- `id` - URL escaped full path or id of the project
+
+Response:
 
 ```json
 {
-  "project":"dependabot-gitlab/dependabot"
+  "id": 1,
+  "name": "dependabot-gitlab/dependabot",
+  "forked_from_id": null,
+  "webhook_id": 1,
+  "web_url": "https://gitlab.com/dependabot-gitlab/dependabot",
+  "config": [
+    {
+      "package_manager": "bundler",
+      "package_ecosystem": "bundler",
+      "directory": "/",
+      "milestone": "0.0.1",
+      "assignees": ["john_doe"],
+      "reviewers": ["john_smith"],
+      "approvers": ["jane_smith"],
+      "custom_labels": ["dependency"],
+      "open_merge_requests_limit": 10,
+      "cron": "00 02 * * sun Europe/Riga",
+      "branch_name_separator": "-",
+      "branch_name_prefix": "dependabot",
+      "allow": [
+        {
+          "dependency_type": "direct"
+        }
+      ],
+      "ignore": [
+        {
+          "dependency_name": "rspec",
+          "versions": ["3.x", "4.x"]
+        },
+        {
+          "dependency_name": "faker",
+          "update_types": ["version-update:semver-major"]
+        }
+      ],
+      "rebase_strategy": "auto",
+      "auto_merge": true,
+      "versioning_strategy": "lockfile_only",
+      "reject_external_code": true,
+      "commit_message_options": {
+        "prefix": "dep",
+        "prefix_development": "bundler-dev",
+        "include_scope": "scope"
+      },
+      "registries": [
+        {
+          "type": "docker_registry",
+          "registry": "https://registry.hub.docker.com",
+          "username": "octocat"
+        }
+      ]
+    }
+  ]
 }
 ```
+
+## Add project
+
+POST `/api/projects`
+
+Add new project or update existing one and sync jobs
+
+Request:
+
+```json
+{
+  "project": "dependabot-gitlab/dependabot"
+}
+```
+
+## Delete project
+
+DELETE `/api/projects/:id`
+
+- `id` - URL escaped full path or id of the project
 
 ## Notify release
 
@@ -198,13 +336,13 @@ POST `/api/notify_release`
 
 Notifies Dependabot of dependency release. In response, Dependabot will check all projects and update the package.
 
-* `name`: package name
-* [`package-ecosystem`](https://docs.github.com/en/code-security/supply-chain-security/keeping-your-dependencies-updated-automatically/configuration-options-for-dependency-updates#package-ecosystem): value from supported ecosystem.
+- `name`: package name
+- [`package-ecosystem`](https://docs.github.com/en/code-security/supply-chain-security/keeping-your-dependencies-updated-automatically/configuration-options-for-dependency-updates#package-ecosystem): value from supported ecosystem.
 
 ```json
 {
-  "name":"package-name",
-  "package_ecosystem":"package-ecosystem"
+  "name": "package-name",
+  "package_ecosystem": "package-ecosystem"
 }
 ```
 
@@ -246,9 +384,9 @@ Trigger dependency update for single project and single package managed
 /home/dependabot/app$ bundle exec rake 'dependabot:update[project,package_ecosystem,directory]'
 ```
 
-* `project` - project full path, example: `dependabot-gitlab/dependabot`
-* `package_ecosystem` - `package-ecosystem` parameter like `bundler`
-* `directory` - directory is path where dependency files are stored, usually `/`
+- `project` - project full path, example: `dependabot-gitlab/dependabot`
+- `package_ecosystem` - `package-ecosystem` parameter like `bundler`
+- `directory` - directory is path where dependency files are stored, usually `/`
 
 This task is used to provide standalone use capability
 
@@ -268,7 +406,7 @@ Index page of application, like `http://localhost:3000/` will display a table wi
 
 # Development
 
-* Install dependencies with `bundle install`
-* Setup [pre-commit](https://pre-commit.com/) hooks with `pre-commit install`
-* Make change and make sure tests pass with `bundle exec rspec` (some tests require instance of mongodb and redis which can be started via `docker-compose -f docker-compose.yml up` command)
-* Submit merge request
+- Install dependencies with `bundle install`
+- Setup [pre-commit](https://pre-commit.com/) hooks with `pre-commit install`
+- Make change and make sure tests pass with `bundle exec rspec` (some tests require instance of mongodb and redis which can be started via `docker-compose -f docker-compose.yml up` command)
+- Submit merge request

@@ -2,7 +2,7 @@
 
 RSpec.shared_examples "registration controller" do
   it "handles event" do
-    post_json("/api/project/registration", { event_name: event_name, **request_args })
+    post_json(path, { event_name: event_name, **request_args })
 
     aggregate_failures do
       expect(last_response.status).to eq(200)
@@ -12,8 +12,10 @@ RSpec.shared_examples "registration controller" do
   end
 end
 
-describe Api::Project::RegistrationController, epic: :controllers do
+describe Api::RegistrationController, epic: :controllers do
   include_context "with rack_test"
+
+  let(:path) { "/api/projects/registration" }
 
   let(:project_name) { "project-name" }
   let(:old_project_name) { "old-project-name" }
@@ -34,7 +36,7 @@ describe Api::Project::RegistrationController, epic: :controllers do
     end
 
     it "does not register project from not allowed namespace" do
-      post_json("/api/project/registration", { event_name: event_name, **request_args })
+      post_json(path, { event_name: event_name, **request_args })
 
       aggregate_failures do
         expect(last_response.status).to eq(200)
@@ -80,7 +82,7 @@ describe Api::Project::RegistrationController, epic: :controllers do
     end
 
     it "handles invalid request" do
-      post_json("/api/project/registration", { "funky" => "object" })
+      post_json(path, { "funky" => "object" })
 
       aggregate_failures do
         expect(last_response.status).to eq(400)
@@ -91,7 +93,7 @@ describe Api::Project::RegistrationController, epic: :controllers do
     end
 
     it "handles unsupported event" do
-      post_json("/api/project/registration", { event_name: "not_supported" })
+      post_json(path, { event_name: "not_supported" })
 
       aggregate_failures do
         expect(last_response.status).to eq(400)

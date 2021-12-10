@@ -2,8 +2,8 @@
 
 module Dependabot
   class ProjectRemover < ApplicationService
-    def initialize(project_name)
-      @project_name = project_name
+    def initialize(project_id)
+      @project_id = project_id
     end
 
     def call
@@ -13,23 +13,33 @@ module Dependabot
 
     private
 
-    attr_reader :project_name
+    attr_reader :project_id
+
+    # Project
+    #
+    # @return [Project]
+    def project
+      @project ||= begin
+        find_by = project_id.is_a?(Integer) ? { id: project_id } : { name: project_id }
+        Project.find_by(**find_by)
+      end
+    end
 
     # Delete project
     #
     # @return [void]
     def remove_project
-      log(:info, "Removing project: #{project_name}")
-      Project.find_by(name: project_name).destroy
+      log(:info, "Removing project: #{project_id}")
+      project.destroy
     rescue Mongoid::Errors::DocumentNotFound
-      log(:error, "Project #{project_name} doesn't exist!")
+      log(:error, "Project #{project_id} doesn't exist!")
     end
 
     # Delete dependency update jobs
     #
     # @return [void]
     def delete_all_jobs
-      Cron::JobRemover.call(project_name)
+      Cron::JobRemover.call(project.name)
     end
   end
 end

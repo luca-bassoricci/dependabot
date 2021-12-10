@@ -62,7 +62,7 @@ module Dependabot
       private
 
       def approvers_hash
-        @approvers_hash ||= approvers.keys.map { |k| [k.to_sym, approvers[k]] }.to_h
+        @approvers_hash ||= approvers.keys.map { |key| [key.to_sym, approvers[key]] }.to_h
       end
     end
   end
