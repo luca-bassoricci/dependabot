@@ -13,8 +13,7 @@ module Api
     #
     # @return [String]
     def show
-      args = project_id.is_a?(Integer) ? { id: project_id } : { name: project_id }
-      json_response(body: Project.find_by(**args).sanitized_hash)
+      json_response(body: project.sanitized_hash)
     end
 
     # Add new project or update existing one and schedule jobs
@@ -29,6 +28,20 @@ module Api
       json_response(body: { status: 400, error: "Missing parameter 'project'" }, status: 400)
     end
 
+    # Update project attributes
+    #
+    # @return [String]
+    def update
+      project.update_attributes!(**params.permit(
+        :name,
+        :forked_from_id,
+        :webhook_id,
+        :web_url,
+        :config
+      ))
+      json_response(body: project.sanitized_hash)
+    end
+
     # Remove project
     #
     # @return [String]
@@ -38,21 +51,33 @@ module Api
 
     private
 
+    # Find project
+    #
+    # @return [Project]
+    def project
+      @project ||= begin
+        args = project_id.is_a?(Integer) ? { id: project_id } : { name: project_id }
+        Project.find_by(**args)
+      end
+    end
+
     # Project name
     #
     # @return [String]
     def project_name
-      params.require(:project)
+      @project_name ||= params.require(:project)
     end
 
     # Project id or full path
     #
     # @return [Integer, String]
     def project_id
-      id = params[:id]
-      return id unless id.match?(/\d/)
+      @project_id ||= begin
+        id = params[:id]
+        return id unless id.match?(/\d/)
 
-      id.to_i
+        id.to_i
+      end
     end
   end
 end
