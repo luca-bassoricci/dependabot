@@ -14,7 +14,7 @@ variable "gitlab_docker_registry_token" {
   default = ""
 }
 
-variable "redis_url" {
+variable "secret_key_base" {
   default = ""
 }
 
@@ -48,12 +48,4 @@ variable "mongodb_db_name" {
 
 variable "image_tag" {
   default = "master-latest"
-}
-
-variable "environment" {
-  default = "development"
-}
-
-variable "chart" {
-  default = "dependabot-gitlab"
 }
