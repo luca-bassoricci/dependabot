@@ -324,6 +324,31 @@ Request:
 }
 ```
 
+## Update project
+
+PUT `/api/projects/:id`
+
+Update project attributes
+
+Request:
+
+- `id` - URL escaped full path or id of the project
+- `name` - full project path
+- `forked_from_id` - id of upstream project
+- `webhook_id` - webhook id
+- `web_url` - project web url
+- `config` - dependabot configuration array
+
+```json
+{
+  "name":"name",
+  "forked_from_id": 1,
+  "webhook_id":1,
+  "web_url": "new-url",
+  "config": []
+}
+```
+
 ## Delete project
 
 DELETE `/api/projects/:id`
