@@ -1,0 +1,20 @@
+credentials:
+  gitlab_access_token: token
+
+projects:
+  - test-repo
+
+image:
+  repository: registry.gitlab.com/dependabot-gitlab/dependabot
+
+migrationJob:
+  activeDeadlineSeconds: 300
+
+redis:
+  master:
+    persistence:
+      enabled: false
+
+mongodb:
+  persistence:
+    enabled: false
