@@ -84,3 +84,5 @@
     - <<: *master
       changes:
         - .gitlab/ci/Dockerfile
+      variables:
+        LATEST_TAG: latest
