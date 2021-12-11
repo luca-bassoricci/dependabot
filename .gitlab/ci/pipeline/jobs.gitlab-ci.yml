@@ -219,7 +219,7 @@ include:
 .e2e:
   stage: test
   extends: .docker_runner
-  image: registry.gitlab.com/dependabot-gitlab/chart/ci:latest
+  image: $CI_REGISTRY_IMAGE/ci:latest
   variables:
     NAMESPACE: dependabot
     DEPENDABOT_PORT: "3000"
