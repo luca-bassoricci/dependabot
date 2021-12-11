@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/narkoz/gitlab.git
-  revision: cfd0d9a988c87dc48c732a204969742c741688df
+  revision: 25f6f765acaf5b792607a0b515bb6ca267bb89d9
   specs:
     gitlab (4.17.0)
       httparty (~> 0.18)
