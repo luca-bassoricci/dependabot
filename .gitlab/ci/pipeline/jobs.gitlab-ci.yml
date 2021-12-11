@@ -306,10 +306,6 @@ include:
 #
 .deploy:
   stage: deploy
-  inherit:
-    variables: false
-  variables:
-    IMAGE_TAG: $CURRENT_TAG
   trigger:
     project: dependabot-gitlab/deploy
     strategy: depend
