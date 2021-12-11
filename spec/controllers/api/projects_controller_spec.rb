@@ -32,7 +32,7 @@ describe Api::ProjectsController, :aggregate_failures, epic: :controllers do
       project.save!
     end
 
-    it "returns single project" do
+    it "returns single project", :integration do
       get("#{path}/#{CGI.escape(project.name)}")
 
       expect(last_response.status).to eq(200)

@@ -1,0 +1,86 @@
+# Reusable rules
+.mr: &mr
+  if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+.master: &master
+  if: '$CI_COMMIT_BRANCH == "master" && ($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "web")'
+.release: &release
+  if: '$CI_COMMIT_TAG =~ /^v[0-9.]+$/ && $CI_PIPELINE_SOURCE == "push"'
+.fork: &fork
+  if: '$CI_PROJECT_ROOT_NAMESPACE != "dependabot-gitlab"'
+  variables:
+    FORK: "true"
+
+.deploy_changes: &deploy_changes
+  - app/**/*
+  - config/**/*
+  - db/**/*
+  - kube/**/*
+  - lib/tasks/dependabot.rake
+  - public/**/*
+  - config.ru
+  - Dockerfile
+  - Gemfile
+  - Gemfile.lock
+  - Rakefile
+
+# ======================================================================================================================
+# Rules
+# ======================================================================================================================
+.rules:main:
+  rules:
+    - *mr
+    - *release
+    - <<: *master
+      variables:
+        LATEST_TAG: latest
+
+.rules:main:mr-manual:
+  rules:
+    - *master
+    - *release
+    - <<: *mr
+      when: manual
+      allow_failure: true
+
+.rules:release:
+  rules:
+    - <<: *fork
+      when: never
+    - *release
+
+.rules:deploy:
+  rules:
+    - <<: *fork
+      when: never
+    - <<: *master
+      changes: *deploy_changes
+
+.rules:dependency-scan:
+  rules:
+    - *master
+    - <<: *mr
+      changes:
+        - Gemfile
+        - Gemfile.lock
+
+.rules:container-scan:
+  rules:
+    - *master
+    - <<: *mr
+      changes:
+        - Dockerfile
+
+.rules:allure-reports:
+  rules:
+    - <<: *fork
+      when: never
+    - *master
+
+.rules:build-ci-image:
+  rules:
+    - <<: *mr
+      changes:
+        - .gitlab/ci/Dockerfile
+    - <<: *master
+      changes:
+        - .gitlab/ci/Dockerfile

@@ -17,7 +17,7 @@ Application providing automated dependency updates based on [dependabot-core](ht
 # Docker image variants
 
 - Release version - `docker.io/andrcuns/dependabot-gitlab:latest`
-- Latest master - `registry.gitlab.com/dependabot-gitlab/dependabot:master-latest`
+- Latest master - `registry.gitlab.com/dependabot-gitlab/dependabot:latest`
 
 # Usage
 

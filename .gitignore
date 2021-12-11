@@ -26,7 +26,3 @@ charts
 
 # Ignore IDE
 .vscode
-
-# Terraform
-terraform/.terraform
-terraform/plan.json

@@ -27,12 +27,6 @@ include:
     - vendor/bundle
   policy: pull
 
-.tf_cache: &tf_cache
-  key: tf-${CI_COMMIT_REF_SLUG}-${TF_STATE_NAME}
-  paths:
-    - terraform/.terraform
-  policy: pull
-
 .coverage_cache: &coverage_cache
   key: coverage-$CODACY_VERSION-$CODECOV_VERSION
   paths:
@@ -54,22 +48,6 @@ include:
     - *gem_cache
   interruptible: true
 
-.terraform_runner:
-  image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
-  variables:
-    GOOGLE_CLOUD_KEYFILE_JSON: $KEYFILE_DEPENDABOT_GITLAB
-    TF_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${TF_STATE_NAME}
-    TF_VAR_dependabot_host: $DEPENDABOT_HOST
-    TF_VAR_gitlab_access_token: $GITLAB_ACCESS_TOKEN
-    TF_VAR_github_access_token: $GITHUB_ACCESS_TOKEN
-    TF_VAR_image_tag: $CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
-    TF_VAR_environment: $TF_STATE_NAME
-    CACHE_FALLBACK_KEY: tf-${CI_DEFAULT_BRANCH}-${TF_STATE_NAME}
-  before_script:
-    - cd terraform
-  cache: *tf_cache
-  interruptible: true
-
 .buildkit_runner:
   image:
     name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/moby/buildkit:v0.9.1
@@ -86,9 +64,10 @@ include:
   interruptible: true
 
 .docker_runner:
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:20.10.5
+  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:20.10.11
   services:
-    - ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:20.10.5-dind
+    - name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:20.10.11-dind
+      alias: docker
   variables:
     DOCKER_HOST: tcp://docker:2376
     DOCKER_TLS_CERTDIR: /certs
@@ -103,30 +82,12 @@ include:
     - while ! test -f "$DOCKER_CERT_PATH/ca.pem"; do sleep 2; done
 
 # ======================================================================================================================
-# Global
-# ======================================================================================================================
-stages:
-  - static analysis
-  - build
-  - test
-  - report
-  - release
-  - deploy
-
-variables:
-  CURRENT_TAG: $CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
-  LATEST_TAG: $CI_COMMIT_REF_SLUG-latest
-  CODACY_VERSION: "13.5.3"
-  CODECOV_VERSION: "0.1.9"
-  DEPENDENCY_SCANNING_DISABLED: "true"
-  SAST_DISABLED: "true"
-  CONTAINER_SCANNING_DISABLED: "true"
-  CODE_QUALITY_DISABLED: "true"
-  TF_STATE_NAME: production
-
-# ======================================================================================================================
 # Jobs
 # ======================================================================================================================
+
+# ----------------------------------------------------------------------------------------------------------------------
+# .pre stage
+#
 .cache_dependencies:
   stage: .pre
   extends: .ruby_runner
@@ -138,15 +99,9 @@ variables:
     - <<: *coverage_cache
       policy: pull-push
 
-.tf_init:
-  stage: .pre
-  extends: .terraform_runner
-  script:
-    - gitlab-terraform init
-  cache:
-    <<: *tf_cache
-    policy: pull-push
-
+# ----------------------------------------------------------------------------------------------------------------------
+# build stage
+#
 .build_app_image:
   stage: build
   extends: .buildkit_runner
@@ -162,17 +117,17 @@ variables:
     DOCKER_CONTEXT: spec/fixture/gitlab
     DOCKER_IMAGE: gitlab-mock
 
-.tf_build:
-  extends: .terraform_runner
+.build_ci_image:
   stage: build
-  resource_group: $TF_STATE_NAME
-  script:
-    - gitlab-terraform plan
-    - gitlab-terraform plan-json
-  artifacts:
-    reports:
-      terraform: terraform/plan.json
+  extends: .buildkit_runner
+  needs: []
+  variables:
+    DOCKER_CONTEXT: .gitlab/ci
+    DOCKER_IMAGE: ci
 
+# ----------------------------------------------------------------------------------------------------------------------
+# 'static analysis' stage
+#
 .rubocop:
   stage: static analysis
   extends: .ruby_runner
@@ -199,19 +154,16 @@ variables:
   variables:
     DS_REMEDIATE: "false"
 
-.tf_fmt:
+.container_scanning:
   stage: static analysis
-  extends: .terraform_runner
-  script:
-    - gitlab-terraform fmt
+  extends: container_scanning
+  variables:
+    DOCKER_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
 
-.tf_validate:
-  stage: static analysis
-  extends: .terraform_runner
-  script:
-    - gitlab-terraform validate
-
-.rspec:
+# ----------------------------------------------------------------------------------------------------------------------
+# test stage
+#
+.unit:
   stage: test
   extends: .ruby_runner
   services:
@@ -242,9 +194,10 @@ variables:
       junit: tmp/rspec.xml
     paths:
       - reports/allure-results
-    expire_in: 7 days
+    expire_in: 1 day
+    when: always
 
-.e2e:
+.standalone:
   stage: test
   image:
     name: $CI_REGISTRY_IMAGE:$CURRENT_TAG
@@ -255,6 +208,7 @@ variables:
   variables:
     SETTINGS__GITLAB_URL: http://gitlab:4567
     SETTINGS__GITLAB_ACCESS_TOKEN: e2e-test
+    SETTINGS__GITHUB_ACCESS_TOKEN: $GITHUB_ACCESS_TOKEN_TEST
     SETTINGS__STANDALONE: "true"
     SETTINGS__LOG_LEVEL: "debug"
     RAILS_ENV: production
@@ -262,14 +216,27 @@ variables:
   script:
     - cd /home/dependabot/app && bundle exec rake 'dependabot:update[test-repo,bundler,/]'
 
-.container_scanning:
+.e2e:
   stage: test
-  extends: container_scanning
+  extends: .docker_runner
+  image: registry.gitlab.com/dependabot-gitlab/chart/ci:latest
   variables:
-    DOCKER_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
+    NAMESPACE: dependabot
+    DEPENDABOT_PORT: "3000"
+  before_script:
+    - .gitlab/ci/script/install-kind.sh
+  script:
+    - .gitlab/ci/script/install-app.sh
+  after_script:
+    - .gitlab/ci/script/log-cluster.sh
+  artifacts:
+    paths:
+      - tmp/*.out
+    expire_in: 1 day
+    when: always
 
 .allure_report:
-  stage: report
+  stage: test
   image:
     name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/andrcuns/allure-report-publisher:0.4.1
     entrypoint: [""]
@@ -287,6 +254,9 @@ variables:
         --copy-latest \
         --color
 
+# ----------------------------------------------------------------------------------------------------------------------
+# release stage
+#
 .release_image:
   stage: release
   extends: .docker_runner
@@ -294,10 +264,10 @@ variables:
     RELEASE_IMAGE: docker.io/andrcuns/dependabot-gitlab
   script:
     - export RELEASE_VERSION=$(echo $CI_COMMIT_TAG | grep -oP 'v\K[0-9.]+')
-    - docker pull $CI_REGISTRY_IMAGE:$CURRENT_TAG
-    - docker tag $CI_REGISTRY_IMAGE:$CURRENT_TAG $RELEASE_IMAGE:$RELEASE_VERSION
-    - docker tag $CI_REGISTRY_IMAGE:$CURRENT_TAG $RELEASE_IMAGE:latest
-    - docker push $RELEASE_IMAGE:$RELEASE_VERSION && docker push $RELEASE_IMAGE:latest
+    - docker pull "$CI_REGISTRY_IMAGE:$CURRENT_TAG"
+    - docker tag "$CI_REGISTRY_IMAGE:$CURRENT_TAG" "$RELEASE_IMAGE:$RELEASE_VERSION"
+    - docker tag "$CI_REGISTRY_IMAGE:$CURRENT_TAG" "$RELEASE_IMAGE:latest"
+    - docker push "$RELEASE_IMAGE:$RELEASE_VERSION" && docker push "$RELEASE_IMAGE:latest"
 
 .gitlab_release:
   stage: release
@@ -331,21 +301,15 @@ variables:
     - bundle exec rake "release:standalone[$CI_COMMIT_TAG]"
   interruptible: false
 
-.tf_deploy:
-  extends: .terraform_runner
+# ----------------------------------------------------------------------------------------------------------------------
+# deploy stage
+#
+.deploy:
   stage: deploy
-  resource_group: $TF_STATE_NAME
-  script:
-    - gitlab-terraform plan
-    - gitlab-terraform apply
-  interruptible: false
-
-.tf_stop:
-  extends: .terraform_runner
-  stage: deploy
-  resource_group: $TF_STATE_NAME
-  script:
-    - gitlab-terraform init
-    - gitlab-terraform plan
-    - gitlab-terraform destroy
-  interruptible: false
+  inherit:
+    variables: false
+  variables:
+    IMAGE_TAG: $CURRENT_TAG
+  trigger:
+    project: dependabot-gitlab/deploy
+    strategy: depend
