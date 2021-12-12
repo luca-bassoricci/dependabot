@@ -29,7 +29,7 @@ updates:
     assignees:
       - andrcuns
   - package-ecosystem: docker
-    directory: /.gitlab/ci/Dockerfile
+    directory: /.gitlab/ci
     schedule:
       interval: daily
     commit-message:
