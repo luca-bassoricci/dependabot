@@ -6,19 +6,6 @@ include:
 # ======================================================================================================================
 # Runners
 # ======================================================================================================================
-.docker_credentials: &docker_credentials
-  - |
-    mkdir -p $HOME/.docker
-    cat <<- EOF > $HOME/.docker/config.json
-    {
-      "auths": {
-        "$DOCKER_REGISTRY": {
-          "auth": "$(echo -n $DOCKER_CREDENTIALS | base64)"
-        }
-      }
-    }
-    EOF
-
 .gem_cache: &gem_cache
   key:
     files:
@@ -47,7 +34,7 @@ include:
 
 .buildkit_runner:
   image:
-    name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/moby/buildkit:v0.9.1
+    name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/moby/buildkit:v0.9.3
     entrypoint: [""]
   before_script:
     - |
@@ -82,6 +69,7 @@ include:
   before_script:
     - '[[ "$CI_JOB_NAME" != "release-image" ]] || echo "$DOCKERHUB_PASSWORD" | docker login -u $DOCKERHUB_USERNAME --password-stdin'
     - while ! test -f "$DOCKER_CERT_PATH/ca.pem"; do sleep 2; done
+  interruptible: true
 
 # ======================================================================================================================
 # Jobs
@@ -248,6 +236,7 @@ include:
     - docker tag "$APP_IMAGE" "$RELEASE_IMAGE:$RELEASE_VERSION"
     - docker tag "$APP_IMAGE" "$RELEASE_IMAGE:latest"
     - docker push "$RELEASE_IMAGE:$RELEASE_VERSION" && docker push "$RELEASE_IMAGE:latest"
+  interruptible: false
 
 .gitlab_release:
   stage: release
@@ -262,6 +251,7 @@ include:
   release:
     tag_name: $CI_COMMIT_TAG
     description: $RELEASE_NOTES_FILE
+  interruptible: false
 
 .update_chart:
   extends: .ruby_runner
