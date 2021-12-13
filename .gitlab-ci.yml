@@ -4,12 +4,19 @@
 stages:
   - build
   - static analysis
-  - test
+  - unit test
+  - e2e test
+  - report
   - release
   - deploy
+  # needed for templates to work
+  - test
 
 variables:
-  CURRENT_TAG: $CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
+  CURRENT_TAG: ${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}
+  APP_IMAGE: ${CI_REGISTRY_IMAGE}:${CURRENT_TAG}
+  TEST_IMAGE: ${CI_REGISTRY_IMAGE}/test:${CURRENT_TAG}
+  MOCK_IMAGE: thiht/smocker:0.17.0
   CODACY_VERSION: "13.5.3"
   CODECOV_VERSION: "0.1.9"
   CHART_VERSION: "^0.2.0"
@@ -19,8 +26,8 @@ variables:
   CODE_QUALITY_DISABLED: "true"
 
 include:
-  - local: .gitlab/ci/pipeline/jobs.gitlab-ci.yml
-  - local: .gitlab/ci/pipeline/rules.gitlab-ci.yml
+  - local: .gitlab/ci/jobs.gitlab-ci.yml
+  - local: .gitlab/ci/rules.gitlab-ci.yml
 
 # ======================================================================================================================
 # Pre Stage
@@ -38,15 +45,15 @@ build-app-image:
     - .build_app_image
     - .rules:main
 
-build-mock-image:
-  extends:
-    - .build_mock_image
-    - .rules:main
-
 build-ci-image:
   extends:
     - .build_ci_image
     - .rules:build-ci-image
+
+build-test-image:
+  extends:
+    - .build_test_image
+    - .rules:main
 
 # ======================================================================================================================
 # Static analysis stage
@@ -94,30 +101,25 @@ container-scan:
     - build-app-image
 
 # ======================================================================================================================
-# Test Stage
+# Unit Test Stage
 # ======================================================================================================================
-unit:
+rspec:
   extends:
-    - .unit
+    - .rspec
     - .rules:main
   needs:
     - cache-dependencies
 
+# ======================================================================================================================
+# E2E Test Stage
+# ======================================================================================================================
 standalone:
   extends:
     - .standalone
     - .rules:main:mr-manual
   needs:
     - build-app-image
-    - build-mock-image
-
-e2e:
-  extends:
-    - .rules:main:mr-manual
-    - .e2e
-  needs:
-    - build-app-image
-    - build-mock-image
+    - build-test-image
 
 # ======================================================================================================================
 # Reporting
@@ -127,7 +129,7 @@ publish-allure-reports:
     - .allure_report
     - .rules:allure-reports
   needs:
-    - unit
+    - rspec
 
 # ======================================================================================================================
 # Release Stage

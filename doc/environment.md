@@ -28,6 +28,8 @@ or
 
 ## Application
 
+* `SECRET_KEY_BASE` - key used for stored credentials encryption
+
 ### Access
 
 * `SETTINGS__GITLAB_URL` - url of gitlab instance, ex: `https://gitlab.com` by default

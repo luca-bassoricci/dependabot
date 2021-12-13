@@ -57,11 +57,11 @@ helm install dependabot dependabot/dependabot-gitlab --set credentials.gitlab_ac
 
 ## Docker Compose
 
-Simple example deployment can be seen in [docker-compose-prod.yml](docker-compose-prod.yml). Deployment consists of 4 containers - web server, sidekiq
-worker, mongodb and redis. Simple production like deployment using `docker-compose` can be done with following command:
+Simple example deployment can be seen in [docker-compose.yml](docker-compose.yml). Deployment consists of 5 containers - web server, sidekiq
+worker, migrations, mongodb and redis. Simple production like deployment using `docker-compose` can be done with following command:
 
 ```bash
-docker-compose -f docker-compose.yml -f docker-compose-prod.yml up
+docker compose up
 ```
 
 # Configuration

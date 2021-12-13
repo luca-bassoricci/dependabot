@@ -80,9 +80,9 @@
   rules:
     - <<: *mr
       changes:
-        - .gitlab/ci/Dockerfile
+        - .gitlab/docker/ci/Dockerfile
     - <<: *master
       changes:
-        - .gitlab/ci/Dockerfile
+        - .gitlab/docker/ci/Dockerfile
       variables:
         LATEST_TAG: latest
