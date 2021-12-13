@@ -7,7 +7,7 @@ source "$(dirname "$0")/utils.sh"
 project="$CI_JOB_NAME"
 
 log "Setup gitlab mock"
-cat <<"YML" | docker-compose -f /dev/stdin -p ${project} up -d --quiet-pull
+cat <<"YML" | docker-compose -f /dev/stdin up -d --quiet-pull
 version: "3"
 
 services:
@@ -39,6 +39,6 @@ docker run --rm -i \
   -e SETTINGS__GITHUB_ACCESS_TOKEN=$GITHUB_ACCESS_TOKEN_TEST \
   -e SETTINGS__STANDALONE=true \
   -e SETTINGS__LOG_LEVEL=debug \
-  --network "${project}_default" \
+  --network "${COMPOSE_PROJECT_NAME}_default" \
   $APP_IMAGE \
   rake 'dependabot:update[dependabot-gitlab/testing,bundler,/]'

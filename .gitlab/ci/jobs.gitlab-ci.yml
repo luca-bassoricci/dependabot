@@ -191,12 +191,14 @@ include:
 .standalone:
   stage: e2e test
   extends: .docker_runner
+  variables:
+    COMPOSE_PROJECT_NAME: dependabot
   script:
     - .gitlab/script/run-standalone.sh
   after_script:
     - |
       docker run --rm -i \
-        --network ${CI_JOB_NAME}_default \
+        --network ${COMPOSE_PROJECT_NAME}_default \
         "${TEST_IMAGE}" \
         curl -X POST -s "gitlab:8081/sessions/verify" | jq
 
