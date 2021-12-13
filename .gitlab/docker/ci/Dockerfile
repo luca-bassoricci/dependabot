@@ -10,6 +10,7 @@ ARG helm_version=v3.7.0
 ARG kubeval_version=v0.16.1
 ARG helmdocs_version=1.5.0
 ARG kind_version=v0.11.1
+ARG compose_version=1.29.2
 
 RUN apk --no-cache add \
   bash \
@@ -74,12 +75,25 @@ RUN set -eux; \
   mv kind /usr/local/bin/
 
 # Install gsutil
-RUN set -eux;\
+RUN set -eux; \
   curl --fail --location --output /tmp/gsutil.tar.gz "https://storage.googleapis.com/pub/gsutil.tar.gz"; \
   \
   tar -xzf /tmp/gsutil.tar.gz -C "/usr/local"; \
   ln -s "/usr/local/gsutil/gsutil" /usr/local/bin/gsutil && \
   rm -f /tmp/gsutil.tar.gz
+
+# Install docker-compose
+RUN set -eux; \
+  apk add --no-cache --virtual .docker-compose-deps \
+  python3-dev \
+  libffi-dev \
+  openssl-dev \
+  gcc \
+  libc-dev \
+  make; \
+  \
+  pip install "docker-compose==${compose_version}"; \
+  apk del .docker-compose-deps
 
 # Install chart testing
 COPY --from=ct /etc/ct/chart_schema.yaml /etc/ct/chart_schema.yaml

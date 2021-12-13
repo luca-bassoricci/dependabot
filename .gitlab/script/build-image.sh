@@ -2,6 +2,8 @@
 
 # Build script for image building on CI
 
+set -e
+
 source "$(dirname "$0")/utils.sh"
 
 if [ -z "$DOCKER_IMAGE" ]; then
@@ -22,13 +24,16 @@ else
   TAGS="$IMAGE:$CURRENT_TAG"
 fi
 
+context="${DOCKER_CONTEXT:-.}"
+dockerfile="${DOCKER_FILE:-$context}"
+
 log "Building image: $IMAGE:$CURRENT_TAG"
 
 $COMMAND build \
   --frontend=dockerfile.v0 \
-  --local context="$DOCKER_CONTEXT" \
-  --local dockerfile="$DOCKER_CONTEXT" \
+  --local context="$context" \
+  --local dockerfile="$dockerfile" \
   --opt build-arg:COMMIT_SHA="$CI_COMMIT_SHA" \
   --opt build-arg:PROJECT_URL="$CI_PROJECT_URL" \
   --opt build-arg:VERSION="${CI_COMMIT_TAG:-$CURRENT_TAG}" \
-  --output type=image,\"name="$TAGS"\",push="$PUSH"
+  --output type=image,\"name="$TAGS"\",push=true

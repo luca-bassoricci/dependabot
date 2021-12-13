@@ -9,7 +9,6 @@ updates:
         - changelog: dependency
     assignees:
       - andrcuns
-    rebase-strategy: auto
   - package-ecosystem: docker
     directory: /
     schedule:
@@ -20,7 +19,7 @@ updates:
     assignees:
       - andrcuns
   - package-ecosystem: docker
-    directory: /spec/fixture/gitlab
+    directory: /.gitlab/docker/test
     schedule:
       interval: daily
     commit-message:
@@ -29,7 +28,7 @@ updates:
     assignees:
       - andrcuns
   - package-ecosystem: docker
-    directory: /.gitlab/ci
+    directory: /.gitlab/docker/ci
     schedule:
       interval: daily
     commit-message:

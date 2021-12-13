@@ -35,14 +35,11 @@ include:
   policy: pull
 
 .ruby_runner:
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/ruby:2.7-bullseye
+  image: ${CI_REGISTRY_IMAGE}/test:latest
   variables:
-    BUNDLER_VERSION: "2.2.32"
     BUNDLE_PATH: vendor/bundle
     BUNDLE_FROZEN: "true"
-    BUNDLE_SUPPRESS_INSTALL_USING_MESSAGES: "true"
   before_script:
-    - gem install bundler -v ${BUNDLER_VERSION} --no-document
     - bundle install
   cache:
     - *gem_cache
@@ -52,19 +49,25 @@ include:
   image:
     name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/moby/buildkit:v0.9.1
     entrypoint: [""]
-  variables:
-    DOCKER_CREDENTIALS: $CI_REGISTRY_USER:$CI_REGISTRY_PASSWORD
-    DOCKER_REGISTRY: registry.gitlab.com
-    PUSH: "true"
   before_script:
-    - *docker_credentials
+    - |
+      mkdir -p $HOME/.docker
+      cat <<- EOF > $HOME/.docker/config.json
+      {
+        "auths": {
+          "registry.gitlab.com": {
+            "auth": "$(echo -n $CI_REGISTRY_USER:$CI_REGISTRY_PASSWORD | base64)"
+          }
+        }
+      }
+      EOF
   script:
-    - .gitlab/ci/script/build.sh
+    - .gitlab/script/build-image.sh
   retry: 2
   interruptible: true
 
 .docker_runner:
-  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:20.10.11
+  image: ${CI_REGISTRY_IMAGE}/ci:latest
   services:
     - name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:20.10.11-dind
       alias: docker
@@ -77,8 +80,7 @@ include:
     DOCKER_CREDENTIALS: $DOCKERHUB_USERNAME:$DOCKERHUB_PASSWORD
     DOCKER_REGISTRY: https://index.docker.io/v1/
   before_script:
-    - *docker_credentials
-    - apk -qq update && apk -qq add grep
+    - '[[ "$CI_JOB_NAME" != "release-image" ]] || echo "$DOCKERHUB_PASSWORD" | docker login -u $DOCKERHUB_USERNAME --password-stdin'
     - while ! test -f "$DOCKER_CERT_PATH/ca.pem"; do sleep 2; done
 
 # ======================================================================================================================
@@ -92,7 +94,7 @@ include:
   stage: .pre
   extends: .ruby_runner
   script:
-    - .gitlab/ci/script/download-coverage.sh
+    - .gitlab/script/download-coverage.sh
   cache:
     - <<: *gem_cache
       policy: pull-push
@@ -106,24 +108,22 @@ include:
   stage: build
   extends: .buildkit_runner
   needs: []
-  variables:
-    DOCKER_CONTEXT: "."
-
-.build_mock_image:
-  stage: build
-  extends: .buildkit_runner
-  needs: []
-  variables:
-    DOCKER_CONTEXT: spec/fixture/gitlab
-    DOCKER_IMAGE: gitlab-mock
 
 .build_ci_image:
   stage: build
   extends: .buildkit_runner
   needs: []
   variables:
-    DOCKER_CONTEXT: .gitlab/ci
+    DOCKER_FILE: .gitlab/docker/ci
     DOCKER_IMAGE: ci
+
+.build_test_image:
+  stage: build
+  extends: .buildkit_runner
+  needs: []
+  variables:
+    DOCKER_FILE: .gitlab/docker/test
+    DOCKER_IMAGE: test
 
 # ----------------------------------------------------------------------------------------------------------------------
 # 'static analysis' stage
@@ -158,13 +158,13 @@ include:
   stage: static analysis
   extends: container_scanning
   variables:
-    DOCKER_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
+    DOCKER_IMAGE: $APP_IMAGE
 
 # ----------------------------------------------------------------------------------------------------------------------
-# test stage
+# unit test stage
 #
-.unit:
-  stage: test
+.rspec:
+  stage: unit test
   extends: .ruby_runner
   services:
     - name: bitnami/redis:6.2-debian-10
@@ -197,46 +197,26 @@ include:
     expire_in: 1 day
     when: always
 
+# ----------------------------------------------------------------------------------------------------------------------
+# e2e test stage
+#
 .standalone:
-  stage: test
-  image:
-    name: $CI_REGISTRY_IMAGE:$CURRENT_TAG
-    entrypoint: [""]
-  services:
-    - name: $CI_REGISTRY_IMAGE/gitlab-mock:$CURRENT_TAG
-      alias: gitlab
-  variables:
-    SETTINGS__GITLAB_URL: http://gitlab:4567
-    SETTINGS__GITLAB_ACCESS_TOKEN: e2e-test
-    SETTINGS__GITHUB_ACCESS_TOKEN: $GITHUB_ACCESS_TOKEN_TEST
-    SETTINGS__STANDALONE: "true"
-    SETTINGS__LOG_LEVEL: "debug"
-    RAILS_ENV: production
-    GIT_STRATEGY: none
-  script:
-    - cd /home/dependabot/app && bundle exec rake 'dependabot:update[test-repo,bundler,/]'
-
-.e2e:
-  stage: test
+  stage: e2e test
   extends: .docker_runner
-  image: $CI_REGISTRY_IMAGE/ci:latest
-  variables:
-    NAMESPACE: dependabot
-    DEPENDABOT_PORT: "3000"
-  before_script:
-    - .gitlab/ci/script/install-kind.sh
   script:
-    - .gitlab/ci/script/install-app.sh
+    - .gitlab/script/run-standalone.sh
   after_script:
-    - .gitlab/ci/script/log-cluster.sh
-  artifacts:
-    paths:
-      - tmp/*.out
-    expire_in: 1 day
-    when: always
+    - |
+      docker run --rm -i \
+        --network ${CI_JOB_NAME}_default \
+        "${TEST_IMAGE}" \
+        curl -X POST -s "gitlab:8081/sessions/verify" | jq
 
+# ----------------------------------------------------------------------------------------------------------------------
+# test report stage
+#
 .allure_report:
-  stage: test
+  stage: report
   image:
     name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/andrcuns/allure-report-publisher:0.4.1
     entrypoint: [""]
@@ -264,9 +244,9 @@ include:
     RELEASE_IMAGE: docker.io/andrcuns/dependabot-gitlab
   script:
     - export RELEASE_VERSION=$(echo $CI_COMMIT_TAG | grep -oP 'v\K[0-9.]+')
-    - docker pull "$CI_REGISTRY_IMAGE:$CURRENT_TAG"
-    - docker tag "$CI_REGISTRY_IMAGE:$CURRENT_TAG" "$RELEASE_IMAGE:$RELEASE_VERSION"
-    - docker tag "$CI_REGISTRY_IMAGE:$CURRENT_TAG" "$RELEASE_IMAGE:latest"
+    - docker pull "$APP_IMAGE"
+    - docker tag "$APP_IMAGE" "$RELEASE_IMAGE:$RELEASE_VERSION"
+    - docker tag "$APP_IMAGE" "$RELEASE_IMAGE:latest"
     - docker push "$RELEASE_IMAGE:$RELEASE_VERSION" && docker push "$RELEASE_IMAGE:latest"
 
 .gitlab_release:
@@ -278,7 +258,7 @@ include:
   before_script:
     - apk --no-cache add -q jq bash curl grep
   script:
-    - .gitlab/ci/script/changelog.sh
+    - .gitlab/script/changelog.sh
   release:
     tag_name: $CI_COMMIT_TAG
     description: $RELEASE_NOTES_FILE

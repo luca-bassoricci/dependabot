@@ -1,5 +1,18 @@
 version: "3.8"
 
+x-environment: &environment_variables
+  REDIS_URL: redis://redis:6379
+  MONGODB_URL: mongodb:27017
+  RAILS_ENV: production
+  SENTRY_DSN:
+  SETTINGS__LOG_LEVEL:
+  SETTINGS__GITLAB_URL:
+  SETTINGS__GITHUB_ACCESS_TOKEN:
+  SETTINGS__GITLAB_ACCESS_TOKEN:
+x-volumes: &service_volumes
+  volumes:
+    - tmp:/home/dependabot/app/tmp
+
 services:
   redis:
     image: bitnami/redis:6.2-debian-10
@@ -18,6 +31,54 @@ services:
     environment:
       ALLOW_EMPTY_PASSWORD: "yes"
 
+  migration:
+    image: ${APP_IMAGE:-andrcuns/dependabot-gitlab:latest}
+    depends_on:
+      - mongodb
+    <<: *service_volumes
+    environment:
+      <<: *environment_variables
+    command: rails db:migrate
+
+  web:
+    image: ${APP_IMAGE:-andrcuns/dependabot-gitlab:latest}
+    depends_on:
+      - redis
+      - migration
+    <<: *service_volumes
+    environment:
+      <<: *environment_variables
+      RAILS_SERVE_STATIC_FILES: "true"
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:-key}
+    ports:
+      - 3000:3000
+    command: rails server
+    healthcheck:
+      test: ["CMD", "curl -f localhost:3000/healthcheck"]
+      interval: 10s
+      timeout: 2s
+      retries: 10
+      start_period: 20s
+
+  worker:
+    image: ${APP_IMAGE:-andrcuns/dependabot-gitlab:latest}
+    depends_on:
+      - redis
+      - migration
+    <<: *service_volumes
+    environment:
+      <<: *environment_variables
+    ports:
+      - 7433:7433
+    command: sidekiq
+    healthcheck:
+      test: ["CMD", "curl -f localhost:7433/healthcheck"]
+      interval: 60s
+      timeout: 2s
+      retries: 10
+      start_period: 20s
+
 volumes:
   redis-data:
   mongodb-data:
+  tmp:

@@ -1,0 +1,399 @@
+# Fetch project
+- request:
+    method: GET
+    path: /api/v4/projects/dependabot-gitlab/testing
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |
+      {
+        "id": 32058529,
+        "description": "Project for e2e tests",
+        "default_branch": "main",
+        "web_url": "https://gitlab.com/testing"
+      }
+
+# Fetch config file
+- request:
+    method: GET
+    path: /api/v4/projects/dependabot-gitlab/testing/repository/files/.gitlab/dependabot.yml/raw
+  response:
+    status: 200
+    headers:
+      Content-Type: text/plain
+    body: |
+      version: 2
+      updates:
+        - package-ecosystem: bundler
+          directory: "/"
+          schedule:
+            interval: weekly
+            day: sunday
+            time: "02:00"
+            timezone: Europe/Riga
+          commit-message:
+            prefix: "dep"
+            prefix-development: "bundler-dev"
+            include: "scope"
+            trailers:
+              - changelog: "dep"
+          ignore:
+            - dependency-name: "faker"
+              update-types: ["version-update:semver-major"]
+          assignees:
+            - andrcuns
+          reviewers:
+            - acunskis
+          approvers:
+            - jane_smith
+          open-pull-requests-limit: 10
+          labels:
+            - dependency
+          pull-request-branch-name:
+            separator: "-"
+          rebase-strategy: auto
+
+# Get main branch HEAD
+- request:
+    method: GET
+    path: /api/v4/projects/dependabot-gitlab/testing/repository/branches/main
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |
+      {
+        "name": "main",
+        "commit": {
+          "id": "d522b9716589980822850be63025b767f0d78768",
+          "short_id": "d522b971"
+        }
+      }
+
+# Get file tree
+- request:
+    method: GET
+    path: /api/v4/projects/dependabot-gitlab/testing/repository/tree
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |
+      [
+        {
+          "id": "e0598ccd894fcc4b439de335a5debe58ca58c3d1",
+          "name": ".gitlab",
+          "type": "tree",
+          "path": ".gitlab",
+          "mode": "040000"
+        },
+        {
+          "id": "0fa78ba25aee3ed6f754c01441b7eb3d8897c3f7",
+          "name": "Gemfile",
+          "type": "blob",
+          "path": "Gemfile",
+          "mode": "100644"
+        },
+        {
+          "id": "c385e8593f517c93a25360a064a11fd8bb8f9353",
+          "name": "Gemfile.lock",
+          "type": "blob",
+          "path": "Gemfile.lock",
+          "mode": "100644"
+        },
+        {
+          "id": "2b573b36cb17a7bc4e123215ebc90e6851cecc2f",
+          "name": "README.md",
+          "type": "blob",
+          "path": "README.md",
+          "mode": "100644"
+        }
+      ]
+
+# Get dependency files
+- request:
+    path: /api/v4/projects/dependabot-gitlab/testing/repository/files/Gemfile
+    method: GET
+    query_params:
+      ref: d522b9716589980822850be63025b767f0d78768
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |
+      {
+        "file_name": "Gemfile",
+        "file_path": "Gemfile",
+        "size": 133,
+        "encoding": "base64",
+        "content_sha256": "5c7ebbeff2fe8fd21c8af05f2c137c7b33d5c5ebc35cd152c0ccf771ba7b53eb",
+        "ref": "d522b9716589980822850be63025b767f0d78768",
+        "blob_id": "0fa78ba25aee3ed6f754c01441b7eb3d8897c3f7",
+        "commit_id": "d522b9716589980822850be63025b767f0d78768",
+        "last_commit_id": "a561e142fb670429c9661ecafc581acc6a5d16d2",
+        "content": "IyBmcm96ZW5fc3RyaW5nX2xpdGVyYWw6IHRydWUKCnNvdXJjZSAiaHR0cHM6Ly9ydWJ5Z2Vtcy5vcmciCgpnZW0gImZha2VyIiwgIn4+IDEuOSIKZ2VtICJnaXQiLCAifj4gMS44LjAiCmdlbSAicnVib2NvcCIsICJ+PiAxLjE5LjEiCg=="
+      }
+- request:
+    path: /api/v4/projects/dependabot-gitlab/testing/repository/files/Gemfile.lock
+    method: GET
+    query_params:
+      ref: d522b9716589980822850be63025b767f0d78768
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |
+      {
+        "file_name": "Gemfile.lock",
+        "file_path": "Gemfile.lock",
+        "size": 870,
+        "encoding": "base64",
+        "content_sha256": "253572af01fdebfe6a9ecda792f1070cfb6ea8f3a8d9d1d860c5d685837c574d",
+        "ref": "d522b9716589980822850be63025b767f0d78768",
+        "blob_id": "c385e8593f517c93a25360a064a11fd8bb8f9353",
+        "commit_id": "d522b9716589980822850be63025b767f0d78768",
+        "last_commit_id": "a561e142fb670429c9661ecafc581acc6a5d16d2",
+        "content": "R0VNCiAgcmVtb3RlOiBodHRwczovL3J1YnlnZW1zLm9yZy8KICBzcGVjczoKICAgIGFzdCAoMi40LjIpCiAgICBjb25jdXJyZW50LXJ1YnkgKDEuMS45KQogICAgZmFrZXIgKDEuOS42KQogICAgICBpMThuICg+PSAwLjcpCiAgICBnaXQgKDEuOC4wKQogICAgICByY2hhcmRldCAofj4gMS44KQogICAgaTE4biAoMS44LjExKQogICAgICBjb25jdXJyZW50LXJ1YnkgKH4+IDEuMCkKICAgIHBhcmFsbGVsICgxLjIxLjApCiAgICBwYXJzZXIgKDMuMC4zLjIpCiAgICAgIGFzdCAofj4gMi40LjEpCiAgICByYWluYm93ICgzLjAuMCkKICAgIHJjaGFyZGV0ICgxLjguMCkKICAgIHJlZ2V4cF9wYXJzZXIgKDIuMi4wKQogICAgcmV4bWwgKDMuMi41KQogICAgcnVib2NvcCAoMS4xOS4xKQogICAgICBwYXJhbGxlbCAofj4gMS4xMCkKICAgICAgcGFyc2VyICg+PSAzLjAuMC4wKQogICAgICByYWluYm93ICg+PSAyLjIuMiwgPCA0LjApCiAgICAgIHJlZ2V4cF9wYXJzZXIgKD49IDEuOCwgPCAzLjApCiAgICAgIHJleG1sCiAgICAgIHJ1Ym9jb3AtYXN0ICg+PSAxLjkuMSwgPCAyLjApCiAgICAgIHJ1YnktcHJvZ3Jlc3NiYXIgKH4+IDEuNykKICAgICAgdW5pY29kZS1kaXNwbGF5X3dpZHRoICg+PSAxLjQuMCwgPCAzLjApCiAgICBydWJvY29wLWFzdCAoMS4xNS4wKQogICAgICBwYXJzZXIgKD49IDMuMC4xLjEpCiAgICBydWJ5LXByb2dyZXNzYmFyICgxLjExLjApCiAgICB1bmljb2RlLWRpc3BsYXlfd2lkdGggKDIuMS4wKQoKUExBVEZPUk1TCiAgeDg2XzY0LWRhcndpbi0yMAoKREVQRU5ERU5DSUVTCiAgZmFrZXIgKH4+IDEuOSkKICBnaXQgKH4+IDEuOC4wKQogIHJ1Ym9jb3AgKH4+IDEuMTkuMSkKCkJVTkRMRUQgV0lUSAogICAyLjIuMzEK"
+      }
+
+# Find users
+- request:
+    path: /api/v4/users
+    method: GET
+    query_params:
+      search: andrcuns
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |
+      [
+        {
+          "id": 1,
+          "username": "andrcuns"
+        }
+      ]
+- request:
+    path: /api/v4/users
+    method: GET
+    query_params:
+      search: acunskis
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |
+      [
+        {
+          "id": 2,
+          "username": "acunskis"
+        }
+      ]
+- request:
+    path: /api/v4/users
+    method: GET
+    query_params:
+      search: jane_smith
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |
+      [
+        {
+          "id": 3,
+          "username": "jane_smith"
+        }
+      ]
+
+# Check if branches exist
+- request:
+    path:
+      matcher: ShouldStartWith
+      value: /api/v4/projects/dependabot-gitlab/testing/repository/branches/dependabot-bundler-git
+    method: GET
+  response:
+    status: 404
+    headers:
+      Content-Type: application/json
+    body: |
+      {
+        "message": "404 Branch Not Found"
+      }
+- request:
+    path:
+      matcher: ShouldStartWith
+      value: /api/v4/projects/dependabot-gitlab/testing/repository/branches/dependabot-bundler-rubocop
+    method: GET
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |
+      {
+        "commit": {
+          "id": "bd101cbfe6c71201abdb03e3193766de42f64560",
+          "short_id": "bd101cbf"
+        }
+      }
+
+# Create branches
+- request:
+    path: /api/v4/projects/dependabot-gitlab/testing/repository/branches
+    method: POST
+    query_params:
+      branch:
+        matcher: ShouldStartWith
+        value: dependabot-bundler-git
+      ref: d522b9716589980822850be63025b767f0d78768
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |
+      []
+
+# Check commit
+- request:
+    path: /api/v4/projects/dependabot-gitlab/testing/repository/commits/bd101cbfe6c71201abdb03e3193766de42f64560
+    method: GET
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |
+      {
+        "id": "bd101cbfe6c71201abdb03e3193766de42f64560",
+        "short_id": "bd101cbf",
+        "title": "dep(deps): bump rubocop"
+      }
+
+# Create commit
+- request:
+    path: /api/v4/projects/dependabot-gitlab/testing/repository/commits
+    method: POST
+    body:
+      matcher: ShouldMatch
+      value: ^branch=(dependabot-bundler-git|dependabot-bundler-rubocop).*
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |
+      []
+
+# Fetch labels
+- request:
+    path: /api/v4/projects/dependabot-gitlab/testing/labels
+    method: GET
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |
+      [
+        {
+          "id": 15387018,
+          "name": "dependencies"
+        },
+        {
+          "id": 15387019,
+          "name": "ruby"
+        }
+      ]
+
+# Check if MR exists
+- request:
+    path: /api/v4/projects/dependabot-gitlab/testing/merge_requests
+    method: GET
+    query_params:
+      state: closed
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |
+      []
+- request:
+    path: /api/v4/projects/dependabot-gitlab/testing/merge_requests
+    method: GET
+    query_params:
+      source_branch:
+        matcher: ShouldStartWith
+        value: dependabot-bundler-rubocop
+      state:
+        matcher: ShouldNotEqual
+        value: closed
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |
+      [
+        {
+          "id": 2,
+          "iid": 2,
+          "project_id": 32058529,
+          "web_url": "https://gitlab.com/dependabot-gitlab/testing/-/merge_requests/2",
+          "reference": "!2",
+          "references": {
+            "short": "!2",
+            "relative": "!2",
+            "full": "dependabot-gitlab/testing!2"
+          },
+          "sha": "bd101cbfe6c71201abdb03e3193766de42f64560",
+          "has_conflicts": true
+        }
+      ]
+- request:
+    path: /api/v4/projects/dependabot-gitlab/testing/merge_requests/2
+    method: GET
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |
+      {
+        "source_branch": "dependabot-bundler-rubocop",
+        "target_branch": "main"
+      }
+
+# Create MR
+- request:
+    path: /api/v4/projects/dependabot-gitlab/testing/merge_requests
+    method: POST
+    body:
+      matcher: ShouldContainSubstring
+      value: source_branch=dependabot-bundler-git
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |
+      {
+        "id": 1,
+        "iid": 1,
+        "project_id": 32058529,
+        "web_url": "https://gitlab.com/dependabot-gitlab/testing/-/merge_requests/1",
+        "reference": "!2",
+        "references": {
+          "short": "!1",
+          "relative": "!1",
+          "full": "dependabot-gitlab/testing!1"
+        }
+      }
+
+# Set approvals
+- request:
+    path: /api/v4/projects/dependabot-gitlab/testing/merge_requests/1/approval_rules
+    method: POST
+    body:
+      matcher: ShouldContainSubstring
+      value: name=dependency-updates&approvals_required=0&user_ids%5B%5D=3
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |
+      []
