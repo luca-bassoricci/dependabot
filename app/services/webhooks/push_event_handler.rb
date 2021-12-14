@@ -5,7 +5,7 @@ module Webhooks
   class PushEventHandler < ApplicationService
     # @param [String] project
     # @param [Array] commits
-    def initialize(project_name, commits)
+    def initialize(project_name:, commits:)
       @project_name = project_name
       @commits = commits
       @config_filename = DependabotConfig.config_filename
@@ -18,7 +18,9 @@ module Webhooks
       return unless modified_config? || deleted_config?
       return clean if deleted_config?
 
-      Dependabot::ProjectCreator.call(project_name).tap { |project| Cron::JobSync.call(project) }
+      Dependabot::ProjectCreator.call(project_name)
+                                .tap { |project| Cron::JobSync.call(project) }
+                                .sanitized_hash
     end
 
     private

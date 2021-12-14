@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 describe DependabotController, :integration, epic: :controllers do
-  include_context "with rack_test"
   include_context "with dependabot helper"
 
   let(:project) { Project.create!(name: repo, config: dependabot_config) }
@@ -19,9 +18,9 @@ describe DependabotController, :integration, epic: :controllers do
     update_job.save!
   end
 
-  it "returns list of jobs" do
+  it "returns index page" do
     get("/")
 
-    expect(last_response.status).to eq(200)
+    expect_status(200)
   end
 end

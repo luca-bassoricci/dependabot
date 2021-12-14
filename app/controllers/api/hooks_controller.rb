@@ -33,7 +33,10 @@ module Api
         ]
       )
 
-      Webhooks::PushEventHandler.call(args.dig(:project, :path_with_namespace), args[:commits])
+      Webhooks::PushEventHandler.call(
+        project_name: args.dig(:project, :path_with_namespace),
+        commits: args[:commits]
+      )
     end
 
     # Handle merge_request hook event
@@ -64,10 +67,10 @@ module Api
       )
 
       Webhooks::CommentEventHandler.call(
-        args.dig(:object_attributes, :discussion_id),
-        args.dig(:object_attributes, :note),
-        args.dig(:project, :path_with_namespace),
-        args.dig(:merge_request, :iid)
+        project_name: args.dig(:project, :path_with_namespace),
+        mr_iid: args.dig(:merge_request, :iid),
+        discussion_id: args.dig(:object_attributes, :discussion_id),
+        note: args.dig(:object_attributes, :note)
       )
     end
 
@@ -82,11 +85,11 @@ module Api
       )
 
       Webhooks::PipelineEventHandler.call(
-        args.dig(:object_attributes, :source),
-        args.dig(:object_attributes, :status),
-        args.dig(:project, :path_with_namespace),
-        args.dig(:merge_request, :iid),
-        args.dig(:merge_request, :merge_status)
+        source: args.dig(:object_attributes, :source),
+        status: args.dig(:object_attributes, :status),
+        project_name: args.dig(:project, :path_with_namespace),
+        mr_iid: args.dig(:merge_request, :iid),
+        merge_status: args.dig(:merge_request, :merge_status)
       )
     end
   end

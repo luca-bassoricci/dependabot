@@ -7,7 +7,7 @@ ENV["SETTINGS__PROJECT_REGISTRATION"] ||= "system_hook"
 require_relative "simplecov_helper"
 require_relative "webmock_helper"
 require_relative "dependabot_helper"
-require_relative "rack_helper"
+require_relative "api_helper"
 require_relative "rake_helper"
 require_relative "../config/environment"
 
@@ -23,10 +23,6 @@ RSpec.configure do |config|
 
   # Remove this line to enable support for ActiveRecord
   config.use_active_record = false
-
-  # The different available types are documented in the features, such as in
-  # https://relishapp.com/rspec/rspec-rails/docs
-  config.infer_spec_type_from_file_location!
 
   # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!
@@ -68,4 +64,8 @@ end
 
 AllureRspec.configure do |config|
   config.clean_results_directory = true
+end
+
+Airborne.configure do |config|
+  config.rack_app = Rails.application
 end
