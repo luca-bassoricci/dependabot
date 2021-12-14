@@ -1,10 +1,18 @@
 # frozen_string_literal: true
 
-describe Api::HooksController, type: :config, epic: :controllers do
-  include_context "with rack_test"
+describe Api::HooksController, :aggregate_failures, epic: :controllers do
+  subject(:receive_webhook) { post_json("/api/hooks", body, auth_token) }
+
+  include_context "with api helper"
+
+  let(:auth_token) { "auth_token" }
+
+  before do
+    allow(CredentialsConfig).to receive(:gitlab_auth_token) { auth_token }
+  end
 
   context "with successful response" do
-    let(:project) { Project.new(name: "project") }
+    let(:project) { Project.new(name: "mike/diaspora") }
     let(:merge_request) do
       MergeRequest.new(
         iid: 1,
@@ -17,27 +25,39 @@ describe Api::HooksController, type: :config, epic: :controllers do
     end
 
     before do
-      allow(Webhooks::PushEventHandler).to receive(:call) { project }
-      allow(Webhooks::MergeRequestEventHandler).to receive(:call) { merge_request }
+      allow(Webhooks::PushEventHandler).to receive(:call) { project.sanitized_hash }
+      allow(Webhooks::MergeRequestEventHandler).to receive(:call).and_return({ closed_merge_request: true })
       allow(Webhooks::CommentEventHandler).to receive(:call).and_return(nil)
       allow(Webhooks::PipelineEventHandler).to receive(:call).and_return(nil)
     end
 
-    it "push event" do
-      post_json("/api/hooks", "spec/fixture/gitlab/webhooks/push.json")
+    def params(object)
+      ActionController::Parameters.new(object).permit!
+    end
 
-      aggregate_failures do
-        expect(last_response.status).to eq(200)
-        expect(last_response.body).to eq(project.to_json)
+    context "with push event" do
+      let(:body) { hash("spec/fixture/gitlab/webhooks/push.json") }
+
+      it "handles event" do
+        receive_webhook
+
+        expect_status(200)
+        expect_json(project.sanitized_hash)
+        expect(Webhooks::PushEventHandler).to have_received(:call).with(
+          project_name: project.name,
+          commits: body[:commits].map { |it| params(it.slice(:added, :modified, :removed)) }
+        )
       end
     end
 
-    it "merge request close event" do
-      post_json("/api/hooks", "spec/fixture/gitlab/webhooks/mr_close.json")
+    context "with mr event" do
+      let(:body) { hash("spec/fixture/gitlab/webhooks/mr_close.json") }
 
-      aggregate_failures do
-        expect(last_response.status).to eq(200)
-        expect(last_response.body).to eq(merge_request.to_json)
+      it "handles event" do
+        receive_webhook
+
+        expect_status(200)
+        expect_json({ closed_merge_request: true })
         expect(Webhooks::MergeRequestEventHandler).to have_received(:call).with(
           project_name: "dependabot-gitlab/test",
           mr_iid: 69,
@@ -46,33 +66,37 @@ describe Api::HooksController, type: :config, epic: :controllers do
       end
     end
 
-    it "comment event" do
-      post_json("/api/hooks", "spec/fixture/gitlab/webhooks/comment.json")
+    context "with comment event" do
+      let(:body) { hash("spec/fixture/gitlab/webhooks/comment.json") }
 
-      aggregate_failures do
-        expect(last_response.status).to eq(202)
-        expect(last_response.body).to eq({}.to_json)
+      it "comment event" do
+        receive_webhook
+
+        expect_status(202)
+        expect_json({})
         expect(Webhooks::CommentEventHandler).to have_received(:call).with(
-          "3343534",
-          "test comment",
-          "dependabot-gitlab/test",
-          69
+          discussion_id: body.dig(:object_attributes, :discussion_id),
+          note: body.dig(:object_attributes, :note),
+          project_name: body.dig(:project, :path_with_namespace),
+          mr_iid: body.dig(:merge_request, :iid)
         )
       end
     end
 
-    it "pipeline event" do
-      post_json("/api/hooks", "spec/fixture/gitlab/webhooks/pipeline.json")
+    context "with pipeline event" do
+      let(:body) { hash("spec/fixture/gitlab/webhooks/pipeline.json") }
 
-      aggregate_failures do
-        expect(last_response.status).to eq(202)
-        expect(last_response.body).to eq({}.to_json)
+      it "pipeline event" do
+        receive_webhook
+
+        expect_status(202)
+        expect_json({})
         expect(Webhooks::PipelineEventHandler).to have_received(:call).with(
-          "merge_request_event",
-          "success",
-          "dependabot-gitlab/test",
-          1,
-          "can_be_merged"
+          source: body.dig(:object_attributes, :source),
+          status: body.dig(:object_attributes, :status),
+          project_name: body.dig(:project, :path_with_namespace),
+          mr_iid: body.dig(:merge_request, :iid),
+          merge_status: body.dig(:merge_request, :merge_status)
         )
       end
     end
@@ -80,41 +104,46 @@ describe Api::HooksController, type: :config, epic: :controllers do
 
   context "with unsuccessful response" do
     let(:error) { StandardError.new("Unexpected") }
-    let(:auth_token) { "auth_token" }
 
     before do
-      allow(CredentialsConfig).to receive(:gitlab_auth_token) { auth_token }
-      allow(Webhooks::PushEventHandler).to receive(:call).and_raise(error)
       allow(Sentry).to receive(:capture_exception)
     end
 
-    it "system error" do
-      post_json("/api/hooks", "spec/fixture/gitlab/webhooks/push.json", auth_token)
+    context "with system error" do
+      let(:body) { hash("spec/fixture/gitlab/webhooks/push.json") }
 
-      aggregate_failures do
+      before do
+        allow(Webhooks::PushEventHandler).to receive(:call).and_raise(error)
+      end
+
+      it "returns 500" do
+        receive_webhook
+
+        expect_status(500)
+        expect_json({ status: 500, error: "Unexpected" })
         expect(Sentry).to have_received(:capture_exception).with(error)
-        expect(last_response.status).to eq(500)
-        expect(last_response.body).to eq({ status: 500, error: "Unexpected" }.to_json)
       end
     end
 
-    it "invalid request" do
-      post_json("/api/hooks", { "funky" => "object" }, auth_token)
+    context "with invalid request" do
+      let(:body) { { "funky" => "object" } }
 
-      aggregate_failures do
-        expect(last_response.status).to eq(400)
-        expect(last_response.body).to eq(
-          { status: 400, error: "Unsupported or missing parameter 'object_kind'" }.to_json
-        )
+      it "returns 400" do
+        receive_webhook
+
+        expect_status(400)
+        expect_json({ status: 400, error: "Unsupported or missing parameter 'object_kind'" })
       end
     end
 
-    it "unauthorized request" do
-      post_json("/api/hooks", "spec/fixture/gitlab/webhooks/push.json", "invalid_token")
+    context "with unauthorized request" do
+      let(:body) { hash("spec/fixture/gitlab/webhooks/push.json") }
 
-      aggregate_failures do
-        expect(last_response.status).to eq(401)
-        expect(last_response.body).to eq({ status: 401, error: "Invalid gitlab authentication token" }.to_json)
+      it "returns 401" do
+        post_json("/api/hooks", body, "wrong_token")
+
+        expect_status(401)
+        expect_json({ status: 401, error: "Invalid gitlab authentication token" })
       end
     end
   end

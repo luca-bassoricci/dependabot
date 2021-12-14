@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 describe JobController, :integration, epic: :controllers do
-  include_context "with rack_test"
   include_context "with dependabot helper"
 
   let(:config) { dependabot_config.first }
@@ -21,10 +20,10 @@ describe JobController, :integration, epic: :controllers do
     update_job.save!
   end
 
-  it "enqueues dependency update job" do
+  it "enqueues dependency update job", :aggregate_failures do
     put("/jobs/#{update_job._id}/execute")
 
-    expect(last_response.status).to eq(302)
+    expect_status(302)
     expect(DependencyUpdateJob).to have_received(:perform_later).with(
       project_name: project.name,
       package_ecosystem: update_job.package_ecosystem,

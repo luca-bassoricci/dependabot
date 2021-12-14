@@ -9,7 +9,7 @@ module Webhooks
     # @param [String] project
     # @param [Number] mr_iid
     # @param [String] merge_status
-    def initialize(source, status, project_name, mr_iid, merge_status)
+    def initialize(source:, status:, project_name:, mr_iid:, merge_status:)
       @source = source
       @status = status
       @project_name = project_name

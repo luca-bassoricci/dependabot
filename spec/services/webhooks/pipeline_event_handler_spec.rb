@@ -25,7 +25,7 @@ describe Webhooks::PipelineEventHandler, integration: true, epic: :services, fea
   end
 
   def event_result(source: event_source, status: pipeline_status, name: project_name, iid: mr_iid, merge: merge_status)
-    described_class.call(source, status, name, iid, merge)
+    described_class.call(source: source, status: status, project_name: name, mr_iid: iid, merge_status: merge)
   end
 
   before do

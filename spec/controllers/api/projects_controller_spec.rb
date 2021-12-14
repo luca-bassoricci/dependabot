@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe Api::ProjectsController, :aggregate_failures, epic: :controllers do
-  include_context "with rack_test"
+  include_context "with api helper"
   include_context "with dependabot helper"
 
   let(:path) { "/api/projects" }
@@ -22,8 +22,8 @@ describe Api::ProjectsController, :aggregate_failures, epic: :controllers do
     it "lists registered projects" do
       get(path)
 
-      expect(last_response.status).to eq(200)
-      expect(last_response.body).to eq([project.sanitized_hash].to_json)
+      expect_status(200)
+      expect(response.body).to eq([project.sanitized_hash].to_json)
     end
   end
 
@@ -35,8 +35,8 @@ describe Api::ProjectsController, :aggregate_failures, epic: :controllers do
     it "returns single project", :integration do
       get("#{path}/#{CGI.escape(project.name)}")
 
-      expect(last_response.status).to eq(200)
-      expect(last_response.body).to eq(project.sanitized_hash.to_json)
+      expect_status(200)
+      expect(response.body).to eq(project.sanitized_hash.to_json)
     end
   end
 
@@ -49,8 +49,8 @@ describe Api::ProjectsController, :aggregate_failures, epic: :controllers do
     it "creates project and jobs" do
       post_json(path, { project: project.name })
 
-      expect(last_response.status).to eq(200)
-      expect(last_response.body).to eq(project.sanitized_hash.to_json)
+      expect_status(200)
+      expect(response.body).to eq(project.sanitized_hash.to_json)
       expect(Dependabot::ProjectCreator).to have_received(:call).with(project.name)
       expect(Cron::JobSync).to have_received(:call).with(project)
     end
@@ -58,7 +58,7 @@ describe Api::ProjectsController, :aggregate_failures, epic: :controllers do
     it "handles incorrect request" do
       post_json(path, {})
 
-      expect(last_response.status).to eq(400)
+      expect_status(400)
     end
   end
 
@@ -72,8 +72,8 @@ describe Api::ProjectsController, :aggregate_failures, epic: :controllers do
 
       project.reload
 
-      expect(last_response.status).to eq(200)
-      expect(last_response.body).to eq(project.sanitized_hash.to_json)
+      expect_status(200)
+      expect(response.body).to eq(project.sanitized_hash.to_json)
       expect(project.name).to eq("updated-name")
     end
   end
@@ -86,7 +86,7 @@ describe Api::ProjectsController, :aggregate_failures, epic: :controllers do
     it "removes registered project and jobs" do
       delete("#{path}/#{project.id}")
 
-      expect(last_response.status).to eq(204)
+      expect_status(204)
       expect(Dependabot::ProjectRemover).to have_received(:call).with(project.id)
     end
   end

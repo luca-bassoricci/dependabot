@@ -5,7 +5,7 @@ describe Api::NotifyReleaseController, epic: :controllers do
     post_json("/api/notify_release", { name: dependency_name, package_ecosystem: package_ecosystem })
   end
 
-  include_context "with rack_test"
+  include_context "with api helper"
   include_context "with dependabot helper"
 
   let(:dependency_name) { "rspec" }
@@ -37,8 +37,8 @@ describe Api::NotifyReleaseController, epic: :controllers do
     end
 
     it "triggers updates", :aggregate_failures do
-      expect(last_response.status).to eq(200)
-      expect(last_response.body).to eq({ triggered: true }.to_json)
+      expect_status(200)
+      expect_json(triggered: true)
       expect(NotifyReleaseJob).to have_received(:perform_later).with(
         dependency_name,
         package_ecosystem,
@@ -58,10 +58,8 @@ describe Api::NotifyReleaseController, epic: :controllers do
     end
 
     it "returns error message", :aggregate_failures do
-      body = { status: 400, error: "No projects with configured '#{package_ecosystem}' found" }.to_json
-
-      expect(last_response.status).to eq(400)
-      expect(last_response.body).to eq(body)
+      expect_status(400)
+      expect_json(status: 400, error: "No projects with configured '#{package_ecosystem}' found")
       expect(NotifyReleaseJob).not_to have_received(:perform_later)
     end
   end

@@ -3,12 +3,12 @@
 module Webhooks
   class CommentEventHandler < ApplicationService
     # @param [String] discussion_id
-    # @param [String] comment
+    # @param [String] note
     # @param [String] project_name
     # @param [Number] mr_iid
-    def initialize(discussion_id, comment, project_name, mr_iid)
+    def initialize(discussion_id:, note:, project_name:, mr_iid:)
       @discussion_id = discussion_id
-      @comment = comment
+      @comment = note
       @project_name = project_name
       @mr_iid = mr_iid
     end

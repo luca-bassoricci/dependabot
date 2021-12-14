@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Webhooks::PushEventHandler, integration: true, epic: :services, feature: :webhooks do
+describe Webhooks::PushEventHandler, :aggregate_failures, integration: true, epic: :services, feature: :webhooks do
   subject { described_class }
 
   include_context "with dependabot helper"
@@ -26,12 +26,10 @@ describe Webhooks::PushEventHandler, integration: true, epic: :services, feature
 
   context "with non config changes" do
     it "skips scheduling jobs" do
-      described_class.call(repo, commits)
+      described_class.call(project_name: repo, commits: commits)
 
-      aggregate_failures do
-        expect(Sidekiq::Cron::Job).not_to have_received(:all)
-        expect(Cron::JobSync).not_to have_received(:call)
-      end
+      expect(Sidekiq::Cron::Job).not_to have_received(:all)
+      expect(Cron::JobSync).not_to have_received(:call)
     end
   end
 
@@ -41,23 +39,19 @@ describe Webhooks::PushEventHandler, integration: true, epic: :services, feature
     end
 
     it "removes project" do
-      described_class.call(repo, commits(removed: [DependabotConfig.config_filename]))
+      described_class.call(project_name: repo, commits: commits(removed: [DependabotConfig.config_filename]))
 
-      aggregate_failures do
-        expect(job).to have_received(:destroy)
-        expect(Project.where(name: repo).first).to be_nil
-      end
+      expect(job).to have_received(:destroy)
+      expect(Project.where(name: repo).first).to be_nil
     end
   end
 
   context "with config update" do
     it "triggers dependency update" do
-      described_class.call(repo, commits(modified: [DependabotConfig.config_filename]))
+      described_class.call(project_name: repo, commits: commits(modified: [DependabotConfig.config_filename]))
 
-      aggregate_failures do
-        expect(Dependabot::ProjectCreator).to have_received(:call).with(repo)
-        expect(Cron::JobSync).to have_received(:call).with(project)
-      end
+      expect(Dependabot::ProjectCreator).to have_received(:call).with(repo)
+      expect(Cron::JobSync).to have_received(:call).with(project)
     end
   end
 end

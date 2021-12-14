@@ -3,7 +3,14 @@
 describe Webhooks::CommentEventHandler, epic: :services, feature: :webhooks do
   include ActiveJob::TestHelper
 
-  subject(:action) { described_class.call(discussion_id, command, project, mr_iid) }
+  subject(:action) do
+    described_class.call(
+      discussion_id: discussion_id,
+      note: command,
+      project_name: project,
+      mr_iid: mr_iid
+    )
+  end
 
   let(:gitlab) { instance_double("Gitlab::Client", rebase_merge_request: nil) }
 

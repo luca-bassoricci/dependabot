@@ -7,16 +7,16 @@ module Api
     # @return [void]
     def create
       return bad_request unless supported_event?
-      return json_response(body: "Skipped, does not match allowed namespace pattern") unless allowed_namespace?
+      return skipped_request unless allowed_namespace?
 
       params.permit(:event_name, :path_with_namespace, :old_path_with_namespace)
-      json_response(
-        body: Webhooks::SystemHookHandler.call(
+      json_response(body: {
+        message: Webhooks::SystemHookHandler.call(
           event_name: params[:event_name],
           project_name: params[:path_with_namespace],
           old_project_name: params[:old_path_with_namespace]
         )
-      )
+      })
     end
 
     private
@@ -42,6 +42,13 @@ module Api
     # @return [void]
     def bad_request
       json_response(body: { status: 400, error: "Unsupported event or missing parameter 'event_name'" }, status: 400)
+    end
+
+    # Handle skipped registration
+    #
+    # @return [void]
+    def skipped_request
+      json_response(body: { message: "Skipped, does not match allowed namespace pattern" }, status: 202)
     end
   end
 end
