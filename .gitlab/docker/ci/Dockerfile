@@ -1,6 +1,6 @@
 FROM quay.io/helmpack/chart-testing:v3.4.0 as ct
 FROM registry.gitlab.com/gitlab-org/release-cli:v0.10.0 as release-cli
-FROM docker:20.10.11
+FROM docker:20.10.12
 
 ARG pip_version=21.3.1
 ARG yamale_version=4.0.2
