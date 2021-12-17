@@ -224,7 +224,11 @@ module Dependabot
     # @return [Mongoid::Criteria]
     def superseeded_mrs
       @superseeded_mrs ||= project.merge_requests
-                                  .where(dependencies: current_dependencies_name, state: "opened")
+                                  .where(
+                                    dependencies: current_dependencies_name,
+                                    state: "opened",
+                                    directory: config[:directory]
+                                  )
                                   .not(iid: mr.iid)
                                   .compact
     end
