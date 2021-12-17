@@ -20,6 +20,7 @@ class MergeRequestRecreationJob < ApplicationJob
     reply_status(":warning: `dependabot` is recreating merge request. All changes will be overwritten! :warning:")
     Dependabot::MergeRequestUpdater.call(project_name: project_name, mr_iid: mr_iid)
     reply_status(":white_check_mark: `dependabot` successfuly recreated merge request!")
+    resolve_discussion
   rescue StandardError => e
     log_error(e)
     reply_status(":x: `dependabot` failed recreating merge request.\n\n```\n#{e.message}\n```")
@@ -40,5 +41,12 @@ class MergeRequestRecreationJob < ApplicationJob
       discussion_id: discussion_id,
       note: message
     )
+  end
+
+  # Resolve mr discussion
+  #
+  # @return [void]
+  def resolve_discussion
+    gitlab.resolve_merge_request_discussion(project_name, mr_iid, discussion_id, resolved: true)
   end
 end

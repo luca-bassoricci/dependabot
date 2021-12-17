@@ -12,7 +12,7 @@ describe Webhooks::CommentEventHandler, epic: :services, feature: :webhooks do
     )
   end
 
-  let(:gitlab) { instance_double("Gitlab::Client", rebase_merge_request: nil) }
+  let(:gitlab) { instance_double("Gitlab::Client", rebase_merge_request: nil, resolve_merge_request_discussion: nil) }
 
   let(:discussion_id) { "11r4" }
   let(:project) { "dependabot/test" }
@@ -25,7 +25,7 @@ describe Webhooks::CommentEventHandler, epic: :services, feature: :webhooks do
     allow(Gitlab::MergeRequest::DiscussionReplier).to receive(:call)
   end
 
-  context "with invalid command" do
+  context "with invalid command", :aggregate_failures do
     let(:command) { "$dependabot test" }
 
     it "skips action" do
@@ -35,14 +35,12 @@ describe Webhooks::CommentEventHandler, epic: :services, feature: :webhooks do
     end
   end
 
-  context "with rebase action" do
+  context "with rebase action", :aggregate_failures do
     let(:command) { "$dependabot rebase" }
 
     it "triggers merge request rebase" do
-      aggregate_failures do
-        expect(action).to eq({ rebase_in_progress: true })
-        expect(gitlab).to have_received(:rebase_merge_request).with(project, mr_iid)
-      end
+      expect(action).to eq({ rebase_in_progress: true })
+      expect(gitlab).to have_received(:rebase_merge_request).with(project, mr_iid)
     end
 
     it "notifies trigger successful" do
@@ -54,20 +52,25 @@ describe Webhooks::CommentEventHandler, epic: :services, feature: :webhooks do
         discussion_id: discussion_id,
         note: ":white_check_mark: `dependabot` successfully triggered merge request rebase!"
       )
+      expect(gitlab).to have_received(:resolve_merge_request_discussion).with(
+        project,
+        mr_iid,
+        discussion_id,
+        resolved: true
+      )
     end
 
     it "notifies trigger unsuccessful" do
       allow(gitlab).to receive(:rebase_merge_request).and_raise("error message")
 
-      aggregate_failures do
-        expect(action).to eq({ rebase_in_progress: false })
-        expect(Gitlab::MergeRequest::DiscussionReplier).to have_received(:call).with(
-          project_name: project,
-          mr_iid: mr_iid,
-          discussion_id: discussion_id,
-          note: ":x: `dependabot` failed to trigger merge request rebase! `error message`"
-        )
-      end
+      expect(action).to eq({ rebase_in_progress: false })
+      expect(Gitlab::MergeRequest::DiscussionReplier).to have_received(:call).with(
+        project_name: project,
+        mr_iid: mr_iid,
+        discussion_id: discussion_id,
+        note: ":x: `dependabot` failed to trigger merge request rebase! `error message`"
+      )
+      expect(gitlab).not_to have_received(:resolve_merge_request_discussion)
     end
   end
 

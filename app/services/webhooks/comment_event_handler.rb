@@ -37,6 +37,8 @@ module Webhooks
       log(:info, "Rebasing mr !#{mr_iid}")
       gitlab.rebase_merge_request(project_name, mr_iid)
       reply_status(":white_check_mark: `dependabot` successfully triggered merge request rebase!")
+      resolve_discussion
+
       { rebase_in_progress: true }
     rescue StandardError => e
       log_error(e)
@@ -77,6 +79,13 @@ module Webhooks
         discussion_id: discussion_id,
         note: message
       )
+    end
+
+    # Resolve mr discussion
+    #
+    # @return [void]
+    def resolve_discussion
+      gitlab.resolve_merge_request_discussion(project_name, mr_iid, discussion_id, resolved: true)
     end
   end
 end
