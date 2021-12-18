@@ -20,7 +20,7 @@ describe Gitlab::Hooks::Creator, epic: :services, feature: :gitlab do
 
   before do
     allow(Gitlab).to receive(:client) { gitlab }
-    allow(gitlab).to receive(:add_project_hook) { OpenStruct.new(id: id) }
+    allow(gitlab).to receive(:add_project_hook) { Gitlab::ObjectifiedHash.new(id: id) }
   end
 
   it "creates webhook" do

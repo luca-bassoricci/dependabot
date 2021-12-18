@@ -4,7 +4,7 @@ describe Dependabot::MergeRequestUpdater, epic: :services, feature: :dependabot,
   include_context "with dependabot helper"
   include_context "with webmock"
 
-  let(:gitlab) { instance_double("Gitlab::client", project: OpenStruct.new(default_branch: branch)) }
+  let(:gitlab) { instance_double("Gitlab::client", project: Gitlab::ObjectifiedHash.new(default_branch: branch)) }
   let(:branch) { "master" }
   let(:project) { Project.new(name: repo) }
   let(:config) { dependabot_config.first }

@@ -6,12 +6,12 @@ describe Gitlab::MergeRequest::Updater, epic: :services, feature: :gitlab do
 
   let(:pr_updater) { instance_double("Dependabot::PullRequestUpdater", update: nil) }
   let(:mr) do
-    OpenStruct.new(
+    Gitlab::ObjectifiedHash.new(
       web_url: "mr-url",
       iid: 1,
       sha: "5f92cc4d9939",
       has_conflicts: false,
-      references: OpenStruct.new(short: "!1")
+      references: { short: "!1" }
     )
   end
 

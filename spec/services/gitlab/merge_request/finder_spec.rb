@@ -8,7 +8,7 @@ describe Gitlab::MergeRequest::Finder, epic: :services, feature: :gitlab do
   include_context "with dependabot helper"
 
   let(:gitlab) { instance_double("Gitlab::Client", merge_requests: [mr]) }
-  let(:mr) { OpenStruct.new(iid: 1) }
+  let(:mr) { Gitlab::ObjectifiedHash.new(iid: 1) }
   let(:search_params) do
     {
       source_branch: "source_branch",

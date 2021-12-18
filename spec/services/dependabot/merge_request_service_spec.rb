@@ -16,13 +16,13 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
   let(:mr_db) { create_mr(mr.iid, "opened", current_dependencies_name) }
   let(:create_mr_return) { mr }
   let(:mr) do
-    OpenStruct.new(
+    Gitlab::ObjectifiedHash.new(
       web_url: "mr-url",
       id: Faker::Number.unique.number(digits: 10),
       iid: Faker::Number.unique.number(digits: 10),
       sha: "5f92cc4d9939",
       has_conflicts: has_conflicts,
-      references: OpenStruct.new(short: "!1"),
+      references: { short: "!1" },
       project_id: 1
     )
   end
@@ -330,10 +330,10 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
 
   context "with gitlab error on creation" do
     let(:response_mock) do
-      OpenStruct.new(
+      Gitlab::ObjectifiedHash.new(
         code: 500,
         parsed_response: "Failure",
-        request: OpenStruct.new(base_uri: "gitlab.com", path: "/merge_request")
+        request: { base_uri: "gitlab.com", path: "/merge_request" }
       )
     end
 

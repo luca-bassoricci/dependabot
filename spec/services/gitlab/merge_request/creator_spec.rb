@@ -17,7 +17,7 @@ describe Gitlab::MergeRequest::Creator, epic: :services, feature: :gitlab do
   let(:pr_creator) { instance_double("Dependabot::PullRequestCreator", create: mr) }
   let(:project_name) { fetcher.source.repo }
   let(:config) { dependabot_config.first }
-  let(:mr) { OpenStruct.new(web_url: "mr-url") }
+  let(:mr) { Gitlab::ObjectifiedHash.new(web_url: "mr-url") }
   let(:milestone_id) { 1 }
   let(:assignees) { [10] }
   let(:reviewers) { [11] }

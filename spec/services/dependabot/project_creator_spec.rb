@@ -9,11 +9,19 @@ describe Dependabot::ProjectCreator, integration: true, epic: :services, feature
   let(:hook_id) { Faker::Number.number(digits: 10) }
   let(:upstream_hook_id) { hook_id }
   let(:config_exists?) { true }
-  let(:gitlab_project) { OpenStruct.new(default_branch: branch, forked_from_project: { id: 1 }) }
+
+  let(:gitlab_project) do
+    Gitlab::ObjectifiedHash.new(
+      id: 1,
+      web_url: "project-url",
+      default_branch: branch,
+      forked_from_project: { id: 1 }
+    )
+  end
 
   before do
     allow(Gitlab).to receive(:client) { gitlab }
-    allow(gitlab).to receive(:project).with(repo) { OpenStruct.new(default_branch: branch) }
+    allow(gitlab).to receive(:project).with(repo) { gitlab_project }
     allow(Gitlab::Config::Checker).to receive(:call).with(repo, branch) { config_exists? }
     allow(Gitlab::Config::Fetcher).to receive(:call).with(repo, branch, update_cache: true) { raw_config }
     allow(Gitlab::Hooks::Creator).to receive(:call) { hook_id }
