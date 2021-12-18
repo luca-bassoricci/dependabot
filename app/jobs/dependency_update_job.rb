@@ -8,52 +8,76 @@ class DependencyUpdateJob < ApplicationJob
   # Perform dependency updates and merge request creation
   #
   # @param [Hash] args
-  # @return [void]
+  # @return [Array]
   def perform(args)
-    symbolized_args = args.symbolize_keys
+    @project, @package_ecosystem, @directory = args.slice("project_name", "package_ecosystem", "directory").values
+    @update_failures = UpdateFailures.call
 
-    save_execution_context(symbolized_args)
-    save_execution_time(symbolized_args)
-    UpdateFailures.call.reset_errors
+    reset_errors
+    save_execution_context
+    save_execution_time
 
-    Dependabot::UpdateService.call(symbolized_args)
+    Dependabot::UpdateService.call(args.symbolize_keys)
+
+    update_failures.errors
   rescue StandardError => e
     capture_error(e)
     raise
   ensure
-    reset_execution_context
+    save_execution_details
   end
 
   private
 
-  # Set dependency update execution context
-  #
-  # @param [Hash] args
-  # @return [void]
-  def save_execution_context(args)
-    return unless args
+  attr_reader :project, :package_ecosystem, :directory, :update_failures
 
-    context_values = args[:directory] == "/" ? args.values_at(:project_name, :package_ecosystem) : args.values
-    Thread.current[:context] = args.dup.merge({ name: context_values.join("=>") })
+  # Update job
+  #
+  # @return [UpdateJob]
+  def update_job
+    @update_job ||= Project.find_or_initialize_by(name: project)
+                           .update_jobs
+                           .find_or_initialize_by(
+                             package_ecosystem: package_ecosystem,
+                             directory: directory
+                           )
   end
 
-  # Reset execution context
+  # Reset execution errors
   #
   # @return [void]
-  def reset_execution_context
-    Thread.current[:context] = nil
+  def reset_errors
+    update_failures.reset
+  end
+
+  # Persist execution errors
+  #
+  # @return [void]
+  def save_execution_details
+    return if AppConfig.standalone?
+
+    update_job.run_errors = update_failures.errors
+    update_job.save!
+  end
+
+  # Set dependency update execution context
+  #
+  # @return [void]
+  def save_execution_context
+    return unless project && package_ecosystem && directory
+
+    context_values = [project, package_ecosystem]
+    context_values << directory unless directory == "/"
+
+    Thread.current[:context] = context_values.join("=>")
   end
 
   # Save last enqued time
   #
-  # @param [Hash] args
   # @return [void]
-  def save_execution_time(args)
+  def save_execution_time
     return if AppConfig.standalone?
 
-    Project
-      .find_by(name: args[:project_name]).update_jobs
-      .find_or_create_by(package_ecosystem: args[:package_ecosystem], directory: args[:directory])
-      .update_attributes!(last_executed: DateTime.now.utc)
+    update_job.last_executed = DateTime.now.utc
   end
 end

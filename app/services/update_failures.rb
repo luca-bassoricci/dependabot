@@ -5,14 +5,11 @@ class UpdateFailures < ApplicationService
     self
   end
 
-  # Reset saved run errors
+  # Reset run errors
   #
   # @return [void]
-  def reset_errors
-    return if AppConfig.standalone? || !execution_context
-
-    update_job.run_errors = []
-    update_job.save!
+  def reset
+    Thread.current[:errors] = []
   end
 
   # Capture update job error
@@ -20,28 +17,15 @@ class UpdateFailures < ApplicationService
   # @param [Error] error
   # @return [void]
   def save_error(error)
-    return if AppConfig.standalone? || !execution_context
-
-    update_job.run_errors.push(error.message)
-    update_job.save!
+    errors.push(error.message)
   end
 
-  private
-
-  # Current context project
+  # Current failures
   #
-  # @return [Project]
-  def project
-    @project ||= Project.find_by(name: execution_context[:project_name])
-  end
+  # @return [Array]
+  def errors
+    return reset unless Thread.current[:errors]
 
-  # Job errors object
-  #
-  # @return [JobErrors]
-  def update_job
-    @update_job ||= UpdateJob.find_or_create_by(
-      project_id: project._id,
-      **execution_context.slice(:package_ecosystem, :directory)
-    )
+    Thread.current[:errors]
   end
 end

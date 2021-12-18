@@ -4,6 +4,7 @@ describe "rake", epic: :tasks do # rubocop:disable RSpec/DescribeClass
   include_context "with rake helper"
 
   describe "dependabot:update" do
+    let(:errors) { [] }
     let(:args) do
       {
         project: "test-repo",
@@ -13,7 +14,7 @@ describe "rake", epic: :tasks do # rubocop:disable RSpec/DescribeClass
     end
 
     before do
-      allow(DependencyUpdateJob).to receive(:perform_now)
+      allow(DependencyUpdateJob).to receive(:perform_now).and_return(errors)
     end
 
     it "runs updates for project" do
@@ -27,9 +28,16 @@ describe "rake", epic: :tasks do # rubocop:disable RSpec/DescribeClass
     end
 
     it "raises error on blank argument" do
-      expect { task.invoke(*args.values[0..1]) }.to(
-        raise_error(ArgumentError, "[:directory] must not be blank")
-      )
+      expect { task.invoke(*args.values[0..1]) }.to raise_error(SystemExit)
+    end
+
+    context "with errors in dependency updates" do
+      let(:errors) { ["Some error!"] }
+      let(:task_name) { "dependabot:update" }
+
+      it "exits with non 0 result code" do
+        expect { task.invoke(*args.values) }.to raise_error(SystemExit)
+      end
     end
   end
 

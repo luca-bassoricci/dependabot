@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe DependabotController, :integration, epic: :controllers do
+describe DependabotController, :integration, epic: :controllers, type: :controller do
   include_context "with dependabot helper"
 
   let(:project) { Project.create!(name: repo, config: dependabot_config) }
@@ -15,12 +15,15 @@ describe DependabotController, :integration, epic: :controllers do
   end
 
   before do
+    allow(Project).to receive(:not).and_return([project])
+
     update_job.save!
   end
 
-  it "returns index page" do
-    get("/")
+  it "returns index page", :aggregate_failures do
+    get(:index)
 
     expect_status(200)
+    expect(response).to render_template(:index)
   end
 end

@@ -34,7 +34,7 @@ module ApplicationHelper
   # @return [void]
   def log(level, message, tag = nil)
     logger = proc { Rails.logger.send(level, message) }
-    tags = [execution_context&.fetch(:name), tag].compact
+    tags = [execution_context, tag].compact
     tags.empty? ? logger.call : Rails.logger.tagged(tags, &logger)
   end
 
