@@ -1,25 +1,29 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
-// https://github.com/microsoft/vscode-dev-containers/tree/v0.191.0/containers/docker-existing-dockerfile
 {
-	"name": "Existing Dockerfile",
-	"context": "..",
-	"dockerFile": "../Dockerfile",
-	"build": {
-		"target": "local"
-	},
-	"settings": {
-		"terminal.integrated.shell.linux": "/bin/bash",
-		"solargraph.useBundler": true,
-	},
+	"name": "dependabot-dev",
+	"workspaceFolder": "/home/dependabot/app",
+	"service": "dependabot",
+	"shutdownAction": "stopCompose",
+	"dockerComposeFile": "docker-compose.yml",
 	"extensions": [
+		"rebornix.ruby",
 		"castwide.solargraph",
-		"rebornix.ruby"
-	],
-	"forwardPorts": [3000],
-	"postCreateCommand": "bundle",
-	"runArgs": [
-		"-e", "SETTINGS__GITLAB_ACCESS_TOKEN=${env:SETTINGS__GITLAB_ACCESS_TOKEN}",
-    "-e", "SETTINGS__STANDALONE=true"
-	],
-	"remoteUser": "dependabot"
+		"groksrc.ruby"
+  ],
+	"settings": {
+		"terminal.integrated.profiles.linux": {
+			"bash": {
+				"path": "bash",
+				"icon": "terminal-bash"
+			}
+		},
+		"terminal.integrated.defaultProfile.linux": "bash",
+		"solargraph.useBundler": false,
+		"solargraph.externalServer": {
+			"host": "localhost",
+			"port": 7658
+		},
+    "ruby.intellisense": false,
+		"ruby.useLanguageServer": false,
+		"ruby.codeCompletion": false
+  }
 }
