@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  redis:
+    image: bitnami/redis:6.2-debian-10
+    ports:
+      - 6379:6379
+    volumes:
+      - redis-data:/bitnami/redis/data
+    environment:
+      ALLOW_EMPTY_PASSWORD: "yes"
+
+  mongodb:
+    image: bitnami/mongodb:4.4-debian-10
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb-data:/bitnami/mongodb
+    environment:
+      ALLOW_EMPTY_PASSWORD: "yes"
+
+  dependabot:
+    build:
+      context: ../
+      target: development
+    environment:
+      RAILS_ENV: development
+      REDIS_URL: redis://redis:6379
+      MONGODB_URL: mongodb:27017
+      SETTINGS__GITLAB_URL: http://gitlab:4567
+      SETTINGS__GITLAB_ACCESS_TOKEN: dev
+      SETTINGS__GITHUB_ACCESS_TOKEN:
+    volumes:
+      - ..:/home/dependabot/app
+      - bundle:/home/dependabot/.bundle
+      - vscode-server:/home/dependabot/.vscode-server
+    command: bundle exec solargraph socket
+
+  gitlab:
+    image: thiht/smocker:0.17.0
+
+volumes:
+  redis-data:
+  mongodb-data:
+  vscode-server:
+  bundle:

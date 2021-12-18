@@ -1,4 +1,21 @@
-FROM dependabot/dependabot-core:0.169.6
+FROM dependabot/dependabot-core:0.169.6 as core
+
+FROM core as development
+
+ARG CODE_DIR=${HOME}/app
+WORKDIR ${CODE_DIR}
+
+ENV BUNDLE_PATH=${HOME}/.bundle \
+    BUNDLE_BIN=${HOME}/.bundle/bin
+
+# Create directory for volume containing VS Code extensions, to avoid reinstalling on image rebuilds
+RUN mkdir -p "${HOME}/.vscode-server"
+
+# Copy gemfile first so cache can be reused
+COPY --chown=dependabot:dependabot Gemfile Gemfile.lock ${CODE_DIR}/
+RUN bundle install
+
+FROM core as production
 
 ENV BUNDLE_PATH=vendor/bundle \
     BUNDLE_WITHOUT="development:test"
