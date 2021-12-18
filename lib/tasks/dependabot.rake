@@ -6,11 +6,22 @@ namespace :dependabot do # rubocop:disable Metrics/BlockLength
     blank_keys = %i[project package_ecosystem directory].reject { |key| args[key] }
     raise(ArgumentError, "#{blank_keys} must not be blank") unless blank_keys.empty?
 
-    DependencyUpdateJob.perform_now(
+    errors = DependencyUpdateJob.perform_now(
       "project_name" => args[:project],
       "package_ecosystem" => args[:package_ecosystem],
       "directory" => args[:directory]
     )
+    next if errors.empty?
+
+    errors_string = errors.map { |it| "- #{it}" }.join("\n")
+    ApplicationHelper.log(
+      :error,
+      "Dependency update execution failed because following errors were present:\n#{errors_string}"
+    )
+    exit(1)
+  rescue StandardError => e
+    ApplicationHelper.log(:error, "Dependency update execution failed with error: #{e}")
+    exit(1)
   end
 
   desc "add dependency updates for repository"
