@@ -10,7 +10,7 @@ describe Gitlab::Hooks::Finder, epic: :services, feature: :gitlab do
   before do
     allow(Gitlab).to receive(:client) { gitlab }
     allow(gitlab).to receive(:project_hooks) do
-      OpenStruct.new(auto_paginate: [OpenStruct.new(id: id, url: hook_url)])
+      Gitlab::ObjectifiedHash.new(auto_paginate: [{ id: id, url: hook_url }])
     end
   end
 

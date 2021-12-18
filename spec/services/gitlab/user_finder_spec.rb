@@ -4,8 +4,8 @@ describe Gitlab::UserFinder, epic: :services, feature: :gitlab do
   subject(:user_finder_return) { described_class.call(usernames) }
 
   let(:gitlab) { instance_double("Gitlab::Client", user_search: [user1, user2]) }
-  let(:user1) { OpenStruct.new(id: 1, username: "test") }
-  let(:user2) { OpenStruct.new(id: 2, username: "test2") }
+  let(:user1) { Gitlab::ObjectifiedHash.new(id: 1, username: "test") }
+  let(:user2) { Gitlab::ObjectifiedHash.new(id: 2, username: "test2") }
 
   before do
     allow(Gitlab::Client).to receive(:new) { gitlab }

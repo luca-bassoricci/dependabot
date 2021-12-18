@@ -12,7 +12,7 @@ describe Dependabot::ProjectSync, integration: true, epic: :services, feature: :
 
   let(:cron) { "0 1 * * * UTC" }
   let(:project_name) { random_name }
-  let(:project) { OpenStruct.new(path_with_namespace: project_name, default_branch: "main") }
+  let(:project) { Gitlab::ObjectifiedHash.new(path_with_namespace: project_name, default_branch: "main") }
   let(:projects) { [project] }
   let(:config) do
     [

@@ -9,10 +9,10 @@ describe Gitlab::ClientWithRetry, epic: :services, feature: :gitlab do
     allow(Gitlab).to receive(:client) { gitlab }
     allow(gitlab).to receive(:get_file).and_raise(
       Gitlab::Error::BadGateway.new(
-        OpenStruct.new(
+        Gitlab::ObjectifiedHash.new(
           code: 500,
           parsed_response: "Failure",
-          request: OpenStruct.new(base_uri: "gitlab.com", path: "/get_file")
+          request: { base_uri: "gitlab.com", path: "/get_file" }
         )
       )
     )

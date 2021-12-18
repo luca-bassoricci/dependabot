@@ -3,9 +3,12 @@
 describe Dependabot::ConfigFetcher, epic: :services, feature: :configuration do
   include_context "with dependabot helper"
 
-  let(:gitlab) { instance_double("Gitlab::client", project: OpenStruct.new(default_branch: default_branch)) }
   let(:project) { "project" }
   let(:default_branch) { "main" }
+
+  let(:gitlab) do
+    instance_double("Gitlab::client", project: Gitlab::ObjectifiedHash.new(default_branch: default_branch))
+  end
 
   before do
     allow(Gitlab).to receive(:client) { gitlab }
