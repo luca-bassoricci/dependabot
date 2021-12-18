@@ -10,7 +10,9 @@ class DependencyUpdateJob < ApplicationJob
   # @param [Hash] args
   # @return [Array]
   def perform(args)
-    @project, @package_ecosystem, @directory = args.slice("project_name", "package_ecosystem", "directory").values
+    @project, @package_ecosystem, @directory = args.symbolize_keys
+                                                   .slice(:project_name, :package_ecosystem, :directory)
+                                                   .values
     @update_failures = UpdateFailures.call
 
     reset_errors
