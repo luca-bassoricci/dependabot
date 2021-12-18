@@ -19,11 +19,12 @@ services:
 
   setup:
     image: ${TEST_IMAGE}
+    working_dir: /build
     depends_on:
       - gitlab
     volumes:
       - ${CI_PROJECT_DIR}:/build
-    command: /build/.gitlab/script/set-mock.sh standalone
+    command: script/set-mock.sh standalone
 YML
 
 log "Run standalone dependency updates"

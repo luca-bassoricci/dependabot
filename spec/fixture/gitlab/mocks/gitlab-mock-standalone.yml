@@ -1,7 +1,7 @@
 # Fetch project
 - request:
     method: GET
-    path: /api/v4/projects/dependabot-gitlab/testing
+    path: /api/v4/projects/dependabot-gitlab%2Ftesting
   response:
     status: 200
     headers:
@@ -17,7 +17,7 @@
 # Fetch config file
 - request:
     method: GET
-    path: /api/v4/projects/dependabot-gitlab/testing/repository/files/.gitlab/dependabot.yml/raw
+    path: /api/v4/projects/dependabot-gitlab%2Ftesting/repository/files/.gitlab%2Fdependabot.yml/raw
   response:
     status: 200
     headers:
@@ -58,7 +58,7 @@
 # Get main branch HEAD
 - request:
     method: GET
-    path: /api/v4/projects/dependabot-gitlab/testing/repository/branches/main
+    path: /api/v4/projects/dependabot-gitlab%2Ftesting/repository/branches/main
   response:
     status: 200
     headers:
@@ -75,7 +75,7 @@
 # Get file tree
 - request:
     method: GET
-    path: /api/v4/projects/dependabot-gitlab/testing/repository/tree
+    path: /api/v4/projects/dependabot-gitlab%2Ftesting/repository/tree
   response:
     status: 200
     headers:
@@ -114,7 +114,7 @@
 
 # Get dependency files
 - request:
-    path: /api/v4/projects/dependabot-gitlab/testing/repository/files/Gemfile
+    path: /api/v4/projects/dependabot-gitlab%2Ftesting/repository/files/Gemfile
     method: GET
     query_params:
       ref: d522b9716589980822850be63025b767f0d78768
@@ -136,7 +136,7 @@
         "content": "IyBmcm96ZW5fc3RyaW5nX2xpdGVyYWw6IHRydWUKCnNvdXJjZSAiaHR0cHM6Ly9ydWJ5Z2Vtcy5vcmciCgpnZW0gImZha2VyIiwgIn4+IDEuOSIKZ2VtICJnaXQiLCAifj4gMS44LjAiCmdlbSAicnVib2NvcCIsICJ+PiAxLjE5LjEiCg=="
       }
 - request:
-    path: /api/v4/projects/dependabot-gitlab/testing/repository/files/Gemfile.lock
+    path: /api/v4/projects/dependabot-gitlab%2Ftesting/repository/files/Gemfile.lock
     method: GET
     query_params:
       ref: d522b9716589980822850be63025b767f0d78768
@@ -210,7 +210,7 @@
 
 # Find milestone
 - request:
-    path: /api/v4/projects/dependabot-gitlab/testing/milestones
+    path: /api/v4/projects/dependabot-gitlab%2Ftesting/milestones
     method: GET
     query_params:
       title: "0.0.1"
@@ -229,7 +229,7 @@
 - request:
     path:
       matcher: ShouldStartWith
-      value: /api/v4/projects/dependabot-gitlab/testing/repository/branches/dependabot-bundler-git
+      value: /api/v4/projects/dependabot-gitlab%2Ftesting/repository/branches/dependabot-bundler-git
     method: GET
   response:
     status: 404
@@ -242,7 +242,7 @@
 - request:
     path:
       matcher: ShouldStartWith
-      value: /api/v4/projects/dependabot-gitlab/testing/repository/branches/dependabot-bundler-rubocop
+      value: /api/v4/projects/dependabot-gitlab%2Ftesting/repository/branches/dependabot-bundler-rubocop
     method: GET
   response:
     status: 200
@@ -258,7 +258,7 @@
 
 # Create branches
 - request:
-    path: /api/v4/projects/dependabot-gitlab/testing/repository/branches
+    path: /api/v4/projects/dependabot-gitlab%2Ftesting/repository/branches
     method: POST
     query_params:
       branch:
@@ -274,7 +274,7 @@
 
 # Check commit
 - request:
-    path: /api/v4/projects/dependabot-gitlab/testing/repository/commits/bd101cbfe6c71201abdb03e3193766de42f64560
+    path: /api/v4/projects/dependabot-gitlab%2Ftesting/repository/commits/bd101cbfe6c71201abdb03e3193766de42f64560
     method: GET
   response:
     status: 200
@@ -289,7 +289,7 @@
 
 # Create commit
 - request:
-    path: /api/v4/projects/dependabot-gitlab/testing/repository/commits
+    path: /api/v4/projects/dependabot-gitlab%2Ftesting/repository/commits
     method: POST
     body:
       matcher: ShouldMatch
@@ -303,7 +303,7 @@
 
 # Fetch labels
 - request:
-    path: /api/v4/projects/dependabot-gitlab/testing/labels
+    path: /api/v4/projects/dependabot-gitlab%2Ftesting/labels
     method: GET
   response:
     status: 200
@@ -323,7 +323,7 @@
 
 # Check if MR exists
 - request:
-    path: /api/v4/projects/dependabot-gitlab/testing/merge_requests
+    path: /api/v4/projects/dependabot-gitlab%2Ftesting/merge_requests
     method: GET
     query_params:
       state: closed
@@ -334,7 +334,7 @@
     body: |
       []
 - request:
-    path: /api/v4/projects/dependabot-gitlab/testing/merge_requests
+    path: /api/v4/projects/dependabot-gitlab%2Ftesting/merge_requests
     method: GET
     query_params:
       source_branch:
@@ -365,7 +365,7 @@
         }
       ]
 - request:
-    path: /api/v4/projects/dependabot-gitlab/testing/merge_requests/2
+    path: /api/v4/projects/dependabot-gitlab%2Ftesting/merge_requests/2
     method: GET
   response:
     status: 200
@@ -379,7 +379,7 @@
 
 # Create MR
 - request:
-    path: /api/v4/projects/dependabot-gitlab/testing/merge_requests
+    path: /api/v4/projects/dependabot-gitlab%2Ftesting/merge_requests
     method: POST
     body:
       matcher: ShouldContainSubstring
@@ -404,7 +404,7 @@
 
 # Set approvals
 - request:
-    path: /api/v4/projects/dependabot-gitlab/testing/merge_requests/1/approval_rules
+    path: /api/v4/projects/dependabot-gitlab%2Ftesting/merge_requests/1/approval_rules
     method: POST
     body:
       matcher: ShouldContainSubstring
