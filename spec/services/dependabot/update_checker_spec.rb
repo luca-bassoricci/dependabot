@@ -69,6 +69,7 @@ describe Dependabot::UpdateChecker, epic: :services, feature: :dependabot do
     allow(checker).to receive(:can_update?).with(requirements_to_unlock: :all) { can_update_all_unlock }
     allow(checker).to receive(:can_update?).with(requirements_to_unlock: :none) { can_update_none_unlock }
     allow(checker).to receive(:latest_version) { Gem::Version.new(latest_version) }
+    allow(checker).to receive(:conflicting_dependencies).and_return([])
   end
 
   context "when update version is ignored" do
