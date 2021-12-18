@@ -53,6 +53,7 @@
           pull-request-branch-name:
             separator: "-"
           rebase-strategy: auto
+          milestone: 0.0.1
 
 # Get main branch HEAD
 - request:
@@ -204,6 +205,23 @@
         {
           "id": 3,
           "username": "jane_smith"
+        }
+      ]
+
+# Find milestone
+- request:
+    path: /api/v4/projects/dependabot-gitlab/testing/milestones
+    method: GET
+    query_params:
+      title: "0.0.1"
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |
+      [
+        {
+          "id": 1
         }
       ]
 

@@ -8,7 +8,6 @@ module Gitlab
         commit_message_options
         branch_name_separator
         branch_name_prefix
-        milestone
       ].freeze
 
       # @param [Dependabot::FileFetchers::Base] fetcher
@@ -69,6 +68,10 @@ module Gitlab
         @approvers ||= Gitlab::UserFinder.call(config[:approvers])
       end
 
+      def milestone_id
+        @milestone_id ||= Gitlab::MilestoneFinder.call(fetcher.source.repo, config[:milestone])
+      end
+
       # Merge request specific options from config
       #
       # @return [Hash]
@@ -77,6 +80,7 @@ module Gitlab
           label_language: true,
           assignees: assignees,
           reviewers: { approvers: approvers, reviewers: reviewers }.compact,
+          milestone: milestone_id,
           **config.select { |key, _value| MR_OPTIONS.include?(key) }
         }
       end
