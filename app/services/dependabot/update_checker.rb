@@ -85,7 +85,11 @@ module Dependabot
     #
     # @return [nil]
     def update_impossible
-      log(:info, "  update for '#{name}' is impossible")
+      log(:warn, "  update for '#{name}' is impossible")
+      unless checker.conflicting_dependencies.empty?
+        log(:warn, "  following conflicting dependencies are present: #{checker.conflicting_dependencies}")
+      end
+
       nil
     end
 
