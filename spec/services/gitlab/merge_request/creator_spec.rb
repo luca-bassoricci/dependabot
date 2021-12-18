@@ -15,28 +15,33 @@ describe Gitlab::MergeRequest::Creator, epic: :services, feature: :gitlab do
   include_context "with webmock"
 
   let(:pr_creator) { instance_double("Dependabot::PullRequestCreator", create: mr) }
+  let(:project_name) { fetcher.source.repo }
   let(:config) { dependabot_config.first }
   let(:mr) { OpenStruct.new(web_url: "mr-url") }
+  let(:milestone_id) { 1 }
   let(:assignees) { [10] }
   let(:reviewers) { [11] }
   let(:approvers) { [12] }
+
   let(:mr_opt_keys) do
     %i[
       custom_labels
       commit_message_options
       branch_name_separator
       branch_name_prefix
-      milestone
     ]
   end
+
   let(:mr_params) do
     {
       assignees: assignees,
       reviewers: { reviewers: reviewers, approvers: approvers },
+      milestone: milestone_id,
       label_language: true,
       **config.select { |key, _value| mr_opt_keys.include?(key) }
     }
   end
+
   let(:footer) do
     <<~MSG
       ---
@@ -59,10 +64,11 @@ describe Gitlab::MergeRequest::Creator, epic: :services, feature: :gitlab do
     allow(Gitlab::UserFinder).to receive(:call).with(config[:assignees]) { assignees }
     allow(Gitlab::UserFinder).to receive(:call).with(config[:reviewers]) { reviewers }
     allow(Gitlab::UserFinder).to receive(:call).with(config[:approvers]) { approvers }
+    allow(Gitlab::MilestoneFinder).to receive(:call).with(project_name, config[:milestone]) { milestone_id }
     allow(Dependabot::PullRequestCreator).to receive(:new) { pr_creator }
   end
 
-  it "creates merge request" do
+  it "creates merge request", :aggregate_failures do
     expect(mr_creator_return).to eq(mr)
     expect(Dependabot::PullRequestCreator).to have_received(:new).with(
       {
