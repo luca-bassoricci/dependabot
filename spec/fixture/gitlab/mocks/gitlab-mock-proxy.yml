@@ -1,0 +1,10 @@
+- request:
+    method:
+      matcher: ShouldMatch
+      value: (GET|PUT|POST)
+    path:
+      matcher: ShouldStartWith
+      value: /api/v4
+  proxy:
+    host: https://gitlab.com
+    follow_redirect: true

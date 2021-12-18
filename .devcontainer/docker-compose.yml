@@ -27,9 +27,9 @@ services:
       RAILS_ENV: development
       REDIS_URL: redis://redis:6379
       MONGODB_URL: mongodb:27017
-      SETTINGS__GITLAB_URL: http://gitlab:4567
-      SETTINGS__GITLAB_ACCESS_TOKEN: dev
-      SETTINGS__GITHUB_ACCESS_TOKEN:
+      SETTINGS__GITLAB_URL: http://gitlab:8080
+      SETTINGS__GITLAB_ACCESS_TOKEN: ${SETTINGS__GITLAB_ACCESS_TOKEN:-dev}
+      SETTINGS__GITHUB_ACCESS_TOKEN: ${SETTINGS__GITHUB_ACCESS_TOKEN}
     volumes:
       - ..:/home/dependabot/app
       - bundle:/home/dependabot/.bundle
@@ -37,7 +37,7 @@ services:
     command: bundle exec solargraph socket
 
   gitlab:
-    image: thiht/smocker:0.17.0
+    image: thiht/smocker:0.17.1
 
 volumes:
   redis-data:
