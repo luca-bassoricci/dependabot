@@ -18,8 +18,8 @@ module Dependabot
     #
     # @return [Hash<Symbol, Object>]
     def call
-      raw_config = Rails.cache.fetch("#{project_name}-configuration", expires_in: 24.hours, force: update_cache) do
-        default_branch = branch || gitlab.project(project_name).default_branch
+      cache_key = "#{project_name}-#{default_branch}-configuration"
+      raw_config = Rails.cache.fetch(cache_key, expires_in: 24.hours, force: update_cache) do
         Gitlab::Config::Fetcher.call(project_name, default_branch, update_cache: update_cache).tap do |raw|
           next if raw
 
@@ -37,6 +37,13 @@ module Dependabot
     private
 
     attr_reader :project_name, :branch, :update_cache, :find_by
+
+    # Default branch
+    #
+    # @return [String]
+    def default_branch
+      @default_branch ||= branch || gitlab.project(project_name).default_branch
+    end
 
     # Find single config entry
     #
