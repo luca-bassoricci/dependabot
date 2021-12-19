@@ -35,7 +35,7 @@ describe Dependabot::RegistriesParser, epic: :services, feature: :dependabot do
           },
           {
             "type" => "npm_registry",
-            "registry" => "https://npm.pkg.github.com",
+            "registry" => "npm.pkg.github.com",
             "token" => "test_token"
           }
         ]
