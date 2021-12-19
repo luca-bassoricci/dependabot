@@ -29,7 +29,7 @@ describe Dependabot::RegistriesParser, epic: :services, feature: :dependabot do
         [
           {
             "type" => "docker_registry",
-            "registry" => "https://registry.hub.docker.com",
+            "registry" => "registry.hub.docker.com",
             "username" => "octocat",
             "password" => "password"
           },
