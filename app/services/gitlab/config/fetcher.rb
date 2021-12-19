@@ -4,10 +4,9 @@ module Gitlab
   module Config
     class Fetcher < ApplicationService
       # @param [String] project_name
-      def initialize(project_name, branch, update_cache: false)
+      def initialize(project_name, branch)
         @project_name = project_name
         @branch = branch
-        @update_cache = update_cache
       end
 
       # Get dependabot.yml file contents
@@ -23,7 +22,7 @@ module Gitlab
 
       private
 
-      attr_reader :project_name, :branch, :update_cache
+      attr_reader :project_name, :branch
     end
   end
 end
