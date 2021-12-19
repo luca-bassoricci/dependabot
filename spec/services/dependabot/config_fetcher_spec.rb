@@ -18,7 +18,7 @@ describe Dependabot::ConfigFetcher, epic: :services, feature: :configuration do
   context "without custom branch configuration" do
     it "fetches config from default branch" do
       expect(described_class.call(project)).to eq(dependabot_config)
-      expect(Gitlab::Config::Fetcher).to have_received(:call).with(project, default_branch, update_cache: false)
+      expect(Gitlab::Config::Fetcher).to have_received(:call).with(project, default_branch)
     end
 
     it "fetches single entry of config from default branch" do
@@ -37,7 +37,7 @@ describe Dependabot::ConfigFetcher, epic: :services, feature: :configuration do
 
     it "fetches config from configured branch" do
       expect(described_class.call(project)).to eq(dependabot_config)
-      expect(Gitlab::Config::Fetcher).to have_received(:call).with(project, branch, update_cache: false)
+      expect(Gitlab::Config::Fetcher).to have_received(:call).with(project, branch)
     end
   end
 end

@@ -19,8 +19,8 @@ module Dependabot
     # @return [Hash<Symbol, Object>]
     def call
       cache_key = "#{project_name}-#{default_branch}-configuration"
-      raw_config = Rails.cache.fetch(cache_key, expires_in: 24.hours, force: update_cache) do
-        Gitlab::Config::Fetcher.call(project_name, default_branch, update_cache: update_cache).tap do |raw|
+      raw_config = Rails.cache.fetch(cache_key, expires_in: 12.hours, force: update_cache) do
+        Gitlab::Config::Fetcher.call(project_name, default_branch).tap do |raw|
           next if raw
 
           raise(
