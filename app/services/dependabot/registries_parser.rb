@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Dependabot
+  # :reek:ControlParameter
   class RegistriesParser < ApplicationService
     SECRET_PATTERN = /\${{(\S+)}}/.freeze
     TYPE_MAPPING = {
@@ -110,7 +111,7 @@ module Dependabot
 
       {
         "type" => mapped_type[:type],
-        mapped_type[:url] => env_value(registry[:url]),
+        mapped_type[:url] => strip_protocol(type, env_value(registry[:url])),
         **registry.except(:type, :url).map { |key, value| [key.to_s, env_value(value)] }.to_h
       }
     end
@@ -152,6 +153,19 @@ module Dependabot
       return value unless value&.match?(SECRET_PATTERN)
 
       ENV[value.match(SECRET_PATTERN)[1]] || ""
+    end
+
+    # Strip protocol from registries of specific type
+    #
+    # Private npm registries will not work if protocol is defined
+    #
+    # @param [String] type
+    # @param [String] url
+    # @return [String]
+    def strip_protocol(type, url)
+      return url unless type == "npm-registry"
+
+      url.gsub(%r{https?://}, "")
     end
   end
 end

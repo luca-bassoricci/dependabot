@@ -37,7 +37,7 @@ describe Dependabot::ConfigParser, epic: :services, feature: :configuration do
       expect(parser.call(config_yml, repo).first[:registries]).to eq(
         [{
           "type" => "npm_registry",
-          "registry" => "https://npm.pkg.github.com",
+          "registry" => "npm.pkg.github.com",
           "token" => "test_token"
         }]
       )
