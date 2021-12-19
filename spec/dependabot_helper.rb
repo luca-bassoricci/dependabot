@@ -101,7 +101,7 @@ RSpec.shared_context("with dependabot helper") do
         registries: [
           {
             "type" => "docker_registry",
-            "registry" => "https://registry.hub.docker.com",
+            "registry" => "registry.hub.docker.com",
             "username" => "octocat",
             "password" => "password"
           }

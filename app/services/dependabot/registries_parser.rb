@@ -157,13 +157,13 @@ module Dependabot
 
     # Strip protocol from registries of specific type
     #
-    # Private npm registries will not work if protocol is defined
+    # Private npm and docker registries will not work if protocol is defined
     #
     # @param [String] type
     # @param [String] url
     # @return [String]
     def strip_protocol(type, url)
-      return url unless type == "npm-registry"
+      return url unless %w[npm-registry docker-registry].include?(type)
 
       url.gsub(%r{https?://}, "")
     end
