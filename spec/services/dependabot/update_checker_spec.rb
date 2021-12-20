@@ -24,6 +24,7 @@ describe Dependabot::UpdateChecker, epic: :services, feature: :dependabot do
   let(:can_update_none_unlock) { true }
   let(:versioning_strategy) { :bump_versions }
   let(:can_update) { true }
+  let(:credentials) { [*Dependabot::Credentials.call, *dependabot_config.first[:registries]] }
   let(:config) do
     {
       **dependabot_config.first,
@@ -36,7 +37,7 @@ describe Dependabot::UpdateChecker, epic: :services, feature: :dependabot do
     args = {
       dependency: dependency,
       dependency_files: fetcher.files,
-      credentials: [*Dependabot::Credentials.call, *dependabot_config.first[:registries]],
+      credentials: credentials,
       ignored_versions: [],
       raise_on_ignored: true
     }
@@ -51,7 +52,8 @@ describe Dependabot::UpdateChecker, epic: :services, feature: :dependabot do
       dependencies: updated_dependencies,
       dependency_files: fetcher.files,
       package_manager: package_manager,
-      repo_contents_path: nil
+      repo_contents_path: nil,
+      credentials: credentials
     ).and_return(updated_files)
 
     allow(Dependabot::RuleHandler).to receive(:new).with(

@@ -6,7 +6,8 @@ describe Dependabot::FileUpdater, epic: :services, feature: :dependabot do
       dependencies: updated_dependencies,
       dependency_files: fetcher.files,
       package_manager: package_manager,
-      repo_contents_path: nil
+      repo_contents_path: nil,
+      credentials: credentials
     )
   end
 
@@ -15,6 +16,7 @@ describe Dependabot::FileUpdater, epic: :services, feature: :dependabot do
 
   let(:files) { fetcher.files }
   let(:updater) { instance_double("Dependabot::Bundler::FileUpdater") }
+  let(:credentials) { Dependabot::Credentials.call }
 
   before do
     stub_gitlab
@@ -28,7 +30,7 @@ describe Dependabot::FileUpdater, epic: :services, feature: :dependabot do
     expect(Dependabot::Bundler::FileUpdater).to have_received(:new).with(
       dependencies: updated_dependencies,
       dependency_files: fetcher.files,
-      credentials: Dependabot::Credentials.call,
+      credentials: credentials,
       repo_contents_path: nil
     )
   end

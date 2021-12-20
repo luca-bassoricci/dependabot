@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 module Dependabot
-  class UpdateChecker < ApplicationService
+  # :reek:TooManyStatements
+  class UpdateChecker < ApplicationService # rubocop:disable Metrics/ClassLength
     # @param [Dependabot::Dependency] dependency
     # @param [Array<Dependabot::DependencyFile>] dependency_files
     # @param [Array<Hash>] allow
@@ -15,8 +16,6 @@ module Dependabot
       @package_manager = config[:package_manager]
       @repo_contents_path = repo_contents_path
     end
-
-    # :reek:TooManyStatements
 
     # Get updated dependencies
     #
@@ -46,6 +45,13 @@ module Dependabot
                 :versioning_strategy,
                 :package_manager,
                 :repo_contents_path
+
+    # Fetch combined credentials
+    #
+    # @return [Array<Hash>]
+    def credentials
+      @credentials ||= [*Credentials.call, *config[:registries]]
+    end
 
     # Full dependency name
     #
@@ -124,7 +130,7 @@ module Dependabot
         args = {
           dependency: dependency,
           dependency_files: dependency_files,
-          credentials: [*Credentials.call, *config[:registries]],
+          credentials: credentials,
           ignored_versions: RuleHandler.ignored_versions(dependency, config[:ignore]),
           raise_on_ignored: true
         }
@@ -157,7 +163,8 @@ module Dependabot
         dependencies: updated_dependencies,
         dependency_files: dependency_files,
         package_manager: package_manager,
-        repo_contents_path: repo_contents_path
+        repo_contents_path: repo_contents_path,
+        credentials: credentials
       )
     end
   end
