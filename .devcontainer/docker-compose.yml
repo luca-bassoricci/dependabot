@@ -32,8 +32,6 @@ services:
       SETTINGS__GITHUB_ACCESS_TOKEN: ${SETTINGS__GITHUB_ACCESS_TOKEN}
     volumes:
       - ..:/home/dependabot/app
-      - bundle:/home/dependabot/.bundle
-      - vscode-server:/home/dependabot/.vscode-server
     command: bundle exec solargraph socket
 
   gitlab:
@@ -42,5 +40,3 @@ services:
 volumes:
   redis-data:
   mongodb-data:
-  vscode-server:
-  bundle:

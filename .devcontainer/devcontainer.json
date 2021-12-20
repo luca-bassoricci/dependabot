@@ -7,7 +7,8 @@
 	"extensions": [
 		"rebornix.ruby",
 		"castwide.solargraph",
-		"groksrc.ruby"
+		"groksrc.ruby",
+		"k--kato.intellij-idea-keybindings"
   ],
 	"settings": {
 		"terminal.integrated.profiles.linux": {
@@ -17,7 +18,6 @@
 			}
 		},
 		"terminal.integrated.defaultProfile.linux": "bash",
-		"solargraph.useBundler": false,
 		"solargraph.externalServer": {
 			"host": "localhost",
 			"port": 7658
