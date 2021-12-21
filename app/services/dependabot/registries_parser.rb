@@ -163,7 +163,7 @@ module Dependabot
     # @param [String] url
     # @return [String]
     def strip_protocol(type, url)
-      return url unless %w[npm-registry docker-registry].include?(type)
+      return url unless %w[npm-registry docker-registry terraform-registry].include?(type)
 
       url.gsub(%r{https?://}, "")
     end
