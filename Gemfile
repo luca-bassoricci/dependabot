@@ -51,7 +51,7 @@ group :test do
 end
 
 group :development do
-  gem "git", "~> 1.9", require: false
+  gem "git", "~> 1.10", require: false
   gem "semver2", "~> 3.4", require: false
   gem "solargraph", "~> 0.44.2", require: false
   gem "spring", "~> 4.0.0", require: false
