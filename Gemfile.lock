@@ -248,7 +248,7 @@ GEM
     fugit (1.4.5)
       et-orbi (~> 1.1, >= 1.1.8)
       raabro (~> 1.4)
-    git (1.9.1)
+    git (1.10.0)
       rchardet (~> 1.8)
     globalid (1.0.0)
       activesupport (>= 5.0)
@@ -553,7 +553,7 @@ DEPENDENCIES
   dependabot-omnibus (~> 0.169.6)
   dry-validation (~> 1.7)
   faker (~> 2.19)
-  git (~> 1.9)
+  git (~> 1.10)
   gitlab!
   lograge (~> 0.11.2)
   mongoid (~> 7.3)
