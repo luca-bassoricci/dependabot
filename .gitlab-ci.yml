@@ -116,7 +116,7 @@ rspec:
 standalone:
   extends:
     - .standalone
-    - .rules:main:mr-manual
+    - .rules:main:e2e
   needs:
     - build-app-image
     - build-test-image

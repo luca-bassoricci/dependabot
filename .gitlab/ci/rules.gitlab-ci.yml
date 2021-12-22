@@ -34,10 +34,15 @@
       variables:
         LATEST_TAG: latest
 
-.rules:main:mr-manual:
+.rules:main:e2e:
   rules:
     - *master
     - *release
+    - <<: *mr
+      changes:
+        - Gemfile
+        - Gemfile.lock
+        - Dockerfile
     - <<: *mr
       when: manual
       allow_failure: true
