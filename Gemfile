@@ -32,7 +32,7 @@ group :development, :test do
   gem "rubocop", "~> 1.24.0", require: false
   gem "rubocop-performance", "~> 1.13.0", require: false
   gem "rubocop-rails", "~> 2.13", require: false
-  gem "rubocop-rspec", "~> 2.6", require: false
+  gem "rubocop-rspec", "~> 2.7", require: false
 end
 
 group :test do
