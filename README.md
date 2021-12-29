@@ -106,7 +106,7 @@ Following configuration options are currently supported:
 
 ### Helm chart
 
-For all configuration options, refer to [chart repository](https://github.com/andrcuns/charts/blob/master/charts/dependabot-gitlab/README.md)
+For all configuration options, refer to [chart repository](https://gitlab.com/dependabot-gitlab/chart/-/blob/master/README.md)
 
 ### Manual
 
