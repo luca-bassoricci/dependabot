@@ -22,7 +22,7 @@ include:
   policy: pull
 
 .ruby_runner:
-  image: ${CI_REGISTRY_IMAGE}/test:latest
+  image: registry.gitlab.com/dependabot-gitlab/dependabot/test:latest
   variables:
     BUNDLE_PATH: vendor/bundle
     BUNDLE_FROZEN: "true"
@@ -54,7 +54,7 @@ include:
   interruptible: true
 
 .docker_runner:
-  image: ${CI_REGISTRY_IMAGE}/ci:latest
+  image: registry.gitlab.com/dependabot-gitlab/dependabot/ci:latest
   services:
     - name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:20.10.12-dind
       alias: docker
