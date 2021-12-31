@@ -29,7 +29,7 @@ group :development, :test do
   gem "pry-byebug", "~> 3.9"
   gem "pry-rails", "~> 0.3.9"
   gem "reek", "~> 6.0", require: false
-  gem "rubocop", "~> 1.24.0", require: false
+  gem "rubocop", "~> 1.24.1", require: false
   gem "rubocop-performance", "~> 1.13.0", require: false
   gem "rubocop-rails", "~> 2.13", require: false
   gem "rubocop-rspec", "~> 2.7", require: false
