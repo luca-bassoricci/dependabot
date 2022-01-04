@@ -41,7 +41,7 @@ group :test do
   gem "faker", "~> 2.19"
   gem "rails-controller-testing", "~> 1.0"
   gem "rspec", "~> 3.10"
-  gem "rspec_junit_formatter", "~> 0.4.1"
+  gem "rspec_junit_formatter", "~> 0.5.0"
   gem "rspec-rails", "~> 5.0.2"
   gem "rspec-sidekiq", "~> 3.1", require: false
   gem "simplecov", "~> 0.21.2", require: false
