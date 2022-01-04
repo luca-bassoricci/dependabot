@@ -38,5 +38,4 @@ $COMMAND build \
   --opt build-arg:VERSION="${CI_COMMIT_TAG:-$CURRENT_TAG}" \
   --output type=image,\"name="$TAGS"\",push=true \
   --export-cache type=inline \
-  --import-cache type=registry,ref="$IMAGE:${LATEST_TAG:-$CI_COMMIT_REF_SLUG-latest}" \
-  --import-cache type=registry,ref="$IMAGE:latest"
+  --import-cache type=registry,ref="$IMAGE:${LATEST_TAG:-$CI_COMMIT_REF_SLUG-latest}"
