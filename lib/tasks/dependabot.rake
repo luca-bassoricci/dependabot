@@ -41,7 +41,7 @@ namespace :dependabot do # rubocop:disable Metrics/BlockLength
 
   desc "validate config file"
   task(:validate, [:project] => :environment) do |_task, args|
-    ApplicationHelper.log(:info, "Validating config '#{AppConfig.config_filename}'")
+    ApplicationHelper.log(:info, "Validating config '#{DependabotConfig.config_filename}'")
     Dependabot::ConfigFetcher.call(args[:project], update_cache: true)
 
     ApplicationHelper.log(:info, "Configuration is valid")
