@@ -21,7 +21,8 @@ describe Dependabot::DependencyUpdater, epic: :services, feature: :dependabot do
       updated_files: updated_files,
       updated_dependencies: updated_dependencies,
       vulnerable: false,
-      security_advisories: []
+      security_advisories: [],
+      auto_merge_rules: auto_merge_rules
     )
   end
 

@@ -29,7 +29,7 @@ module Dependabot
 
       updated_dependency
     rescue Dependabot::AllVersionsIgnored
-      log(:info, "  skipping '#{name}' update due to ignored versions: #{checker.ignored_versions}")
+      log(:info, "  skipping #{dependency.name} update due to ignored versions rule: #{checker.ignored_versions}")
       nil
     rescue StandardError => e
       log_error(e)
@@ -75,7 +75,7 @@ module Dependabot
     #
     # @return [nil]
     def skipped
-      log(:debug, "Skipping '#{name}' due to allow rules")
+      log(:debug, "Skipping '#{name}' due to allow rules: #{config[:allow]}")
       nil
     end
 
@@ -110,7 +110,7 @@ module Dependabot
     #
     # @return [Array<Dependabot::Dependency>]
     def updated_dependency
-      log(:info, "  found version for update: #{name} => #{checker.latest_version}")
+      log(:info, "  found version for update - #{name} => #{checker.latest_version}")
       updated_dependencies = checker.updated_dependencies(requirements_to_unlock: requirements_to_unlock)
 
       Dependabot::UpdatedDependency.new(
@@ -118,7 +118,8 @@ module Dependabot
         updated_dependencies: updated_dependencies,
         updated_files: updated_files(updated_dependencies),
         vulnerable: checker.vulnerable?,
-        security_advisories: checker.security_advisories
+        security_advisories: checker.security_advisories,
+        auto_merge_rules: config[:auto_merge]
       )
     end
 
@@ -131,7 +132,7 @@ module Dependabot
           dependency: dependency,
           dependency_files: dependency_files,
           credentials: credentials,
-          ignored_versions: RuleHandler.ignored_versions(dependency, config[:ignore]),
+          ignored_versions: RuleHandler.version_conditions(dependency, config[:ignore]),
           raise_on_ignored: true
         }
         args[:requirements_update_strategy] = versioning_strategy if versioning_strategy && !lockfile_only?

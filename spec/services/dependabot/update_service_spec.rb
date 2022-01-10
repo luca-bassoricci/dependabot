@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
-describe Dependabot::UpdateService, integration: true, epic: :services, feature: :updater do
+describe Dependabot::UpdateService, integration: true, epic: :services, feature: :dependabot do
   subject(:dependency_updater) { described_class }
 
   include_context "with dependabot helper"
   include_context "with webmock"
 
   let(:gitlab) { instance_double("Gitlab::client", project: Gitlab::ObjectifiedHash.new(default_branch: branch)) }
-  let(:rspec) { "rspec" }
   let(:branch) { "master" }
   let(:project) { Project.new(name: repo) }
   let(:config) { dependabot_config.first }
@@ -20,7 +19,8 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
       updated_dependencies: ["updated_config"],
       updated_files: [],
       vulnerable: false,
-      security_advisories: []
+      security_advisories: [],
+      auto_merge_rules: nil
     )
   end
   let(:updated_rspec) do
@@ -29,7 +29,8 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
       updated_dependencies: ["updated_rspec"],
       updated_files: [],
       vulnerable: true,
-      security_advisories: []
+      security_advisories: [],
+      auto_merge_rules: nil
     )
   end
 

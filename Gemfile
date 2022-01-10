@@ -15,6 +15,7 @@ gem "mongoid_rails_migrations", "~> 1.4"
 gem "puma", "~> 5.5"
 gem "rails", "~> 6.1.4"
 gem "rails-healthcheck", "~> 1.4"
+gem "semantic_range", "~> 3.0"
 gem "sentry-rails", "~> 4.8", require: false
 gem "sentry-ruby", "~> 4.8", require: false
 gem "sentry-sidekiq", "~> 4.8", require: false

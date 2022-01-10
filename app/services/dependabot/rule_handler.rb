@@ -22,14 +22,16 @@ module Dependabot
       @versioning_strategy = config[:versioning_strategy]
     end
 
-    # Ignored versions for dependency
+    # Version conditions for dependency
     #
     # @param [Dependabot::Dependency] dependency
-    # @param [Array] ignore
+    # @param [Array, nil] conditions
     # @return [Array]
-    def self.ignored_versions(dependency, ignore)
-      ignore_conditions = ignore.map { |ic| Dependabot::Config::IgnoreCondition.new(**ic) }
+    def self.version_conditions(dependency, conditions)
+      return unless conditions
 
+      # Dependabot uses it for ignore only, but ranges can actually be used for both allow and ignore conditions
+      ignore_conditions = conditions.map { |ic| Dependabot::Config::IgnoreCondition.new(**ic) }
       Dependabot::Config::UpdateConfig.new(ignore_conditions: ignore_conditions).ignored_versions_for(dependency)
     end
 
