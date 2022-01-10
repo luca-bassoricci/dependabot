@@ -118,7 +118,8 @@ describe Dependabot::UpdateChecker, epic: :services, feature: :dependabot do
         updated_files: updated_files,
         updated_dependencies: updated_dependencies,
         vulnerable: checker.vulnerable?,
-        security_advisories: checker.security_advisories
+        security_advisories: checker.security_advisories,
+        auto_merge_rules: auto_merge_rules
       )
     end
 

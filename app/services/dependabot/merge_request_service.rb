@@ -21,7 +21,7 @@ module Dependabot
     #
     # @return [void]
     def call
-      log(:info, "Updating following dependencies: #{updated_dependencies_name}")
+      log(:info, "Updating following dependencies: #{current_versions}")
       if find_mr("closed")
         log(:warn, " closed mr exists, skipping!")
         return
@@ -40,7 +40,8 @@ module Dependabot
 
     private
 
-    delegate :updated_files, :updated_dependencies, :name, to: :updated_dependency
+    delegate :updated_files, :updated_dependencies, :name, :previous_versions, :current_versions,
+             to: :updated_dependency
 
     attr_reader :project, :fetcher, :updated_dependency, :config, :recreate
 
@@ -82,8 +83,8 @@ module Dependabot
         package_ecosystem: config[:package_ecosystem],
         directory: config[:directory],
         state: "opened",
-        auto_merge: config[:auto_merge],
-        dependencies: current_dependencies_name,
+        auto_merge: updated_dependency.auto_mergeable?,
+        dependencies: previous_versions,
         main_dependency: name,
         branch: source_branch,
         target_project_id: target_project_id
@@ -147,7 +148,7 @@ module Dependabot
     # @return [void]
     def accept_mr
       return unless AppConfig.standalone
-      return unless mr && config[:auto_merge]
+      return unless mr && updated_dependency.auto_mergeable?
 
       gitlab.accept_merge_request(mr.project_id, mr.iid, merge_when_pipeline_succeeds: true)
       log(:info, "  accepted merge request")
@@ -205,27 +206,13 @@ module Dependabot
       recreate || rebase_all? || (rebase? && mr["has_conflicts"])
     end
 
-    # All dependencies to be updated with new versions
-    #
-    # @return [String]
-    def updated_dependencies_name
-      @updated_dependencies_name ||= updated_dependencies.map { |dep| "#{dep.name}-#{dep.version}" }.join("/")
-    end
-
-    # All dependencies being updated with current versions
-    #
-    # @return [String]
-    def current_dependencies_name
-      @current_dependencies_name ||= updated_dependencies.map { |dep| "#{dep.name}-#{dep.previous_version}" }.join("/")
-    end
-
     # List of open superseeded merge requests
     #
     # @return [Mongoid::Criteria]
     def superseeded_mrs
       @superseeded_mrs ||= project.merge_requests
                                   .where(
-                                    dependencies: current_dependencies_name,
+                                    dependencies: previous_versions,
                                     state: "opened",
                                     directory: config[:directory]
                                   )

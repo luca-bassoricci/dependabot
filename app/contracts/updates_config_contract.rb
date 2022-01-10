@@ -46,6 +46,8 @@ class UpdatesConfigContract < Dry::Validation::Contract
         optional(:prefix).filled(:string)
       end
 
+      optional(:"auto-merge") { filled? > bool? | hash? }
+
       optional(:registries) { filled? > array? | eql?("*") }
       optional(:assignees).array(:str?)
       optional(:reviewers).array(:str?)
@@ -56,7 +58,6 @@ class UpdatesConfigContract < Dry::Validation::Contract
       optional(:"open-pull-requests-limit").filled(:integer)
       optional(:"rebase-strategy").filled(:string)
       optional(:"target-branch").filled(:string)
-      optional(:"auto-merge").filled(:bool?)
       optional(:"versioning-strategy").filled(:string)
       optional(:"insecure-external-code-execution").filled(:string)
     end

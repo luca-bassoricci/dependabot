@@ -5,6 +5,7 @@ RSpec.shared_context("with dependabot helper") do
   let(:repo) { Faker::Alphanumeric.unique.alpha(number: 15) }
   let(:package_manager) { "bundler" }
   let(:raw_config) { File.read("spec/fixture/gitlab/responses/dependabot.yml") }
+
   let(:allow_conf) { [{ dependency_type: "direct" }] }
   let(:ignore_conf) do
     [
@@ -12,6 +13,8 @@ RSpec.shared_context("with dependabot helper") do
       { dependency_name: "faker", update_types: ["version-update:semver-major"] }
     ]
   end
+
+  let(:auto_merge_rules) { { allow: [{ dependency_name: "*" }] } }
 
   let(:source) do
     Dependabot::Source.new(
@@ -41,16 +44,14 @@ RSpec.shared_context("with dependabot helper") do
   end
 
   let(:updated_dependencies) do
-    requirement = dependency.requirements.first
-    updated_dep = Dependabot::Dependency.new(
+    [Dependabot::Dependency.new(
       name: dependency.name,
       package_manager: dependency.package_manager,
-      previous_requirements: [requirement],
+      previous_requirements: [dependency.requirements.first],
       previous_version: dependency.version,
       version: "2.2.1",
-      requirements: [requirement.merge({ requirement: "~> 2.2.1" })]
-    )
-    [updated_dep]
+      requirements: [dependency.requirements.first.merge({ requirement: "~> 2.2.1" })]
+    )]
   end
 
   let(:updated_files) do
@@ -87,9 +88,9 @@ RSpec.shared_context("with dependabot helper") do
         allow: allow_conf,
         ignore: ignore_conf,
         rebase_strategy: "auto",
-        auto_merge: true,
         versioning_strategy: :lockfile_only,
         reject_external_code: true,
+        auto_merge: auto_merge_rules,
         commit_message_options: {
           prefix: "dep",
           prefix_development: "bundler-dev",

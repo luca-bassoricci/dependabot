@@ -38,4 +38,6 @@ updates:
       separator: "-"
     versioning-strategy: lockfile-only
     rebase-strategy: auto
-    auto-merge: true
+    auto-merge:
+      allow:
+        - dependency-name: "*"

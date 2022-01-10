@@ -30,7 +30,7 @@ describe Dependabot::RuleHandler, epic: :services, feature: :dependabot do
   end
 
   it "returns ignored versions for dependency" do
-    ignored_versions = described_class.ignored_versions(
+    ignored_versions = described_class.version_conditions(
       dependency,
       [{ dependency_name: "config", update_types: ["version-update:semver-major"] }]
     )

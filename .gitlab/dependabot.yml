@@ -9,6 +9,9 @@ updates:
         - changelog: dependency
     assignees:
       - andrcuns
+    auto-merge:
+      ignore:
+        - dependency-name: dependabot-omnibus
   - package-ecosystem: docker
     directory: /
     schedule:
@@ -36,3 +39,4 @@ updates:
         - changelog: development-dependency
     assignees:
       - andrcuns
+    auto-merge: true

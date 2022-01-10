@@ -49,7 +49,8 @@ module Dependabot
           **branch_options(configuration),
           **commit_message_options(configuration),
           **filter_options(configuration),
-          **schedule_options(configuration)
+          **schedule_options(configuration),
+          **auto_merge_options(configuration)
         }.compact
       end
     end
@@ -140,9 +141,27 @@ module Dependabot
         custom_labels: opts[:labels],
         open_merge_requests_limit: opts[:"open-pull-requests-limit"] || DependabotConfig.open_pull_request_limit,
         rebase_strategy: opts[:"rebase-strategy"] || "auto",
-        auto_merge: opts[:"auto-merge"],
         versioning_strategy: versioning_strategy(opts[:"versioning-strategy"]),
         fork: yml[:fork]
+      }
+    end
+
+    # Auto merge options
+    #
+    # @param [Hash] opts
+    # @return [Hash]
+    def auto_merge_options(opts)
+      auto_merge = opts[:"auto-merge"]
+      return {} unless auto_merge
+      return { auto_merge: { dependency_name: "*" } } if auto_merge == true
+
+      validate_dependabot_config(AutoMergeConfigContract, { "auto-merge": auto_merge })
+
+      {
+        auto_merge: {
+          allow: transform_filter_options(auto_merge[:allow]),
+          ignore: transform_filter_options(auto_merge[:ignore])
+        }.compact
       }
     end
 
