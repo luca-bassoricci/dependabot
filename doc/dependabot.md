@@ -80,6 +80,25 @@ Automatically accept merge request and set it to merge when pipeline succeeds. I
 auto-merge: true
 ```
 
+### allow/ignore
+
+`auto-merge` key can be configured with optional `allow` or `ignore` rules that function same way as global [ignore](https://docs.github.com/en/code-security/supply-chain-security/keeping-your-dependencies-updated-automatically/configuration-options-for-dependency-updates#ignore). Both `allow` and `ignore` support `dependency-name`, `versions` and `update-types` parameters.\
+If only `ignore` parameter is set, it is implied that all other dependencies are allowed to be automatically merged.
+
+```yml
+auto-merge:
+  allow:
+    # automatically merge only minor version lodash updates
+    - dependency-name: "lodash"
+      update-types: ["version-update:semver-minor"]
+  ignore:
+    # do not merge automatically all aws-sdk major version updates
+    - dependency-name: aws-sdk
+      update-types: ["version-update:semver-major"]
+```
+
+### Standalone
+
 In standalone mode this feature is not guaranteed to work due to gitlab limitation of accepting merge request before pipeline has been triggered. If pipeline
 started with delay after merge request was created, trying to accept and auto merge might fail with `Method Not Allowed` error.
 
