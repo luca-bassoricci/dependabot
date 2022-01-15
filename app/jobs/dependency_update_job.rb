@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# :reek:TooManyStatements
 class DependencyUpdateJob < ApplicationJob
   queue_as :default
 
@@ -27,6 +28,7 @@ class DependencyUpdateJob < ApplicationJob
     raise
   ensure
     save_execution_details
+    clear_execution_context
   end
 
   private
@@ -72,6 +74,15 @@ class DependencyUpdateJob < ApplicationJob
     context_values << directory unless directory == "/"
 
     Thread.current[:context] = context_values.join("=>")
+  end
+
+  # Clear execution context
+  #
+  # Sidekiq can reuse threads, should be cleared in case next job doesn't set it
+  #
+  # @return [void]
+  def clear_execution_context
+    Thread.current[:context] = nil
   end
 
   # Save last enqued time
