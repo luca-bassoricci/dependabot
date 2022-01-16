@@ -148,7 +148,7 @@ module Dependabot
     # @param [Dependabot::UpdatedDependency] updated_dependency
     # @return [Gitlab::ObjectifiedHash]
     def create_mr(updated_dependency)
-      Dependabot::MergeRequestService.call(
+      Dependabot::MergeRequest::CreateService.call(
         project: project,
         fetcher: fetcher,
         config: config,

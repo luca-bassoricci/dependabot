@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Dependabot::MergeRequestService, integration: true, epic: :services, feature: :dependabot do
+describe Dependabot::MergeRequest::CreateService, integration: true, epic: :services, feature: :dependabot do
   include_context "with dependabot helper"
 
   let(:gitlab) { instance_double("Gitlab::Client", rebase_merge_request: nil, accept_merge_request: nil) }
@@ -175,7 +175,8 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
           fetcher: fetcher,
           updated_files: updated_files,
           merge_request: mr,
-          target_project_id: nil
+          target_project_id: nil,
+          recreate: false
         )
       end
     end
@@ -227,8 +228,13 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
 
       it "updates on recreate flag" do
         expect(service_return(recreate: true)).to eq(mr)
-        expect(Gitlab::MergeRequest::Updater).to have_received(:call)
-        expect(gitlab).not_to have_received(:rebase_merge_request)
+        expect(Gitlab::MergeRequest::Updater).to have_received(:call).with(
+          fetcher: fetcher,
+          updated_files: updated_files,
+          merge_request: mr,
+          target_project_id: nil,
+          recreate: true
+        )
       end
     end
 
@@ -240,10 +246,9 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
         config[:rebase_strategy] = "all"
       end
 
-      it "triggers merge request rebase" do
+      it "triggers merge request update" do
         expect(service_return).to eq(mr)
-        expect(gitlab).to have_received(:rebase_merge_request).with(mr.project_id, mr.iid)
-        expect(Gitlab::MergeRequest::Updater).not_to have_received(:call)
+        expect(Gitlab::MergeRequest::Updater).to have_received(:call)
       end
     end
 
@@ -258,13 +263,17 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
       it "skips updating" do
         expect(service_return).to eq(mr)
         expect(Gitlab::MergeRequest::Updater).not_to have_received(:call)
-        expect(gitlab).not_to have_received(:rebase_merge_request)
       end
 
       it "recreates on recreate flag" do
         expect(service_return(recreate: true)).to eq(mr)
-        expect(Gitlab::MergeRequest::Updater).to have_received(:call)
-        expect(gitlab).not_to have_received(:rebase_merge_request)
+        expect(Gitlab::MergeRequest::Updater).to have_received(:call).with(
+          fetcher: fetcher,
+          updated_files: updated_files,
+          merge_request: mr,
+          target_project_id: nil,
+          recreate: true
+        )
       end
     end
 
@@ -279,13 +288,17 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
       it "recreates on conflict" do
         expect(service_return).to eq(mr)
         expect(Gitlab::MergeRequest::Updater).to have_received(:call)
-        expect(gitlab).not_to have_received(:rebase_merge_request)
       end
 
       it "recreates on recreate flag" do
         expect(service_return(recreate: true)).to eq(mr)
-        expect(Gitlab::MergeRequest::Updater).to have_received(:call)
-        expect(gitlab).not_to have_received(:rebase_merge_request)
+        expect(Gitlab::MergeRequest::Updater).to have_received(:call).with(
+          fetcher: fetcher,
+          updated_files: updated_files,
+          merge_request: mr,
+          target_project_id: nil,
+          recreate: true
+        )
       end
     end
 
@@ -300,7 +313,6 @@ describe Dependabot::MergeRequestService, integration: true, epic: :services, fe
       it "recreates on conflict" do
         expect(service_return).to eq(mr)
         expect(Gitlab::MergeRequest::Updater).to have_received(:call)
-        expect(gitlab).not_to have_received(:rebase_merge_request)
       end
     end
 

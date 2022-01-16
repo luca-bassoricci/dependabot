@@ -1,21 +1,23 @@
 # frozen_string_literal: true
 
-describe Dependabot::MergeRequestUpdater, epic: :services, feature: :dependabot, integration: true do
+describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dependabot, integration: true do
   include_context "with dependabot helper"
   include_context "with webmock"
 
   let(:gitlab) { instance_double("Gitlab::client", project: Gitlab::ObjectifiedHash.new(default_branch: branch)) }
+  let(:updated_dependency) { instance_double("Dependabot::UpdatedDependency", updated_files: updated_files) }
+
   let(:branch) { "master" }
   let(:project) { Project.new(name: repo) }
   let(:config) { dependabot_config.first }
-  let(:updated_dependency) { updated_dependencies.first }
+
   let(:mr) do
     MergeRequest.new(
       project: project,
       iid: 1,
       package_ecosystem: config[:package_ecosystem],
       directory: config[:directory],
-      main_dependency: updated_dependency.name
+      main_dependency: "rspec"
     )
   end
 
@@ -30,25 +32,25 @@ describe Dependabot::MergeRequestUpdater, epic: :services, feature: :dependabot,
         project_name: repo,
         config: config,
         fetcher: fetcher,
-        name: updated_dependency.name,
+        name: "rspec",
         repo_contents_path: nil
       )
       .and_return(updated_dependency)
 
-    allow(Dependabot::MergeRequestService).to receive(:call)
+    allow(Gitlab::MergeRequest::Updater).to receive(:call)
 
     project.save!
     mr.save!
   end
 
-  it "recreates merge request" do
+  it "updates merge request" do
     described_class.call(project_name: repo, mr_iid: mr.iid)
 
-    expect(Dependabot::MergeRequestService).to have_received(:call).with(
-      project: project,
+    expect(Gitlab::MergeRequest::Updater).to have_received(:call).with(
       fetcher: fetcher,
-      config: config,
-      updated_dependency: updated_dependency,
+      updated_files: updated_files,
+      merge_request: mr,
+      target_project_id: nil,
       recreate: true
     )
   end

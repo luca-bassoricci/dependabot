@@ -70,7 +70,7 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
     let(:action) { "reopen" }
 
     before do
-      allow(Dependabot::MergeRequestUpdater).to receive(:call)
+      allow(Dependabot::MergeRequest::UpdateService).to receive(:call)
 
       closed_merge_request.save!
     end
@@ -81,7 +81,7 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
       aggregate_failures do
         expect(result).to eq({ reopened_merge_request: true })
         expect(closed_merge_request.reload.state).to eq("opened")
-        expect(Dependabot::MergeRequestUpdater).to have_received(:call).with(project.name, mr_iid)
+        expect(MergeRequestUpdateJob).to have_received(:perform_later).with(project.name, mr_iid)
       end
     end
   end

@@ -31,7 +31,7 @@ module Webhooks
     def reopen_mr
       log(:info, "Reopening merge request !#{mr(state: 'closed').iid} for project #{project_name}!")
       mr.update_attributes!(state: "opened")
-      Dependabot::MergeRequestUpdater.call(project.name, mr.iid)
+      MergeRequestUpdateJob.perform_later(project_name, mr_iid)
 
       { reopened_merge_request: true }
     end
