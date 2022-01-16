@@ -18,7 +18,7 @@ class MergeRequestRecreationJob < ApplicationJob
     @discussion_id = discussion_id
 
     reply_status(":warning: `dependabot` is recreating merge request. All changes will be overwritten! :warning:")
-    Dependabot::MergeRequestUpdater.call(project_name: project_name, mr_iid: mr_iid)
+    Dependabot::MergeRequest::UpdateService.call(project_name: project_name, mr_iid: mr_iid)
     reply_status(":white_check_mark: `dependabot` successfuly recreated merge request!")
     resolve_discussion
   rescue StandardError => e

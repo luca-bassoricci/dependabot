@@ -69,7 +69,7 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
       )
       .and_return(updated_deps)
 
-    allow(Dependabot::MergeRequestService).to receive(:call).and_return("mr")
+    allow(Dependabot::MergeRequest::CreateService).to receive(:call).and_return("mr")
   end
 
   context "with deployed version" do
@@ -81,8 +81,8 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
       it "runs dependency updates for all defined dependencies" do
         dependency_updater.call(project_name: repo, package_ecosystem: package_manager, directory: "/")
 
-        expect(Dependabot::MergeRequestService).to have_received(:call).with(rspec_mr_args)
-        expect(Dependabot::MergeRequestService).to have_received(:call).with(config_mr_args)
+        expect(Dependabot::MergeRequest::CreateService).to have_received(:call).with(rspec_mr_args)
+        expect(Dependabot::MergeRequest::CreateService).to have_received(:call).with(config_mr_args)
       end
     end
 
@@ -98,7 +98,7 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
           dependency_name: dependency_name
         )
 
-        expect(Dependabot::MergeRequestService).to have_received(:call).with(rspec_mr_args)
+        expect(Dependabot::MergeRequest::CreateService).to have_received(:call).with(rspec_mr_args)
       end
     end
   end
@@ -111,11 +111,11 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
     it "runs dependency update for repository" do
       dependency_updater.call(project_name: repo, package_ecosystem: package_manager, directory: "/")
 
-      expect(Dependabot::MergeRequestService).to have_received(:call)
+      expect(Dependabot::MergeRequest::CreateService).to have_received(:call)
         .with(
           hash_including({ **rspec_mr_args.slice(:fetcher, :config, :updated_dependency), project: kind_of(Project) })
         )
-      expect(Dependabot::MergeRequestService).to have_received(:call)
+      expect(Dependabot::MergeRequest::CreateService).to have_received(:call)
         .with(
           hash_including({ **config_mr_args.slice(:fetcher, :config, :updated_dependency), project: kind_of(Project) })
         )
