@@ -21,7 +21,7 @@ module Api
     # @return [String]
     def create
       log(:info, "Registering project '#{project_name}'")
-      project = Dependabot::ProjectCreator.call(project_name)
+      project = Dependabot::Projects::Creator.call(project_name)
       Cron::JobSync.call(project)
       json_response(body: project.sanitized_hash)
     rescue ActionController::ParameterMissing
@@ -46,7 +46,7 @@ module Api
     #
     # @return [String]
     def destroy
-      Dependabot::ProjectRemover.call(project_id)
+      Dependabot::Projects::Remover.call(project_id)
     end
 
     private

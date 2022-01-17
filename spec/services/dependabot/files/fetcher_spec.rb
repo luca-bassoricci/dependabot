@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Dependabot::FileFetcher, epic: :services, feature: :dependabot do
+describe Dependabot::Files::Fetcher, epic: :services, feature: :dependabot do
   subject { described_class.call(repo, dependabot_config.first, nil) }
 
   include_context "with webmock"

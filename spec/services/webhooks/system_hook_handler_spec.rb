@@ -22,13 +22,13 @@ describe Webhooks::SystemHookHandler, integration: true, epic: :services, featur
     let(:project) { Project.new(name: project_name) }
 
     before do
-      allow(Dependabot::ProjectCreator).to receive(:call) { project }
+      allow(Dependabot::Projects::Creator).to receive(:call) { project }
     end
 
     it "creates new project" do
       expect(result).to eq(project.sanitized_hash)
 
-      expect(Dependabot::ProjectCreator).to have_received(:call).with(project_name)
+      expect(Dependabot::Projects::Creator).to have_received(:call).with(project_name)
       expect(Cron::JobSync).to have_received(:call).with(project)
     end
   end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Gitlab
-  module Config
+  module ConfigFile
     # Check if config file exists in repository
     #
     class Checker < ApplicationService

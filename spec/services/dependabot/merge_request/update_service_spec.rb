@@ -25,8 +25,8 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
     stub_gitlab
 
     allow(Gitlab).to receive(:client) { gitlab }
-    allow(Gitlab::Config::Fetcher).to receive(:call).with(repo, branch) { raw_config }
-    allow(Dependabot::FileFetcher).to receive(:call).with(repo, config, nil) { fetcher }
+    allow(Gitlab::ConfigFile::Fetcher).to receive(:call).with(repo, branch) { raw_config }
+    allow(Dependabot::Files::Fetcher).to receive(:call).with(repo, config, nil) { fetcher }
     allow(Dependabot::DependencyUpdater).to receive(:call)
       .with(
         project_name: repo,

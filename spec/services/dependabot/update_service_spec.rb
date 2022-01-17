@@ -55,8 +55,8 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
     stub_gitlab
 
     allow(Gitlab).to receive(:client) { gitlab }
-    allow(Dependabot::FileFetcher).to receive(:call).with(repo, config, nil) { fetcher }
-    allow(Dependabot::ConfigFetcher).to receive(:call)
+    allow(Dependabot::Files::Fetcher).to receive(:call).with(repo, config, nil) { fetcher }
+    allow(Dependabot::Config::Fetcher).to receive(:call)
       .with(repo, find_by: { package_ecosystem: package_manager, directory: "/" })
       .and_return(config)
     allow(Dependabot::DependencyUpdater).to receive(:call)

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module Dependabot
+  # Wrapper around Dependabot::Source
+  #
   class DependabotSource < ApplicationService
     attr_reader :repo, :directory, :branch
 

@@ -2,6 +2,9 @@
 
 module Dependabot
   # :reek:InstanceVariableAssumption
+
+  # Main entrypoint class for updating dependencies and creating merge requests
+  #
   class UpdateService < ApplicationService
     # @param [Hash<String, Object>] args
     def initialize(args)
@@ -55,7 +58,7 @@ module Dependabot
     #
     # @return [Hash]
     def fetch_config
-      config_entry = Dependabot::ConfigFetcher.call(
+      config_entry = Dependabot::Config::Fetcher.call(
         project_name,
         find_by: {
           package_ecosystem: package_ecosystem,
@@ -90,7 +93,7 @@ module Dependabot
     #
     # @return [Dependabot::FileFetcher]
     def fetcher
-      @fetcher ||= Dependabot::FileFetcher.call(project_name, config, repo_contents_path)
+      @fetcher ||= Dependabot::Files::Fetcher.call(project_name, config, repo_contents_path)
     end
 
     # All security updates

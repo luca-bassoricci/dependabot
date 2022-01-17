@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Dependabot::FileUpdater, epic: :services, feature: :dependabot do
+describe Dependabot::Files::Updater, epic: :services, feature: :dependabot do
   subject(:file_updater) do
     described_class.call(
       dependencies: updated_dependencies,

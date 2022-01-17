@@ -18,9 +18,9 @@ module Webhooks
       return unless modified_config? || deleted_config?
       return clean if deleted_config?
 
-      Dependabot::ProjectCreator.call(project_name)
-                                .tap { |project| Cron::JobSync.call(project) }
-                                .sanitized_hash
+      Dependabot::Projects::Creator.call(project_name)
+                                   .tap { |project| Cron::JobSync.call(project) }
+                                   .sanitized_hash
     end
 
     private
@@ -51,7 +51,7 @@ module Webhooks
     #
     # @return [void]
     def clean
-      Dependabot::ProjectRemover.call(project_name)
+      Dependabot::Projects::Remover.call(project_name)
     end
   end
 end

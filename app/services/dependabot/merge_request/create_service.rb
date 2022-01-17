@@ -6,7 +6,7 @@ module Dependabot
   # :reek:RepeatedConditional
   module MergeRequest
     class CreateService < ApplicationService # rubocop:disable Metrics/ClassLength
-      # @param [Dependabot::FileFetchers::Base] fetcher
+      # @param [Dependabot::Files::Fetchers::Base] fetcher
       # @param [Project] project
       # @param [Hash] config
       # @param [Dependabot::UpdatedDependency] updated_dependency

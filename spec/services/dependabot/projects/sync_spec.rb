@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Dependabot::ProjectSync, integration: true, epic: :services, feature: :dependabot do
+describe Dependabot::Projects::Sync, integration: true, epic: :services, feature: :dependabot do
   subject(:sync) { described_class }
 
   let(:gitlab) do
@@ -44,10 +44,10 @@ describe Dependabot::ProjectSync, integration: true, epic: :services, feature: :
   before do
     allow(Gitlab::Client).to receive(:new) { gitlab }
 
-    allow(Dependabot::ConfigFetcher).to receive(:call).with(
+    allow(Dependabot::Config::Fetcher).to receive(:call).with(
       project.path_with_namespace, branch: project.default_branch, update_cache: true
     ).and_return(config)
-    allow(Dependabot::ProjectCreator).to receive(:call).with(project.path_with_namespace) { saved_project }
+    allow(Dependabot::Projects::Creator).to receive(:call).with(project.path_with_namespace) { saved_project }
     allow(Cron::JobSync).to receive(:call).with(saved_project)
   end
 
@@ -59,21 +59,21 @@ describe Dependabot::ProjectSync, integration: true, epic: :services, feature: :
     it "skips project" do
       sync.call
 
-      expect(Dependabot::ConfigFetcher).not_to have_received(:call)
+      expect(Dependabot::Config::Fetcher).not_to have_received(:call)
     end
   end
 
   context "with non existing project" do
     context "without configuration" do
       before do
-        allow(Dependabot::ConfigFetcher).to receive(:call).and_raise(Dependabot::MissingConfigurationError)
+        allow(Dependabot::Config::Fetcher).to receive(:call).and_raise(Dependabot::Config::MissingConfigurationError)
       end
 
       it "skips registering project" do
         sync.call
 
         aggregate_failures do
-          expect(Dependabot::ProjectCreator).not_to have_received(:call).with(project_name)
+          expect(Dependabot::Projects::Creator).not_to have_received(:call).with(project_name)
           expect(Cron::JobSync).not_to have_received(:call).with(saved_project)
         end
       end
@@ -84,7 +84,7 @@ describe Dependabot::ProjectSync, integration: true, epic: :services, feature: :
         sync.call
 
         aggregate_failures do
-          expect(Dependabot::ProjectCreator).to have_received(:call).with(project_name)
+          expect(Dependabot::Projects::Creator).to have_received(:call).with(project_name)
           expect(Cron::JobSync).to have_received(:call).with(saved_project)
         end
       end
@@ -98,14 +98,14 @@ describe Dependabot::ProjectSync, integration: true, epic: :services, feature: :
 
     context "without config" do
       before do
-        allow(Dependabot::ConfigFetcher).to receive(:call).and_raise(Dependabot::MissingConfigurationError)
-        allow(Dependabot::ProjectRemover).to receive(:call).with(project_name)
+        allow(Dependabot::Config::Fetcher).to receive(:call).and_raise(Dependabot::Config::MissingConfigurationError)
+        allow(Dependabot::Projects::Remover).to receive(:call).with(project_name)
       end
 
       it "removes project" do
         sync.call
 
-        expect(Dependabot::ProjectRemover).to have_received(:call).with(project_name)
+        expect(Dependabot::Projects::Remover).to have_received(:call).with(project_name)
       end
     end
 
@@ -118,7 +118,7 @@ describe Dependabot::ProjectSync, integration: true, epic: :services, feature: :
         sync.call
 
         aggregate_failures do
-          expect(Dependabot::ProjectCreator).to have_received(:call).with(project_name)
+          expect(Dependabot::Projects::Creator).to have_received(:call).with(project_name)
           expect(Cron::JobSync).to have_received(:call).with(saved_project)
         end
       end
@@ -133,7 +133,7 @@ describe Dependabot::ProjectSync, integration: true, epic: :services, feature: :
         sync.call
 
         aggregate_failures do
-          expect(Dependabot::ProjectCreator).not_to have_received(:call).with(project_name)
+          expect(Dependabot::Projects::Creator).not_to have_received(:call).with(project_name)
           expect(Cron::JobSync).not_to have_received(:call).with(saved_project)
         end
       end

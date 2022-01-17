@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Dependabot::ProjectRegistration, integration: true, epic: :services, feature: :dependabot do
+describe Dependabot::Projects::Registration, integration: true, epic: :services, feature: :dependabot do
   let(:cron) { "0/15 * * * *" }
   let(:job_name) { "Project Registration" }
   let(:job_args) do

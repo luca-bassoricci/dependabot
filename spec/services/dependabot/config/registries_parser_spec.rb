@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Dependabot::RegistriesParser, epic: :services, feature: :dependabot do
+describe Dependabot::Config::RegistriesParser, epic: :services, feature: :dependabot do
   subject(:parsed_registries) { described_class.call(registries: registries) }
 
   context "with correctly configured registries" do

@@ -3,7 +3,7 @@
 module Gitlab
   module MergeRequest
     class Updater < ApplicationService
-      # @param [Dependabot::FileFetchers::Base] fetcher
+      # @param [Dependabot::Files::Fetchers::Base] fetcher
       # @param [Array<Dependabot::DependencyFile>] updated_files
       # @param [Gitlab::ObjectifiedHash] merge_request
       # @param [Number] target_project_id

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Gitlab
-  module Config
+  module ConfigFile
     class Fetcher < ApplicationService
       # @param [String] project_name
       def initialize(project_name, branch)

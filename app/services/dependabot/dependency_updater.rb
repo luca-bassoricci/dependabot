@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module Dependabot
+  # Dependency file updater
+  #
   class DependencyUpdater < ApplicationService
     def initialize(project_name:, config:, fetcher:, repo_contents_path:, name: nil)
       @project_name = project_name
@@ -23,7 +25,7 @@ module Dependabot
     attr_reader :project_name
     # @return [Hash]
     attr_reader :config
-    # @return [Dependabot::FileFetcher]
+    # @return [Dependabot::Files::Fetcher]
     attr_reader :fetcher
     # @return [String]
     attr_reader :name
@@ -55,7 +57,7 @@ module Dependabot
     #
     # @return [Array<Dependabot::Dependency>]
     def dependencies
-      @dependencies ||= Dependabot::FileParser.call(
+      @dependencies ||= Dependabot::Files::Parser.call(
         source: fetcher.source,
         dependency_files: fetcher.files,
         repo_contents_path: repo_contents_path,

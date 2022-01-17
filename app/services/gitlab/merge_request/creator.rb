@@ -10,7 +10,7 @@ module Gitlab
         branch_name_prefix
       ].freeze
 
-      # @param [Dependabot::FileFetchers::Base] fetcher
+      # @param [Dependabot::Files::Fetchers::Base] fetcher
       # @param [Array<Dependabot::Dependency>] updated_dependencies
       # @param [Array<Dependabot::DependencyFile>] updated_files
       # @param [Hash] mr_options

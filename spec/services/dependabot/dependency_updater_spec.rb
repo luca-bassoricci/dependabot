@@ -29,7 +29,7 @@ describe Dependabot::DependencyUpdater, epic: :services, feature: :dependabot do
   before do
     stub_gitlab
 
-    allow(Dependabot::FileParser).to receive(:call)
+    allow(Dependabot::Files::Parser).to receive(:call)
       .with(
         source: fetcher.source,
         dependency_files: fetcher.files,
