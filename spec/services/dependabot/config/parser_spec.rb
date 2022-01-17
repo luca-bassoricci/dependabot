@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Dependabot::ConfigParser, epic: :services, feature: :configuration do
+describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
   subject(:parser) { described_class }
 
   include_context "with dependabot helper"
@@ -95,7 +95,7 @@ describe Dependabot::ConfigParser, epic: :services, feature: :configuration do
 
     it "throws invalid configuration error" do
       expect { parser.call(config_yml, repo) }.to raise_error(
-        Dependabot::InvalidConfigurationError, /#{invalid_config_error}/
+        Dependabot::Config::InvalidConfigurationError, /#{invalid_config_error}/
       )
     end
   end

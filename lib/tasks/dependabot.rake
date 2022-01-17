@@ -28,7 +28,7 @@ namespace :dependabot do # rubocop:disable Metrics/BlockLength
   task(:register, [:projects] => :environment) do |_task, args|
     args[:projects].split(" ").each do |project_name|
       ApplicationHelper.log(:info, "Registering project '#{project_name}'")
-      Dependabot::ProjectCreator.call(project_name).tap do |project|
+      Dependabot::Projects::Creator.call(project_name).tap do |project|
         Cron::JobSync.call(project)
       end
     end
@@ -36,16 +36,16 @@ namespace :dependabot do # rubocop:disable Metrics/BlockLength
 
   desc "remove dependency update for repository"
   task(:remove, [:project] => :environment) do |_task, args|
-    Dependabot::ProjectRemover.call(args[:project])
+    Dependabot::Projects::Remover.call(args[:project])
   end
 
   desc "validate config file"
   task(:validate, [:project] => :environment) do |_task, args|
     ApplicationHelper.log(:info, "Validating config '#{DependabotConfig.config_filename}'")
-    Dependabot::ConfigFetcher.call(args[:project], update_cache: true)
+    Dependabot::Config::Fetcher.call(args[:project], update_cache: true)
 
     ApplicationHelper.log(:info, "Configuration is valid")
-  rescue Dependabot::InvalidConfigurationError => e
+  rescue Dependabot::Config::InvalidConfigurationError => e
     ApplicationHelper.log(:error, "Configuration not valid: #{e}")
     exit(1)
   end

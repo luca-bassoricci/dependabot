@@ -6,7 +6,7 @@ describe ProjectRegistrationJob, epic: :jobs do
   subject(:job) { described_class }
 
   before do
-    allow(Dependabot::ProjectSync).to receive(:call)
+    allow(Dependabot::Projects::Sync).to receive(:call)
   end
 
   it "queues job in project_registration queue" do
@@ -16,6 +16,6 @@ describe ProjectRegistrationJob, epic: :jobs do
   it "runs job sync" do
     perform_enqueued_jobs { job.perform_later }
 
-    expect(Dependabot::ProjectSync).to have_received(:call)
+    expect(Dependabot::Projects::Sync).to have_received(:call)
   end
 end

@@ -3,6 +3,8 @@
 require "dependabot/config/update_config"
 
 module Dependabot
+  # Allow/ignore rule handling
+  #
   class RuleHandler
     # @return [Hash<String, Proc>] handlers for type allow rules
     TYPE_HANDLERS = {

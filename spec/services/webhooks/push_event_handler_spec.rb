@@ -19,7 +19,7 @@ describe Webhooks::PushEventHandler, :aggregate_failures, integration: true, epi
   before do
     allow(Sidekiq::Cron::Job).to receive(:all)
     allow(Cron::JobSync).to receive(:call)
-    allow(Dependabot::ProjectCreator).to receive(:call) { project }
+    allow(Dependabot::Projects::Creator).to receive(:call) { project }
 
     project.save!
   end
@@ -50,7 +50,7 @@ describe Webhooks::PushEventHandler, :aggregate_failures, integration: true, epi
     it "triggers dependency update" do
       described_class.call(project_name: repo, commits: commits(modified: [DependabotConfig.config_filename]))
 
-      expect(Dependabot::ProjectCreator).to have_received(:call).with(repo)
+      expect(Dependabot::Projects::Creator).to have_received(:call).with(repo)
       expect(Cron::JobSync).to have_received(:call).with(project)
     end
   end

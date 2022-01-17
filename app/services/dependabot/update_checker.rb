@@ -2,6 +2,9 @@
 
 module Dependabot
   # :reek:TooManyStatements
+
+  # Checker class for new version availability
+  #
   class UpdateChecker < ApplicationService # rubocop:disable Metrics/ClassLength
     # @param [Dependabot::Dependency] dependency
     # @param [Array<Dependabot::DependencyFile>] dependency_files
@@ -160,7 +163,7 @@ module Dependabot
     #
     # @return [Array<Dependabot::DependencyFile>]
     def updated_files(updated_dependencies)
-      Dependabot::FileUpdater.call(
+      Dependabot::Files::Updater.call(
         dependencies: updated_dependencies,
         dependency_files: dependency_files,
         package_manager: package_manager,

@@ -48,7 +48,7 @@ describe Dependabot::UpdateChecker, epic: :services, feature: :dependabot do
   before do
     stub_gitlab
 
-    allow(Dependabot::FileUpdater).to receive(:call).with(
+    allow(Dependabot::Files::Updater).to receive(:call).with(
       dependencies: updated_dependencies,
       dependency_files: fetcher.files,
       package_manager: package_manager,

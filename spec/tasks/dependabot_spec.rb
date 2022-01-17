@@ -46,14 +46,14 @@ describe "rake", epic: :tasks do # rubocop:disable RSpec/DescribeClass
     let(:project) { Project.new(name: project_name) }
 
     before do
-      allow(Dependabot::ProjectCreator).to receive(:call) { project }
+      allow(Dependabot::Projects::Creator).to receive(:call) { project }
       allow(Cron::JobSync).to receive(:call).with(project).and_call_original
     end
 
     it "registers new project" do
       task.invoke(project_name)
 
-      expect(Dependabot::ProjectCreator).to have_received(:call).with(project_name)
+      expect(Dependabot::Projects::Creator).to have_received(:call).with(project_name)
       expect(Cron::JobSync).to have_received(:call).with(project)
     end
   end
@@ -62,13 +62,13 @@ describe "rake", epic: :tasks do # rubocop:disable RSpec/DescribeClass
     let(:project_name) { "test-project" }
 
     before do
-      allow(Dependabot::ProjectRemover).to receive(:call)
+      allow(Dependabot::Projects::Remover).to receive(:call)
     end
 
     it "removes project" do
       task.invoke(project_name)
 
-      expect(Dependabot::ProjectRemover).to have_received(:call).with(project_name)
+      expect(Dependabot::Projects::Remover).to have_received(:call).with(project_name)
     end
   end
 

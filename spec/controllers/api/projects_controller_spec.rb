@@ -42,7 +42,7 @@ describe Api::ProjectsController, :aggregate_failures, epic: :controllers do
 
   describe "#create" do
     before do
-      allow(Dependabot::ProjectCreator).to receive(:call) { project }
+      allow(Dependabot::Projects::Creator).to receive(:call) { project }
       allow(Cron::JobSync).to receive(:call).with(project)
     end
 
@@ -51,7 +51,7 @@ describe Api::ProjectsController, :aggregate_failures, epic: :controllers do
 
       expect_status(200)
       expect(response.body).to eq(project.sanitized_hash.to_json)
-      expect(Dependabot::ProjectCreator).to have_received(:call).with(project.name)
+      expect(Dependabot::Projects::Creator).to have_received(:call).with(project.name)
       expect(Cron::JobSync).to have_received(:call).with(project)
     end
 
@@ -80,14 +80,14 @@ describe Api::ProjectsController, :aggregate_failures, epic: :controllers do
 
   describe "#destroy" do
     before do
-      allow(Dependabot::ProjectRemover).to receive(:call)
+      allow(Dependabot::Projects::Remover).to receive(:call)
     end
 
     it "removes registered project and jobs" do
       delete("#{path}/#{project.id}")
 
       expect_status(204)
-      expect(Dependabot::ProjectRemover).to have_received(:call).with(project.id)
+      expect(Dependabot::Projects::Remover).to have_received(:call).with(project.id)
     end
   end
 end

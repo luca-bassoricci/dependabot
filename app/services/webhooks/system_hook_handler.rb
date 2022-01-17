@@ -22,9 +22,9 @@ module Webhooks
     #
     # @return [Project]
     def project_create
-      Dependabot::ProjectCreator.call(project_name)
-                                .tap { |project| Cron::JobSync.call(project) }
-                                .sanitized_hash
+      Dependabot::Projects::Creator.call(project_name)
+                                   .tap { |project| Cron::JobSync.call(project) }
+                                   .sanitized_hash
     end
 
     # Remove project on project_destroy event
@@ -32,7 +32,7 @@ module Webhooks
     # @return [nil]
     def project_destroy
       Project.find_by(name: project_name)
-      Dependabot::ProjectRemover.call(project_name)
+      Dependabot::Projects::Remover.call(project_name)
 
       "project removed successfully"
     rescue Mongoid::Errors::DocumentNotFound

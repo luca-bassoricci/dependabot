@@ -61,7 +61,7 @@ module Dependabot
       #
       # @return [Hash]
       def config
-        @config ||= Dependabot::ConfigFetcher.call(
+        @config ||= Dependabot::Config::Fetcher.call(
           project_name,
           find_by: {
             package_ecosystem: mr.package_ecosystem,
@@ -72,9 +72,9 @@ module Dependabot
 
       # Get file fetcher
       #
-      # @return [Dependabot::FileFetcher]
+      # @return [Dependabot::Files::Fetcher]
       def fetcher
-        @fetcher ||= Dependabot::FileFetcher.call(project_name, config, repo_contents_path)
+        @fetcher ||= Dependabot::Files::Fetcher.call(project_name, config, repo_contents_path)
       end
 
       # Updated dependency

@@ -35,7 +35,7 @@ module DependabotGitlab
           config.time_to_live = 60
         end
 
-        Dependabot::ProjectRegistration.call
+        Dependabot::Registration.call
       end
     end
   end

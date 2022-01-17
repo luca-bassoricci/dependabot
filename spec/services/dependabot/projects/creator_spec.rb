@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Dependabot::ProjectCreator, integration: true, epic: :services, feature: :dependabot do
+describe Dependabot::Projects::Creator, integration: true, epic: :services, feature: :dependabot do
   include_context "with dependabot helper"
 
   let(:branch) { "master" }
@@ -22,8 +22,8 @@ describe Dependabot::ProjectCreator, integration: true, epic: :services, feature
   before do
     allow(Gitlab).to receive(:client) { gitlab }
     allow(gitlab).to receive(:project).with(repo) { gitlab_project }
-    allow(Gitlab::Config::Checker).to receive(:call).with(repo, branch) { config_exists? }
-    allow(Gitlab::Config::Fetcher).to receive(:call).with(repo, branch) { raw_config }
+    allow(Gitlab::ConfigFile::Checker).to receive(:call).with(repo, branch) { config_exists? }
+    allow(Gitlab::ConfigFile::Fetcher).to receive(:call).with(repo, branch) { raw_config }
     allow(Gitlab::Hooks::Creator).to receive(:call) { hook_id }
     allow(Gitlab::Hooks::Updater).to receive(:call) { hook_id }
     allow(Gitlab::Hooks::Finder).to receive(:call) { upstream_hook_id }
