@@ -25,17 +25,17 @@ describe Gitlab::MergeRequest::Updater, epic: :services, feature: :gitlab do
       sha: "5f92cc4d9939",
       has_conflicts: has_conflicts,
       references: { short: "!1" }
-    )
+    ).to_hash.merge(commit_message: "update-commit")
   end
 
   let(:updater_args) do
     {
       source: fetcher.source,
       base_commit: fetcher.commit,
-      old_commit: mr.sha,
+      old_commit: mr[:commit_message],
       files: updated_files,
       credentials: Dependabot::Credentials.call,
-      pull_request_number: mr.iid,
+      pull_request_number: mr[:iid],
       provider_metadata: { target_project_id: nil }
     }
   end
@@ -79,7 +79,7 @@ describe Gitlab::MergeRequest::Updater, epic: :services, feature: :gitlab do
       updater
 
       expect(pr_updater).not_to have_received(:update)
-      expect(gitlab).to have_received(:rebase_merge_request).with(mr.project_id, mr.iid)
+      expect(gitlab).to have_received(:rebase_merge_request).with(mr[:project_id], mr[:iid])
     end
   end
 end

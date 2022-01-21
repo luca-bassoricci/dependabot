@@ -30,7 +30,9 @@ module Webhooks
     # @return [Hash]
     def reopen_mr
       log(:info, "Reopening merge request !#{mr(state: 'closed').iid} for project #{project_name}!")
+
       mr.update_attributes!(state: "opened")
+      recreate_branch
       MergeRequestUpdateJob.perform_later(project_name, mr_iid)
 
       { reopened_merge_request: true }
@@ -41,8 +43,11 @@ module Webhooks
     # @return [Hash]
     def close_mr
       log(:info, "Setting merge request !#{mr.iid} state to closed for project #{project_name}!")
+
       mr.update_attributes!(state: "closed")
-      Gitlab::MergeRequest::Commenter.call(project_name, mr.iid, comment)
+
+      Gitlab::BranchRemover.call(project_name, mr.branch)
+      Gitlab::MergeRequest::Commenter.call(project_name, mr.iid, ignore_comment)
 
       { closed_merge_request: true }
     end
@@ -101,7 +106,7 @@ module Webhooks
     #
     # @return [Hash]
     def config
-      @config ||= project.symbolized_config.find do |entry|
+      @config ||= project.config.find do |entry|
         entry[:package_ecosystem] == mr.package_ecosystem && entry[:directory] == mr.directory
       end
     end
@@ -131,10 +136,19 @@ module Webhooks
       true
     end
 
+    # Recreate mr branch if it doesn't exist
+    #
+    # @return [void]
+    def recreate_branch
+      gitlab.branch(project_name, mr.branch)
+    rescue Gitlab::Error::NotFound
+      gitlab.create_branch(project_name, mr.branch, mr.target_branch)
+    end
+
     # Closed mr message
     #
     # @return [String]
-    def comment
+    def ignore_comment
       <<~TXT
         Dependabot won't notify anymore about this release, but will get in touch when a new version is available. \
         You can also ignore all major, minor, or patch releases for a dependency by adding an [`ignore` condition](https://docs.github.com/en/code-security/supply-chain-security/configuration-options-for-dependency-updates#ignore) with the desired `update_types` to your config file.

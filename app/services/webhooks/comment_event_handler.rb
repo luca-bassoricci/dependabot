@@ -42,7 +42,7 @@ module Webhooks
       { rebase_in_progress: true }
     rescue StandardError => e
       log_error(e)
-      reply_status(":x: `dependabot` failed to trigger merge request rebase! `#{e.message}`")
+      reply_status(":x: `dependabot` failed to trigger merge request rebase! `#{e}`")
       { rebase_in_progress: false }
     end
 

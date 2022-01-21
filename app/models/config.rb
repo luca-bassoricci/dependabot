@@ -7,7 +7,7 @@ class Config
     @config_array = config_array
   end
 
-  delegate :select, :map, :first, :last, :empty?, to: :config_array
+  delegate :select, :map, :first, :last, :empty?, :find, to: :config_array
 
   # @return [Array<Hash>]
   attr_reader :config_array

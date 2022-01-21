@@ -272,21 +272,6 @@
     body: |
       []
 
-# Check commit
-- request:
-    path: /api/v4/projects/dependabot-gitlab%2Ftesting/repository/commits/bd101cbfe6c71201abdb03e3193766de42f64560
-    method: GET
-  response:
-    status: 200
-    headers:
-      Content-Type: application/json
-    body: |
-      {
-        "id": "bd101cbfe6c71201abdb03e3193766de42f64560",
-        "short_id": "bd101cbf",
-        "title": "dep(deps): bump rubocop"
-      }
-
 # Create commit
 - request:
     path: /api/v4/projects/dependabot-gitlab%2Ftesting/repository/commits

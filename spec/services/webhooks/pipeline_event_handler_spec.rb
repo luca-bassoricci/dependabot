@@ -20,7 +20,7 @@ describe Webhooks::PipelineEventHandler, integration: true, epic: :services, fea
       auto_merge: auto_merge,
       package_ecosystem: "bundler",
       state: "opened",
-      dependencies: "test"
+      update_from: "test-0.1"
     )
   end
 

@@ -24,7 +24,7 @@ module Gitlab
 
       # Create merge request
       #
-      # @return [Gitlab::ObjectifiedHash]
+      # @return [Dependabot::PullRequestCreator::Gitlab]
       def call
         Dependabot::PullRequestCreator.new(
           source: fetcher.source,
@@ -36,7 +36,7 @@ module Gitlab
           pr_message_footer: AppConfig.standalone ? nil : message_footer,
           provider_metadata: { target_project_id: target_project_id },
           **mr_options
-        ).create
+        ).send(:gitlab_creator)
       end
 
       private

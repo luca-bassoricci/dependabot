@@ -15,7 +15,8 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
       package_ecosystem: config[:package_ecosystem],
       state: "opened",
       auto_merge: false,
-      dependencies: "test"
+      update_from: "test-0.1",
+      branch: "dep-update"
     )
   end
   let(:open_merge_request) do
@@ -26,7 +27,7 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
       package_ecosystem: config[:package_ecosystem],
       state: "opened",
       auto_merge: false,
-      dependencies: "test"
+      update_from: "test-0.1"
     )
   end
   let(:other_open_merge_request) do
@@ -37,7 +38,7 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
       package_ecosystem: "npm",
       state: "opened",
       auto_merge: false,
-      dependencies: "test"
+      update_from: "test-0.1"
     )
   end
   let(:closed_merge_request) do
@@ -48,7 +49,9 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
       package_ecosystem: config[:package_ecosystem],
       state: "closed",
       auto_merge: false,
-      dependencies: "test"
+      update_from: "test-0.1",
+      branch: "mr-branch",
+      target_branch: "master"
     )
   end
   let(:close_comment) do
@@ -65,44 +68,57 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
     merge_request.save!
   end
 
-  context "with mr reopen action" do
+  context "with mr reopen action", :aggregate_failures do
+    let(:gitlab) { instance_double("Gitlab::Client", create_branch: nil) }
     let(:mr_iid) { 5 }
     let(:action) { "reopen" }
+    let(:mr) { closed_merge_request }
 
     before do
       allow(Dependabot::MergeRequest::UpdateService).to receive(:call)
+      allow(Gitlab).to receive(:client) { gitlab }
+      allow(gitlab).to receive(:branch).with(project.name, mr.branch).and_raise(
+        Gitlab::Error::NotFound.new(
+          Gitlab::ObjectifiedHash.new(
+            code: 404,
+            parsed_response: "Failure",
+            request: { base_uri: "gitlab.com", path: "/branch" }
+          )
+        )
+      )
 
       closed_merge_request.save!
     end
 
-    it "reopens closed mr and trigger update" do
+    it "reopens closed mr and triggers update" do
       result = described_class.call(**args)
 
-      aggregate_failures do
-        expect(result).to eq({ reopened_merge_request: true })
-        expect(closed_merge_request.reload.state).to eq("opened")
-        expect(MergeRequestUpdateJob).to have_received(:perform_later).with(project.name, mr_iid)
-      end
+      expect(result).to eq({ reopened_merge_request: true })
+      expect(closed_merge_request.reload.state).to eq("opened")
+      expect(gitlab).to have_received(:create_branch).with(project.name, mr.branch, mr.target_branch)
+      expect(MergeRequestUpdateJob).to have_received(:perform_later).with(project.name, mr_iid)
     end
   end
 
-  context "with mr close action" do
+  context "with mr close action", :aggregate_failures do
     let(:action) { "close" }
 
     before do
       allow(Gitlab::MergeRequest::Commenter).to receive(:call)
+      allow(Gitlab::BranchRemover).to receive(:call)
     end
 
-    it "closes saved mr and adds a comment" do
+    it "closes saved mr, removes branch and adds a comment" do
       result = described_class.call(**args)
 
-      aggregate_failures do
-        expect(result).to eq({ closed_merge_request: true })
-        expect(merge_request.reload.state).to eq("closed")
-        expect(Gitlab::MergeRequest::Commenter).to have_received(:call).with(
-          project.name, merge_request.iid, close_comment
-        )
-      end
+      expect(result).to eq({ closed_merge_request: true })
+      expect(merge_request.reload.state).to eq("closed")
+      expect(Gitlab::BranchRemover).to have_received(:call).with(
+        project.name, merge_request.branch
+      )
+      expect(Gitlab::MergeRequest::Commenter).to have_received(:call).with(
+        project.name, merge_request.iid, close_comment
+      )
     end
 
     it "skips non existing mrs" do
@@ -110,7 +126,7 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
     end
   end
 
-  context "with mr merge action" do
+  context "with mr merge action", :aggregate_failures do
     ActiveJob::Base.queue_adapter = :test
 
     let(:action) { "merge" }
@@ -124,10 +140,8 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
       it "closes saved mr and triggers update of open mrs for same package_ecosystem" do
         described_class.call(**args)
 
-        aggregate_failures do
-          expect(MergeRequestUpdateJob).to have_received(:perform_later).with(repo, open_merge_request.iid)
-          expect(merge_request.reload.state).to eq("merged")
-        end
+        expect(MergeRequestUpdateJob).to have_received(:perform_later).with(repo, open_merge_request.iid)
+        expect(merge_request.reload.state).to eq("merged")
       end
     end
 
@@ -138,9 +152,7 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
       end
 
       it "skips update for auto-rebase: none option" do
-        aggregate_failures do
-          expect(MergeRequestUpdateJob).not_to have_received(:perform_later)
-        end
+        expect(MergeRequestUpdateJob).not_to have_received(:perform_later)
       end
     end
   end
