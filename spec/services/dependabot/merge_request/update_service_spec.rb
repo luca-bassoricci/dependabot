@@ -2,14 +2,18 @@
 
 describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dependabot, integration: true do
   include_context "with dependabot helper"
-  include_context "with webmock"
 
-  let(:gitlab) { instance_double("Gitlab::client", project: Gitlab::ObjectifiedHash.new(default_branch: branch)) }
+  let(:gitlab) { instance_double("Gitlab::Client", merge_request: gitlab_mr) }
   let(:updated_dependency) { instance_double("Dependabot::UpdatedDependency", updated_files: updated_files) }
 
-  let(:branch) { "master" }
-  let(:project) { Project.new(name: repo) }
+  let(:project) { Project.new(name: repo, config: dependabot_config) }
   let(:config) { dependabot_config.first }
+
+  let(:gitlab_mr) do
+    Gitlab::ObjectifiedHash.new(
+      iid: mr.iid
+    )
+  end
 
   let(:mr) do
     MergeRequest.new(
@@ -17,15 +21,13 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
       iid: 1,
       package_ecosystem: config[:package_ecosystem],
       directory: config[:directory],
-      main_dependency: "rspec"
+      main_dependency: "rspec",
+      commit_message: "original-commit"
     )
   end
 
   before do
-    stub_gitlab
-
     allow(Gitlab).to receive(:client) { gitlab }
-    allow(Gitlab::ConfigFile::Fetcher).to receive(:call).with(repo, branch) { raw_config }
     allow(Dependabot::Files::Fetcher).to receive(:call).with(repo, config, nil) { fetcher }
     allow(Dependabot::DependencyUpdater).to receive(:call)
       .with(
@@ -46,10 +48,11 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
   it "updates merge request" do
     described_class.call(project_name: repo, mr_iid: mr.iid)
 
+    expect(gitlab).to have_received(:merge_request).with(repo, mr.iid)
     expect(Gitlab::MergeRequest::Updater).to have_received(:call).with(
       fetcher: fetcher,
       updated_files: updated_files,
-      merge_request: mr,
+      merge_request: gitlab_mr.to_hash.merge(commit_message: mr.commit_message),
       target_project_id: nil,
       recreate: true
     )

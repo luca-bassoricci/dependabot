@@ -11,10 +11,13 @@ class MergeRequest
   field :directory, type: String
   field :state, type: String
   field :auto_merge, type: Boolean
-  field :dependencies, type: String
+  field :update_from, type: String
+  field :update_to, type: String
   field :main_dependency, type: String
   field :branch, type: String
+  field :target_branch, type: String
   field :target_project_id, type: String
+  field :commit_message, type: String
 
   belongs_to :project
 end

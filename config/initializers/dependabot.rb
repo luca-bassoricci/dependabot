@@ -26,6 +26,8 @@ end
 module Dependabot
   class PullRequestCreator
     class Gitlab
+      private
+
       def create_merge_request
         gitlab_client_for_source.create_merge_request(
           source.repo,
@@ -59,10 +61,19 @@ module Dependabot
         )
       end
 
-      private
-
       def approvers_hash
         @approvers_hash ||= approvers.keys.map { |key| [key.to_sym, approvers[key]] }.to_h
+      end
+    end
+  end
+
+  class PullRequestUpdater
+    class Gitlab
+      # Hacky method override to be able to pass old commit message directly to pr updater
+      #
+      # @return [String]
+      def commit_being_updated
+        Struct.new(:title).new(old_commit)
       end
     end
   end

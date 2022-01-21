@@ -41,6 +41,8 @@ module Dependabot
 
       private
 
+      delegate :commit_message, :branch_name, to: :mr_creator
+
       delegate :updated_files, :updated_dependencies, :name, :previous_versions, :current_versions,
                to: :updated_dependency
 
@@ -50,13 +52,7 @@ module Dependabot
       #
       # @return [void]
       def create_mr
-        @mr = Gitlab::MergeRequest::Creator.call(
-          fetcher: fetcher,
-          updated_dependencies: updated_dependencies,
-          updated_files: updated_files,
-          config: config,
-          target_project_id: target_project_id
-        ) || return # dependabot-core returns nil if branch && mr exists and nothing was created
+        @mr = mr_creator.create || return # dependabot-core returns nil if branch && mr exists and nothing was created
 
         log(:info, "  created merge request: #{mr.web_url}")
         mr
@@ -74,7 +70,7 @@ module Dependabot
       # Persist merge request
       #
       # @return [void]
-      def persist_mr
+      def persist_mr # rubocop:disable Metrics/MethodLength
         return if AppConfig.standalone
 
         ::MergeRequest.create!(
@@ -85,9 +81,12 @@ module Dependabot
           directory: config[:directory],
           state: "opened",
           auto_merge: updated_dependency.auto_mergeable?,
-          dependencies: previous_versions,
+          update_from: previous_versions,
+          update_to: current_versions,
           main_dependency: name,
-          branch: source_branch,
+          branch: branch_name,
+          target_branch: fetcher.source.branch,
+          commit_message: commit_message,
           target_project_id: target_project_id
         )
       end
@@ -122,7 +121,7 @@ module Dependabot
         Gitlab::MergeRequest::Updater.call(
           fetcher: fetcher,
           updated_files: updated_files,
-          merge_request: mr,
+          merge_request: mr.to_hash.merge(commit_message: commit_message),
           target_project_id: target_project_id,
           recreate: recreate
         )
@@ -139,19 +138,6 @@ module Dependabot
         log(:info, "  accepted merge request")
       rescue Gitlab::Error::MethodNotAllowed, Gitlab::Error::NotAcceptable => e
         log(:error, " failed to accept merge request: #{e.message}")
-      end
-
-      # Get source branch name
-      #
-      # @return [String]
-      def source_branch
-        @source_branch ||= Dependabot::PullRequestCreator::BranchNamer.new(
-          dependencies: updated_dependencies,
-          files: updated_files,
-          target_branch: fetcher.source.branch,
-          separator: config[:branch_name_separator],
-          prefix: config[:branch_name_prefix]
-        ).new_branch_name
       end
 
       # Target project id
@@ -197,7 +183,7 @@ module Dependabot
       def superseeded_mrs
         @superseeded_mrs ||= project.merge_requests
                                     .where(
-                                      dependencies: previous_versions,
+                                      update_from: previous_versions,
                                       state: "opened",
                                       directory: config[:directory]
                                     )
@@ -221,9 +207,22 @@ module Dependabot
       def find_mr(state)
         Gitlab::MergeRequest::Finder.call(
           project: target_project_id || fetcher.source.repo,
-          source_branch: source_branch,
+          source_branch: branch_name,
           target_branch: fetcher.source.branch,
           state: state
+        )
+      end
+
+      # MR creator service
+      #
+      # @return [Dependabot::PullRequestCreator::Gitlab]
+      def mr_creator
+        @mr_creator ||= Gitlab::MergeRequest::Creator.call(
+          fetcher: fetcher,
+          updated_dependencies: updated_dependencies,
+          updated_files: updated_files,
+          config: config,
+          target_project_id: target_project_id
         )
       end
     end

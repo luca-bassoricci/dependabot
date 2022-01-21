@@ -5,21 +5,32 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
 
   let(:gitlab) { instance_double("Gitlab::Client", rebase_merge_request: nil, accept_merge_request: nil) }
 
+  let(:mr_creator) do
+    instance_double(
+      "Dependabot::PullRequestCreator::Gitlab",
+      branch_name: source_branch,
+      commit_message: "update-commit"
+    )
+  end
+
   let(:project) { Project.new(name: repo, config: dependabot_config, forked_from_id: 1) }
   let(:source_branch) { "dependabot-bundler-.-master-config-2.2.1" }
   let(:target_branch) { "master" }
   let(:config) { dependabot_config.first }
-  let(:previous_versions) { updated_dependencies.map { |dep| "#{dep.name}-#{dep.previous_version}" }.join("/") }
   let(:has_conflicts) { true }
+  let(:target_project_id) { nil }
+
   let(:existing_mr) { mr }
   let(:closed_mr) { nil }
-  let(:mr_db) { create_mr(mr.iid, "opened", previous_versions) }
+  let(:mr_db) { create_mr(mr.id, mr.iid, "opened") }
   let(:create_mr_return) { mr }
+  let(:mr_hash) { mr.to_hash.merge(commit_message: "update-commit") }
+
   let(:mr) do
     Gitlab::ObjectifiedHash.new(
       web_url: "mr-url",
-      id: Faker::Number.unique.number(digits: 10),
-      iid: Faker::Number.unique.number(digits: 10),
+      id: unique_id,
+      iid: unique_id,
       sha: "5f92cc4d9939",
       has_conflicts: has_conflicts,
       references: { short: "!1" },
@@ -27,17 +38,33 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
     )
   end
 
-  def create_mr(iid, state, dependencies, branch = "some-branch")
+  let(:updated_dependency) do
+    Dependabot::UpdatedDependency.new(
+      name: dependency.name,
+      updated_dependencies: updated_dependencies,
+      updated_files: updated_files,
+      vulnerable: false,
+      security_advisories: [],
+      auto_merge_rules: auto_merge_rules
+    )
+  end
+
+  def create_mr(id, iid, state, branch = source_branch) # rubocop:disable Metrics/MethodLength
     MergeRequest.new(
       project: project,
-      id: Faker::Number.unique.number(digits: 10),
+      id: id,
       iid: iid,
       package_ecosystem: config[:package_ecosystem],
       directory: config[:directory],
       state: state,
-      auto_merge: config[:auto_merge],
-      dependencies: dependencies,
-      branch: branch
+      auto_merge: updated_dependency.auto_mergeable?,
+      update_to: updated_dependency.current_versions,
+      update_from: updated_dependency.previous_versions,
+      branch: branch,
+      target_branch: fetcher.source.branch,
+      commit_message: "update-commit",
+      main_dependency: updated_dependency.name,
+      target_project_id: target_project_id
     )
   end
 
@@ -47,15 +74,12 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
       fetcher: fetcher,
       config: config,
       recreate: recreate,
-      updated_dependency: Dependabot::UpdatedDependency.new(
-        name: dependency.name,
-        updated_dependencies: updated_dependencies,
-        updated_files: updated_files,
-        vulnerable: false,
-        security_advisories: [],
-        auto_merge_rules: auto_merge_rules
-      )
+      updated_dependency: updated_dependency
     )
+  end
+
+  def unique_id
+    Faker::Number.unique.number(digits: 10)
   end
 
   before do
@@ -73,7 +97,8 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
       state: "closed"
     ).and_return(closed_mr)
 
-    allow(Gitlab::MergeRequest::Creator).to receive(:call) { create_mr_return }
+    allow(Gitlab::MergeRequest::Creator).to receive(:call) { mr_creator }
+    allow(mr_creator).to receive(:create) { create_mr_return }
     allow(Gitlab::MergeRequest::Updater).to receive(:call)
     allow(Gitlab::MergeRequest::Commenter).to receive(:call)
 
@@ -110,23 +135,30 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
   end
 
   # rubocop:disable RSpec/NestedGroups
-  describe "non standalone" do
+  describe "non standalone", :aggregate_failures do
     context "with new merge request" do
       let(:existing_mr) { nil }
 
       context "without fork" do
         it "gets created in same project" do
-          aggregate_failures do
-            expect(service_return).to eq(mr)
-            expect(Gitlab::MergeRequest::Creator).to have_received(:call).with(
-              fetcher: fetcher,
-              updated_dependencies: updated_dependencies,
-              updated_files: updated_files,
-              config: dependabot_config.first,
-              target_project_id: nil
-            )
-            expect(gitlab).not_to have_received(:accept_merge_request)
-          end
+          expect(service_return).to eq(mr)
+          expect(Gitlab::MergeRequest::Creator).to have_received(:call).with(
+            fetcher: fetcher,
+            updated_dependencies: updated_dependencies,
+            updated_files: updated_files,
+            config: dependabot_config.first,
+            target_project_id: nil
+          )
+          expect(mr_creator).to have_received(:create)
+          expect(gitlab).not_to have_received(:accept_merge_request)
+        end
+
+        it "persists mr correctly" do
+          service_return
+
+          expect(project.merge_requests.find_by(id: mr.id).attributes.except("_id")).to eq(
+            mr_db.attributes.except("_id")
+          )
         end
       end
 
@@ -151,17 +183,23 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
         end
 
         it "gets created in forked project" do
-          aggregate_failures do
-            expect(service_return).to eq(mr)
-            expect(Gitlab::MergeRequest::Creator).to have_received(:call).with(
-              fetcher: fetcher,
-              updated_dependencies: updated_dependencies,
-              updated_files: updated_files,
-              config: dependabot_config.first,
-              target_project_id: target_project_id
-            )
-            expect(gitlab).not_to have_received(:accept_merge_request)
-          end
+          expect(service_return).to eq(mr)
+          expect(Gitlab::MergeRequest::Creator).to have_received(:call).with(
+            fetcher: fetcher,
+            updated_dependencies: updated_dependencies,
+            updated_files: updated_files,
+            config: dependabot_config.first,
+            target_project_id: target_project_id
+          )
+          expect(gitlab).not_to have_received(:accept_merge_request)
+        end
+
+        it "persists mr correctly" do
+          service_return
+
+          expect(project.merge_requests.find_by(id: mr.id).attributes.except("_id")).to eq(
+            mr_db.attributes.except("_id")
+          )
         end
       end
     end
@@ -174,7 +212,7 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
         expect(Gitlab::MergeRequest::Updater).to have_received(:call).with(
           fetcher: fetcher,
           updated_files: updated_files,
-          merge_request: mr,
+          merge_request: mr_hash,
           target_project_id: nil,
           recreate: false
         )
@@ -185,11 +223,9 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
       let(:closed_mr) { mr }
 
       it "skips mr creation" do
-        aggregate_failures do
-          expect(Gitlab::MergeRequest::Creator).not_to have_received(:call)
-          expect(Gitlab::MergeRequest::Updater).not_to have_received(:call)
-          expect(gitlab).not_to have_received(:accept_merge_request)
-        end
+        expect(Gitlab::MergeRequest::Creator).not_to have_received(:call)
+        expect(Gitlab::MergeRequest::Updater).not_to have_received(:call)
+        expect(gitlab).not_to have_received(:accept_merge_request)
       end
     end
 
@@ -231,7 +267,7 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
         expect(Gitlab::MergeRequest::Updater).to have_received(:call).with(
           fetcher: fetcher,
           updated_files: updated_files,
-          merge_request: mr,
+          merge_request: mr_hash,
           target_project_id: nil,
           recreate: true
         )
@@ -270,7 +306,7 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
         expect(Gitlab::MergeRequest::Updater).to have_received(:call).with(
           fetcher: fetcher,
           updated_files: updated_files,
-          merge_request: mr,
+          merge_request: mr_hash,
           target_project_id: nil,
           recreate: true
         )
@@ -295,7 +331,7 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
         expect(Gitlab::MergeRequest::Updater).to have_received(:call).with(
           fetcher: fetcher,
           updated_files: updated_files,
-          merge_request: mr,
+          merge_request: mr_hash,
           target_project_id: nil,
           recreate: true
         )
@@ -319,14 +355,14 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
     context "with newer merge request" do
       let(:existing_mr) { nil }
       let(:superseeded_mr) do
-        create_mr(Faker::Number.unique.number(digits: 10), "opened", previous_versions, "superseeded-branch")
+        create_mr(unique_id, unique_id, "opened", "superseeded-branch")
       end
 
       before do
         allow(Gitlab::BranchRemover).to receive(:call)
 
-        create_mr(Faker::Number.unique.number(digits: 10), "closed", previous_versions).save!
-        create_mr(Faker::Number.unique.number(digits: 10), "opened", "test1").save!
+        create_mr(unique_id, unique_id, "closed").save!
+        create_mr(unique_id, unique_id, "opened", "test1").save!
         superseeded_mr.save!
       end
 
@@ -355,7 +391,7 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
       end
 
       before do
-        allow(Gitlab::MergeRequest::Creator).to receive(:call).and_raise(gitlab_error)
+        allow(mr_creator).to receive(:create).and_raise(gitlab_error)
       end
 
       context "with conflict error" do

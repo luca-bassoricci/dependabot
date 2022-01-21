@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe Gitlab::MergeRequest::Creator, epic: :services, feature: :gitlab do
-  subject(:mr_creator_return) do
+  subject(:mr_creator) do
     described_class.call(
       fetcher: fetcher,
       updated_dependencies: updated_dependencies,
@@ -14,7 +14,7 @@ describe Gitlab::MergeRequest::Creator, epic: :services, feature: :gitlab do
   include_context "with dependabot helper"
   include_context "with webmock"
 
-  let(:pr_creator) { instance_double("Dependabot::PullRequestCreator", create: mr) }
+  let(:pr_creator) { instance_double("Dependabot::PullRequestCreator", gitlab_creator: "creator") }
   let(:project_name) { fetcher.source.repo }
   let(:config) { dependabot_config.first }
   let(:mr) { Gitlab::ObjectifiedHash.new(web_url: "mr-url") }
@@ -69,7 +69,7 @@ describe Gitlab::MergeRequest::Creator, epic: :services, feature: :gitlab do
   end
 
   it "creates merge request", :aggregate_failures do
-    expect(mr_creator_return).to eq(mr)
+    expect(mr_creator).to eq("creator")
     expect(Dependabot::PullRequestCreator).to have_received(:new).with(
       {
         source: fetcher.source,

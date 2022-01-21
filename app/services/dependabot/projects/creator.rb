@@ -66,7 +66,7 @@ module Dependabot
       # @return [Array]
       def config
         @config ||= begin
-          return nil unless Gitlab::ConfigFile::Checker.call(project_name, default_branch)
+          return unless Gitlab::ConfigFile::Checker.call(project_name, default_branch)
 
           Config::Fetcher.call(project_name, update_cache: true)
         end
