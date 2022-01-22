@@ -38,7 +38,7 @@ end
 
 group :test do
   gem "airborne", "~> 0.3.7"
-  gem "allure-rspec", "~> 2.15.0"
+  gem "allure-rspec", "~> 2.16.0"
   gem "faker", "~> 2.19"
   gem "rails-controller-testing", "~> 1.0"
   gem "rspec", "~> 3.10"
