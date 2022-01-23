@@ -23,7 +23,7 @@ class MergeRequestRecreationJob < ApplicationJob
     resolve_discussion
   rescue StandardError => e
     log_error(e)
-    reply_status(":x: `dependabot` failed recreating merge request.\n\n```\n#{e.message}\n```")
+    reply_status(":x: `dependabot` failed recreating merge request.\n\n```\n#{e}\n```")
   end
 
   private

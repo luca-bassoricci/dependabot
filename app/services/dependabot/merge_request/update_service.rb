@@ -23,7 +23,8 @@ module Dependabot
             recreate: recreate
           }
         end
-        return unless updated_dependency
+        raise("Dependency could not be updated or already up to date!") unless updated_dependency
+        raise("Newer version for update exists, new merge request will be created!") unless same_version?
 
         Gitlab::MergeRequest::Updater.call(**args)
       ensure
@@ -93,6 +94,16 @@ module Dependabot
         @gitlab_mr ||= gitlab.merge_request(project_name, mr_iid)
                              .to_hash
                              .merge(commit_message: mr.commit_message)
+      end
+
+      # Check if newer version exist
+      #
+      # @return [Boolean]
+      def same_version?
+        # TODO: backwards compatibility for mrs create without update_to field, remove in next release
+        return true unless mr.update_to
+
+        mr.update_to == updated_dependency.current_versions
       end
     end
   end
