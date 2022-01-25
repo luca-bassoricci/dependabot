@@ -13,20 +13,25 @@ module Dependabot
         log(:info, "Fetched #{projects.length} projects")
         log(:info, "Processing projects matching pattern '#{allowed_pattern}'") if allowed_pattern
 
-        projects.each { |project| allowed?(project.path_with_namespace) && sync(project) }
+        projects.each { |project| sync?(project) && sync(project) }
       end
 
       private
 
-      # Check project namespace allowed
+      # Check if project should be synced
       #
-      # @param [String] project_name
+      # @param [Gitlab::ObjectifiedHash] project
       # @return [Boolean]
-      def allowed?(project_name)
-        return true unless allowed_pattern
+      def sync?(project)
+        name = project.path_with_namespace
 
-        project_name.match?(Regexp.new(allowed_pattern)).tap do |match|
-          log(:debug, "Project '#{project_name}' doesn't match pattern '#{allowed_pattern}', skipping...") unless match
+        unless project["default_branch"]
+          log(:debug, "Project '#{name}' doesn't have a default branch, skipping...")
+          return
+        end
+
+        !allowed_pattern || name.match?(Regexp.new(allowed_pattern)).tap do |match|
+          log(:debug, "Project '#{name}' doesn't match pattern '#{allowed_pattern}', skipping...") unless match
         end
       end
 

@@ -12,7 +12,8 @@ describe Dependabot::Projects::Sync, integration: true, epic: :services, feature
 
   let(:cron) { "0 1 * * * UTC" }
   let(:project_name) { random_name }
-  let(:project) { Gitlab::ObjectifiedHash.new(path_with_namespace: project_name, default_branch: "main") }
+  let(:default_branch) { "main" }
+  let(:project) { Gitlab::ObjectifiedHash.new(path_with_namespace: project_name, default_branch: default_branch) }
   let(:projects) { [project] }
   let(:config) do
     [
@@ -87,6 +88,16 @@ describe Dependabot::Projects::Sync, integration: true, epic: :services, feature
           expect(Dependabot::Projects::Creator).to have_received(:call).with(project_name)
           expect(Cron::JobSync).to have_received(:call).with(saved_project)
         end
+      end
+    end
+
+    context "without default_branch" do
+      let(:default_branch) { nil }
+
+      it "skips project" do
+        sync.call
+
+        expect(Dependabot::Projects::Creator).not_to have_received(:call)
       end
     end
   end
