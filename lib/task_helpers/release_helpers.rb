@@ -33,7 +33,7 @@ class ReleaseCreator
   #
   # @return [void]
   def commit_and_tag
-    logger.info("Comitting changelog")
+    logger.info("Comitting VERSION")
 
     git = Git.init
     git.add("VERSION")
