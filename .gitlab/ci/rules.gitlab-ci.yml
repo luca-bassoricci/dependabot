@@ -28,9 +28,7 @@
   rules:
     - *mr
     - *release
-    - <<: *master
-      variables:
-        LATEST_TAG: latest
+    - *master
 
 .rules:main:e2e:
   rules:
@@ -90,8 +88,10 @@
     - <<: *master
       variables:
         LATEST_TAG: latest
+    - <<: *release
+      variables:
+        LATEST_TAG: latest
     - *mr
-    - *release
 
 .rules:build-ci-image:
   rules:
