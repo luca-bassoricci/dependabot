@@ -65,7 +65,9 @@ module Dependabot
           directory: directory
         }
       )
-      raise("Configuration missing entry with package-ecosystem: #{package_ecosystem}") unless config_entry
+      unless config_entry
+        raise("Configuration missing entry with package-ecosystem: #{package_ecosystem}, directory: #{directory}")
+      end
 
       @config = config_entry
     end
