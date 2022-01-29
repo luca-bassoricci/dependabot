@@ -48,7 +48,9 @@ RUN set -eux;\
   ln -s "/usr/local/helm-${helm_version}/linux-amd64/helm" /usr/local/bin/helm && \
   rm -f /tmp/helm.tar.gz; \
   \
-  helm plugin install https://github.com/chartmuseum/helm-push.git
+  helm plugin install https://github.com/chartmuseum/helm-push.git; \
+  helm plugin install https://github.com/mbenabda/helm-local-chart-version; \
+  helm plugin install https://github.com/databus23/helm-diff
 
 # Install helmdocs
 RUN set -eux; \
