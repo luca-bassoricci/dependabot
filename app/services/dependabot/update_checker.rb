@@ -113,7 +113,7 @@ module Dependabot
     #
     # @return [Dependabot::UpdatedDependency]
     def updated_dependency
-      log(:info, "  found version for update - #{name} => #{checker.latest_version}")
+      log(:info, "  updating #{name} => #{checker.latest_version}")
       updated_dependencies = checker.updated_dependencies(requirements_to_unlock: requirements_to_unlock)
 
       Dependabot::UpdatedDependency.new(
