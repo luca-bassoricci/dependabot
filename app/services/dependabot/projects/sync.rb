@@ -66,7 +66,7 @@ module Dependabot
       # Get project config
       #
       # @param [Gitlab::ObjectifiedHash] project
-      # @return [<Hash, nil>]
+      # @return [Config, nil]
       def config(project)
         Config::Fetcher.call(
           project.path_with_namespace,

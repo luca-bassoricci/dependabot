@@ -6,33 +6,28 @@ module Dependabot
 
     class Fetcher < ApplicationService
       # @param [String] project_name
+      # @param [String] branch
       # @param [Boolean] update_cache
-      # @param [Hash] find_by
-      def initialize(project_name, branch: DependabotConfig.config_branch, update_cache: false, find_by: nil)
+      def initialize(project_name, branch: DependabotConfig.config_branch, update_cache: false)
         @project_name = project_name
         @branch = branch
         @update_cache = update_cache
-        @find_by = find_by
       end
 
-      # Dependabot config hash
+      # Dependabot config
       #
-      # @return [Hash<Symbol, Object>]
+      # @return [Config]
       def call
         cache_key = "#{project_name}-#{default_branch}-configuration"
         raw_config = Rails.cache.fetch(cache_key, expires_in: 12.hours, force: update_cache) do
-          Gitlab::ConfigFile::Fetcher.call(project_name, default_branch).tap do |raw|
-            next if raw
-
-            raise(
-              MissingConfigurationError,
-              "#{DependabotConfig.config_filename} not present in #{project_name}'s branch #{branch}"
-            )
-          end
+          raw = Gitlab::ConfigFile::Fetcher.call(project_name, default_branch)
+          raw || raise(
+            MissingConfigurationError,
+            "#{DependabotConfig.config_filename} not present in #{project_name}'s branch #{branch}"
+          )
         end
 
-        config = Parser.call(raw_config, project_name)
-        find_by ? config_entry(config) : config
+        ::Config.new(Parser.call(raw_config, project_name))
       end
 
       private
@@ -44,16 +39,6 @@ module Dependabot
       # @return [String]
       def default_branch
         @default_branch ||= branch || gitlab.project(project_name).default_branch
-      end
-
-      # Find single config entry
-      #
-      # @param [Array<Hash>] config
-      # @return [Hash]
-      def config_entry(config)
-        config.detect do |conf|
-          find_by.all? { |key, val| conf[key] == val }
-        end
       end
     end
   end

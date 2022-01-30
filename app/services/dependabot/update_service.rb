@@ -1,12 +1,28 @@
 # frozen_string_literal: true
 
 module Dependabot
+  class TooManyRequestsError < StandardError
+    def message
+      "GitHub API rate limit exceeded! See: https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting"
+    end
+  end
+
+  class ExternalCodeExecutionError < StandardError
+    def initialize(package_ecosystem, directory)
+      super(<<~ERR)
+        Unexpected external code execution detected.
+        Option 'insecure-external-code-execution' must be set to 'allow' for entry:
+          package_ecosystem - '#{package_ecosystem}'
+          directory - '#{directory}'
+      ERR
+    end
+  end
+
   # :reek:InstanceVariableAssumption
 
   # Main entrypoint class for updating dependencies and creating merge requests
   #
   class UpdateService < ApplicationService
-    # @param [Hash<String, Object>] args
     def initialize(args)
       @project_name = args[:project_name]
       @package_ecosystem = args[:package_ecosystem]
@@ -17,22 +33,18 @@ module Dependabot
     # Create or update mr's for dependencies
     #
     # @return [void]
-    def call # rubocop:disable Metrics/MethodLength
+    def call
       fetch_config
+      set_fork
 
       Semaphore.synchronize do
         update_security_vulnerabilities
         update_dependencies
       end
     rescue Octokit::TooManyRequests
-      raise(<<~ERR)
-        github API rate limit exceeded! See: https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting
-      ERR
+      raise TooManyRequestsError
     rescue Dependabot::UnexpectedExternalCode
-      raise(<<~ERR)
-        Unexpected external code execution detected.
-        Option 'insecure-external-code-execution' must be set to 'allow' for package_ecosystem '#{package_ecosystem}'
-      ERR
+      raise ExternalCodeExecutionError.new(package_ecosystem, directory)
     ensure
       FileUtils.rm_r(repo_contents_path, force: true, secure: true) if repo_contents_path
     end
@@ -42,7 +54,7 @@ module Dependabot
     attr_reader :project_name,
                 :package_ecosystem,
                 :directory,
-                :config,
+                :config_entry,
                 :dependency_name
 
     # Get cloned repository path
@@ -51,51 +63,43 @@ module Dependabot
     def repo_contents_path
       return @repo_contents_path if defined?(@repo_contents_path)
 
-      @repo_contents_path = DependabotCoreHelper.repo_contents_path(project_name, config)
+      @repo_contents_path = DependabotCoreHelper.repo_contents_path(project_name, config_entry)
     end
 
-    # Fetch config for project
+    # Fetch config entry for project
     #
     # @return [Hash]
     def fetch_config
-      config_entry = Dependabot::Config::Fetcher.call(
-        project_name,
-        find_by: {
-          package_ecosystem: package_ecosystem,
-          directory: directory
-        }
-      )
-      unless config_entry
+      config = project.config.empty? ? Dependabot::Config::Fetcher.call(project_name) : project.config
+      entry = config.entry(package_ecosystem: package_ecosystem, directory: directory)
+      unless entry
         raise("Configuration missing entry with package-ecosystem: #{package_ecosystem}, directory: #{directory}")
       end
 
-      @config = config_entry
+      @config_entry = entry
+    end
+
+    # Set fork id
+    #
+    # @return [void]
+    def set_fork
+      return unless config_entry[:fork] && !project.forked_from_id
+
+      project.forked_from_id = gitlab.project(project_name).to_h.dig("forked_from_project", "id")
     end
 
     # Project
     #
     # @return [Project]
     def project
-      return Project.find_by(name: project_name) unless AppConfig.standalone
-
-      Project.new(
-        name: project_name,
-        forked_from_id: config[:fork] ? gitlab.project(project_name).to_h.dig("forked_from_project", "id") : nil
-      )
-    end
-
-    # Package manager name
-    #
-    # @return [String]
-    def package_manager
-      @package_manager ||= config[:package_manager]
+      @project ||= AppConfig.standalone ? Project.new(name: project_name) : Project.find_by(name: project_name)
     end
 
     # Get file fetcher
     #
     # @return [Dependabot::FileFetcher]
     def fetcher
-      @fetcher ||= Dependabot::Files::Fetcher.call(project_name, config, repo_contents_path)
+      @fetcher ||= Dependabot::Files::Fetcher.call(project_name, config_entry, repo_contents_path)
     end
 
     # All security updates
@@ -112,7 +116,7 @@ module Dependabot
       @all_updated_dependencies ||= begin
         dependencies = Dependabot::DependencyUpdater.call(
           project_name: project_name,
-          config: config,
+          config: config_entry,
           fetcher: fetcher,
           repo_contents_path: repo_contents_path,
           name: dependency_name
@@ -142,7 +146,7 @@ module Dependabot
       (all_updated_dependencies - all_vulnerable_dependencies).reduce(0) do |mr_count, dep|
         mr_count += 1 if create_mr(dep)
 
-        break if mr_count >= config[:open_merge_requests_limit]
+        break if mr_count >= config_entry[:open_merge_requests_limit]
 
         mr_count
       end
@@ -156,7 +160,7 @@ module Dependabot
       Dependabot::MergeRequest::CreateService.call(
         project: project,
         fetcher: fetcher,
-        config: config,
+        config: config_entry,
         updated_dependency: updated_dependency
       )
     end

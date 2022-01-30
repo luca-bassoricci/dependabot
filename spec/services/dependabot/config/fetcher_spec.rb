@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
 describe Dependabot::Config::Fetcher, epic: :services, feature: :configuration do
+  subject(:fetched_config) { described_class.call(project) }
+
   include_context "with dependabot helper"
 
   let(:project) { "project" }
   let(:default_branch) { "main" }
+  let(:config) { Config.new(dependabot_config) }
 
   let(:gitlab) do
     instance_double("Gitlab::client", project: Gitlab::ObjectifiedHash.new(default_branch: default_branch))
@@ -17,14 +20,8 @@ describe Dependabot::Config::Fetcher, epic: :services, feature: :configuration d
 
   context "without custom branch configuration" do
     it "fetches config from default branch" do
-      expect(described_class.call(project)).to eq(dependabot_config)
+      expect(fetched_config).to eq(config)
       expect(Gitlab::ConfigFile::Fetcher).to have_received(:call).with(project, default_branch)
-    end
-
-    it "fetches single entry of config from default branch" do
-      expect(described_class.call(project, find_by: { package_ecosystem: "bundler" })).to eq(
-        dependabot_config.find { |entry| entry[:package_ecosystem] == "bundler" }
-      )
     end
   end
 
@@ -36,7 +33,7 @@ describe Dependabot::Config::Fetcher, epic: :services, feature: :configuration d
     end
 
     it "fetches config from configured branch" do
-      expect(described_class.call(project)).to eq(dependabot_config)
+      expect(fetched_config).to eq(config)
       expect(Gitlab::ConfigFile::Fetcher).to have_received(:call).with(project, branch)
     end
   end
