@@ -12,6 +12,16 @@ class Config
   # @return [Array<Hash>]
   attr_reader :config_array
 
+  # Get single config entry
+  #
+  # @param [Hash] find_by
+  # @return [Hash]
+  def entry(**find_by)
+    config_array.find do |conf|
+      find_by.all? { |key, value| conf[key] == value }
+    end
+  end
+
   # Convert object to database compatible form
   #
   # @return [Array<Hash>]
