@@ -5,6 +5,7 @@ updates:
     schedule:
       interval: daily
     commit-message:
+      prefix-development: dev
       trailers:
         - changelog: dependency
     assignees:
@@ -29,8 +30,9 @@ updates:
     schedule:
       interval: daily
     commit-message:
+      prefix: dev
       trailers:
-        - changelog: development-dependency
+        - changelog: dependency
     assignees:
       - andrcuns
   - package-ecosystem: docker
@@ -38,8 +40,9 @@ updates:
     schedule:
       interval: daily
     commit-message:
+      prefix: dev
       trailers:
-        - changelog: development-dependency
+        - changelog: dependency
     assignees:
       - andrcuns
     auto-merge: true
