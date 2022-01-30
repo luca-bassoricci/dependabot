@@ -11,12 +11,15 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
   end
 
   include_context "with dependabot helper"
-  include_context "with webmock"
 
   let(:gitlab) do
     instance_double("Gitlab::client", project: Gitlab::ObjectifiedHash.new({
       "forked_from_project" => { "id" => 1 }
     }))
+  end
+
+  let(:fetcher) do
+    instance_double("Dependabot::FileFetcher", files: "files", source: "source")
   end
 
   let(:branch) { "master" }
@@ -25,17 +28,13 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
   let(:config_entry) { config.first }
   let(:dependency_name) { nil }
 
-  let(:updated_deps) { [updated_config, updated_rspec] }
-  let(:updated_config) do
-    Dependabot::UpdatedDependency.new(
-      name: "config",
-      updated_dependencies: ["updated_config"],
-      updated_files: [],
-      vulnerable: false,
-      security_advisories: [],
-      auto_merge_rules: nil
-    )
+  let(:dependencies) do
+    [
+      instance_double("Dependabot::Dependency", name: "rspec"),
+      instance_double("Dependabot::Dependency", name: "config")
+    ]
   end
+
   let(:updated_rspec) do
     Dependabot::UpdatedDependency.new(
       name: "rspec",
@@ -47,6 +46,24 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
     )
   end
 
+  let(:updated_config) do
+    Dependabot::UpdatedDependency.new(
+      name: "config",
+      updated_dependencies: ["updated_config"],
+      updated_files: [],
+      vulnerable: false,
+      security_advisories: [],
+      auto_merge_rules: nil
+    )
+  end
+
+  let(:updated_deps) do
+    [
+      updated_rspec,
+      updated_config
+    ]
+  end
+
   let(:config_mr_args) do
     {
       project: project,
@@ -55,6 +72,7 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
       updated_dependency: updated_config
     }
   end
+
   let(:rspec_mr_args) do
     {
       project: project,
@@ -65,19 +83,35 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
   end
 
   before do
-    stub_gitlab
-
     allow(Dependabot::Config::Fetcher).to receive(:call).with(repo) { config }
     allow(Dependabot::Files::Fetcher).to receive(:call).with(repo, config_entry, nil) { fetcher }
-    allow(Dependabot::DependencyUpdater).to receive(:call)
+
+    allow(Dependabot::Files::Parser).to receive(:call)
       .with(
-        project_name: repo,
-        config: config_entry,
-        fetcher: fetcher,
+        source: fetcher.source,
+        dependency_files: fetcher.files,
         repo_contents_path: nil,
-        name: dependency_name
+        config: config_entry
       )
-      .and_return(updated_deps)
+      .and_return(dependencies)
+
+    allow(Dependabot::UpdateChecker).to receive(:call)
+      .with(
+        dependency: dependencies[0],
+        dependency_files: fetcher.files,
+        config: config_entry,
+        repo_contents_path: nil
+      )
+      .and_return(updated_rspec)
+
+    allow(Dependabot::UpdateChecker).to receive(:call)
+      .with(
+        dependency: dependencies[1],
+        dependency_files: fetcher.files,
+        config: config_entry,
+        repo_contents_path: nil
+      )
+      .and_return(updated_config)
 
     allow(Dependabot::MergeRequest::CreateService).to receive(:call).and_return("mr")
   end
@@ -110,7 +144,7 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
 
   context "with errors" do
     before do
-      allow(Dependabot::DependencyUpdater).to receive(:call).and_raise(error)
+      allow(Dependabot::Files::Parser).to receive(:call).and_raise(error)
 
       project.save!
     end

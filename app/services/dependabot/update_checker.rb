@@ -22,7 +22,7 @@ module Dependabot
 
     # Get updated dependencies
     #
-    # @return [Array<Dependabot::Dependency>]
+    # @return [Dependabot::UpdatedDependency, nil]
     def call
       return skipped unless rule_handler.allowed?
 
@@ -111,7 +111,7 @@ module Dependabot
 
     # Get filtered updated dependencies
     #
-    # @return [Array<Dependabot::Dependency>]
+    # @return [Dependabot::UpdatedDependency]
     def updated_dependency
       log(:info, "  found version for update - #{name} => #{checker.latest_version}")
       updated_dependencies = checker.updated_dependencies(requirements_to_unlock: requirements_to_unlock)

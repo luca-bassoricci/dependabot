@@ -37,10 +37,7 @@ module Dependabot
       fetch_config
       set_fork
 
-      Semaphore.synchronize do
-        update_security_vulnerabilities
-        update_dependencies
-      end
+      Semaphore.synchronize { update }
     rescue Octokit::TooManyRequests
       raise TooManyRequestsError
     rescue Dependabot::UnexpectedExternalCode
@@ -56,6 +53,27 @@ module Dependabot
                 :directory,
                 :config_entry,
                 :dependency_name
+
+    # Open mr limit
+    #
+    # @return [Number]
+    def mr_limit
+      @mr_limit ||= config_entry[:open_merge_requests_limit]
+    end
+
+    # Project
+    #
+    # @return [Project]
+    def project
+      @project ||= AppConfig.standalone ? Project.new(name: project_name) : Project.find_by(name: project_name)
+    end
+
+    # Get file fetcher
+    #
+    # @return [Dependabot::FileFetcher]
+    def fetcher
+      @fetcher ||= Dependabot::Files::Fetcher.call(project_name, config_entry, repo_contents_path)
+    end
 
     # Get cloned repository path
     #
@@ -88,80 +106,87 @@ module Dependabot
       project.forked_from_id = gitlab.project(project_name).to_h.dig("forked_from_project", "id")
     end
 
-    # Project
+    # Update project dependencies
     #
-    # @return [Project]
-    def project
-      @project ||= AppConfig.standalone ? Project.new(name: project_name) : Project.find_by(name: project_name)
+    # @return [void]
+    def update
+      dependencies.each_with_object({ mr: 0, security_mr: 0 }) do |dep, count|
+        break if count[:security_mr] >= 10 && count[:mr] >= mr_limit
+
+        updated_dep = updated_dependency(dep)
+        next unless updated_dep
+
+        if updated_dep.vulnerable
+          update_vulnerable_dependency(updated_dep, count)
+        else
+          update_dependency(updated_dep, count)
+        end
+      end
     end
 
-    # Get file fetcher
+    # Update vulnerable dependency
     #
-    # @return [Dependabot::FileFetcher]
-    def fetcher
-      @fetcher ||= Dependabot::Files::Fetcher.call(project_name, config_entry, repo_contents_path)
+    # @param [Dependabot::UpdatedDependency] updated_dependency
+    # @param [Hash] mr_count
+    # @return [void]
+    def update_vulnerable_dependency(updated_dependency, mr_count)
+      if mr_count[:security_mr] >= 10
+        return log(:info, " skipping update of vulnerable dependency due to max 10 open mr limit!")
+      end
+
+      mr_count[:security_mr] += 1 if create_mr(updated_dependency)
     end
 
-    # All security updates
+    # Update dependency
     #
-    # @return [Array]
-    def all_vulnerable_dependencies
-      @all_vulnerable_dependencies ||= all_updated_dependencies.select(&:vulnerable)
+    # @param [Dependabot::UpdatedDependency] updated_dependency
+    # @param [Hash] mr_count
+    # @return [void]
+    def update_dependency(updated_dependency, mr_count)
+      if mr_count[:mr] >= mr_limit
+        return log(:ingo, " skipping update of dependency due to max #{mr_limit} open mr limit!")
+      end
+
+      mr_count[:mr] += 1 if create_mr(updated_dependency)
     end
 
-    # All dependencies for update
+    # All project dependencies
     #
-    # @return [Array<Dependabot::UpdatedDependency>]
-    def all_updated_dependencies
-      @all_updated_dependencies ||= begin
-        dependencies = Dependabot::DependencyUpdater.call(
-          project_name: project_name,
-          config: config_entry,
-          fetcher: fetcher,
+    # @return [Array<Dependabot::Dependency>]
+    def dependencies
+      @dependencies ||= begin
+        deps = Dependabot::Files::Parser.call(
+          source: fetcher.source,
+          dependency_files: fetcher.files,
           repo_contents_path: repo_contents_path,
-          name: dependency_name
+          config: config_entry
         )
-
-        dependency_name ? [dependencies].compact : dependencies
+        dependency_name ? deps.select { |dep| dep.name == dependency_name } : deps
       end
     end
 
-    # Run updates for vulnerable dependencies
+    # Array of dependencies to update
     #
-    # @return [void]
-    def update_security_vulnerabilities
-      all_vulnerable_dependencies.reduce(0) do |mr_count, dep|
-        mr_count += 1 if create_mr(dep)
-
-        break if mr_count >= 10
-
-        mr_count
-      end
-    end
-
-    # Update rest of the dependencies
-    #
-    # @return [void]
-    def update_dependencies
-      (all_updated_dependencies - all_vulnerable_dependencies).reduce(0) do |mr_count, dep|
-        mr_count += 1 if create_mr(dep)
-
-        break if mr_count >= config_entry[:open_merge_requests_limit]
-
-        mr_count
-      end
+    # @return [Dependabot::UpdatedDependency]
+    def updated_dependency(dependency)
+      Dependabot::UpdateChecker.call(
+        dependency: dependency,
+        dependency_files: fetcher.files,
+        config: config_entry,
+        repo_contents_path: repo_contents_path
+      )
     end
 
     # Create or update merge request
     #
-    # @param [Dependabot::UpdatedDependency] updated_dependency
+    # @param [Dependabot::UpdatedDependency] updated_dep
     # @return [Gitlab::ObjectifiedHash]
-    def create_mr(updated_dependency)
+    def create_mr(updated_dep)
       Dependabot::MergeRequest::CreateService.call(
         project: project,
         fetcher: fetcher,
         config: config_entry,
-        updated_dependency: updated_dependency
+        updated_dependency: updated_dep
       )
     end
   end
