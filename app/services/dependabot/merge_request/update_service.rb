@@ -39,11 +39,18 @@ module Dependabot
       #
       # @return [Dependabot::UpdatedDependency]
       def updated_dependency
-        @updated_dependency ||= Dependabot::DependencyUpdater.call(
-          project_name: project_name,
+        dependency = Dependabot::Files::Parser.call(
+          source: fetcher.source,
+          dependency_files: fetcher.files,
+          repo_contents_path: repo_contents_path,
+          config: config
+        ).find { |dep| dep.name == mr.main_dependency }
+        return unless dependency
+
+        Dependabot::UpdateChecker.call(
+          dependency: dependency,
+          dependency_files: fetcher.files,
           config: config,
-          fetcher: fetcher,
-          name: mr.main_dependency,
           repo_contents_path: repo_contents_path
         )
       end

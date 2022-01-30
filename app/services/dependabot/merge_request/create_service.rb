@@ -22,7 +22,6 @@ module Dependabot
       #
       # @return [void]
       def call
-        log(:info, "Updating following dependencies: #{current_versions}")
         if find_mr("closed")
           log(:warn, " closed mr exists, skipping!")
           return

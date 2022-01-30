@@ -6,15 +6,12 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
   include_context "with dependabot helper"
 
   let(:gitlab) { instance_double("Gitlab::Client", merge_request: gitlab_mr) }
+  let(:fetcher) { instance_double("Dependabot::FileFetcher", files: "files", source: "source") }
   let(:project) { Project.new(name: repo, config: dependabot_config) }
   let(:config) { dependabot_config.first }
   let(:update_to_versions) { updated_dependency.current_versions }
-
-  let(:gitlab_mr) do
-    Gitlab::ObjectifiedHash.new(
-      iid: mr.iid
-    )
-  end
+  let(:gitlab_mr) { Gitlab::ObjectifiedHash.new(iid: mr.iid) }
+  let(:dependencies) { [instance_double("Dependabot::Dependency", name: "config")] }
 
   let(:mr) do
     MergeRequest.new(
@@ -22,7 +19,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
       iid: 1,
       package_ecosystem: config[:package_ecosystem],
       directory: config[:directory],
-      main_dependency: "rspec",
+      main_dependency: "config",
       commit_message: "original-commit",
       update_to: update_to_versions
     )
@@ -42,12 +39,20 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
   before do
     allow(Gitlab).to receive(:client) { gitlab }
     allow(Dependabot::Files::Fetcher).to receive(:call).with(repo, config, nil) { fetcher }
-    allow(Dependabot::DependencyUpdater).to receive(:call)
+    allow(Dependabot::Files::Parser).to receive(:call)
       .with(
-        project_name: repo,
+        source: fetcher.source,
+        dependency_files: fetcher.files,
+        repo_contents_path: nil,
+        config: config
+      )
+      .and_return(dependencies)
+
+    allow(Dependabot::UpdateChecker).to receive(:call)
+      .with(
+        dependency: dependencies[0],
+        dependency_files: fetcher.files,
         config: config,
-        fetcher: fetcher,
-        name: "rspec",
         repo_contents_path: nil
       )
       .and_return(updated_dependency)
@@ -75,7 +80,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
 
   context "without updated dependency" do
     before do
-      allow(Dependabot::DependencyUpdater).to receive(:call).and_return(nil)
+      allow(Dependabot::UpdateChecker).to receive(:call).and_return(nil)
     end
 
     it "raises unable to update error" do
