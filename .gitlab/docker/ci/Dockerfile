@@ -1,10 +1,7 @@
-FROM quay.io/helmpack/chart-testing:v3.5.0 as ct
 FROM registry.gitlab.com/gitlab-org/release-cli:v0.11.0 as release-cli
 FROM docker:20.10.12
 
 ARG pip_version=21.3.1
-ARG yamale_version=4.0.2
-ARG yamllint_version=1.26.3
 ARG kubectl_version=v1.21.5
 ARG helm_version=v3.7.0
 ARG kubeval_version=v0.16.1
@@ -24,12 +21,6 @@ RUN apk --no-cache add \
   py3-wheel \
   python3 && \
   pip install --upgrade pip==${pip_version}
-
-# Install a YAML Linter
-RUN pip install "yamllint==${yamllint_version}"
-
-# Install Yamale YAML schema validator
-RUN pip install "yamale==${yamale_version}"
 
 # Install kubectl
 RUN set -eux; \
@@ -96,11 +87,6 @@ RUN set -eux; \
   \
   pip install "docker-compose==${compose_version}"; \
   apk del .docker-compose-deps
-
-# Install chart testing
-COPY --from=ct /etc/ct/chart_schema.yaml /etc/ct/chart_schema.yaml
-COPY --from=ct /etc/ct/lintconf.yaml /etc/ct/lintconf.yaml
-COPY --from=ct /usr/local/bin/ct /usr/local/bin/ct
 
 # Install release-cli
 COPY --from=release-cli /usr/local/bin/release-cli /usr/local/bin/release-cli
