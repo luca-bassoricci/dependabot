@@ -34,9 +34,6 @@ module Dependabot
     #
     # @return [void]
     def call
-      fetch_config
-      set_fork
-
       Semaphore.synchronize { update }
     rescue Octokit::TooManyRequests
       raise TooManyRequestsError
@@ -48,11 +45,7 @@ module Dependabot
 
     private
 
-    attr_reader :project_name,
-                :package_ecosystem,
-                :directory,
-                :config_entry,
-                :dependency_name
+    attr_reader :project_name, :package_ecosystem, :directory, :dependency_name
 
     # Open mr limit
     #
@@ -65,7 +58,29 @@ module Dependabot
     #
     # @return [Project]
     def project
-      @project ||= AppConfig.standalone ? Project.new(name: project_name) : Project.find_by(name: project_name)
+      @project ||= AppConfig.standalone ? standalone_project : Project.find_by(name: project_name)
+    end
+
+    # Non persisted project for standalone run
+    #
+    # @return [Project]
+    def standalone_project
+      conf = Dependabot::Config::Fetcher.call(project_name)
+      entry = conf.entry(package_ecosystem: package_ecosystem, directory: directory)
+      fork_id = entry[:fork] ? gitlab.project(project_name).to_h.dig("forked_from_project", "id") : nil
+
+      Project.new(name: project_name, config: conf, forked_from_id: fork_id)
+    end
+
+    # Fetch config entry for project
+    #
+    # @return [Hash]
+    def config_entry
+      @config_entry = project.config.entry(package_ecosystem: package_ecosystem, directory: directory).tap do |entry|
+        unless entry
+          raise("Configuration missing entry with package-ecosystem: #{package_ecosystem}, directory: #{directory}")
+        end
+      end
     end
 
     # Get file fetcher
@@ -82,28 +97,6 @@ module Dependabot
       return @repo_contents_path if defined?(@repo_contents_path)
 
       @repo_contents_path = DependabotCoreHelper.repo_contents_path(project_name, config_entry)
-    end
-
-    # Fetch config entry for project
-    #
-    # @return [Hash]
-    def fetch_config
-      config = project.config.empty? ? Dependabot::Config::Fetcher.call(project_name) : project.config
-      entry = config.entry(package_ecosystem: package_ecosystem, directory: directory)
-      unless entry
-        raise("Configuration missing entry with package-ecosystem: #{package_ecosystem}, directory: #{directory}")
-      end
-
-      @config_entry = entry
-    end
-
-    # Set fork id
-    #
-    # @return [void]
-    def set_fork
-      return unless config_entry[:fork] && !project.forked_from_id
-
-      project.forked_from_id = gitlab.project(project_name).to_h.dig("forked_from_project", "id")
     end
 
     # Update project dependencies
