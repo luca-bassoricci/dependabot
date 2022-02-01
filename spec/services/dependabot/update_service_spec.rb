@@ -23,9 +23,8 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
   end
 
   let(:branch) { "master" }
-  let(:project) { Project.new(name: repo) }
-  let(:config) { Config.new(dependabot_config) }
-  let(:config_entry) { config.first }
+  let(:project) { Project.new(name: repo, config: dependabot_config) }
+  let(:config_entry) { dependabot_config.first }
   let(:dependency_name) { nil }
 
   let(:dependencies) do
@@ -83,7 +82,6 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
   end
 
   before do
-    allow(Dependabot::Config::Fetcher).to receive(:call).with(repo) { config }
     allow(Dependabot::Files::Fetcher).to receive(:call).with(repo, config_entry, nil) { fetcher }
 
     allow(Dependabot::Files::Parser).to receive(:call)
@@ -193,6 +191,7 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
     before do
       allow(Gitlab).to receive(:client) { gitlab }
 
+      allow(Dependabot::Config::Fetcher).to receive(:call).with(repo) { Config.new(dependabot_config) }
       allow(Dependabot::MergeRequest::CreateService).to receive(:call) { |args| create_calls << args }
     end
 

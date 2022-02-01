@@ -26,7 +26,7 @@ module Cron
     #
     # @return [Hash]
     def config
-      @config ||= project.symbolized_config
+      @config ||= project.config
     end
 
     # Destroy jobs not present in config anymore
