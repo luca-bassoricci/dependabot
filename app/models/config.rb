@@ -9,17 +9,14 @@ class Config
 
   delegate :select, :map, :first, :last, :empty?, :find, to: :config_array
 
-  # @return [Array<Hash>]
-  attr_reader :config_array
-
-  # Get single config entry
+  # Get single config entry and symbolize keys
   #
   # @param [Hash] find_by
   # @return [Hash]
   def entry(**find_by)
-    config_array.find do |conf|
-      find_by.all? { |key, value| conf[key] == value }
-    end
+    config_array
+      .find { |conf| find_by.all? { |key, value| conf[key] == value } }
+      .yield_self { |entry| entry&.deep_symbolize_keys&.merge({ registries: entry[:registries] }) }
   end
 
   # Convert object to database compatible form
@@ -46,6 +43,11 @@ class Config
   def ==(other)
     self.class == other.class && config_array == other.config_array
   end
+
+  protected
+
+  # @return [Array<Hash>]
+  attr_reader :config_array
 
   class << self
     # Convert object to Config

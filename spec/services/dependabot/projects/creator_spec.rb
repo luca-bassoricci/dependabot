@@ -9,6 +9,7 @@ describe Dependabot::Projects::Creator, integration: true, epic: :services, feat
   let(:hook_id) { Faker::Number.number(digits: 10) }
   let(:upstream_hook_id) { hook_id }
   let(:config_exists?) { true }
+  let(:config) { Config.new(dependabot_config.map(&:deep_stringify_keys)) }
 
   let(:gitlab_project) do
     Gitlab::ObjectifiedHash.new(
@@ -39,7 +40,7 @@ describe Dependabot::Projects::Creator, integration: true, epic: :services, feat
         saved_project = Project.find_by(name: repo)
         aggregate_failures do
           expect(saved_project.name).to eq(repo)
-          expect(saved_project.symbolized_config).to eq(dependabot_config.map(&:deep_symbolize_keys))
+          expect(saved_project.config).to eq(config)
           expect(saved_project.webhook_id).to eq(hook_id)
         end
       end
@@ -62,7 +63,7 @@ describe Dependabot::Projects::Creator, integration: true, epic: :services, feat
 
         described_class.call(repo)
         aggregate_failures do
-          expect(project.reload.symbolized_config).to eq(dependabot_config.map(&:deep_symbolize_keys))
+          expect(project.reload.config).to eq(config)
           expect(Gitlab::Hooks::Updater).to have_received(:call).with(repo, branch, hook_id)
           expect(Gitlab::Hooks::Creator).not_to have_received(:call)
           expect(Gitlab::Hooks::Finder).not_to have_received(:call)
@@ -74,7 +75,7 @@ describe Dependabot::Projects::Creator, integration: true, epic: :services, feat
 
         described_class.call(repo)
         aggregate_failures do
-          expect(project.reload.symbolized_config).to eq(dependabot_config.map(&:deep_symbolize_keys))
+          expect(project.reload.config).to eq(config)
           expect(Gitlab::Hooks::Updater).to have_received(:call).with(repo, branch, hook_id)
           expect(Gitlab::Hooks::Creator).not_to have_received(:call)
         end

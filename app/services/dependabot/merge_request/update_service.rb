@@ -82,9 +82,7 @@ module Dependabot
       #
       # @return [Hash]
       def config
-        @config ||= project.config.find do |conf|
-          conf[:package_ecosystem] == mr.package_ecosystem && conf[:directory] == mr.directory
-        end
+        @config ||= project.config.entry(package_ecosystem: mr.package_ecosystem, directory: mr.directory)
       end
 
       # Find merge request
