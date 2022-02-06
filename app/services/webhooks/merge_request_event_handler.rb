@@ -129,9 +129,7 @@ module Webhooks
       return false if updateable_mrs.empty?
 
       log(:info, "Triggering open mr update for #{project_name}=>#{mr.package_ecosystem}=>#{mr.directory}")
-      updateable_mrs.each do |merge_request|
-        MergeRequestUpdateJob.perform_later(project_name, merge_request.iid)
-      end
+      updateable_mrs.each { |merge_request| MergeRequestUpdateJob.perform_later(project_name, merge_request.iid) }
 
       true
     end
