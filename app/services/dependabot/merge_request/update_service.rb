@@ -14,11 +14,13 @@ module Dependabot
       #
       # @return [Gitlab::ObjectifiedHash]
       def call
+        return log(:info, "Merge request !#{mr_iid} not in opened state, skipping!") unless gitlab_mr.state == "opened"
+
         args = Semaphore.synchronize do
           {
             fetcher: fetcher,
             updated_files: updated_dependency&.updated_files,
-            merge_request: gitlab_mr,
+            merge_request: gitlab_mr.to_hash.merge(commit_message: mr.commit_message),
             target_project_id: mr.target_project_id,
             recreate: recreate
           }
@@ -94,11 +96,9 @@ module Dependabot
 
       # Gitlab merge request
       #
-      # @return [Hash]
+      # @return [Gitlab::ObjectifiedHash]
       def gitlab_mr
         @gitlab_mr ||= gitlab.merge_request(project_name, mr_iid)
-                             .to_hash
-                             .merge(commit_message: mr.commit_message)
       end
 
       # Check if newer version exist

@@ -10,8 +10,9 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
   let(:project) { Project.new(name: repo, config: dependabot_config) }
   let(:config) { dependabot_config.first }
   let(:update_to_versions) { updated_dependency.current_versions }
-  let(:gitlab_mr) { Gitlab::ObjectifiedHash.new(iid: mr.iid) }
+  let(:gitlab_mr) { Gitlab::ObjectifiedHash.new(iid: mr.iid, state: state) }
   let(:dependencies) { [instance_double("Dependabot::Dependency", name: "config")] }
+  let(:state) { "opened" }
 
   let(:mr) do
     MergeRequest.new(
@@ -67,7 +68,6 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
     it "updates merge request" do
       update
 
-      expect(gitlab).to have_received(:merge_request).with(repo, mr.iid)
       expect(Gitlab::MergeRequest::Updater).to have_received(:call).with(
         fetcher: fetcher,
         updated_files: updated_files,
@@ -93,6 +93,16 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
 
     it "raises newer version exists error" do
       expect { update }.to raise_error("Newer version for update exists, new merge request will be created!")
+    end
+  end
+
+  context "with merge request already merged" do
+    let(:state) { "merged" }
+
+    it "skips update" do
+      update
+
+      expect(Gitlab::MergeRequest::Updater).not_to have_received(:call)
     end
   end
 end
