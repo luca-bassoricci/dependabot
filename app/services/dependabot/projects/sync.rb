@@ -9,11 +9,15 @@ module Dependabot
       #
       # @return [void]
       def call
-        projects = gitlab.projects(min_access_level: 30, per_page: 100).auto_paginate
-        log(:info, "Fetched #{projects.length} projects")
-        log(:info, "Processing projects matching pattern '#{allowed_pattern}'") if allowed_pattern
+        log(:info, "Running project registration")
+        log(:info, "Processing only projects matching pattern '#{allowed_pattern}'") if allowed_pattern
 
-        projects.each { |project| sync?(project) && sync(project) }
+        gitlab.projects(min_access_level: 30, per_page: 50).auto_paginate do |project|
+          log(:info, "Processing project '#{project.path_with_namespace}'")
+          next unless sync?(project)
+
+          register(project)
+        end
       end
 
       private
@@ -26,12 +30,12 @@ module Dependabot
         name = project.path_with_namespace
 
         unless project["default_branch"]
-          log(:debug, "Project '#{name}' doesn't have a default branch, skipping...")
+          log(:debug, " project '#{name}' doesn't have a default branch, skipping")
           return
         end
 
         !allowed_pattern || name.match?(Regexp.new(allowed_pattern)).tap do |match|
-          log(:debug, "Project '#{name}' doesn't match pattern '#{allowed_pattern}', skipping...") unless match
+          log(:debug, " project '#{name}' doesn't match pattern '#{allowed_pattern}', skipping") unless match
         end
       end
 
@@ -48,19 +52,18 @@ module Dependabot
       #
       # @param [Gitlab::ObjectifiedHash] project
       # @return [Boolean]
-      def sync(project) # rubocop:disable Metrics/CyclomaticComplexity
+      def register(project) # rubocop:disable Metrics/CyclomaticComplexity
         project_name = project.path_with_namespace
-        log(:info, "Processing project '#{project_name}'")
 
         proj = saved_project(project_name)
         conf = config(project)
 
-        return log(:info, "Project '#{project_name}' has no #{config_file}, skipping") if !proj && !conf
+        return log(:info, " project '#{project_name}' has no #{config_file}, skipping") if !proj && !conf
         return register_project(project_name, "not added for updates, registering") if !proj && conf
         return remove_project(project_name) if proj && !conf
         return register_project(project_name, "jobs out of sync, updating") unless jobs_synced?(project_name, conf)
 
-        log(:info, "Skipping '#{project_name}', project is up to date")
+        log(:info, "  project '#{project_name}' is up to date, skipping")
       end
 
       # Get project config
@@ -110,10 +113,10 @@ module Dependabot
       # @param [String] project_name
       # @return [void]
       def register_project(project_name, log_message)
-        log(:info, "Project '#{project_name}' #{log_message}")
+        log(:info, "  project '#{project_name}' #{log_message}")
         project = Creator.call(project_name)
 
-        log(:info, "Adding dependency update jobs")
+        log(:info, "  adding dependency update jobs")
         Cron::JobSync.call(project)
       end
 
@@ -122,7 +125,7 @@ module Dependabot
       # @param [String] project_name
       # @return [void]
       def remove_project(project_name)
-        log(:info, "#{config_file} removed for '#{project_name}', removing from dependency updates")
+        log(:info, "  #{config_file} removed for '#{project_name}', removing from dependency updates")
         Remover.call(project_name)
       end
 
