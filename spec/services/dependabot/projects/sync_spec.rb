@@ -3,12 +3,8 @@
 describe Dependabot::Projects::Sync, integration: true, epic: :services, feature: :dependabot do
   subject(:sync) { described_class }
 
-  let(:gitlab) do
-    instance_double(
-      "Gitlab::Client",
-      projects: instance_double("Gitlab::PaginatedResponse", auto_paginate: projects)
-    )
-  end
+  let(:gitlab) { instance_double("Gitlab::Client", projects: projects_response) }
+  let(:projects_response) { instance_double("Gitlab::PaginatedResponse") }
 
   let(:cron) { "0 1 * * * UTC" }
   let(:project_name) { random_name }
@@ -44,6 +40,7 @@ describe Dependabot::Projects::Sync, integration: true, epic: :services, feature
 
   before do
     allow(Gitlab::Client).to receive(:new) { gitlab }
+    allow(projects_response).to receive(:auto_paginate).and_yield(*projects)
 
     allow(Dependabot::Config::Fetcher).to receive(:call).with(
       project.path_with_namespace, branch: project.default_branch, update_cache: true
@@ -64,7 +61,7 @@ describe Dependabot::Projects::Sync, integration: true, epic: :services, feature
     end
   end
 
-  context "with non existing project" do
+  context "with non existing project", :aggregate_failures do
     context "without configuration" do
       before do
         allow(Dependabot::Config::Fetcher).to receive(:call).and_raise(Dependabot::Config::MissingConfigurationError)
@@ -73,10 +70,8 @@ describe Dependabot::Projects::Sync, integration: true, epic: :services, feature
       it "skips registering project" do
         sync.call
 
-        aggregate_failures do
-          expect(Dependabot::Projects::Creator).not_to have_received(:call).with(project_name)
-          expect(Cron::JobSync).not_to have_received(:call).with(saved_project)
-        end
+        expect(Dependabot::Projects::Creator).not_to have_received(:call).with(project_name)
+        expect(Cron::JobSync).not_to have_received(:call).with(saved_project)
       end
     end
 
@@ -84,10 +79,8 @@ describe Dependabot::Projects::Sync, integration: true, epic: :services, feature
       it "registers project" do
         sync.call
 
-        aggregate_failures do
-          expect(Dependabot::Projects::Creator).to have_received(:call).with(project_name)
-          expect(Cron::JobSync).to have_received(:call).with(saved_project)
-        end
+        expect(Dependabot::Projects::Creator).to have_received(:call).with(project_name)
+        expect(Cron::JobSync).to have_received(:call).with(saved_project)
       end
     end
 
@@ -120,7 +113,7 @@ describe Dependabot::Projects::Sync, integration: true, epic: :services, feature
       end
     end
 
-    context "with out of sync jobs" do
+    context "with out of sync jobs", :aggregate_failures do
       before do
         allow(Sidekiq::Cron::Job).to receive(:all).and_return([jobs[0]])
       end
@@ -128,14 +121,12 @@ describe Dependabot::Projects::Sync, integration: true, epic: :services, feature
       it "syncs project and jobs" do
         sync.call
 
-        aggregate_failures do
-          expect(Dependabot::Projects::Creator).to have_received(:call).with(project_name)
-          expect(Cron::JobSync).to have_received(:call).with(saved_project)
-        end
+        expect(Dependabot::Projects::Creator).to have_received(:call).with(project_name)
+        expect(Cron::JobSync).to have_received(:call).with(saved_project)
       end
     end
 
-    context "with jobs in sync" do
+    context "with jobs in sync", :aggregate_failures do
       before do
         allow(Sidekiq::Cron::Job).to receive(:all).and_return(jobs)
       end
@@ -143,10 +134,8 @@ describe Dependabot::Projects::Sync, integration: true, epic: :services, feature
       it "skips project" do
         sync.call
 
-        aggregate_failures do
-          expect(Dependabot::Projects::Creator).not_to have_received(:call).with(project_name)
-          expect(Cron::JobSync).not_to have_received(:call).with(saved_project)
-        end
+        expect(Dependabot::Projects::Creator).not_to have_received(:call).with(project_name)
+        expect(Cron::JobSync).not_to have_received(:call).with(saved_project)
       end
     end
   end
