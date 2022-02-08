@@ -5,7 +5,8 @@ updates:
     schedule:
       interval: daily
     commit-message:
-      prefix-development: dev
+      prefix: dep
+      prefix-development: dep-dev
       trailers:
         - changelog: dependency
     assignees:
@@ -21,6 +22,7 @@ updates:
     schedule:
       interval: daily
     commit-message:
+      prefix: dep
       trailers:
         - changelog: dependency
     assignees:
@@ -30,7 +32,7 @@ updates:
     schedule:
       interval: daily
     commit-message:
-      prefix: dev
+      prefix: dep-dev
       trailers:
         - changelog: dependency
     assignees:
@@ -40,7 +42,7 @@ updates:
     schedule:
       interval: daily
     commit-message:
-      prefix: dev
+      prefix: dep-dev
       trailers:
         - changelog: dependency
     assignees:
