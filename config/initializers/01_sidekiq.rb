@@ -39,13 +39,11 @@ module Sidekiq
 
       yield
 
-      with_elapsed_time_context(start) do
-        log(level, "done")
-      end
+      Sidekiq::Context.add(:elapsed, elapsed(start))
+      log(level, "done")
     rescue Exception # rubocop:disable Lint/RescueException
-      with_elapsed_time_context(start) do
-        log(level, "fail")
-      end
+      Sidekiq::Context.add(:elapsed, elapsed(start))
+      log(level, "fail")
 
       raise
     end
