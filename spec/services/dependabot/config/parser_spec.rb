@@ -1,11 +1,23 @@
 # frozen_string_literal: true
 
 describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
-  subject(:parser) { described_class }
+  subject(:parser) { described_class.call(config_yml, repo) }
 
   include_context "with dependabot helper"
 
-  context "with valid configuration and registries" do
+  context "with valid configuration" do
+    let(:config_yml) { File.read("spec/fixture/gitlab/responses/dependabot.yml") }
+
+    it "returns parsed configuration" do
+      expect(parser).to eq(dependabot_config)
+    end
+
+    it "sets reject_external_code: true by default" do
+      expect(parser.first[:reject_external_code]).to eq(true)
+    end
+  end
+
+  context "with registries" do
     let(:config_yml) do
       <<~YAML
         version: 2
@@ -29,22 +41,14 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
       YAML
     end
 
-    it "returns parsed configuration" do
-      expect(parser.call(File.read("spec/fixture/gitlab/responses/dependabot.yml"), repo)).to eq(dependabot_config)
-    end
-
     it "returns parsed configuration with explicitly allowed registries" do
-      expect(parser.call(config_yml, repo).first[:registries]).to eq(
+      expect(parser.first[:registries]).to eq(
         [{
           "type" => "npm_registry",
           "registry" => "npm.pkg.github.com",
           "token" => "test_token"
         }]
       )
-    end
-
-    it "sets reject_external_code: true by default" do
-      expect(parser.call(config_yml, repo).first[:reject_external_code]).to eq(true)
     end
   end
 
@@ -61,11 +65,11 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
     end
 
     it "sets reject_external_code: false by default" do
-      expect(parser.call(config_yml, repo).first[:reject_external_code]).to eq(false)
+      expect(parser.first[:reject_external_code]).to eq(false)
     end
   end
 
-  context "with invalid config" do
+  context "with missing or incorrect types in config" do
     let(:config_yml) do
       <<~YAML
         version: 2
@@ -96,6 +100,48 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
     it "throws invalid configuration error" do
       expect { parser.call(config_yml, repo) }.to raise_error(
         Dependabot::Config::InvalidConfigurationError, /#{invalid_config_error}/
+      )
+    end
+  end
+
+  context "with incorrect hours range format" do
+    let(:config_yml) do
+      <<~YAML
+        version: 2
+        updates:
+          - package-ecosystem: bundler
+            directory: "/"
+            schedule:
+              interval: weekly
+              hours: "25"
+      YAML
+    end
+
+    it "throws invalid format error" do
+      expect { parser.call(config_yml, repo) }.to raise_error(
+        Dependabot::Config::InvalidConfigurationError,
+        "key 'schedule.hours.0' has invalid format, must match pattern '^[0-23]+-[0-23]+$'"
+      )
+    end
+  end
+
+  context "with incorrect hours range definition" do
+    let(:config_yml) do
+      <<~YAML
+        version: 2
+        updates:
+          - package-ecosystem: bundler
+            directory: "/"
+            schedule:
+              interval: weekly
+              hours: "23-0"
+      YAML
+    end
+
+    it "throws invalid format error" do
+      expect { parser.call(config_yml, repo) }.to raise_error(
+        Dependabot::Config::InvalidConfigurationError,
+        "key 'schedule.hours.0' has invalid format, first number in range must be smaller or equal"
       )
     end
   end
