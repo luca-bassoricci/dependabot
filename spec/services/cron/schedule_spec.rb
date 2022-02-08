@@ -16,6 +16,10 @@ describe Cron::Schedule, epic: :services, feature: :configuration do
     expect(cron.call(entry: entry_a, interval: "monthly", day: day, time: time)).to eq("00 2 1 * * UTC")
   end
 
+  it "generates randon cron hour in specific range" do
+    expect(cron.call(entry: entry_a, interval: "daily", hours: "8-9")).to match(/[0-59]+ [8-9] \* \* \* UTC/)
+  end
+
   it "generates random cron hour based on project name" do
     cron_a = cron.call(entry: entry_a, interval: "daily", day: day)
     cron_b = cron.call(entry: entry_b, interval: "daily", day: day)

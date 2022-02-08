@@ -11,23 +11,19 @@ module Cron
 
     # @param [String] entry
     # @param [String] interval
-    # @param [String] day
-    # @param [String] time
-    # @param [String] timezone
-    def initialize(entry:, interval:, day: nil, time: nil, timezone: nil)
+    # @param [Hash] cron_args
+    def initialize(entry:, interval:, **cron_args)
       @entry = entry
       @interval = INTERVALS.include?(interval) ? interval : "daily"
-      @day = Date::DAYNAMES.map(&:downcase).include?(day) ? day[0..2] : nil
-      @time = time&.match?(/^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/) ? time : nil
-      @timezone = TZInfo::Timezone.all_identifiers.include?(timezone) ? timezone : Time.zone.name
+      @cron_args = cron_args
     end
 
     # Parse schedule data and return cron string
     #
     # @return [String]
     def call
-      cron_time = (time || random_time).split(":").yield_self { |arr| "#{arr[1]} #{arr[0]}" }
-      return "#{cron_time} * * #{day || random_day} #{timezone}" if interval == "weekly"
+      cron_time = time.split(":").yield_self { |arr| "#{arr[1]} #{arr[0]}" }
+      return "#{cron_time} * * #{day} #{timezone}" if interval == "weekly"
       return "#{cron_time} 1 * * #{timezone}" if interval == "monthly"
       return "#{cron_time} * * 1-5 #{timezone}" if interval == "weekday"
 
@@ -36,7 +32,46 @@ module Cron
 
     private
 
-    attr_reader :entry, :interval, :day, :time, :timezone
+    attr_reader :entry, :interval, :cron_args
+
+    # Day to run update job
+    #
+    # @return [String, Integer]
+    def day
+      @day ||= Date::DAYNAMES.map(&:downcase).include?(cron_args[:day]) ? cron_args[:day][0..2] : random_day
+    end
+
+    # Time to run updates on
+    #
+    # @return [String]
+    def time
+      @time ||= cron_args[:time]&.match?(/^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/) ? cron_args[:time] : random_time
+    end
+
+    # Schedule timezone
+    #
+    # @return [String]
+    def timezone
+      @timezone ||= if TZInfo::Timezone.all_identifiers.include?(cron_args[:timezone])
+                      cron_args[:timezone]
+                    else
+                      Time.zone.name
+                    end
+    end
+
+    # Specific hour range for schedule
+    #
+    # @return [Range]
+    def hours
+      @hours ||= if cron_args[:hours]
+                   cron_args[:hours]
+                     .split("-")
+                     .map(&:to_i)
+                     .yield_self { |range| (range[0]..range[1]) }
+                 else
+                   (0..23)
+                 end
+    end
 
     # Random number generator
     #
@@ -49,7 +84,7 @@ module Cron
     #
     # @return [String]
     def random_time
-      hour = random.rand(0..23)
+      hour = random.rand(hours)
       minute = random.rand(0..59)
 
       "#{hour}:#{minute}"

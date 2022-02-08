@@ -9,7 +9,7 @@ class UpdatesConfigContract < Dry::Validation::Contract
 
       if AppConfig.standalone?
         optional(:schedule).hash do
-          optional(:interval).filled(:string)
+          optional(:interval).value(:string)
           optional(:day).value(:string)
           optional(:time).value(:string)
           optional(:timezone).value(:string)
@@ -17,9 +17,10 @@ class UpdatesConfigContract < Dry::Validation::Contract
       else
         required(:schedule).hash do
           required(:interval).filled(:string)
-          optional(:day).value(:string)
-          optional(:time).value(:string)
-          optional(:timezone).value(:string)
+          optional(:day).filled(:string)
+          optional(:time).filled(:string)
+          optional(:timezone).filled(:string)
+          optional(:hours).filled(:string)
         end
       end
 
@@ -60,6 +61,20 @@ class UpdatesConfigContract < Dry::Validation::Contract
       optional(:"target-branch").filled(:string)
       optional(:"versioning-strategy").filled(:string)
       optional(:"insecure-external-code-execution").filled(:string)
+    end
+  end
+
+  rule(:updates).each do |index:|
+    hours = value.dig(:schedule, :hours)
+    next unless hours
+
+    pattern = "^[0-23]+-[0-23]+$"
+    key_index = [:schedule, :hours, index]
+
+    if !Regexp.new(pattern).match?(hours)
+      key(key_index).failure("has invalid format, must match pattern '#{pattern}'")
+    elsif hours.split("-").yield_self { |num| num[0] >= num[1] }
+      key(key_index).failure("has invalid format, first number in range must be smaller or equal")
     end
   end
 end

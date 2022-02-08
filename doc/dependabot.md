@@ -35,8 +35,22 @@ If it is required to use packages from different project package registries, mak
 
 ## schedule
 
+### Random schedule
+
 If `time` value is not provided, random time value will be set. \
 If `day` value is not provided for `weekly` interval, random day of the week will be set.
+
+Additionally it is possible to provide `hours` interval that will set fixed hour range for random time setting:
+
+```yml
+schedule:
+  interval: daily
+  hours: "9-17"
+```
+
+will set random hour between hours 9 and 17.
+
+### Interval types
 
 Unlike [github native](https://docs.github.com/en/code-security/supply-chain-security/keeping-your-dependencies-updated-automatically/configuration-options-for-dependency-updates#scheduleinterval), `schedule.interval` supports 2 different daily interval types:
 
