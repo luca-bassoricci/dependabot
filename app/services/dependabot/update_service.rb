@@ -22,7 +22,7 @@ module Dependabot
 
   # Main entrypoint class for updating dependencies and creating merge requests
   #
-  class UpdateService < ApplicationService
+  class UpdateService < ApplicationService # rubocop:disable Metrics/ClassLength
     def initialize(args)
       @project_name = args[:project_name]
       @package_ecosystem = args[:package_ecosystem]
@@ -47,6 +47,31 @@ module Dependabot
 
     attr_reader :project_name, :package_ecosystem, :directory, :dependency_name
 
+    # Project
+    #
+    # @return [Project]
+    def project
+      @project ||= begin
+        return standalone_project if AppConfig.standalone?
+
+        # Fetch config from Gitlab if deployment is not integrated with webhooks to make sure it is up to date
+        Project.find_by(name: project_name).tap do |proj|
+          proj.config = config unless AppConfig.integrated?
+        end
+      end
+    end
+
+    # Non persisted project for standalone run
+    #
+    # @return [Project]
+    def standalone_project
+      @config_entry = config.entry(package_ecosystem: package_ecosystem, directory: directory)
+      raise_missing_entry_error unless @config_entry
+
+      fork_id = config_entry[:fork] ? gitlab.project(project_name).to_h.dig("forked_from_project", "id") : nil
+      Project.new(name: project_name, config: config, forked_from_id: fork_id)
+    end
+
     # Open mr limit
     #
     # @return [Number]
@@ -54,32 +79,19 @@ module Dependabot
       @mr_limit ||= config_entry[:open_merge_requests_limit]
     end
 
-    # Project
+    # Project configuration fetched from gitlab
     #
-    # @return [Project]
-    def project
-      @project ||= AppConfig.standalone ? standalone_project : Project.find_by(name: project_name)
+    # @return [Config]
+    def config
+      @config ||= Dependabot::Config::Fetcher.call(project_name)
     end
 
-    # Non persisted project for standalone run
-    #
-    # @return [Project]
-    def standalone_project
-      conf = Dependabot::Config::Fetcher.call(project_name)
-      entry = conf.entry(package_ecosystem: package_ecosystem, directory: directory)
-      fork_id = entry[:fork] ? gitlab.project(project_name).to_h.dig("forked_from_project", "id") : nil
-
-      Project.new(name: project_name, config: conf, forked_from_id: fork_id)
-    end
-
-    # Fetch config entry for project
+    # Config entry for specific package ecosystem and directory
     #
     # @return [Hash]
     def config_entry
-      @config_entry = project.config.entry(package_ecosystem: package_ecosystem, directory: directory).tap do |entry|
-        unless entry
-          raise("Configuration missing entry with package-ecosystem: #{package_ecosystem}, directory: #{directory}")
-        end
+      @config_entry ||= project.config.entry(package_ecosystem: package_ecosystem, directory: directory).tap do |entry|
+        raise_missing_entry_error unless entry
       end
     end
 
@@ -181,6 +193,13 @@ module Dependabot
         config: config_entry,
         updated_dependency: updated_dep
       )
+    end
+
+    # Raise config missing specific entry error
+    #
+    # @return [void]
+    def raise_missing_entry_error
+      raise("Configuration missing entry with package-ecosystem: #{package_ecosystem}, directory: #{directory}")
     end
   end
 end
