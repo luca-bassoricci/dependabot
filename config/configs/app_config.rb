@@ -27,4 +27,11 @@ class AppConfig < ApplicationConfig
   def sidekiq_retry
     update_retry.is_a?(Numeric) ? update_retry : update_retry == "true"
   end
+
+  # Deployment integrated with gitlab
+  #
+  # @return [Boolean]
+  def integrated?
+    dependabot_url && create_project_hook
+  end
 end
