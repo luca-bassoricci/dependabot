@@ -41,7 +41,7 @@ group :test do
   gem "allure-rspec", "~> 2.16.1"
   gem "faker", "~> 2.19"
   gem "rails-controller-testing", "~> 1.0"
-  gem "rspec", "~> 3.10"
+  gem "rspec", "~> 3.11"
   gem "rspec_junit_formatter", "~> 0.5.1"
   gem "rspec-rails", "~> 5.1.0"
   gem "rspec-sidekiq", "~> 3.1", require: false
