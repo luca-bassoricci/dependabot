@@ -23,7 +23,7 @@ module ApplicationHelper
   # @param [StandardError] error
   # @return [void]
   def capture_error(error)
-    UpdateFailures.call.save_error(error)
+    UpdateFailures.save_error(error)
   end
 
   # Log tagged message with dependency context

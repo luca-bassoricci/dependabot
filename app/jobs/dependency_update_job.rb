@@ -11,18 +11,17 @@ class DependencyUpdateJob < ApplicationJob
   # @param [Hash] args
   # @return [Array]
   def perform(args)
-    @project, @package_ecosystem, @directory = args.symbolize_keys
-                                                   .slice(:project_name, :package_ecosystem, :directory)
-                                                   .values
-    @update_failures = UpdateFailures.call
-
-    reset_errors
+    symbolized_args = args.symbolize_keys
+    @project, @package_ecosystem, @directory = symbolized_args
+                                               .slice(:project_name, :package_ecosystem, :directory)
+                                               .values
+    UpdateFailures.reset
     save_execution_context
     save_execution_time
 
-    Dependabot::UpdateService.call(args.symbolize_keys)
+    Dependabot::UpdateService.call(symbolized_args)
 
-    update_failures.errors
+    UpdateFailures.errors
   rescue StandardError => e
     capture_error(e)
     raise
@@ -33,7 +32,7 @@ class DependencyUpdateJob < ApplicationJob
 
   private
 
-  attr_reader :project, :package_ecosystem, :directory, :update_failures
+  attr_reader :project, :package_ecosystem, :directory
 
   # Update job
   #
@@ -47,20 +46,13 @@ class DependencyUpdateJob < ApplicationJob
                            )
   end
 
-  # Reset execution errors
-  #
-  # @return [void]
-  def reset_errors
-    update_failures.reset
-  end
-
   # Persist execution errors
   #
   # @return [void]
   def save_execution_details
     return if AppConfig.standalone?
 
-    update_job.run_errors = update_failures.errors
+    update_job.run_errors = UpdateFailures.errors
     update_job.save!
   end
 
