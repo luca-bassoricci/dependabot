@@ -593,7 +593,7 @@ DEPENDENCIES
   yabeda-sidekiq (~> 0.8.1)
 
 RUBY VERSION
-   ruby 2.6.7p197
+   ruby 2.7.5p203
 
 BUNDLED WITH
    2.2.32
