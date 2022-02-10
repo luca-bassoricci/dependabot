@@ -1,3 +1,53 @@
+## 0.14.0 (2022-02-10)
+
+### 🚀 New features (1 change)
+
+- [Add ability to set random schedule hour range](dependabot-gitlab/dependabot@c5ea19677c783c35e8bcb6cbacf7a18559e23021) by @andrcuns. See merge request dependabot-gitlab/dependabot!1314
+
+### 🔬 Improvements (1 change)
+
+- [Refactor update service to run full update of single dep at a time](dependabot-gitlab/dependabot@6ff0c2c301751ad24fecb8713c5bbf02755e05a6) by @andrcuns. See merge request dependabot-gitlab/dependabot!1297
+
+### 🐞 Bug Fixes (2 changes)
+
+- [Update sidekiq logger patch](dependabot-gitlab/dependabot@0423277ab9e6f2c7ffa050801278fc00e2f0a2fd) by @andrcuns. See merge request dependabot-gitlab/dependabot!1313
+- [Check mr is in opened state before updating](dependabot-gitlab/dependabot@886d28b6b098987ff07d037e7928e463a724769c) by @andrcuns. See merge request dependabot-gitlab/dependabot!1307
+
+### 📦 Dependency updates (11 changes)
+
+- [dep: bump dependabot-omnibus from 0.171.5 to 0.172.1](dependabot-gitlab/dependabot@073cd14bb6cf9038aaa97cc3d248052ad193956d) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1318
+- [dep-dev: bump rspec from 3.10.0 to 3.11.0](dependabot-gitlab/dependabot@bc4938894ab94fbb0e1329c07d96878acdf27477) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1319
+- [Bump dependabot-omnibus from 0.171.4 to 0.171.5](dependabot-gitlab/dependabot@c930a3b2daf8807ec5944adf963fdf29e16c39fe) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1310
+- [Bump sidekiq from 6.4.0 to 6.4.1](dependabot-gitlab/dependabot@c4d1568d6b8c9226deb8330d1169c09f264a75aa) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1311
+- [Bump rubocop from 1.25.0 to 1.25.1](dependabot-gitlab/dependabot@86f65aa3be2e7651d100bed4a7f146915afc7501) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1305
+- [Bump allure-rspec from 2.16.0 to 2.16.1](dependabot-gitlab/dependabot@b7886ef9714ac7e5f59b52a1c7183cda60237637) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1306
+- [Bump bootsnap from 1.10.2 to 1.10.3](dependabot-gitlab/dependabot@6aa21dbfd489ed6a05da9fc41e3c3114e40fff03) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1304
+- [Bump dependabot-omnibus from 0.171.3 to 0.171.4](dependabot-gitlab/dependabot@027771b5c706938b2723085e658312c66d258eca) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1290
+- [Bump puma from 5.6.0 to 5.6.1](dependabot-gitlab/dependabot@08b6d025bdf1e54fdfef70b9b9f80725d4ef69ee) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1291
+- [Bump dependabot/dependabot-core from 0.171.2 to 0.171.3](dependabot-gitlab/dependabot@63ef3906590731c1a6683266f3fa340ceb226a86) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1287
+- [Bump rspec-rails from 5.0.2 to 5.1.0](dependabot-gitlab/dependabot@47ddd1e8ae350e4066643cff7922979435f6973d) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1288
+
+### 🔧 CI changes (4 changes)
+
+- [Remove codecov](dependabot-gitlab/dependabot@d9b1de32b24d22a5d0bf8bcf0a6033730de3ae5e) by @andrcuns. See merge request dependabot-gitlab/dependabot!1303
+- [Update dependencies in CI image](dependabot-gitlab/dependabot@18a250f45981de4ff2915b98548f89816e21d450) by @andrcuns. See merge request dependabot-gitlab/dependabot!1295
+- [Remove chart-testing from ci image](dependabot-gitlab/dependabot@9e30121eb67669bb0a8bef590cab0ec6d25a02c1) by @andrcuns. See merge request dependabot-gitlab/dependabot!1294
+- [Add helm diff and local version plugins](dependabot-gitlab/dependabot@dc63d3a7b758864b413fb459ee377e32f26f17ab) by @andrcuns. See merge request dependabot-gitlab/dependabot!1293
+
+### 🛠️ Chore (7 changes)
+
+- [Remove unnecessary UpdateErrors instance creation](dependabot-gitlab/dependabot@2ee7b5eb18dc0d78a2d9b86fc3185db7dd6c4cab) by @andrcuns. See merge request dependabot-gitlab/dependabot!1317
+- [Refetch config from gitlab when webhooks are not configured](dependabot-gitlab/dependabot@717b9e4a2259514c80f9a6ff0f43c90526ff276c) by @andrcuns. See merge request dependabot-gitlab/dependabot!1316
+- [Temporary patch sidekiq job class](dependabot-gitlab/dependabot@6f30ed7526031310bea889522e96ca3860dc3dc0) by @andrcuns. See merge request dependabot-gitlab/dependabot!1315
+- [Lazy iterate gitlab projects on registration job](dependabot-gitlab/dependabot@9e7c79ef1d3cc59e60e32acf26a2c539773edfa6) by @andrcuns. See merge request dependabot-gitlab/dependabot!1308
+- [Simplify update service setup](dependabot-gitlab/dependabot@d8ff1c27ca61642bab31f31cc62d2e5bb64b31b6) by @andrcuns. See merge request dependabot-gitlab/dependabot!1302
+- [Remove redundant config methods](dependabot-gitlab/dependabot@d5f7535523105bcd8c794ab6e5c4999a0b53d5cc) by @andrcuns. See merge request dependabot-gitlab/dependabot!1301
+- [Refactor config fetching](dependabot-gitlab/dependabot@17ff51fec808e28dc178418dc34b7be27bf4e3ac) by @andrcuns. See merge request dependabot-gitlab/dependabot!1296
+
+### 📄 Documentation updates (1 change)
+
+- [Remove latest master tag from documentation](dependabot-gitlab/dependabot@f739f3e3fd513bc901a9d41a062c3f542f0add49) by @andrcuns. See merge request dependabot-gitlab/dependabot!1309
+
 ## 0.13.0 (2022-01-26)
 
 ### 🚀 New features (1 change)
