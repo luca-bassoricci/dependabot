@@ -23,7 +23,7 @@ module Dependabot
       # @return [void]
       def call
         if find_mr("closed")
-          log(:warn, " closed mr exists, skipping!")
+          log(:warn, "  closed mr exists, skipping!")
           return
         end
 
