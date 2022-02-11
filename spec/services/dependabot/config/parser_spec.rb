@@ -35,7 +35,8 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
           - package-ecosystem: bundler
             directory: "/"
             schedule:
-              interval: weekly
+              interval: daily
+              hours: 9-17
             registries:
               - npm
       YAML
@@ -120,7 +121,7 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
     it "throws invalid format error" do
       expect { parser.call(config_yml, repo) }.to raise_error(
         Dependabot::Config::InvalidConfigurationError,
-        "key 'schedule.hours.0' has invalid format, must match pattern '^[0-23]+-[0-23]+$'"
+        "key 'schedule.hours.0' has invalid format, must match pattern '^\\d{1,2}-\\d{1,2}$'"
       )
     end
   end
@@ -141,7 +142,7 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
     it "throws invalid format error" do
       expect { parser.call(config_yml, repo) }.to raise_error(
         Dependabot::Config::InvalidConfigurationError,
-        "key 'schedule.hours.0' has invalid format, first number in range must be smaller or equal"
+        "key 'schedule.hours.0' has invalid format, first number in range must be smaller or equal than second"
       )
     end
   end
