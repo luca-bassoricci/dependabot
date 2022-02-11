@@ -1,3 +1,9 @@
+## 0.14.1 (2022-02-11)
+
+### 🐞 Bug Fixes (1 change)
+
+- [Fix schedule hours validation](dependabot-gitlab/dependabot@2b3bf70bc35d41487646c9ce405cddce4aaf863b) by @andrcuns. See merge request dependabot-gitlab/dependabot!1321
+
 ## 0.14.0 (2022-02-10)
 
 ### 🚀 New features (1 change)
