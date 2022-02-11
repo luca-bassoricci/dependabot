@@ -13,6 +13,7 @@ class UpdatesConfigContract < Dry::Validation::Contract
           optional(:day).value(:string)
           optional(:time).value(:string)
           optional(:timezone).value(:string)
+          optional(:hours).filled(:string)
         end
       else
         required(:schedule).hash do
@@ -68,13 +69,15 @@ class UpdatesConfigContract < Dry::Validation::Contract
     hours = value.dig(:schedule, :hours)
     next unless hours
 
-    pattern = "^[0-23]+-[0-23]+$"
+    pattern = "^\\d{1,2}-\\d{1,2}$"
     key_index = [:schedule, :hours, index]
 
     if !Regexp.new(pattern).match?(hours)
       key(key_index).failure("has invalid format, must match pattern '#{pattern}'")
-    elsif hours.split("-").yield_self { |num| num[0] >= num[1] }
-      key(key_index).failure("has invalid format, first number in range must be smaller or equal")
+    elsif hours.split("-").yield_self { |num| num[0].to_i >= num[1].to_i }
+      key(key_index).failure("has invalid format, first number in range must be smaller or equal than second")
+    elsif hours.split("-").any? { |num| num.to_i <= 0 && num.to_i >= 23 }
+      key(key_index).failure("has invalid format, hours must be between 0 and 23")
     end
   end
 end
