@@ -149,7 +149,7 @@ module Dependabot
     # @return [void]
     def update_dependency(updated_dependency, mr_count)
       if mr_count[:mr] >= mr_limit
-        return log(:ingo, " skipping update of dependency due to max #{mr_limit} open mr limit!")
+        return log(:info, " skipping update of dependency due to max #{mr_limit} open mr limit!")
       end
 
       mr_count[:mr] += 1 if create_mr(updated_dependency)
