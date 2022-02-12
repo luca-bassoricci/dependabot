@@ -36,7 +36,7 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
   end
 
   let(:updated_rspec) do
-    Dependabot::UpdatedDependency.new(
+    Dependabot::Dependencies::UpdatedDependency.new(
       name: "rspec",
       updated_dependencies: ["updated_rspec"],
       updated_files: [],
@@ -47,7 +47,7 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
   end
 
   let(:updated_config) do
-    Dependabot::UpdatedDependency.new(
+    Dependabot::Dependencies::UpdatedDependency.new(
       name: "config",
       updated_dependencies: ["updated_config"],
       updated_files: [],
@@ -94,7 +94,7 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
       )
       .and_return(dependencies)
 
-    allow(Dependabot::UpdateChecker).to receive(:call)
+    allow(Dependabot::Dependencies::UpdateChecker).to receive(:call)
       .with(
         dependency: dependencies[0],
         dependency_files: fetcher.files,
@@ -103,7 +103,7 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
       )
       .and_return(updated_rspec)
 
-    allow(Dependabot::UpdateChecker).to receive(:call)
+    allow(Dependabot::Dependencies::UpdateChecker).to receive(:call)
       .with(
         dependency: dependencies[1],
         dependency_files: fetcher.files,

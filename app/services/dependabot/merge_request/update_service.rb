@@ -66,7 +66,7 @@ module Dependabot
         ).find { |dep| dep.name == mr.main_dependency }
         return unless dependency
 
-        Dependabot::UpdateChecker.call(
+        Dependabot::Dependencies::UpdateChecker.call(
           dependency: dependency,
           dependency_files: fetcher.files,
           config: config,

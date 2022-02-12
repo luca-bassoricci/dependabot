@@ -5,7 +5,7 @@ module Dependabot
   # :reek:InstanceVariableAssumption
   # :reek:RepeatedConditional
   module MergeRequest
-    class CreateService < ApplicationService # rubocop:disable Metrics/ClassLength
+    class CreateService < ApplicationService
       # @param [Dependabot::Files::Fetchers::Base] fetcher
       # @param [Project] project
       # @param [Hash] config
@@ -27,12 +27,8 @@ module Dependabot
           return
         end
 
-        if create_mr
-          persist_mr
-          close_superseeded_mrs
-        else
-          update_mr
-        end
+        # update existing mr if nothing was created
+        update_mr unless create_mr
 
         accept_mr
         mr
@@ -40,18 +36,17 @@ module Dependabot
 
       private
 
-      delegate :commit_message, :branch_name, to: :mr_creator
-
-      delegate :updated_files, :updated_dependencies, :name, :previous_versions, :current_versions,
-               to: :updated_dependency
-
-      attr_reader :project, :fetcher, :updated_dependency, :config, :recreate
+      attr_reader :project,
+                  :fetcher,
+                  :updated_dependency,
+                  :config,
+                  :recreate
 
       # Create mr
       #
       # @return [void]
       def create_mr
-        @mr = mr_creator.create || return # dependabot-core returns nil if branch && mr exists and nothing was created
+        @mr = mr_creator.call || return # dependabot-core returns nil if branch && mr exists and nothing was created
 
         log(:info, "  created merge request: #{mr.web_url}")
         mr
@@ -66,51 +61,6 @@ module Dependabot
         mr
       end
 
-      # Persist merge request
-      #
-      # @return [void]
-      def persist_mr # rubocop:disable Metrics/MethodLength
-        return if AppConfig.standalone
-
-        ::MergeRequest.create!(
-          project: project,
-          id: mr.id,
-          iid: mr.iid,
-          package_ecosystem: config[:package_ecosystem],
-          directory: config[:directory],
-          state: "opened",
-          auto_merge: updated_dependency.auto_mergeable?,
-          update_from: previous_versions,
-          update_to: current_versions,
-          main_dependency: name,
-          branch: branch_name,
-          target_branch: fetcher.source.branch,
-          commit_message: commit_message,
-          target_project_id: target_project_id
-        )
-      end
-
-      # Close superseeded merge requests
-      #
-      # @return [void]
-      def close_superseeded_mrs
-        return if AppConfig.standalone
-
-        superseeded_mrs.each do |superseeded_mr|
-          Gitlab::BranchRemover.call(project.name, superseeded_mr.branch)
-          superseeded_mr.update_attributes!(state: "closed")
-          next if target_project_id
-
-          Gitlab::MergeRequest::Commenter.call(
-            project.name,
-            superseeded_mr.iid,
-            "This merge request has been superseeded by #{mr.web_url}"
-          )
-        end
-        # close leftover mrs, primarily for forked projects without webhooks
-        existing_mrs.each { |existing_mr| existing_mr.update_attributes!(state: "closed") }
-      end
-
       # Update existing merge request
       #
       # @return [void]
@@ -122,9 +72,9 @@ module Dependabot
           credentials: Dependabot::Credentials.call,
           source: fetcher.source,
           base_commit: fetcher.commit,
-          old_commit: commit_message,
+          old_commit: mr_creator.commit_message,
           pull_request_number: mr.iid,
-          files: updated_files,
+          files: updated_dependency.updated_files,
           provider_metadata: { target_project_id: target_project_id }
         ).update
         log(:info, "  recreated merge request #{mr.web_url}")
@@ -142,7 +92,7 @@ module Dependabot
       #
       # @return [void]
       def accept_mr
-        return unless AppConfig.standalone
+        return unless AppConfig.standalone?
         return unless mr && updated_dependency.auto_mergeable?
 
         gitlab.accept_merge_request(mr.project_id, mr.iid, merge_when_pipeline_succeeds: true)
@@ -188,37 +138,13 @@ module Dependabot
         recreate || rebase_all? || (rebase? && mr.has_conflicts)
       end
 
-      # List of open superseeded merge requests
-      #
-      # @return [Mongoid::Criteria]
-      def superseeded_mrs
-        @superseeded_mrs ||= project.merge_requests
-                                    .where(
-                                      update_from: previous_versions,
-                                      state: "opened",
-                                      directory: config[:directory]
-                                    )
-                                    .not(iid: mr.iid)
-                                    .compact
-      end
-
-      # List of open existing mrs
-      #
-      # @return [Mongoid::Criteria]
-      def existing_mrs
-        @existing_mrs ||= project.merge_requests
-                                 .where(main_dependency: name, state: "opened")
-                                 .not(iid: mr.iid)
-                                 .compact
-      end
-
       # Find existing mr
       #
       # @return [Gitlab::ObjectifiedHash]
       def find_mr(state)
         Gitlab::MergeRequest::Finder.call(
           project: target_project_id || fetcher.source.repo,
-          source_branch: branch_name,
+          source_branch: mr_creator.branch_name,
           target_branch: fetcher.source.branch,
           state: state
         )
@@ -228,10 +154,10 @@ module Dependabot
       #
       # @return [Dependabot::PullRequestCreator::Gitlab]
       def mr_creator
-        @mr_creator ||= Gitlab::MergeRequest::Creator.call(
+        @mr_creator ||= Gitlab::MergeRequest::Creator.new(
+          project: project,
           fetcher: fetcher,
-          updated_dependencies: updated_dependencies,
-          updated_files: updated_files,
+          updated_dependency: updated_dependency,
           config: config,
           target_project_id: target_project_id
         )

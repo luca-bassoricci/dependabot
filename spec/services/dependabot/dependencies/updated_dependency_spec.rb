@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Dependabot::UpdatedDependency, feature: :dependabot do
+describe Dependabot::Dependencies::UpdatedDependency, feature: :dependabot do
   subject(:updated_dependency) do
     described_class.new(
       name: name,

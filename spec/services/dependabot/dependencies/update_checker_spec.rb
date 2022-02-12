@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Dependabot::UpdateChecker, epic: :services, feature: :dependabot do
+describe Dependabot::Dependencies::UpdateChecker, epic: :services, feature: :dependabot do
   subject(:update_checker_return) do
     described_class.call(
       dependency: dependency,
@@ -56,7 +56,7 @@ describe Dependabot::UpdateChecker, epic: :services, feature: :dependabot do
       credentials: credentials
     ).and_return(updated_files)
 
-    allow(Dependabot::RuleHandler).to receive(:new).with(
+    allow(Dependabot::Dependencies::RuleHandler).to receive(:new).with(
       dependency: dependency,
       checker: checker,
       config: config
@@ -113,7 +113,7 @@ describe Dependabot::UpdateChecker, epic: :services, feature: :dependabot do
 
   context "when dependency can be updated" do
     let(:updated_deps) do
-      Dependabot::UpdatedDependency.new(
+      Dependabot::Dependencies::UpdatedDependency.new(
         name: dependency.name,
         updated_files: updated_files,
         updated_dependencies: updated_dependencies,
