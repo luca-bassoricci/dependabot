@@ -17,18 +17,29 @@ class MergeRequestRecreationJob < ApplicationJob
     @mr_iid = mr_iid
     @discussion_id = discussion_id
 
-    reply_status(":warning: `dependabot` is recreating merge request. All changes will be overwritten! :warning:")
-    Dependabot::MergeRequest::UpdateService.call(project_name: project_name, mr_iid: mr_iid)
-    reply_status(":white_check_mark: `dependabot` successfuly recreated merge request!")
-    resolve_discussion
+    save_execution_context
+
+    recreate
   rescue StandardError => e
     log_error(e)
     reply_status(":x: `dependabot` failed recreating merge request.\n\n```\n#{e}\n```")
+  ensure
+    clear_execution_context
   end
 
   private
 
   attr_reader :project_name, :mr_iid, :discussion_id
+
+  # Run mr recreate
+  #
+  # @return [void]
+  def recreate
+    reply_status(":warning: `dependabot` is recreating merge request. All changes will be overwritten! :warning:")
+    Dependabot::MergeRequest::UpdateService.call(project_name: project_name, mr_iid: mr_iid)
+    reply_status(":white_check_mark: `dependabot` successfuly recreated merge request!")
+    resolve_discussion
+  end
 
   # Add action status reply
   #
@@ -48,5 +59,19 @@ class MergeRequestRecreationJob < ApplicationJob
   # @return [void]
   def resolve_discussion
     gitlab.resolve_merge_request_discussion(project_name, mr_iid, discussion_id, resolved: true)
+  end
+
+  # Save job execution context
+  #
+  # @return [void]
+  def save_execution_context
+    Thread.current[:context] = "#{project_name}=>!#{mr_iid}"
+  end
+
+  # Clear job execution context
+  #
+  # @return [void]
+  def clear_execution_context
+    Thread.current[:context] = nil
   end
 end
