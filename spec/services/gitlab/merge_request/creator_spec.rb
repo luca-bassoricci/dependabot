@@ -96,7 +96,7 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
     MSG
   end
 
-  def create_mr(id, iid, state, branch = source_branch) # rubocop:disable Metrics/MethodLength
+  def create_mr(id, iid, state, branch = source_branch)
     MergeRequest.new(
       project: project,
       id: id,

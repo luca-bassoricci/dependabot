@@ -54,7 +54,7 @@ module Cron
     #
     # @param [Hash] opts
     # @return [ProjectJob]
-    def save_project_job(opts) # rubocop:disable Metrics/MethodLength
+    def save_project_job(opts)
       package_ecosystem = opts[:package_ecosystem]
       directory = opts[:directory]
 

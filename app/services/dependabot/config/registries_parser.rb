@@ -99,7 +99,7 @@ module Dependabot
       #
       # @param [Hash] registry
       # @return [Hash]
-      def transform_registry_values(registry) # rubocop:disable Metrics/MethodLength
+      def transform_registry_values(registry)
         type = registry[:type]
         mapped_type = TYPE_MAPPING[type]
         return warn_unsupported_registry(type) unless mapped_type

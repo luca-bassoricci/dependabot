@@ -125,7 +125,7 @@ module Dependabot
       #
       # @param [Hash<Symbol, Object>] opts
       # @return [Hash<Symbol, Object>]
-      def general_options(opts) # rubocop:disable Metrics/MethodLength
+      def general_options(opts)
         package_ecosystem = opts[:"package-ecosystem"]
 
         {

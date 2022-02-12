@@ -68,7 +68,7 @@ module Gitlab
       # Persist merge request
       #
       # @return [void]
-      def persist_mr # rubocop:disable Metrics/MethodLength
+      def persist_mr
         ::MergeRequest.create!(
           project: project,
           id: mr.id,
