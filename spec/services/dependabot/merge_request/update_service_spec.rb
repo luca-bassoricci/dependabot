@@ -1,16 +1,21 @@
 # frozen_string_literal: true
 
 describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dependabot, integration: true do
-  subject(:update) { described_class.call(project_name: repo, mr_iid: mr.iid) }
+  subject(:update) { described_class.call(project_name: repo, mr_iid: mr.iid, recreate: recreate) }
 
   include_context "with dependabot helper"
 
-  let(:gitlab) { instance_double("Gitlab::Client", merge_request: gitlab_mr) }
-  let(:fetcher) { instance_double("Dependabot::FileFetcher", files: "files", source: "source") }
+  let(:gitlab) { instance_double("Gitlab::Client", merge_request: gitlab_mr, rebase_merge_request: nil) }
+  let(:fetcher) { instance_double("Dependabot::FileFetcher", files: "files", source: "source", commit: "commit") }
+  let(:pr_updater) { instance_double("Dependabot::PullRequestUpdater", update: nil) }
+
+  let(:conflicts) { false }
+  let(:recreate) { false }
+
   let(:project) { Project.new(name: repo, config: dependabot_config) }
   let(:config) { dependabot_config.first }
   let(:update_to_versions) { updated_dependency.current_versions }
-  let(:gitlab_mr) { Gitlab::ObjectifiedHash.new(iid: mr.iid, state: state) }
+  let(:gitlab_mr) { Gitlab::ObjectifiedHash.new(iid: mr.iid, state: state, web_url: "url", has_conflicts: conflicts) }
   let(:dependencies) { [instance_double("Dependabot::Dependency", name: "config")] }
   let(:state) { "opened" }
 
@@ -37,6 +42,18 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
     )
   end
 
+  let(:updater_args) do
+    {
+      credentials: Dependabot::Credentials.call,
+      source: fetcher.source,
+      base_commit: fetcher.commit,
+      old_commit: mr.commit_message,
+      pull_request_number: mr.iid,
+      files: updated_dependency.updated_files,
+      provider_metadata: { target_project_id: nil }
+    }
+  end
+
   before do
     allow(Gitlab).to receive(:client) { gitlab }
     allow(Dependabot::Files::Fetcher).to receive(:call).with(repo, config, nil) { fetcher }
@@ -58,51 +75,75 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
       )
       .and_return(updated_dependency)
 
-    allow(Gitlab::MergeRequest::Updater).to receive(:call)
+    allow(Dependabot::PullRequestUpdater).to receive(:new).with(**updater_args) { pr_updater }
 
     project.save!
     mr.save!
   end
 
-  context "with successfull dependency update" do
-    it "updates merge request" do
-      update
+  context "with successfull update", :aggregate_failures do
+    context "without recreate and conflicts" do
+      it "rebases merge request" do
+        update
 
-      expect(Gitlab::MergeRequest::Updater).to have_received(:call).with(
-        fetcher: fetcher,
-        updated_files: updated_files,
-        merge_request: gitlab_mr.to_hash.merge(commit_message: mr.commit_message),
-        target_project_id: nil,
-        recreate: true
-      )
+        expect(gitlab).to have_received(:rebase_merge_request).with(repo, mr.iid)
+        expect(pr_updater).not_to have_received(:update)
+      end
+    end
+
+    context "with recreate merge request option" do
+      let(:recreate) { true }
+
+      it "recreates merge request" do
+        update
+
+        expect(pr_updater).to have_received(:update)
+        expect(gitlab).not_to have_received(:rebase_merge_request)
+      end
+    end
+
+    context "with merge request conflicts" do
+      let(:recreate) { false }
+      let(:conflicts) { true }
+
+      it "recreates merge request" do
+        update
+
+        expect(pr_updater).to have_received(:update)
+        expect(gitlab).not_to have_received(:rebase_merge_request)
+      end
     end
   end
 
-  context "without updated dependency" do
-    before do
-      allow(Dependabot::UpdateChecker).to receive(:call).and_return(nil)
+  context "with unsuccessfull update" do
+    let(:conflicts) { true }
+
+    context "without updated dependency" do
+      before do
+        allow(Dependabot::UpdateChecker).to receive(:call).and_return(nil)
+      end
+
+      it "raises unable to update error" do
+        expect { update }.to raise_error("Dependency could not be updated or already up to date!")
+      end
     end
 
-    it "raises unable to update error" do
-      expect { update }.to raise_error("Dependency could not be updated or already up to date!")
+    context "with newer versions to update" do
+      let(:update_to_versions) { "config-2.3.0" }
+
+      it "raises newer version exists error" do
+        expect { update }.to raise_error("Newer version for update exists, new merge request will be created!")
+      end
     end
-  end
 
-  context "with newer versions to update" do
-    let(:update_to_versions) { "config-2.3.0" }
+    context "with merge request already merged" do
+      let(:state) { "merged" }
 
-    it "raises newer version exists error" do
-      expect { update }.to raise_error("Newer version for update exists, new merge request will be created!")
-    end
-  end
+      it "skips update" do
+        update
 
-  context "with merge request already merged" do
-    let(:state) { "merged" }
-
-    it "skips update" do
-      update
-
-      expect(Gitlab::MergeRequest::Updater).not_to have_received(:call)
+        expect(pr_updater).not_to have_received(:update)
+      end
     end
   end
 end
