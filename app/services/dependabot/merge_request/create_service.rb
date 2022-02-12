@@ -78,6 +78,10 @@ module Dependabot
           provider_metadata: { target_project_id: target_project_id }
         ).update
         log(:info, "  recreated merge request #{mr.web_url}")
+      rescue Gitlab::Error::ResponseError => e
+        log_error(e)
+        capture_error(e)
+        mr
       end
 
       # Rebase merge request

@@ -37,6 +37,10 @@ Lint/StructNewOverride:
 Metrics/MethodLength:
   Enabled: true
   Max: 15
+  CountAsOne:
+    - array
+    - hash
+    - heredoc
 
 Lint/MissingSuper:
   Enabled: false
