@@ -116,14 +116,26 @@ module Dependabot
       # @return [void]
       def update_mr
         return log(:info, " merge request #{mr.web_url} doesn't require updating") unless update_mr?
+        return rebase_mr unless recreate || mr.has_conflicts
 
-        Gitlab::MergeRequest::Updater.call(
-          fetcher: fetcher,
-          updated_files: updated_files,
-          merge_request: mr.to_hash.merge(commit_message: commit_message),
-          target_project_id: target_project_id,
-          recreate: recreate
-        )
+        Dependabot::PullRequestUpdater.new(
+          credentials: Dependabot::Credentials.call,
+          source: fetcher.source,
+          base_commit: fetcher.commit,
+          old_commit: commit_message,
+          pull_request_number: mr.iid,
+          files: updated_files,
+          provider_metadata: { target_project_id: target_project_id }
+        ).update
+        log(:info, "  recreated merge request #{mr.web_url}")
+      end
+
+      # Rebase merge request
+      #
+      # @return [void]
+      def rebase_mr
+        gitlab.rebase_merge_request(project.name, mr.iid)
+        log(:info, "  rebased merge request #{mr.web_url}")
       end
 
       # Accept merge request and set to merge automatically

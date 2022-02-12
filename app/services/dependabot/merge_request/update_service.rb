@@ -12,23 +12,13 @@ module Dependabot
 
       # Trigger merge request update
       #
-      # @return [Gitlab::ObjectifiedHash]
+      # @return [void]
       def call
-        return log(:info, "Merge request !#{mr_iid} not in opened state, skipping!") unless gitlab_mr.state == "opened"
+        log(:info, "Running update for merge request !#{mr_iid}")
+        return log(:info, " merge request not in opened state, skipping") unless gitlab_mr.state == "opened"
+        return rebase_mr unless recreate || gitlab_mr.has_conflicts
 
-        args = Semaphore.synchronize do
-          {
-            fetcher: fetcher,
-            updated_files: updated_dependency&.updated_files,
-            merge_request: gitlab_mr.to_hash.merge(commit_message: mr.commit_message),
-            target_project_id: mr.target_project_id,
-            recreate: recreate
-          }
-        end
-        raise("Dependency could not be updated or already up to date!") unless updated_dependency
-        raise("Newer version for update exists, new merge request will be created!") unless same_version?
-
-        Gitlab::MergeRequest::Updater.call(**args)
+        Semaphore.synchronize { update }
       ensure
         FileUtils.rm_r(repo_contents_path, force: true, secure: true) if repo_contents_path
       end
@@ -37,9 +27,36 @@ module Dependabot
 
       attr_reader :project_name, :mr_iid, :recreate
 
+      # Rebase merge request
+      #
+      # @return [void]
+      def rebase_mr
+        gitlab.rebase_merge_request(project_name, mr_iid)
+        log(:info, "  rebased merge request #{gitlab_mr.web_url}")
+      end
+
+      # Recreate merge request
+      #
+      # @return [void]
+      def update
+        raise("Dependency could not be updated or already up to date!") unless updated_dependency
+        raise("Newer version for update exists, new merge request will be created!") unless same_version?
+
+        Dependabot::PullRequestUpdater.new(
+          credentials: Dependabot::Credentials.call,
+          source: fetcher.source,
+          base_commit: fetcher.commit,
+          old_commit: mr.commit_message,
+          pull_request_number: mr.iid,
+          files: updated_dependency.updated_files,
+          provider_metadata: { target_project_id: mr.target_project_id }
+        ).update
+        log(:info, "  recreated merge request #{gitlab_mr.web_url}")
+      end
+
       # Updated dependency
       #
-      # @return [Dependabot::UpdatedDependency]
+      # @return [Dependabot::UpdatedDependency, nil]
       def updated_dependency
         dependency = Dependabot::Files::Parser.call(
           source: fetcher.source,
@@ -105,7 +122,7 @@ module Dependabot
       #
       # @return [Boolean]
       def same_version?
-        # TODO: backwards compatibility for mrs create without update_to field, remove in next release
+        # TODO: backwards compatibility for mrs create without update_to field, remove in minor next release
         return true unless mr.update_to
 
         mr.update_to == updated_dependency.current_versions
