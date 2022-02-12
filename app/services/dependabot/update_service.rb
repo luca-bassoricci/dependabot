@@ -174,7 +174,7 @@ module Dependabot
     #
     # @return [Dependabot::UpdatedDependency]
     def updated_dependency(dependency)
-      Dependabot::UpdateChecker.call(
+      Dependabot::Dependencies::UpdateChecker.call(
         dependency: dependency,
         dependency_files: fetcher.files,
         config: config_entry,

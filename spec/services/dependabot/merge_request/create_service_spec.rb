@@ -43,7 +43,7 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
   end
 
   let(:updated_dependency) do
-    Dependabot::UpdatedDependency.new(
+    Dependabot::Dependencies::UpdatedDependency.new(
       name: dependency.name,
       updated_dependencies: updated_dependencies,
       updated_files: updated_files,

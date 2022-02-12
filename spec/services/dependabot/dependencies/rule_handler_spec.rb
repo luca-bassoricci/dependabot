@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Dependabot::RuleHandler, epic: :services, feature: :dependabot do
+describe Dependabot::Dependencies::RuleHandler, epic: :services, feature: :dependabot do
   subject(:rule_handler_return) do
     described_class.new(
       dependency: dependency,

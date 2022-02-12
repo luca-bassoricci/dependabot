@@ -32,7 +32,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
   end
 
   let(:updated_dependency) do
-    Dependabot::UpdatedDependency.new(
+    Dependabot::Dependencies::UpdatedDependency.new(
       name: "config",
       updated_dependencies: updated_dependencies,
       updated_files: updated_files,
@@ -66,7 +66,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
       )
       .and_return(dependencies)
 
-    allow(Dependabot::UpdateChecker).to receive(:call)
+    allow(Dependabot::Dependencies::UpdateChecker).to receive(:call)
       .with(
         dependency: dependencies[0],
         dependency_files: fetcher.files,
@@ -120,7 +120,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
 
     context "without updated dependency" do
       before do
-        allow(Dependabot::UpdateChecker).to receive(:call).and_return(nil)
+        allow(Dependabot::Dependencies::UpdateChecker).to receive(:call).and_return(nil)
       end
 
       it "raises unable to update error" do
