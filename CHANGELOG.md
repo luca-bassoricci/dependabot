@@ -1,3 +1,25 @@
+## 0.14.2 (2022-02-14)
+
+### 🐞 Bug Fixes (3 changes)
+
+- [Rescue gitlab response on mr update](dependabot-gitlab/dependabot@b2e7c666fbe3635571add2d1848b7f3da4f7170a) by @andrcuns. See merge request dependabot-gitlab/dependabot!1333
+- [Always recreate mr on forks](dependabot-gitlab/dependabot@7bc8e7891715b6d2483b1243cf98631b471f6f28) by @andrcuns. See merge request dependabot-gitlab/dependabot!1332
+- [Fix log call typo](dependabot-gitlab/dependabot@cd03091cfeb30956d4d78e8418d6478b89cdaf10) by @andrcuns. See merge request dependabot-gitlab/dependabot!1328
+
+### 📦 Dependency updates (4 changes)
+
+- [dep: bump dependabot-omnibus from 0.172.1 to 0.172.2](dependabot-gitlab/dependabot@c23b6fa4ed5b00f290795ffd289e3c52a2b968ce) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1322
+- [dep: bump sentry-ruby, sentry-rails, rails and sentry-sidekiq](dependabot-gitlab/dependabot@d784c5dab577c62074525304d666cfe81dfb37c3) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1326
+- [dep: bump rails from 6.1.4.4 to 6.1.4.6](dependabot-gitlab/dependabot@7e5ef271f9c5f677559ba2e8e972687c8e82dcd3) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1324
+- [dep: bump puma from 5.6.1 to 5.6.2](dependabot-gitlab/dependabot@d7707a3743a566d539066bf1209eb7ee3303614a) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1323
+
+### 🛠️ Chore (4 changes)
+
+- [Add Dependencies namespace for better grouping](dependabot-gitlab/dependabot@d78a24207e8e4e9bd68ad04e255dd8eebd588f9d) by @andrcuns. See merge request dependabot-gitlab/dependabot!1331
+- [Move merge request persistence to creator class](dependabot-gitlab/dependabot@92f0ecd1819c413be42a1f8af71ce033b2a1943a) by @andrcuns. See merge request dependabot-gitlab/dependabot!1331
+- [Add execution context for mr update jobs](dependabot-gitlab/dependabot@88a1bc24069a8a3f4bba5e802ad2fea3f312826f) by @andrcuns. See merge request dependabot-gitlab/dependabot!1330
+- [Do not fetch dependency info on merge request rebase](dependabot-gitlab/dependabot@72068195a08989ffa935d69af768f100f3e9a2ec) by @andrcuns. See merge request dependabot-gitlab/dependabot!1330
+
 ## 0.14.1 (2022-02-11)
 
 ### 🐞 Bug Fixes (1 change)
