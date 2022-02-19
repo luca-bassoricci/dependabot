@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-ruby "~> 2.6"
+ruby "~> 2.7"
 
 gem "anyway_config", "~> 2.2"
 gem "bootsnap", ">= 1.4.2", require: false
