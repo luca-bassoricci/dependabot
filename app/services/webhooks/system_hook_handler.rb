@@ -45,8 +45,7 @@ module Webhooks
     def project_rename
       project = Project.find_by(name: old_project_name)
 
-      project.name = project_name
-      project.save!
+      project.update_attributes!(name: project_name)
 
       Cron::JobRemover.call(old_project_name)
       Cron::JobSync.call(project)

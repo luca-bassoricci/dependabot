@@ -55,8 +55,8 @@ module Dependabot
         return standalone_project if AppConfig.standalone?
 
         # Fetch config from Gitlab if deployment is not integrated with webhooks to make sure it is up to date
-        Project.find_by(name: project_name).tap do |proj|
-          proj.config = config unless AppConfig.integrated?
+        Project.find_by(name: project_name).tap do |existing_project|
+          existing_project.config = config unless AppConfig.integrated?
         end
       end
     end

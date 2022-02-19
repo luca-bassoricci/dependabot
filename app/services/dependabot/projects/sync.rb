@@ -52,18 +52,25 @@ module Dependabot
       #
       # @param [Gitlab::ObjectifiedHash] project
       # @return [Boolean]
-      def register(project) # rubocop:disable Metrics/CyclomaticComplexity
+      def register(project) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
         project_name = project.path_with_namespace
 
-        proj = saved_project(project_name)
+        existing_project = saved_project(name: project_name) || saved_project(id: project.id)
         conf = config(project)
 
-        return log(:info, " project '#{project_name}' has no #{config_file}, skipping") if !proj && !conf
-        return register_project(project_name, "not added for updates, registering") if !proj && conf
-        return remove_project(project_name) if proj && !conf
-        return register_project(project_name, "jobs out of sync, updating") unless jobs_synced?(project_name, conf)
-
-        log(:info, "  project '#{project_name}' is up to date, skipping")
+        if !existing_project && !conf
+          log(:info, " project '#{project_name}' has no #{config_file}, skipping")
+        elsif existing_project && existing_project.name != project_name
+          rename_project(existing_project, project_name)
+        elsif !existing_project && conf
+          register_project(project_name, "not added for updates, registering")
+        elsif existing_project && !conf
+          remove_project(project_name)
+        elsif !jobs_synced?(project_name, conf)
+          register_project(project_name, "jobs out of sync, updating")
+        else
+          log(:info, "  project '#{project_name}' is up to date, skipping")
+        end
       end
 
       # Get project config
@@ -82,12 +89,12 @@ module Dependabot
 
       # Saved project
       #
-      # @param [String] project_name
+      # @param [Hash] args
       # @return [Boolean]
-      def saved_project(project_name)
-        Project.find_by(name: project_name)
+      def saved_project(**args)
+        Project.find_by(args)
       rescue Mongoid::Errors::DocumentNotFound
-        false
+        nil
       end
 
       # Check jobs synced
@@ -127,6 +134,21 @@ module Dependabot
       def remove_project(project_name)
         log(:info, "  #{config_file} removed for '#{project_name}', removing from dependency updates")
         Remover.call(project_name)
+      end
+
+      # Rename project
+      #
+      # @param [Project] project
+      # @param [String] new_project_name
+      # @return [void]
+      def rename_project(project, new_project_name)
+        old_project_name = project.name
+        log(:info, " renaming project '#{old_project_name}' to '#{new_project_name}'")
+
+        project.update_attributes!(name: new_project_name)
+
+        Cron::JobRemover.call(old_project_name)
+        Cron::JobSync.call(project)
       end
 
       # Config filename
