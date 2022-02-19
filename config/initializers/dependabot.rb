@@ -77,4 +77,60 @@ module Dependabot
       end
     end
   end
+
+  # Log dependabot helpers to debug level
+  #
+  module SharedHelpers
+    # rubocop:disable Metrics/ParameterLists
+    def self.run_helper_subprocess(
+      command:,
+      function:,
+      args:,
+      env: nil,
+      stderr_to_stdout: false,
+      allow_unsafe_shell_command: false
+    )
+      start = Time.zone.now
+      stdin_data = JSON.dump(function: function, args: args)
+      cmd = allow_unsafe_shell_command ? command : escape_command(command)
+
+      env_cmd = [env, cmd].compact
+      stdout, stderr, process = Open3.capture3(*env_cmd, stdin_data: stdin_data)
+      time_taken = Time.zone.now - start
+
+      # Some package managers output useful stuff to stderr instead of stdout so
+      # we want to parse this, most package manager will output garbage here so
+      # would mess up json response from stdout
+      stdout = "#{stderr}\n#{stdout}" if stderr_to_stdout
+
+      ApplicationHelper.log(:debug, "#{function}: #{stderr}\n#{stdout}")
+
+      error_context = {
+        command: command,
+        function: function,
+        args: args,
+        time_taken: time_taken,
+        stderr_output: stderr ? stderr[0..50_000] : "", # Truncate to ~100kb
+        process_exit_value: process.to_s,
+        process_termsig: process.termsig
+      }
+
+      response = JSON.parse(stdout)
+      return response["result"] if process.success?
+
+      raise HelperSubprocessFailed.new(
+        message: response["error"],
+        error_class: response["error_class"],
+        error_context: error_context,
+        trace: response["trace"]
+      )
+    rescue JSON::ParserError
+      raise HelperSubprocessFailed.new(
+        message: stdout || "No output from command",
+        error_class: "JSON::ParserError",
+        error_context: error_context
+      )
+    end
+    # rubocop:enable Metrics/ParameterLists
+  end
 end
