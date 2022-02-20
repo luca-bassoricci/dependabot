@@ -78,7 +78,7 @@ module Dependabot
     end
   end
 
-  # Log dependabot helpers to debug level
+  # Log dependabot helpers output to debug level
   #
   module SharedHelpers
     # rubocop:disable Metrics/ParameterLists
@@ -103,8 +103,6 @@ module Dependabot
       # would mess up json response from stdout
       stdout = "#{stderr}\n#{stdout}" if stderr_to_stdout
 
-      ApplicationHelper.log(:debug, "#{function}: #{stderr}\n#{stdout}")
-
       error_context = {
         command: command,
         function: function,
@@ -116,6 +114,9 @@ module Dependabot
       }
 
       response = JSON.parse(stdout)
+
+      log_helper_result(error_context, response, args)
+
       return response["result"] if process.success?
 
       raise HelperSubprocessFailed.new(
@@ -132,5 +133,25 @@ module Dependabot
       )
     end
     # rubocop:enable Metrics/ParameterLists
+
+    # Log helper result
+    #
+    # @param [Hash] error_context
+    # @param [Hash] response
+    # @param [Hash] args
+    # @return [void]
+    def self.log_helper_result(error_context, response, args)
+      debug_message = error_context.merge({ response: response })
+
+      if args&.fetch(:credentials, nil)
+        debug_message[:args] = args.merge({
+          credentials: args[:credentials].map { |cred| cred.except(*::Config::AUTH_FIELDS) }
+        })
+      end
+
+      ApplicationHelper.log(:debug, "[SharedHelpers] #{debug_message.to_json}")
+    rescue StandardError => e
+      ApplicationHelper.log(:debug, "Failed to log shared helper result: #{e}")
+    end
   end
 end
