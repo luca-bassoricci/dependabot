@@ -3,10 +3,13 @@
 describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services, feature: :webhooks do
   include_context "with dependabot helper"
 
+  let(:gitlab) { instance_double("Gitlab::Client", create_branch: nil, accept_merge_request: nil) }
+
   let(:config) { dependabot_config.first }
   let(:mr_iid) { 1 }
-  let(:args) { { project_name: repo, mr_iid: mr_iid, action: action } }
+  let(:args) { { project_name: repo, mr_iid: mr_iid, action: action, merge_status: "can_be_merged" } }
   let(:project) { Project.new(name: repo, config: dependabot_config) }
+
   let(:merge_request) do
     MergeRequest.new(
       project: project,
@@ -19,6 +22,7 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
       branch: "dep-update"
     )
   end
+
   let(:open_merge_request) do
     MergeRequest.new(
       project: project,
@@ -30,6 +34,7 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
       update_from: "test-0.1"
     )
   end
+
   let(:other_open_merge_request) do
     MergeRequest.new(
       project: project,
@@ -41,6 +46,7 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
       update_from: "test-0.1"
     )
   end
+
   let(:closed_merge_request) do
     MergeRequest.new(
       project: project,
@@ -54,6 +60,7 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
       target_branch: "master"
     )
   end
+
   let(:close_comment) do
     <<~TXT
       Dependabot won't notify anymore about this release, but will get in touch when a new version is available. \
@@ -62,6 +69,7 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
   end
 
   before do
+    allow(Gitlab).to receive(:client) { gitlab }
     allow(MergeRequestUpdateJob).to receive(:perform_later)
 
     project.save!
@@ -69,14 +77,12 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
   end
 
   context "with mr reopen action", :aggregate_failures do
-    let(:gitlab) { instance_double("Gitlab::Client", create_branch: nil) }
     let(:mr_iid) { 5 }
     let(:action) { "reopen" }
     let(:mr) { closed_merge_request }
 
     before do
       allow(Dependabot::MergeRequest::UpdateService).to receive(:call)
-      allow(Gitlab).to receive(:client) { gitlab }
       allow(gitlab).to receive(:branch).with(project.name, mr.branch).and_raise(
         Gitlab::Error::NotFound.new(
           Gitlab::ObjectifiedHash.new(
@@ -146,14 +152,28 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
     end
 
     context "with auto-rebase disabled" do
-      before do
-        project.config.first[:rebase_strategy] = "none"
-        project.save!
-      end
+      let(:project) { Project.new(name: repo, config: [dependabot_config.first.merge({ rebase_strategy: "none" })]) }
 
       it "skips update for auto-rebase: none option" do
+        described_class.call(**args)
+
         expect(MergeRequestUpdateJob).not_to have_received(:perform_later)
       end
+    end
+  end
+
+  context "with mr approved action" do
+    let(:action) { "approved" }
+    let(:auto_merge_rules) { { allow: [{ dependency_name: "*" }], on_approval: true } }
+
+    before do
+      merge_request.update_attributes!(auto_merge: true)
+    end
+
+    it "accepts merge request" do
+      described_class.call(**args)
+
+      expect(gitlab).to have_received(:accept_merge_request).with(project.name, merge_request.iid)
     end
   end
 end

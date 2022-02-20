@@ -18,33 +18,16 @@ module Webhooks
     end
 
     def call
-      return unless actionable? && auto_merge
+      return unless actionable? && mr.auto_merge && !merge_on_approve?
 
       accept
+    rescue Mongoid::Errors::DocumentNotFound
+      nil
     end
 
     private
 
     attr_reader :project_name, :mr_iid, :source, :status, :merge_status
-
-    # Is event actionable
-    #
-    # @return [Boolean]
-    def actionable?
-      source == "merge_request_event" && status == "success" && merge_status != "cannot_be_merged"
-    end
-
-    # Is mr set for auto merging
-    #
-    # @return [Boolean]
-    def auto_merge
-      @auto_merge ||= Project.find_by(name: project_name)
-                             .merge_requests
-                             .find_by(iid: mr_iid, state: "opened")
-                             .auto_merge
-    rescue Mongoid::Errors::DocumentNotFound
-      nil
-    end
 
     # Accept merge request
     #
@@ -57,6 +40,38 @@ module Webhooks
     rescue Gitlab::Error::MethodNotAllowed => e
       log(:error, "Failed to accept merge requests !#{mr_iid}. Error: #{e.message}")
       { merge_request_accepted: false }
+    end
+
+    # Is event actionable
+    #
+    # @return [Boolean]
+    def actionable?
+      source == "merge_request_event" && status == "success" && merge_status != "cannot_be_merged"
+    end
+
+    # Auto merge on approval
+    #
+    # @return [Boolean]
+    def merge_on_approve?
+      config.dig(:auto_merge, :on_approval)
+    end
+
+    # Config entry for particular ecosystem and directory
+    #
+    # @return [Hash]
+    def config
+      @config ||= project.config.entry(package_ecosystem: mr.package_ecosystem, directory: mr.directory)
+    end
+
+    def mr
+      @mr ||= project.merge_requests.find_by(iid: mr_iid, state: "opened")
+    end
+
+    # Current project
+    #
+    # @return [Project]
+    def project
+      @project ||= Project.find_by(name: project_name)
     end
   end
 end

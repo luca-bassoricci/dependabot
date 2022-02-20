@@ -83,12 +83,11 @@ If webhooks for deployed version are configured, when dependency update MR is me
 
 ## auto-merge
 
-Automatically accept merge request and set it to merge when pipeline succeeds. In order for this function to work, following criteria must be met:
+Automatically accept merge request and set it to merge when pipeline succeeds or merge request has been approved. In order for this function to work, following criteria must be met:
 
-* `Pipeline events` webhook is configured
-* pipelines for merge requests must be enabled
+* `Pipeline events` or `Merge request events` webhook is configured
+* pipelines for merge requests must be enabled in case of merge based on successful pipeline status
 * user must be able to merge
-* merge request doesn't have mandatory approvals
 
 ```yml
 auto-merge: true
@@ -109,6 +108,15 @@ auto-merge:
     # do not merge automatically all aws-sdk major version updates
     - dependency-name: aws-sdk
       update-types: ["version-update:semver-major"]
+```
+
+### on-approval
+
+If mandatory approvals are set for merge requests, it is possible to set auto merging based on approval event rather than successful pipeline event:
+
+```yml
+auto-merge:
+  on-approval: true
 ```
 
 ### Standalone
