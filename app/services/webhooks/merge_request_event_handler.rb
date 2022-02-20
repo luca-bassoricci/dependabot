@@ -4,10 +4,11 @@ module Webhooks
   class MergeRequestEventHandler < ApplicationService
     # @param [String] project
     # @param [String] mr_iid
-    def initialize(project_name:, mr_iid:, action:)
+    def initialize(project_name:, mr_iid:, action:, merge_status:)
       @project_name = project_name
       @mr_iid = mr_iid
       @action = action
+      @merge_status = merge_status
     end
 
     # Set merge request state to closed
@@ -17,13 +18,14 @@ module Webhooks
       return reopen_mr if reopened?
       return close_mr if closed?
       return update_mrs if merged?
+      return accept_mr if approved?
     rescue Mongoid::Errors::DocumentNotFound
       nil
     end
 
     private
 
-    attr_reader :project_name, :mr_iid, :action
+    attr_reader :project_name, :mr_iid, :action, :merge_status
 
     # Reopen closed merge request
     #
@@ -65,6 +67,21 @@ module Webhooks
       }
     end
 
+    # Accept merge request
+    #
+    # @return [Hash]
+    def accept_mr
+      return unless config.dig(:auto_merge, :on_approval) && mr.auto_merge && merge_status != "cannot_be_merged"
+
+      gitlab.accept_merge_request(project_name, mr_iid)
+      log(:info, "Accepted merge request !#{mr_iid}")
+
+      { merge_request_accepted: true }
+    rescue Gitlab::Error::MethodNotAllowed => e
+      log(:error, "Failed to accept merge requests !#{mr_iid}. Error: #{e.message}")
+      { merge_request_accepted: false }
+    end
+
     # Check if reopen event action
     #
     # @return [Boolean]
@@ -84,6 +101,10 @@ module Webhooks
     # @return [Boolean]
     def closed?
       action == "close"
+    end
+
+    def approved?
+      action == "approved"
     end
 
     # Current project
@@ -106,9 +127,7 @@ module Webhooks
     #
     # @return [Hash]
     def config
-      @config ||= project.config.find do |entry|
-        entry[:package_ecosystem] == mr.package_ecosystem && entry[:directory] == mr.directory
-      end
+      @config ||= project.config.entry(package_ecosystem: mr.package_ecosystem, directory: mr.directory)
     end
 
     # Merge requests to update

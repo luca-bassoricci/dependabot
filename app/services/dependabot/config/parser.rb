@@ -160,6 +160,7 @@ module Dependabot
 
         {
           auto_merge: {
+            on_approval: auto_merge[:"on-approval"],
             allow: transform_filter_options(auto_merge[:allow]),
             ignore: transform_filter_options(auto_merge[:ignore])
           }.compact

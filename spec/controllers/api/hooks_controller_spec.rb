@@ -61,7 +61,8 @@ describe Api::HooksController, :aggregate_failures, epic: :controllers do
         expect(Webhooks::MergeRequestEventHandler).to have_received(:call).with(
           project_name: "dependabot-gitlab/test",
           mr_iid: 69,
-          action: "close"
+          action: "close",
+          merge_status: "can_be_merged"
         )
       end
     end

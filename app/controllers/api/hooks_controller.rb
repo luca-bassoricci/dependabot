@@ -44,15 +44,16 @@ module Api
     # @return [void]
     def merge_request
       args = params.permit(
-        object_attributes: %i[iid action],
+        object_attributes: %i[iid action merge_status],
         project: [:path_with_namespace]
       )
-      return unless %w[close merge reopen].include?(args.dig(:object_attributes, :action))
+      return unless %w[close merge reopen approved].include?(args.dig(:object_attributes, :action))
 
       Webhooks::MergeRequestEventHandler.call(
         project_name: args.dig(:project, :path_with_namespace),
         mr_iid: args.dig(:object_attributes, :iid),
-        action: args.dig(:object_attributes, :action)
+        action: args.dig(:object_attributes, :action),
+        merge_status: args.dig(:object_attributes, :merge_status)
       )
     end
 
