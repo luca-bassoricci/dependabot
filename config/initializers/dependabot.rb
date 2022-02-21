@@ -115,7 +115,7 @@ module Dependabot
 
       response = JSON.parse(stdout)
 
-      log_helper_result(error_context, response, args)
+      log_helper_result(error_context, response)
 
       return response["result"] if process.success?
 
@@ -140,18 +140,34 @@ module Dependabot
     # @param [Hash] response
     # @param [Hash] args
     # @return [void]
-    def self.log_helper_result(error_context, response, args)
-      debug_message = error_context.merge({ response: response })
-
-      if args&.fetch(:credentials, nil)
-        debug_message[:args] = args.merge({
-          credentials: args[:credentials].map { |cred| cred.except(*::Config::AUTH_FIELDS) }
-        })
-      end
+    def self.log_helper_result(error_context, response)
+      debug_message = error_context.merge({ response: response, args: sanitize_args(error_context[:args]) })
 
       ApplicationHelper.log(:debug, "[SharedHelpers] #{debug_message.to_json}")
     rescue StandardError => e
       ApplicationHelper.log(:debug, "Failed to log shared helper result: #{e}")
+    end
+
+    # Remove credentials from arguments
+    #
+    # @param [Object] args
+    # @return [Object]
+    def self.sanitize_args(args) # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+      if args.is_a?(Hash) && args[:credentials]
+        args.merge({
+          credentials: args[:credentials].map { |cred| cred.except(*::Config::AUTH_FIELDS) }
+        })
+      elsif args.is_a?(Array)
+        args.map do |arg|
+          next arg unless arg.is_a?(Array) && arg.any? do |item|
+            item.is_a?(Hash) && ::Config::AUTH_FIELDS.any? { |key| item.key?(key) }
+          end
+
+          arg.map { |cred| cred.except(*::Config::AUTH_FIELDS) }
+        end
+      else
+        args
+      end
     end
   end
 end
