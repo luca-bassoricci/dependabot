@@ -1,6 +1,8 @@
 ## 0.15.1 (2022-02-21)
 
-No changes.
+### 🐞 Bug Fixes (1 change)
+
+- [Correctly remove credentials from SharedHelpers debug log messages](dependabot-gitlab/dependabot@f592a438d71e6b6c80302049273e6b5052f3f2b1) by @andrcuns. See merge request dependabot-gitlab/dependabot!1344
 
 ## 0.15.0 (2022-02-21)
 
