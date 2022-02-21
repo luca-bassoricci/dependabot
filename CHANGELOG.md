@@ -1,3 +1,24 @@
+## 0.15.0 (2022-02-21)
+
+### 🚀 New features (1 change)
+
+- [Allow mr auto-merge on approval event](dependabot-gitlab/dependabot@7590b96b27f2285b2999ee6e2e73332ce93bd9d0) by @andrcuns. See merge request dependabot-gitlab/dependabot!1342
+
+### 🔬 Improvements (2 changes)
+
+- [Rename moved projects during project sync](dependabot-gitlab/dependabot@155d31b939d58b7669ebd37616aca241619f6e86) by @andrcuns. See merge request dependabot-gitlab/dependabot!1341
+- [Log dependabot shared helper output to debug level](dependabot-gitlab/dependabot@20b21243d39a5db0a74472cbeff85a13036382da) by @andrcuns. See merge request dependabot-gitlab/dependabot!1340
+
+### 📦 Dependency updates (3 changes)
+
+- [dep: bump dependabot-omnibus from 0.173.0 to 0.174.0](dependabot-gitlab/dependabot@1183178d3223d6575bbb0e1cce325cd6a0b1f6b8) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1337
+- [dep: bump dry-validation from 1.7.0 to 1.8.0](dependabot-gitlab/dependabot@82db2007e56d48d9dcb40c328ae31e0bada364da) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1336
+- [dep: bump dependabot-omnibus from 0.172.2 to 0.173.0](dependabot-gitlab/dependabot@874b36b16f8f9b75ece734a7b4c201d600c7faec) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1334
+
+### 🛠️ Chore (1 change)
+
+- [Improve dependabot helper logging](dependabot-gitlab/dependabot@bccd4e484c739ba824c606111696371bbb99dd3d) by @andrcuns. See merge request dependabot-gitlab/dependabot!1343
+
 ## 0.14.2 (2022-02-14)
 
 ### 🐞 Bug Fixes (3 changes)
