@@ -6,9 +6,14 @@ x-environment: &environment_variables
   RAILS_ENV: production
   SENTRY_DSN:
   SETTINGS__LOG_LEVEL:
+  # Optional gitlab instance url, https://gitlab.com by default
   SETTINGS__GITLAB_URL:
-  SETTINGS__GITHUB_ACCESS_TOKEN:
+  # Gitlab api token
   SETTINGS__GITLAB_ACCESS_TOKEN:
+  # Github api token
+  SETTINGS__GITHUB_ACCESS_TOKEN:
+  # Custom secret used for password encryption, https://apidock.com/rails/v6.0.0/Rails/Application/secret_key_base
+  SECRET_KEY_BASE:
 x-volumes: &service_volumes
   volumes:
     - tmp:/home/dependabot/app/tmp

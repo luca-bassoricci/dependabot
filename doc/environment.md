@@ -28,7 +28,7 @@ or
 
 ## Application
 
-* `SECRET_KEY_BASE` - key used for stored credentials encryption
+* `SECRET_KEY_BASE` - custom key used for stored credentials encryption, https://apidock.com/rails/v6.0.0/Rails/Application/secret_key_base
 
 ### Access
 
