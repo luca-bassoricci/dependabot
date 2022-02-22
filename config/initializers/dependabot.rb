@@ -115,9 +115,13 @@ module Dependabot
 
       response = JSON.parse(stdout)
 
-      log_helper_result(error_context, response)
+      if process.success?
+        log_helper_result(:debug, error_context, response)
 
-      return response["result"] if process.success?
+        return response["result"]
+      else
+        log_helper_result(:error, error_context, response)
+      end
 
       raise HelperSubprocessFailed.new(
         message: response["error"],
@@ -140,12 +144,13 @@ module Dependabot
     # @param [Hash] response
     # @param [Hash] args
     # @return [void]
-    def self.log_helper_result(error_context, response)
+    def self.log_helper_result(level, error_context, response)
       debug_message = error_context.merge({ response: response, args: sanitize_args(error_context[:args]) })
+      msg = (level == :error ? "core helpers failure: " : "core helpers output: ") + debug_message.to_json
 
-      ApplicationHelper.log(:debug, "[SharedHelpers] #{debug_message.to_json}")
+      ApplicationHelper.log(level, msg)
     rescue StandardError => e
-      ApplicationHelper.log(:debug, "Failed to log shared helper result: #{e}")
+      ApplicationHelper.log(:debug, "failed to log core helper result: #{e}")
     end
 
     # Remove credentials from arguments
