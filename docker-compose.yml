@@ -13,7 +13,7 @@ x-environment: &environment_variables
   # Github api token
   SETTINGS__GITHUB_ACCESS_TOKEN:
   # Custom secret used for password encryption, https://apidock.com/rails/v6.0.0/Rails/Application/secret_key_base
-  SECRET_KEY_BASE:
+  SECRET_KEY_BASE: ${SECRET_KEY_BASE:-key}
 x-volumes: &service_volumes
   volumes:
     - tmp:/home/dependabot/app/tmp
@@ -54,7 +54,6 @@ services:
     environment:
       <<: *environment_variables
       RAILS_SERVE_STATIC_FILES: "true"
-      SECRET_KEY_BASE: ${SECRET_KEY_BASE:-key}
     ports:
       - 3000:3000
     command: rails server
