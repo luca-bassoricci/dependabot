@@ -16,7 +16,7 @@ class Config
   def entry(**find_by)
     config_array
       .find { |conf| find_by.all? { |key, value| conf[key] == value } }
-      .yield_self { |entry| entry&.deep_symbolize_keys&.merge({ registries: entry[:registries] }) }
+      .yield_self { |entry| entry&.to_h&.deep_symbolize_keys&.merge({ registries: entry[:registries] }) }
   end
 
   # Convert object to database compatible form
