@@ -21,10 +21,11 @@ include:
   policy: pull
 
 .ruby_runner:
-  image: registry.gitlab.com/dependabot-gitlab/dependabot/test:latest
+  image: ruby:2.7-bullseye
   variables:
     BUNDLE_PATH: vendor/bundle
     BUNDLE_FROZEN: "true"
+    BUNDLE_SUPPRESS_INSTALL_USING_MESSAGES: "true"
   before_script:
     - bundle install
   cache:
@@ -53,7 +54,7 @@ include:
   interruptible: true
 
 .docker_runner:
-  image: registry.gitlab.com/dependabot-gitlab/dependabot/ci:latest
+  image: ${CI_IMAGE}
   services:
     - name: ${DIND_IMAGE}
       alias: docker
@@ -103,14 +104,6 @@ include:
   variables:
     DOCKER_FILE: .gitlab/docker/ci
     DOCKER_IMAGE: ci
-
-.build_test_image:
-  stage: build
-  extends: .buildkit_runner
-  needs: []
-  variables:
-    DOCKER_FILE: .gitlab/docker/test
-    DOCKER_IMAGE: test
 
 # ----------------------------------------------------------------------------------------------------------------------
 # 'static analysis' stage
@@ -194,11 +187,7 @@ include:
   script:
     - .gitlab/script/run-standalone.sh
   after_script:
-    - |
-      docker run --rm -i \
-        --network ${COMPOSE_PROJECT_NAME}_default \
-        "${TEST_IMAGE}" \
-        curl -X POST -s "gitlab:8081/sessions/verify" | jq
+    - curl -X POST -s "http://docker:8081/sessions/verify" | jq
 
 # ----------------------------------------------------------------------------------------------------------------------
 # test report stage

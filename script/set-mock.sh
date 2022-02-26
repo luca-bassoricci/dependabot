@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Must be executed from project root
 
