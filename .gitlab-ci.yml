@@ -15,12 +15,10 @@ stages:
 variables:
   CURRENT_TAG: ${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}
   APP_IMAGE: ${CI_REGISTRY_IMAGE}:${CURRENT_TAG}
-  TEST_IMAGE: ${CI_REGISTRY_IMAGE}/test:${CURRENT_TAG}
   BUILDKIT_IMAGE: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/moby/buildkit:v0.9.3
   DIND_IMAGE: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:20.10.12-dind
-  MOCK_IMAGE: thiht/smocker:0.17.1
+  CI_IMAGE: registry.gitlab.com/dependabot-gitlab/dependabot/ci:latest
   CODACY_VERSION: "13.5.3"
-  CHART_VERSION: "^0.2.0"
   DEPENDENCY_SCANNING_DISABLED: "true"
   SAST_DISABLED: "true"
   CONTAINER_SCANNING_DISABLED: "true"
@@ -50,11 +48,6 @@ build-ci-image:
   extends:
     - .build_ci_image
     - .rules:build-ci-image
-
-build-test-image:
-  extends:
-    - .build_test_image
-    - .rules:build-image
 
 # ======================================================================================================================
 # Static analysis stage
@@ -120,7 +113,6 @@ standalone:
     - .rules:main:e2e
   needs:
     - build-app-image
-    - build-test-image
 
 # ======================================================================================================================
 # Reporting

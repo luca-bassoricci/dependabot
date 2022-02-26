@@ -12,6 +12,3 @@ RUN set -eux; \
   build-essential; \
   \
   gem install bundler -v ${BUNDLER_VERSION} --no-document
-
-COPY Gemfile Gemfile.lock ./
-RUN bundle install

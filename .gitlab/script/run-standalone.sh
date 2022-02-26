@@ -12,13 +12,13 @@ version: "3"
 
 services:
   gitlab:
-    image: ${MOCK_IMAGE}
+    image: thiht/smocker:0.18.0
     ports:
       - 8080:8080
       - 8081:8081
 
   setup:
-    image: ${TEST_IMAGE}
+    image: alpine/curl:3.14
     working_dir: /build
     depends_on:
       - gitlab
