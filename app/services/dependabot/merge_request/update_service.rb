@@ -16,7 +16,7 @@ module Dependabot
       def call
         log(:info, "Running update for merge request !#{mr_iid}")
         return log(:info, " merge request not in opened state, skipping") unless gitlab_mr.state == "opened"
-        return rebase_mr unless recreate || gitlab_mr.has_conflicts
+        return rebase_mr unless recreate || gitlab_mr["has_conflicts"]
 
         Semaphore.synchronize { update }
       ensure

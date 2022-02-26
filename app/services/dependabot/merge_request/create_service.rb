@@ -66,7 +66,7 @@ module Dependabot
       # @return [void]
       def update_mr
         return log(:info, " merge request #{mr.web_url} doesn't require updating") unless update_mr?
-        return rebase_mr unless recreate || mr.has_conflicts || target_project_id
+        return rebase_mr unless recreate || mr["has_conflicts"] || target_project_id
 
         Dependabot::PullRequestUpdater.new(
           credentials: Dependabot::Credentials.call,
@@ -139,7 +139,7 @@ module Dependabot
       #
       # @return [Boolean]
       def update_mr?
-        recreate || rebase_all? || (rebase? && mr.has_conflicts)
+        recreate || rebase_all? || (rebase? && mr["has_conflicts"])
       end
 
       # Find existing mr
