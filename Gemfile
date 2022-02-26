@@ -13,7 +13,7 @@ gem "lograge", "~> 0.11.2"
 gem "mongoid", "~> 7.3"
 gem "mongoid_rails_migrations", "~> 1.4"
 gem "puma", "~> 5.6"
-gem "rails", "~> 6.1.4"
+gem "rails", "~> 7.0.2"
 gem "rails-healthcheck", "~> 1.4"
 gem "semantic_range", "~> 3.0"
 gem "sentry-rails", "~> 5.1", require: false
