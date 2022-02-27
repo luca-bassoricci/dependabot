@@ -21,14 +21,10 @@ or
 `REDIS_URL` - redis instance url
 `REDIS_PASSWORD` - redis password
 
-### Sentry
-
-* `SENTRY_DSN` - [sentry dsn](https://docs.sentry.io/platforms/ruby/configuration/options/#environment-variables) value
-* `SETTINGS__SENTRY_TRACES_SAMPLE_RATE` - [traces sample rate](https://docs.sentry.io/platforms/ruby/performance/#configure-the-sample-rate), default: 0.0
-
 ## Application
 
-* `SECRET_KEY_BASE` - custom key used for stored credentials encryption, https://apidock.com/rails/v6.0.0/Rails/Application/secret_key_base
+* `SECRET_KEY_BASE` - custom key used for stored credentials encryption, [Rails documentation](https://apidock.com/rails/v6.0.0/Rails/Application/secret_key_base)
+* `SETTINGS__LOG_LEVEL` - logging level, `[debug, info, warn, error]`. Default: `info`
 
 ### Access
 
@@ -43,6 +39,7 @@ token set in gitlab webhook configuration will be ignored
 * `SETTINGS__DEPENDABOT_URL` - url application can be reached on, example: `https://dependabot-gitlab.com`. This url will be used to automatically
 add necessary webhooks to project
 * `SETTINGS__CREATE_PROJECT_HOOK` - enable or disable automated hook creation, default `true`. This can be useful if the user associated with used access token, does not have maintainer role
+* `SETTINGS__COMMANDS_PREFIX` - bot name/prefix for comment commands in merge requests
 
 ### Configuration
 
@@ -63,3 +60,12 @@ add necessary webhooks to project
   * `automatic` - creates a cron job which automatically scans all projects where user associated with used gitlab access token has at least developer role and adds project if `dependabot.yml` configuration file is present
 * `SETTINGS__PROJECT_REGISTRATION_CRON` - cron expression for project registration job in `automatic` mode, default: `0 5 * * *`
 * `SETTINGS__PROJECT_REGISTRATION_NAMESPACE` - regex pattern of namespaces allowed to be registered automatically
+
+### Metrics
+
+* `SETTINGS__METRICS` - enable `/metrics` endpoint for prometheus compatible metrics
+
+## Sentry
+
+* `SENTRY_DSN` - [sentry dsn](https://docs.sentry.io/platforms/ruby/configuration/options/#environment-variables) value
+* `SETTINGS__SENTRY_TRACES_SAMPLE_RATE` - [traces sample rate](https://docs.sentry.io/platforms/ruby/performance/#configure-the-sample-rate), default: 0.0
