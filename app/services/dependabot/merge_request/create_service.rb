@@ -6,6 +6,8 @@ module Dependabot
   # :reek:RepeatedConditional
   module MergeRequest
     class CreateService < ApplicationService
+      using Rainbow
+
       # @param [Dependabot::Files::Fetchers::Base] fetcher
       # @param [Project] project
       # @param [Hash] config
@@ -48,7 +50,7 @@ module Dependabot
       def create_mr
         @mr = mr_creator.call || return # dependabot-core returns nil if branch && mr exists and nothing was created
 
-        log(:info, "  created merge request: #{mr.web_url}")
+        log(:info, "  created merge request: #{mr.web_url.bright}")
         mr
       rescue Gitlab::Error::ResponseError => e
         # dependabot-core will try to create mr in the edge case when mr exists without the branch
@@ -65,7 +67,7 @@ module Dependabot
       #
       # @return [void]
       def update_mr
-        return log(:info, " merge request #{mr.web_url} doesn't require updating") unless update_mr?
+        return log(:info, " merge request #{mr.web_url.bright} doesn't require updating") unless update_mr?
         return rebase_mr unless recreate || mr["has_conflicts"] || target_project_id
 
         Dependabot::PullRequestUpdater.new(
@@ -77,7 +79,7 @@ module Dependabot
           files: updated_dependency.updated_files,
           provider_metadata: { target_project_id: target_project_id }
         ).update
-        log(:info, "  recreated merge request #{mr.web_url}")
+        log(:info, "  recreated merge request #{mr.web_url.bright}")
       rescue Gitlab::Error::ResponseError => e
         log_error(e)
         capture_error(e)
@@ -89,7 +91,7 @@ module Dependabot
       # @return [void]
       def rebase_mr
         gitlab.rebase_merge_request(project.name, mr.iid)
-        log(:info, "  rebased merge request #{mr.web_url}")
+        log(:info, "  rebased merge request #{mr.web_url.bright}")
       end
 
       # Accept merge request and set to merge automatically

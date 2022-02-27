@@ -7,6 +7,8 @@ module Dependabot
     # Checker class for new version availability
     #
     class UpdateChecker < ApplicationService # rubocop:disable Metrics/ClassLength
+      using Rainbow
+
       # @param [Dependabot::Dependency] dependency
       # @param [Array<Dependabot::DependencyFile>] dependency_files
       # @param [Array<Hash>] allow
@@ -27,13 +29,16 @@ module Dependabot
       def call
         return skipped unless rule_handler.allowed?
 
-        log(:info, "Fetching info for #{dependency.name}")
+        log(:info, "Fetching info for #{dependency.name.bright}")
         return up_to_date if checker.up_to_date?
         return update_impossible if requirements_to_unlock == :update_not_possible
 
         updated_dependency
       rescue Dependabot::AllVersionsIgnored
-        log(:info, "  skipping #{dependency.name} update due to ignored versions rule: #{checker.ignored_versions}")
+        log(
+          :info,
+          "  skipping #{dependency.name.bright} update due to ignored versions rule: #{checker.ignored_versions}"
+        )
         nil
       rescue StandardError => e
         log_error(e)
@@ -61,7 +66,7 @@ module Dependabot
       #
       # @return [String]
       def name
-        @name ||= "#{dependency.name}: #{dependency.version}"
+        @name ||= "#{dependency.name}: #{dependency.version}".bright
       end
 
       # Rule handler
@@ -114,7 +119,7 @@ module Dependabot
       #
       # @return [Dependabot::UpdatedDependency]
       def updated_dependency
-        log(:info, "  updating #{name} => #{checker.latest_version}")
+        log(:info, "  updating #{name} => #{checker.latest_version.to_s.bright}")
         updated_dependencies = checker.updated_dependencies(requirements_to_unlock: requirements_to_unlock)
 
         Dependabot::Dependencies::UpdatedDependency.new(
