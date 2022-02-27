@@ -40,6 +40,7 @@ docker run --rm -i \
   -e SETTINGS__GITHUB_ACCESS_TOKEN=$GITHUB_ACCESS_TOKEN_TEST \
   -e SETTINGS__STANDALONE=true \
   -e SETTINGS__LOG_LEVEL=debug \
+  -e SETTINGS__LOG_COLOR=true \
   --network "${COMPOSE_PROJECT_NAME}_default" \
   $APP_IMAGE \
   rake 'dependabot:update[dependabot-gitlab/testing,bundler,/]'

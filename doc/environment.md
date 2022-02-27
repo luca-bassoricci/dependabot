@@ -25,6 +25,7 @@ or
 
 * `SECRET_KEY_BASE` - custom key used for stored credentials encryption, [Rails documentation](https://apidock.com/rails/v6.0.0/Rails/Application/secret_key_base)
 * `SETTINGS__LOG_LEVEL` - logging level, `[debug, info, warn, error]`. Default: `info`
+* `SETTINGS__LOG_COLOR` - adds colorized log output. Default: `false`
 
 ### Access
 

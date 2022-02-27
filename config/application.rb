@@ -16,6 +16,8 @@ require_relative "dependabot_logger"
 
 module DependabotGitlab
   class Application < Rails::Application
+    Rainbow.enabled = AppConfig.log_color
+
     config.load_defaults 6.0
     config.active_job.queue_adapter = :sidekiq
 

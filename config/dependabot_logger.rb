@@ -1,14 +1,25 @@
 # frozen_string_literal: true
 
+require "rainbow/refinement"
+
 # Common logger class
 #
 class DependabotLogger
   DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+  LOG_COLORS = {
+    "DEBUG" => :magenta,
+    "INFO" => :green,
+    "WARN" => :yellow,
+    "ERROR" => :red
+  }.freeze
 
   class SimpleLogFormatter < Sidekiq::Logger::Formatters::Base
     # :reek:LongParameterList
     def call(severity, time, _program_name, message)
-      "[#{time}#{thread}#{clazz}] #{severity}: #{message}\n"
+      prefix = "[#{time}#{thread}#{clazz}] #{severity}: "
+      msg = "#{message}\n"
+
+      Rainbow(prefix).send(LOG_COLORS.fetch(severity, :silver)) + msg
     end
 
     def thread
