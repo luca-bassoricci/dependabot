@@ -16,7 +16,7 @@ class DependabotLogger
   class SimpleLogFormatter < Sidekiq::Logger::Formatters::Base
     # :reek:LongParameterList
     def call(severity, time, _program_name, message)
-      prefix = "[#{time}#{thread}#{clazz}] #{severity}: "
+      prefix = "[#{time}#{thread}#{clazz}] #{severity.ljust(5)} -- "
       msg = "#{message}\n"
 
       Rainbow(prefix).send(LOG_COLORS.fetch(severity, :silver)) + msg
