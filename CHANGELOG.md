@@ -1,3 +1,37 @@
+## 0.15.2 (2022-02-28)
+
+### 🔬 Improvements (2 changes)
+
+- [Add colorized logs](dependabot-gitlab/dependabot@856f33c95bf68df6c304b2a231210d8b5c3a9f98) by @andrcuns. See merge request dependabot-gitlab/dependabot!1363
+- [Log to error on shared helpers subprocess failure](dependabot-gitlab/dependabot@2d5723e85a7a0dbb1bcff4f437a49c263a683fe7) by @andrcuns. See merge request dependabot-gitlab/dependabot!1345
+
+### 🐞 Bug Fixes (2 changes)
+
+- [Correctly convert config entry after rails upgrade](dependabot-gitlab/dependabot@065ea148409999fb906821ebfbab945dbae08c0c) by @andrcuns. See merge request dependabot-gitlab/dependabot!1361
+- [Correctly handle mrs without conflict status present](dependabot-gitlab/dependabot@100d99fd6f910a2f6d287ab31440278ba2c4616c) by @andrcuns. See merge request dependabot-gitlab/dependabot!1358
+
+### 📦 Dependency updates (5 changes)
+
+- [dep: bump rails from 6.1.4.6 to 7.0.2.2](dependabot-gitlab/dependabot@662ba575dfa156a147f7210df59ac6d34fd79686) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1361
+- [dep: bump dependabot-omnibus from 0.174.1 to 0.175.0.](dependabot-gitlab/dependabot@01795b0ea4c0821db45f518dd2667a054d99e3a3) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1353
+- [dep: bump rails from 6.1.4.6 to 7.0.2.2](dependabot-gitlab/dependabot@aa7e51a7027baa0023b0a13045ed769488823a2e) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1350
+- [dep: bump dependabot-omnibus from 0.174.0 to 0.174.1](dependabot-gitlab/dependabot@dd9aae64ee55ec1a26b2fcd6f7c54ea6a0988250) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1346
+- [dep: bump mongoid from 7.3.3 to 7.3.4](dependabot-gitlab/dependabot@5d3b9c8917d298d9911ac827eececf7ef82c2de2) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1347
+
+### 🔧 CI changes (1 change)
+
+- [Remove test image usage](dependabot-gitlab/dependabot@9ae1a946977c04785d0b5f8b6f826ef1c0e12aaa) by @andrcuns. See merge request dependabot-gitlab/dependabot!1357
+
+### 🛠️ Chore (3 changes)
+
+- [Adjust log message padding](dependabot-gitlab/dependabot@573b3f82726aeba67d0bba399cb2a75b0caa0e81) by @andrcuns. See merge request dependabot-gitlab/dependabot!1364
+- [Add spec for configuration fetching](dependabot-gitlab/dependabot@ffa8d90d7813a153e53d9bfa0cd8f9245b1a1b5b) by @andrcuns. See merge request dependabot-gitlab/dependabot!1360
+- [Add SECRET_KEY_BASE env variable for docker-compose.yml](dependabot-gitlab/dependabot@6a854b60d08bdb964f084348099088f010fe4193) by @andrcuns.
+
+### 📄 Documentation updates (1 change)
+
+- [Document missing configuration environment variables](dependabot-gitlab/dependabot@77770a05c2ec9219dc1e4575c6ea734ab20c1d92) by @andrcuns. See merge request dependabot-gitlab/dependabot!1362
+
 ## 0.15.1 (2022-02-21)
 
 ### 🐞 Bug Fixes (1 change)
