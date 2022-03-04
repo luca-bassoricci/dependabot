@@ -1,5 +1,43 @@
 # dependabot.yml configuration options
 
+## default values
+
+Some of the options have default values. Other options without a default value simply do not add additional desired effect.
+
+```yml
+version: 2
+registries: 'default: none'
+updates:
+  - package-ecosystem: 'required'
+    directory: 'required'
+    schedule:
+      interval: 'required'
+      day: 'default: "random day"' # for weekly updates
+      time: 'default: "random time"'
+      timezone: 'default: "server timezone"'
+      hours: 'default: "00-24"' # for random time
+    pull-request-branch-name:
+      separator: 'default: "-"'
+      prefix: 'default: "dependabot"'
+    allow:
+      - dependency-type: 'default: "direct"'
+    open-pull-requests-limit: 'default: 5'
+    versioning-strategy: 'default: "auto"'
+    rebase-strategy: 'default: "auto"'
+    auto-merge: 'default: false'
+    fork: 'default: false'
+    vendor: 'default: false'
+    insecure-external-code-execution: 'default: false'
+    registries: 'default: "*"'
+    labels: 'default: none'
+    commit-message: 'default: none'
+    milestone: 'default: none'
+    ignore: 'default: none'
+    assignees: 'default: none'
+    reviewers: 'default: none'
+    approvers: 'default: none'
+```
+
 ## fork
 
 It is possible to update dependencies from a forked project and create merge requests back to target project in order to not expose CI environment variables to updated dependencies right away.
