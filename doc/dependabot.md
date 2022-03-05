@@ -1,5 +1,7 @@
 # dependabot.yml configuration options
 
+[[_TOC_]]
+
 ## default values
 
 Some of the options have default values. Other options without a default value simply do not add additional desired effect.
