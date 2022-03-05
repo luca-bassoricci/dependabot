@@ -40,7 +40,7 @@ end
 group :test do
   gem "airborne", "~> 0.3.7"
   gem "allure-rspec", "~> 2.16.1"
-  gem "faker", "~> 2.19"
+  gem "faker", "~> 2.20"
   gem "rails-controller-testing", "~> 1.0"
   gem "rspec", "~> 3.11"
   gem "rspec_junit_formatter", "~> 0.5.1"
