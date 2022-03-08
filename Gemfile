@@ -44,7 +44,7 @@ group :test do
   gem "rails-controller-testing", "~> 1.0"
   gem "rspec", "~> 3.11"
   gem "rspec_junit_formatter", "~> 0.5.1"
-  gem "rspec-rails", "~> 5.1.0"
+  gem "rspec-rails", "~> 5.1.1"
   gem "rspec-sidekiq", "~> 3.1", require: false
   gem "simplecov", "~> 0.21.2", require: false
   gem "simplecov-cobertura", "~> 2.1.0"
