@@ -82,10 +82,10 @@ GEM
       rack-test (>= 1.1.0, < 2.0)
       rest-client (>= 2.0.2, < 3.0)
       rspec (~> 3.8)
-    allure-rspec (2.16.1)
-      allure-ruby-commons (= 2.16.1)
+    allure-rspec (2.16.2)
+      allure-ruby-commons (= 2.16.2)
       rspec-core (>= 3.8, < 4)
-    allure-ruby-commons (2.16.1)
+    allure-ruby-commons (2.16.2)
       mime-types (>= 3.3, < 4)
       oj (>= 3.10, < 4)
       require_all (>= 2, < 4)
@@ -568,7 +568,7 @@ PLATFORMS
 
 DEPENDENCIES
   airborne (~> 0.3.7)
-  allure-rspec (~> 2.16.1)
+  allure-rspec (~> 2.16.2)
   anyway_config (~> 2.2)
   bootsnap (>= 1.4.2)
   dependabot-omnibus (~> 0.177.0)
