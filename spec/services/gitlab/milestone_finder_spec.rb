@@ -1,33 +1,34 @@
 # frozen_string_literal: true
 
 describe Gitlab::MilestoneFinder, epic: :services, feature: :gitlab do
-  subject(:milestone_finder_return) { described_class.call(project_name, title) }
+  subject(:milestone_id) { described_class.call(project_name, title) }
 
-  let(:gitlab) { instance_double("Gitlab::Client", milestones: milestones) }
+  let(:gitlab) { instance_double("Gitlab::Client") }
   let(:project_name) { "test-project" }
   let(:milestone) { Gitlab::ObjectifiedHash.new(id: 1) }
 
   before do
     allow(Gitlab::Client).to receive(:new) { gitlab }
+    allow(gitlab).to receive(:milestones)
+      .with(project_name, title: title, include_parent_milestones: true)
+      .and_return(milestones)
   end
 
-  context "with existing user" do
+  context "with existing milestone" do
     let(:title) { "0.0.1" }
     let(:milestones) { [milestone] }
 
-    it "returns array with ids", :aggregate_failures do
-      expect(milestone_finder_return).to eq(1)
-      expect(gitlab).to have_received(:milestones).with(project_name, title: title)
+    it "returns array with ids" do
+      expect(milestone_id).to eq(1)
     end
   end
 
-  context "with non existing user" do
+  context "with non existing milestone" do
     let(:title) { "0.0.2" }
     let(:milestones) { [] }
 
-    it "returns nil", :aggregate_failures do
-      expect(milestone_finder_return).to be_nil
-      expect(gitlab).to have_received(:milestones).with(project_name, title: title)
+    it "returns nil" do
+      expect(milestone_id).to be_nil
     end
   end
 end
