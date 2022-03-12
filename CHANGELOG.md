@@ -1,3 +1,34 @@
+## 0.15.3 (2022-03-12)
+
+### 🐞 Bug Fixes (1 change)
+
+- [Count only unique merge requests towards mr limit](dependabot-gitlab/dependabot@64e16dbdbcb7be9fd001217cd405ba484726fa91) by @andrcuns. See merge request dependabot-gitlab/dependabot!1386
+
+### 📦 Dependency updates (14 changes)
+
+- [dep: bump anyway_config from 2.2.3 to 2.3.0](dependabot-gitlab/dependabot@385f10667fa890473d975ac519d47f0174eb40e4) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1384
+- [dep-dev: bump docker from 20.10.12 to 20.10.13 in /.gitlab/docker/ci](dependabot-gitlab/dependabot@862beecc18f66d1c8819047563e6b02d9ac4db6e) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1383
+- [dep: bump dependabot-omnibus from 0.177.0 to 0.178.0](dependabot-gitlab/dependabot@79653ae7d61699136a70211156c553c4952e22c0) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1381
+- [dep-dev: bump rubocop from 1.25.1 to 1.26.0](dependabot-gitlab/dependabot@34a9dab3853819d904af7803ec2c7d7e3bb9e323) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1379
+- [dep-dev: bump allure-rspec from 2.16.1 to 2.16.2](dependabot-gitlab/dependabot@683501a848b9aee7c123ce151fc947d8ce019626) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1380
+- [dep: bump sentry-ruby, sentry-rails, rails and sentry-sidekiq](dependabot-gitlab/dependabot@c231c9f82f91430520af36931c7b67956d96dcf2) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1377
+- [dep: bump bootsnap from 1.10.3 to 1.11.1](dependabot-gitlab/dependabot@2f8dc8f7af286dd4a2f7ed0e44c1234427a413ed) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1374
+- [dep: bump rails from 7.0.2.2 to 7.0.2.3](dependabot-gitlab/dependabot@78c3c6fede9dfa41136e13f33379ed546eedb283) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1375
+- [dep-dev: bump rspec-rails from 5.1.0 to 5.1.1](dependabot-gitlab/dependabot@e4011e94a888ee20a4dd5a9ac561a9ac7ab718cb) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1373
+- [dep-dev: bump faker from 2.19.0 to 2.20.0](dependabot-gitlab/dependabot@697abcb75d1c020f900cfe8544163e5d34c5bc29) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1372
+- [dep-dev: bump rubocop-performance from 1.13.2 to 1.13.3](dependabot-gitlab/dependabot@f855c51c61d0ad9a38f0877b5caca45d453b6570) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1371
+- [dep: bump dependabot-omnibus from 0.176.0 to 0.177.0](dependabot-gitlab/dependabot@c3cae6e524c38ddca6ad01400dd7f45bbc34e430) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1369
+- [dep: bump dependabot-omnibus from 0.175.0 to 0.176.0](dependabot-gitlab/dependabot@91e44955c16d9a666cb5c174dc8f784e4722227e) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1366
+- [dep-dev: bump rubocop-rspec from 2.8.0 to 2.9.0](dependabot-gitlab/dependabot@5b403a3d00259f60e85a8ee244eb32bc1328df6f) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1365
+
+### 🔧 CI changes (1 change)
+
+- [Bump ci dind image to 20.10.13](dependabot-gitlab/dependabot@ea4b162650e5b6741f5e7b71596a2775915a6554) by @andrcuns. See merge request dependabot-gitlab/dependabot!1385
+
+### 📄 Documentation updates (1 change)
+
+- [Document configuration default values](dependabot-gitlab/dependabot@82fef2543f9de31c8374f53fd2a3e3a367a81dd1) by @andrcuns. See merge request dependabot-gitlab/dependabot!1368
+
 ## 0.15.2 (2022-02-28)
 
 ### 🔬 Improvements (2 changes)
