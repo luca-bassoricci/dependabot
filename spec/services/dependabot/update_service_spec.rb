@@ -23,24 +23,25 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
   end
 
   let(:branch) { "master" }
-  let(:project) { Project.new(name: repo, config: dependabot_config) }
-  let(:config_entry) { dependabot_config.first }
   let(:config) { Config.new(dependabot_config) }
+  let(:config_entry) { config.first }
+  let(:project) { Project.new(name: repo, config: config) }
   let(:dependency_name) { nil }
 
-  let(:dependencies) do
-    [
-      instance_double("Dependabot::Dependency", name: "rspec"),
-      instance_double("Dependabot::Dependency", name: "config")
-    ]
+  let(:mr) do
+    Gitlab::ObjectifiedHash.new(iid: 1)
   end
+
+  let(:rspec_dep) { instance_double("Dependabot::Dependency", name: "rspec") }
+  let(:config_dep) { instance_double("Dependabot::Dependency", name: "config") }
+  let(:dependencies) { [rspec_dep, config_dep] }
 
   let(:updated_rspec) do
     Dependabot::Dependencies::UpdatedDependency.new(
       name: "rspec",
       updated_dependencies: ["updated_rspec"],
       updated_files: [],
-      vulnerable: true,
+      vulnerable: false,
       security_advisories: [],
       auto_merge_rules: nil
     )
@@ -96,7 +97,7 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
 
     allow(Dependabot::Dependencies::UpdateChecker).to receive(:call)
       .with(
-        dependency: dependencies[0],
+        dependency: rspec_dep,
         dependency_files: fetcher.files,
         config: config_entry,
         repo_contents_path: nil
@@ -105,14 +106,14 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
 
     allow(Dependabot::Dependencies::UpdateChecker).to receive(:call)
       .with(
-        dependency: dependencies[1],
+        dependency: config_dep,
         dependency_files: fetcher.files,
         config: config_entry,
         repo_contents_path: nil
       )
       .and_return(updated_config)
 
-    allow(Dependabot::MergeRequest::CreateService).to receive(:call).and_return("mr")
+    allow(Dependabot::MergeRequest::CreateService).to receive(:call).and_return(mr)
   end
 
   context "with deployed version" do
@@ -131,7 +132,6 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
 
     context "with single specific dependency" do
       let(:dependency_name) { "rspec" }
-      let(:updated_deps) { updated_rspec }
 
       it "runs dependency update for specific dependency" do
         update_dependencies
@@ -139,6 +139,101 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
         expect(Dependabot::MergeRequest::CreateService).to have_received(:call).once.with(rspec_mr_args)
       end
     end
+
+    # rubocop:disable RSpec/NestedGroups
+    context "with mr limit" do
+      let(:config) { Config.new([dependabot_config.first.merge(open_merge_requests_limit: 2)]) }
+      let(:second_mr) { Gitlab::ObjectifiedHash.new(iid: 2) }
+      let(:third_mr) { Gitlab::ObjectifiedHash.new(iid: 3) }
+
+      let(:puma_dep) { instance_double("Dependabot::Dependency", name: "puma") }
+      let(:rails_dep) { instance_double("Dependabot::Dependency", name: "rails") }
+
+      let(:updated_puma) do
+        Dependabot::Dependencies::UpdatedDependency.new(
+          name: "puma",
+          updated_dependencies: ["updated_puma"],
+          updated_files: [],
+          vulnerable: true,
+          security_advisories: [],
+          auto_merge_rules: nil
+        )
+      end
+
+      let(:updated_rails) do
+        Dependabot::Dependencies::UpdatedDependency.new(
+          name: "rails",
+          updated_dependencies: ["updated_rails"],
+          updated_files: [],
+          vulnerable: false,
+          security_advisories: [],
+          auto_merge_rules: nil
+        )
+      end
+
+      before do
+        allow(Dependabot::Dependencies::UpdateChecker).to receive(:call)
+          .with(
+            dependency: puma_dep,
+            dependency_files: fetcher.files,
+            config: config_entry,
+            repo_contents_path: nil
+          )
+          .and_return(updated_puma)
+
+        allow(Dependabot::Dependencies::UpdateChecker).to receive(:call)
+          .with(
+            dependency: rails_dep,
+            dependency_files: fetcher.files,
+            config: config_entry,
+            repo_contents_path: nil
+          )
+          .and_return(updated_rails)
+      end
+
+      context "with multiple dependencies in same mr" do
+        let(:dependencies) { [rspec_dep, rails_dep, config_dep] }
+
+        before do
+          allow(Dependabot::MergeRequest::CreateService).to receive(:call).and_return(mr, mr, second_mr)
+        end
+
+        it "doesn't count towards mr limit" do
+          update_dependencies
+
+          expect(Dependabot::MergeRequest::CreateService).to have_received(:call).exactly(3).times
+        end
+      end
+
+      context "with mr count over the limit" do
+        let(:dependencies) { [rspec_dep, rails_dep, config_dep] }
+
+        before do
+          allow(Dependabot::MergeRequest::CreateService).to receive(:call).and_return(mr, second_mr)
+        end
+
+        it "counts unique merge request towards mr limit" do
+          update_dependencies
+
+          expect(Dependabot::MergeRequest::CreateService).to have_received(:call).twice
+        end
+      end
+
+      context "with mr count over the limit but with vulnerable dependency" do
+        let(:dependencies) { [rspec_dep, puma_dep, config_dep] }
+
+        before do
+          allow(Dependabot::MergeRequest::CreateService).to receive(:call).and_return(mr, second_mr, third_mr)
+        end
+
+        it "still updates vulnerable dependency" do
+          update_dependencies
+
+          expect(Dependabot::MergeRequest::CreateService).to have_received(:call).exactly(3).times
+        end
+      end
+    end
+    # rubocop:enable RSpec/NestedGroups
   end
 
   context "with errors" do
@@ -193,7 +288,10 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
       allow(Gitlab).to receive(:client) { gitlab }
 
       allow(Dependabot::Config::Fetcher).to receive(:call).with(repo) { config }
-      allow(Dependabot::MergeRequest::CreateService).to receive(:call) { |args| create_calls << args }
+      allow(Dependabot::MergeRequest::CreateService).to receive(:call) do |args|
+        create_calls << args
+        mr
+      end
     end
 
     around do |example|
