@@ -53,6 +53,7 @@
             <th>Cron</th>
             <th>Last executed</th>
             <th>Last execution errors</th>
+            <th>Open merge requests</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -65,6 +66,12 @@
               <td><%= job.cron %></td>
               <td><%= job.last_executed&.to_formatted_s(:long) %>
               <td><%= job.run_errors.join("\n") %></td>
+              <td>
+                <%=
+                  mrs = open_merge_requests(project, job.package_ecosystem, job.directory).length
+                  link_to_if(mrs > 0, mrs, open_mrs_url(project, job.package_ecosystem, job.directory))
+                %>
+              </td>
               <td>
                 <%= button_to "Execute", job_execute_path(job.id), method: "put", title: "Execute job now" %>
               </td>
