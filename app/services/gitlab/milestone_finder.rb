@@ -28,11 +28,10 @@ module Gitlab
     def milestone
       Rails.cache.fetch("milestone-#{project_name}-#{title}", expires_in: 1.week) do
         log(:debug, "Running milestone search for #{title}")
+        milestones = gitlab.milestones(project_name, title: title, include_parent_milestones: true)
+        return log(:error, "Milestone with '#{title}' not found!") && nil if milestones.empty?
 
-        id = gitlab.milestones(project_name, title: title)&.first&.id
-        log(:error, "Milestone with '#{title}' not found!") unless id
-
-        id
+        milestones.first.id
       end
     end
   end
