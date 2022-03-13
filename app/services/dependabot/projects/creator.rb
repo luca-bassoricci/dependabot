@@ -46,8 +46,11 @@ module Dependabot
         project.id = gitlab_project.id
         project.web_url = gitlab_project.web_url
         project.config = config if config
+        project.forked_from_id = forked_from[:forked_from_id]
+        project.forked_from_name = forked_from[:forked_from_name]
+        project.save!
 
-        project.tap(&:save!)
+        project
       end
 
       # Existing project
@@ -57,7 +60,7 @@ module Dependabot
         @project ||= begin
           Project.find_by(name: project_name)
         rescue Mongoid::Errors::DocumentNotFound
-          Project.new(name: project_name, **forked_from)
+          Project.new(name: project_name)
         end
       end
 
