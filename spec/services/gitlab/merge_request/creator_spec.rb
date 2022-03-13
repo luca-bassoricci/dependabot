@@ -76,6 +76,7 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
       github_redirection_service: "github.com",
       pr_message_footer: footer,
       provider_metadata: { target_project_id: nil },
+      automerge_candidate: true,
       **mr_params
     }
   end
