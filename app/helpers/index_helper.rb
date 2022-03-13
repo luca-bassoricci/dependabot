@@ -11,7 +11,8 @@ module IndexHelper
     "maven" => "java",
     "gradle" => "java",
     "bundler" => "ruby",
-    "pip" => "python"
+    "pip" => "python",
+    "npm_and_yarn" => "javascript"
   }.freeze
 
   # Fetch specific merge requests
