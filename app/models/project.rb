@@ -8,6 +8,7 @@ class Project
   field :name, type: String
   field :id, type: Integer
   field :forked_from_id, type: Integer
+  field :forked_from_name, type: String
   field :config, type: Config, default: Config.new([])
   field :webhook_id, type: Integer
   field :web_url, type: String
@@ -23,6 +24,7 @@ class Project
       id: id,
       name: name,
       forked_from_id: forked_from_id,
+      forked_from_name: forked_from_name,
       webhook_id: webhook_id,
       web_url: web_url,
       config: config.sanitize

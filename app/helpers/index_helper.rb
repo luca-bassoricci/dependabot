@@ -21,7 +21,8 @@ module IndexHelper
     entry = project.config.entry(package_ecosystem: package_ecosystem, directory: directory)
     labels = entry[:custom_labels] || ["dependencies"]
 
-    base_url = "#{AppConfig.gitlab_url}/#{project.name}/-/merge_requests"
+    project_name = project.forked_from_name || project.name
+    base_url = "#{AppConfig.gitlab_url}/#{project_name}/-/merge_requests"
     base_args = "scope=all&state=opened"
     label_args = "label_name[]=#{labels.join('&label_name[]=')}"
 

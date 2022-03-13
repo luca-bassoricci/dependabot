@@ -35,6 +35,7 @@ module Api
       project.update_attributes!(**params.permit(
         :name,
         :forked_from_id,
+        :forked_from_name,
         :webhook_id,
         :web_url,
         :config
