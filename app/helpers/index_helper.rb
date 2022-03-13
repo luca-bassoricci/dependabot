@@ -1,6 +1,19 @@
 # frozen_string_literal: true
 
 module IndexHelper
+  LANGUAGE_LABELS = {
+    "nuget" => ".NET",
+    "cargo" => "rust",
+    "composer" => "php",
+    "pub" => "dart",
+    "hex" => "elixir",
+    "go_modules" => "go",
+    "maven" => "java",
+    "gradle" => "java",
+    "bundler" => "ruby",
+    "pip" => "python"
+  }.freeze
+
   # Fetch specific merge requests
   #
   # @param [Project] project
@@ -18,8 +31,9 @@ module IndexHelper
   # @param [String] directory
   # @return [String]
   def open_mrs_url(project, package_ecosystem, directory)
+    package_manager = Dependabot::Config::Parser::PACKAGE_ECOSYSTEM_MAPPING.fetch(package_ecosystem, package_ecosystem)
     entry = project.config.entry(package_ecosystem: package_ecosystem, directory: directory)
-    labels = entry[:custom_labels] || ["dependencies"]
+    labels = entry[:custom_labels] || (["dependencies"] << LANGUAGE_LABELS.fetch(package_manager, package_manager))
 
     project_name = project.forked_from_name || project.name
     base_url = "#{AppConfig.gitlab_url}/#{project_name}/-/merge_requests"
