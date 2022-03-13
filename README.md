@@ -334,6 +334,7 @@ Request:
 - `id` - URL escaped full path or id of the project
 - `name` - full project path
 - `forked_from_id` - id of upstream project
+- `forked_from_name` - upstream project path with namespace
 - `webhook_id` - webhook id
 - `web_url` - project web url
 - `config` - dependabot configuration array

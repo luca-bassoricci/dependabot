@@ -57,7 +57,7 @@ module Dependabot
         @project ||= begin
           Project.find_by(name: project_name)
         rescue Mongoid::Errors::DocumentNotFound
-          Project.new(name: project_name, forked_from_id: forked_from_id)
+          Project.new(name: project_name, **forked_from)
         end
       end
 
@@ -88,9 +88,14 @@ module Dependabot
 
       # Parent project id if exists
       #
-      # @return [Integer]
-      def forked_from_id
-        @forked_from_id ||= gitlab_project.to_h.dig("forked_from_project", "id")
+      # @return [Hash]
+      def forked_from
+        @forked_from ||= begin
+          id = gitlab_project.to_h.dig("forked_from_project", "id")
+          name = gitlab_project.to_h.dig("forked_from_project", "path_with_namespace")
+
+          { forked_from_id: id, forked_from_name: name }
+        end
       end
 
       alias_method :validate_project_exists, :gitlab_project
