@@ -127,14 +127,14 @@ module Dependabot
       #
       # @return [Boolean]
       def rebase?
-        config[:rebase_strategy] == "auto"
+        config.dig(:rebase_strategy, :strategy) == "auto"
       end
 
       # Automatically rebase all mr's
       #
       # @return [Boolean]
       def rebase_all?
-        config[:rebase_strategy] == "all"
+        config.dig(:rebase_strategy, :strategy) == "all"
       end
 
       # Check if mr should be updated

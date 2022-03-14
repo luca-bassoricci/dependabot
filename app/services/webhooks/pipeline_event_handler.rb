@@ -18,7 +18,7 @@ module Webhooks
     end
 
     def call
-      return unless actionable? && mr.auto_merge && !merge_on_approve?
+      return unless actionable? && mr.auto_merge
 
       accept
     rescue Mongoid::Errors::DocumentNotFound
@@ -47,13 +47,6 @@ module Webhooks
     # @return [Boolean]
     def actionable?
       source == "merge_request_event" && status == "success" && merge_status != "cannot_be_merged"
-    end
-
-    # Auto merge on approval
-    #
-    # @return [Boolean]
-    def merge_on_approve?
-      config.dig(:auto_merge, :on_approval)
     end
 
     # Config entry for particular ecosystem and directory

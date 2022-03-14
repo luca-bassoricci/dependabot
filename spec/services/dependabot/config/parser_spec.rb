@@ -70,6 +70,25 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
     end
   end
 
+  context "with valid config and rebase on approvals" do
+    let(:config_yml) do
+      <<~YAML
+        version: 2
+        updates:
+          - package-ecosystem: bundler
+            directory: "/"
+            schedule:
+              interval: weekly
+            rebase-strategy:
+              on-approval: true
+      YAML
+    end
+
+    it "sets reject_external_code: false by default" do
+      expect(parser.first[:rebase_strategy]).to eq({ strategy: "auto", on_approval: true })
+    end
+  end
+
   context "with missing or incorrect types in config" do
     let(:config_yml) do
       <<~YAML
@@ -99,7 +118,7 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
     end
 
     it "throws invalid configuration error" do
-      expect { parser.call(config_yml, repo) }.to raise_error(
+      expect { parser }.to raise_error(
         Dependabot::Config::InvalidConfigurationError, /#{invalid_config_error}/
       )
     end
@@ -119,7 +138,7 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
     end
 
     it "throws invalid format error" do
-      expect { parser.call(config_yml, repo) }.to raise_error(
+      expect { parser }.to raise_error(
         Dependabot::Config::InvalidConfigurationError,
         "key 'schedule.hours.0' has invalid format, must match pattern '^\\d{1,2}-\\d{1,2}$'"
       )
@@ -140,9 +159,31 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
     end
 
     it "throws invalid format error" do
-      expect { parser.call(config_yml, repo) }.to raise_error(
+      expect { parser }.to raise_error(
         Dependabot::Config::InvalidConfigurationError,
         "key 'schedule.hours.0' has invalid format, first number in range must be smaller or equal than second"
+      )
+    end
+  end
+
+  context "with invalid rebase-strategy configuration" do
+    let(:config_yml) do
+      <<~YAML
+        version: 2
+        updates:
+          - package-ecosystem: bundler
+            directory: "/"
+            schedule:
+              interval: weekly
+            rebase-strategy:
+              approval: true
+      YAML
+    end
+
+    it "sets reject_external_code: false by default" do
+      expect { parser }.to raise_error(
+        Dependabot::Config::InvalidConfigurationError,
+        "key 'rebase-strategy.approval' is not allowed"
       )
     end
   end

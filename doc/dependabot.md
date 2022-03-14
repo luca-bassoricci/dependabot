@@ -119,19 +119,34 @@ Rebase strategy supports 3 options:
 rebase-strategy: auto
 ```
 
+or if approval option is used:
+
+```yml
+rebase-strategy:
+  strategy: auto
+  on-approval: false
+```
+
 If webhooks for deployed version are configured, when dependency update MR is merged, update of other open MR's of same package ecosystem is triggered
+
+### rebase on mr approval
+
+It is possible to trigger automatic rebase of merge request when it is approved. If `strategy` is omitted, it is set to `auto` by default.
+Approval option is limited only to rebase, it will not recreate merge request if it has conflicts because it can lead to unwanted loss of local changes.
+
+```yml
+rebase-strategy:
+  on-approval: true
+```
 
 ## auto-merge
 
-Automatically accept merge request and set it to merge when pipeline succeeds or merge request has been approved. In order for this function to work, following criteria must be met:
+Automatically accept merge request and set it to merge when pipeline succeeds. In order for this function to work, following criteria must be met:
 
 * `Pipeline events` or `Merge request events` webhook is configured
 * pipelines for merge requests must be enabled in case of merge based on successful pipeline status
 * user must be able to merge
-
-```yml
-auto-merge: true
-```
+* merge request must be approved if approvals are required
 
 ### allow/ignore
 

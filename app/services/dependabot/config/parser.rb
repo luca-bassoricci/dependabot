@@ -51,7 +51,8 @@ module Dependabot
             **commit_message_options(configuration),
             **filter_options(configuration),
             **schedule_options(configuration),
-            **auto_merge_options(configuration)
+            **auto_merge_options(configuration),
+            **rebase_options(configuration)
           }.compact
         end
       end
@@ -141,9 +142,22 @@ module Dependabot
           approvers: opts[:approvers],
           custom_labels: opts[:labels],
           open_merge_requests_limit: opts[:"open-pull-requests-limit"] || DependabotConfig.open_pull_request_limit,
-          rebase_strategy: opts[:"rebase-strategy"] || "auto",
           versioning_strategy: versioning_strategy(opts[:"versioning-strategy"]),
           fork: yml[:fork]
+        }
+      end
+
+      def rebase_options(opts)
+        strategy = opts[:"rebase-strategy"] || "auto"
+        return { rebase_strategy: { strategy: strategy } } if strategy.is_a?(String)
+
+        validate_dependabot_config(RebaseStrategyConfigContract, { "rebase-strategy": strategy })
+
+        {
+          rebase_strategy: {
+            strategy: strategy[:strategy] || "auto",
+            on_approval: strategy[:"on-approval"]
+          }
         }
       end
 
@@ -160,7 +174,6 @@ module Dependabot
 
         {
           auto_merge: {
-            on_approval: auto_merge[:"on-approval"],
             allow: transform_filter_options(auto_merge[:allow]),
             ignore: transform_filter_options(auto_merge[:ignore])
           }.compact
