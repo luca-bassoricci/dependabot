@@ -2,8 +2,9 @@
 
 class AutoMergeConfigContract < Dry::Validation::Contract
   params do
-    optional(:"auto-merge").hash do
-      optional(:"on-approval").filled(:bool?)
+    config.validate_keys = true
+
+    required(:"auto-merge").hash do
       optional(:allow).array(:hash) do
         required(:"dependency-name").filled(:string)
         optional(:versions).array(:str?)

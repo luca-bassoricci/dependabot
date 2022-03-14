@@ -87,7 +87,7 @@ RSpec.shared_context("with dependabot helper") do
         branch_name_prefix: "dependabot",
         allow: allow_conf,
         ignore: ignore_conf,
-        rebase_strategy: "auto",
+        rebase_strategy: { strategy: "auto" },
         versioning_strategy: :lockfile_only,
         reject_external_code: true,
         auto_merge: auto_merge_rules,

@@ -3,7 +3,9 @@
 describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services, feature: :webhooks do
   include_context "with dependabot helper"
 
-  let(:gitlab) { instance_double("Gitlab::Client", create_branch: nil, accept_merge_request: nil) }
+  let(:gitlab) do
+    instance_double("Gitlab::Client", create_branch: nil, accept_merge_request: nil, rebase_merge_request: nil)
+  end
 
   let(:config) { dependabot_config.first }
   let(:mr_iid) { 1 }
@@ -152,7 +154,12 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
     end
 
     context "with auto-rebase disabled" do
-      let(:project) { Project.new(name: repo, config: [dependabot_config.first.merge({ rebase_strategy: "none" })]) }
+      let(:project) do
+        Project.new(
+          name: repo,
+          config: [dependabot_config.first.merge({ rebase_strategy: { strategy: "none" } })]
+        )
+      end
 
       it "skips update for auto-rebase: none option" do
         described_class.call(**args)
@@ -164,16 +171,17 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
 
   context "with mr approved action" do
     let(:action) { "approved" }
-    let(:auto_merge_rules) { { allow: [{ dependency_name: "*" }], on_approval: true } }
-
-    before do
-      merge_request.update_attributes!(auto_merge: true)
+    let(:project) do
+      Project.new(
+        name: repo,
+        config: [dependabot_config.first.merge({ rebase_strategy: { on_approval: true, strategy: "none" } })]
+      )
     end
 
-    it "accepts merge request" do
+    it "rebases merge request" do
       described_class.call(**args)
 
-      expect(gitlab).to have_received(:accept_merge_request).with(project.name, merge_request.iid)
+      expect(gitlab).to have_received(:rebase_merge_request).with(repo, merge_request.iid)
     end
   end
 end

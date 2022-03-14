@@ -18,7 +18,7 @@ module Webhooks
       return reopen_mr if reopened?
       return close_mr if closed?
       return update_mrs if merged?
-      return accept_mr if approved?
+      return update_mr if approved?
     rescue Mongoid::Errors::DocumentNotFound
       nil
     end
@@ -62,24 +62,21 @@ module Webhooks
       mr.update_attributes!(state: "merged")
 
       {
-        update_triggered: config.fetch(:rebase_strategy) == "none" ? false : trigger_update,
+        update_triggered: config.dig(:rebase_strategy, :strategy) == "none" ? false : trigger_update,
         closed_merge_request: true
       }
     end
 
-    # Accept merge request
+    # Update single mr
     #
     # @return [Hash]
-    def accept_mr
-      return unless config.dig(:auto_merge, :on_approval) && mr.auto_merge && merge_status != "cannot_be_merged"
+    def update_mr
+      return unless config.dig(:rebase_strategy, :on_approval)
 
-      gitlab.accept_merge_request(project_name, mr_iid)
-      log(:info, "Accepted merge request !#{mr_iid}")
+      log(:info, "Triggering rebase for !#{mr.iid} for project #{project_name}!")
+      gitlab.rebase_merge_request(project_name, mr_iid)
 
-      { merge_request_accepted: true }
-    rescue Gitlab::Error::MethodNotAllowed => e
-      log(:error, "Failed to accept merge requests !#{mr_iid}. Error: #{e.message}")
-      { merge_request_accepted: false }
+      { merge_request_rebase_triggered: true }
     end
 
     # Check if reopen event action

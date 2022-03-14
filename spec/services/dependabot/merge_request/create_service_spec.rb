@@ -209,7 +209,7 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
       let(:has_conflicts) { false }
 
       before do
-        config[:rebase_strategy] = "none"
+        config[:rebase_strategy][:strategy] = "none"
       end
 
       it "skips updating" do
@@ -228,7 +228,7 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
       let(:has_conflicts) { false }
 
       before do
-        config[:rebase_strategy] = "auto"
+        config[:rebase_strategy][:strategy] = "auto"
       end
 
       it "skips updating" do
@@ -248,7 +248,7 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
       let(:has_conflicts) { false }
 
       before do
-        config[:rebase_strategy] = "all"
+        config[:rebase_strategy][:strategy] = "all"
       end
 
       it "triggers merge request rebase" do
@@ -263,7 +263,7 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
       let(:has_conflicts) { true }
 
       before do
-        config[:rebase_strategy] = "none"
+        config[:rebase_strategy][:strategy] = "none"
       end
 
       it "skips updating" do
@@ -282,7 +282,7 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
       let(:has_conflicts) { true }
 
       before do
-        config[:rebase_strategy] = "auto"
+        config[:rebase_strategy][:strategy] = "auto"
       end
 
       it "recreates on conflict" do
@@ -301,7 +301,7 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
       let(:has_conflicts) { true }
 
       before do
-        config[:rebase_strategy] = "all"
+        config[:rebase_strategy][:strategy] = "all"
       end
 
       it "recreates on conflict" do
