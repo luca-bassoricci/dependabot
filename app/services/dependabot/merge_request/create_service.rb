@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Dependabot
-  # :reek:TooManyInstanceVariables
   # :reek:InstanceVariableAssumption
   # :reek:RepeatedConditional
   module MergeRequest

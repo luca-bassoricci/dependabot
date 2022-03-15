@@ -18,6 +18,8 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
   let(:gitlab_mr) { Gitlab::ObjectifiedHash.new(iid: mr.iid, state: state, web_url: "url", has_conflicts: conflicts) }
   let(:dependencies) { [instance_double("Dependabot::Dependency", name: "config")] }
   let(:state) { "opened" }
+  let(:dependency_state) { Dependabot::Dependencies::UpdateChecker::HAS_UPDATES }
+  let(:branch) { "update-branch" }
 
   let(:mr) do
     MergeRequest.new(
@@ -27,13 +29,15 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
       directory: config[:directory],
       main_dependency: "config",
       commit_message: "original-commit",
-      update_to: update_to_versions
+      update_to: update_to_versions,
+      branch: branch
     )
   end
 
   let(:updated_dependency) do
     Dependabot::Dependencies::UpdatedDependency.new(
       name: "config",
+      state: dependency_state,
       updated_dependencies: updated_dependencies,
       updated_files: updated_files,
       vulnerable: false,
@@ -119,12 +123,10 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
     let(:conflicts) { true }
 
     context "without updated dependency" do
-      before do
-        allow(Dependabot::Dependencies::UpdateChecker).to receive(:call).and_return(nil)
-      end
+      let(:dependency_state) { Dependabot::Dependencies::UpdateChecker::UPDATE_IMPOSSIBLE }
 
       it "raises unable to update error" do
-        expect { update }.to raise_error("Dependency could not be updated or already up to date!")
+        expect { update }.to raise_error("Dependency update is impossible!")
       end
     end
 
@@ -143,6 +145,21 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
         update
 
         expect(pr_updater).not_to have_received(:update)
+      end
+    end
+
+    context "with dependency already up to date" do
+      let(:dependency_state) { Dependabot::Dependencies::UpdateChecker::UP_TO_DATE }
+
+      before do
+        allow(Gitlab::BranchRemover).to receive(:call)
+      end
+
+      it "closes existing merge request" do
+        update
+
+        expect(Gitlab::BranchRemover).to have_received(:call).with(repo, branch)
+        expect(mr.reload.state).to eq("closed")
       end
     end
   end

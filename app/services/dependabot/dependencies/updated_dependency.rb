@@ -8,6 +8,7 @@ module Dependabot
       # :reek:LongParameterList
 
       # @param [String] name
+      # @param [Integer] state
       # @param [Array<Dependabot::Dependency>] updated_dependencies
       # @param [Array<Dependabot::DependencyFile>] updated_files
       # @param [Boolean] vulnerable
@@ -16,13 +17,15 @@ module Dependabot
       # rubocop:disable Metrics/ParameterLists
       def initialize(
         name:,
-        updated_dependencies:,
-        updated_files:,
-        vulnerable:,
-        security_advisories:,
-        auto_merge_rules:
+        state:,
+        updated_dependencies: nil,
+        updated_files: nil,
+        vulnerable: nil,
+        security_advisories: nil,
+        auto_merge_rules: nil
       )
         @name = name
+        @state = state
         @updated_dependencies = updated_dependencies
         @updated_files = updated_files
         @vulnerable = vulnerable
@@ -33,6 +36,8 @@ module Dependabot
 
       # @return [String] main dependency name
       attr_reader :name
+      # @return [Integer] update state
+      attr_reader :state
       # @return [Array<Dependabot::Dependency>] updated dependencies
       attr_reader :updated_dependencies
       # @return [Array<Dependabot::DependencyFile>] updated files
@@ -69,14 +74,42 @@ module Dependabot
       # @param [UpdatedDependency] other
       # @return [Booelan]
       def ==(other)
-        self.class == other.class && state == other.state
+        self.class == other.class && comparable == other.comparable
+      end
+
+      # Updates present
+      #
+      # @return [Boolean]
+      def updates?
+        state == UpdateChecker::HAS_UPDATES
+      end
+
+      # Update is not possible
+      #
+      # @return [Boolean]
+      def update_impossible?
+        state == UpdateChecker::UPDATE_IMPOSSIBLE
+      end
+
+      # Dependency is up to date
+      #
+      # @return [Boolean]
+      def up_to_date?
+        state == UpdateChecker::UP_TO_DATE
+      end
+
+      # Update was skipped
+      #
+      # @return [Boolean]
+      def skipped?
+        state == UpdateChecker::SKIPPED
       end
 
       protected
 
       # Object state
       # @return [Array]
-      def state
+      def comparable
         instance_variables.map { |var| instance_variable_get(var) }
       end
 

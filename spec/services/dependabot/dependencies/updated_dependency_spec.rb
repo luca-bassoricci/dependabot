@@ -4,6 +4,7 @@ describe Dependabot::Dependencies::UpdatedDependency, feature: :dependabot do
   subject(:updated_dependency) do
     described_class.new(
       name: name,
+      state: Dependabot::Dependencies::UpdateChecker::HAS_UPDATES,
       updated_dependencies: updated_dependencies,
       updated_files: updated_files,
       vulnerable: false,

@@ -39,7 +39,9 @@ module Dependabot
       #
       # @return [void]
       def update
-        raise("Dependency could not be updated or already up to date!") unless updated_dependency
+        return close_mr if updated_dependency.up_to_date?
+
+        raise("Dependency update is impossible!") if updated_dependency.update_impossible?
         raise("Newer version for update exists, new merge request will be created!") unless same_version?
 
         Dependabot::PullRequestUpdater.new(
@@ -56,7 +58,7 @@ module Dependabot
 
       # Updated dependency
       #
-      # @return [Dependabot::UpdatedDependency, nil]
+      # @return [Dependabot::Dependencies::UpdatedDependency]
       def updated_dependency
         dependency = Dependabot::Files::Parser.call(
           source: fetcher.source,
@@ -126,6 +128,15 @@ module Dependabot
         return true unless mr.update_to
 
         mr.update_to == updated_dependency.current_versions
+      end
+
+      # Close obsolete merge request
+      #
+      # @return [void]
+      def close_mr
+        log(:info, "  dependency is already up to date, closing mr!")
+        mr.close
+        Gitlab::BranchRemover.call(project_name, mr.branch)
       end
     end
   end
