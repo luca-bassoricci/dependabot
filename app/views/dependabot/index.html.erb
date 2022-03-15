@@ -59,6 +59,7 @@
         </thead>
 
         <tbody>
+          <% config = project.config %>
           <% project.update_jobs.each do |job| %>
             <tr>
               <td><%= job.package_ecosystem %></td>
@@ -69,7 +70,7 @@
               <td>
                 <%=
                   mrs = open_merge_requests(project, job.package_ecosystem, job.directory).length
-                  link_to_if(mrs > 0, mrs, open_mrs_url(project, job.package_ecosystem, job.directory))
+                  link_to_if(mrs > 0, mrs, open_mrs_url(project, config, job.package_ecosystem, job.directory))
                 %>
               </td>
               <td>
