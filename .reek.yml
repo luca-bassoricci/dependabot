@@ -33,7 +33,7 @@ detectors:
       - logger.info
 
   TooManyInstanceVariables:
-    max_instance_variables: 6
+    max_instance_variables: 10
 
   ManualDispatch:
     exclude:

@@ -39,6 +39,7 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
   let(:updated_dependency) do
     Dependabot::Dependencies::UpdatedDependency.new(
       name: dependency.name,
+      state: Dependabot::Dependencies::UpdateChecker::HAS_UPDATES,
       updated_dependencies: updated_dependencies,
       updated_files: updated_files,
       vulnerable: false,

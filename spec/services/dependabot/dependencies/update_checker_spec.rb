@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe Dependabot::Dependencies::UpdateChecker, epic: :services, feature: :dependabot do
-  subject(:update_checker_return) do
+  subject(:update_checker) do
     described_class.call(
       dependency: dependency,
       dependency_files: fetcher.files,
@@ -25,6 +25,28 @@ describe Dependabot::Dependencies::UpdateChecker, epic: :services, feature: :dep
   let(:versioning_strategy) { :bump_versions }
   let(:can_update) { true }
   let(:credentials) { [*Dependabot::Credentials.call, *dependabot_config.first[:registries]] }
+
+  let(:skipped_dep) do
+    Dependabot::Dependencies::UpdatedDependency.new(
+      name: dependency.name,
+      state: Dependabot::Dependencies::UpdateChecker::SKIPPED
+    )
+  end
+
+  let(:up_to_date_dep) do
+    Dependabot::Dependencies::UpdatedDependency.new(
+      name: dependency.name,
+      state: Dependabot::Dependencies::UpdateChecker::UP_TO_DATE
+    )
+  end
+
+  let(:update_impossible_dep) do
+    Dependabot::Dependencies::UpdatedDependency.new(
+      name: dependency.name,
+      state: Dependabot::Dependencies::UpdateChecker::UPDATE_IMPOSSIBLE
+    )
+  end
+
   let(:config) do
     {
       **dependabot_config.first,
@@ -33,6 +55,7 @@ describe Dependabot::Dependencies::UpdateChecker, epic: :services, feature: :dep
       versioning_strategy: versioning_strategy
     }
   end
+
   let(:checker_args) do
     args = {
       dependency: dependency,
@@ -80,34 +103,44 @@ describe Dependabot::Dependencies::UpdateChecker, epic: :services, feature: :dep
       allow(checker).to receive(:up_to_date?).and_raise(Dependabot::AllVersionsIgnored)
     end
 
-    it { is_expected.to be_nil }
+    it "returns dep skipped" do
+      expect(update_checker).to eq(skipped_dep)
+    end
   end
 
   context "when nothing to update" do
     context "when dependency up to date" do
       let(:up_to_date) { true }
 
-      it { is_expected.to be_nil }
+      it "returns dep up to date" do
+        expect(update_checker).to eq(up_to_date_dep)
+      end
     end
 
     context "when update not possible with requirements unlocked" do
       let(:can_update_own_unlock) { false }
       let(:can_update_all_unlock) { false }
 
-      it { is_expected.to be_nil }
+      it "returns dep update impossible" do
+        expect(update_checker).to eq(update_impossible_dep)
+      end
     end
 
     context "when update not possible with requirements locked" do
       let(:unlocked_or_can_be) { false }
       let(:can_update_none_unlock) { false }
 
-      it { is_expected.to be_nil }
+      it "returns dep update impossible" do
+        expect(update_checker).to eq(update_impossible_dep)
+      end
     end
 
     context "when update not allowed by rules" do
       let(:can_update) { false }
 
-      it { is_expected.to be_falsey }
+      it "returns dep skipped" do
+        expect(update_checker).to eq(skipped_dep)
+      end
     end
   end
 
@@ -115,6 +148,7 @@ describe Dependabot::Dependencies::UpdateChecker, epic: :services, feature: :dep
     let(:updated_deps) do
       Dependabot::Dependencies::UpdatedDependency.new(
         name: dependency.name,
+        state: Dependabot::Dependencies::UpdateChecker::HAS_UPDATES,
         updated_files: updated_files,
         updated_dependencies: updated_dependencies,
         vulnerable: checker.vulnerable?,
@@ -132,8 +166,8 @@ describe Dependabot::Dependencies::UpdateChecker, epic: :services, feature: :dep
     context "when only lockfile updates are allowed" do
       let(:versioning_strategy) { :lockfile_only }
 
-      it do
-        expect(update_checker_return).to eq(updated_deps)
+      it "returns updated dependencies" do
+        expect(update_checker).to eq(updated_deps)
         expect(checker).to have_received(:updated_dependencies).with(requirements_to_unlock: :none)
       end
     end
@@ -141,15 +175,15 @@ describe Dependabot::Dependencies::UpdateChecker, epic: :services, feature: :dep
     context "when no requirements to unlock" do
       let(:unlocked_or_can_be) { false }
 
-      it do
-        expect(update_checker_return).to eq(updated_deps)
+      it "returns updated dependencies" do
+        expect(update_checker).to eq(updated_deps)
         expect(checker).to have_received(:updated_dependencies).with(requirements_to_unlock: :none)
       end
     end
 
     context "when own requirements to unlock" do
-      it do
-        expect(update_checker_return).to eq(updated_deps)
+      it "returns updated dependencies" do
+        expect(update_checker).to eq(updated_deps)
         expect(checker).to have_received(:updated_dependencies).with(requirements_to_unlock: :own)
       end
     end
@@ -157,8 +191,8 @@ describe Dependabot::Dependencies::UpdateChecker, epic: :services, feature: :dep
     context "when all requirements to unlock" do
       let(:can_update_own_unlock) { false }
 
-      it do
-        expect(update_checker_return).to eq(updated_deps)
+      it "returns updated dependencies" do
+        expect(update_checker).to eq(updated_deps)
         expect(checker).to have_received(:updated_dependencies).with(requirements_to_unlock: :all)
       end
     end

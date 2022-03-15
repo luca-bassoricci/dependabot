@@ -83,7 +83,7 @@ module Dependabot
     #
     # @return [Config]
     def config
-      @config ||= Dependabot::Config::Fetcher.call(project_name)
+      @config ||= Config::Fetcher.call(project_name)
     end
 
     # Config entry for specific package ecosystem and directory
@@ -99,7 +99,7 @@ module Dependabot
     #
     # @return [Dependabot::FileFetcher]
     def fetcher
-      @fetcher ||= Dependabot::Files::Fetcher.call(project_name, config_entry, repo_contents_path)
+      @fetcher ||= Files::Fetcher.call(project_name, config_entry, repo_contents_path)
     end
 
     # Get cloned repository path
@@ -119,7 +119,8 @@ module Dependabot
         break if count[:security_mr].length >= 10 && count[:mr].length >= mr_limit
 
         updated_dep = updated_dependency(dep)
-        next unless updated_dep
+        close_obsolete_mrs(dep.name) if updated_dep.up_to_date?
+        next unless updated_dep.updates?
 
         if updated_dep.vulnerable
           update_vulnerable_dependency(updated_dep, count)
@@ -162,7 +163,7 @@ module Dependabot
     # @return [Array<Dependabot::Dependency>]
     def dependencies
       @dependencies ||= begin
-        deps = Dependabot::Files::Parser.call(
+        deps = Files::Parser.call(
           source: fetcher.source,
           dependency_files: fetcher.files,
           repo_contents_path: repo_contents_path,
@@ -174,9 +175,9 @@ module Dependabot
 
     # Array of dependencies to update
     #
-    # @return [Dependabot::UpdatedDependency]
+    # @return [Dependabot::Dependencies::UpdatedDependency]
     def updated_dependency(dependency)
-      Dependabot::Dependencies::UpdateChecker.call(
+      Dependencies::UpdateChecker.call(
         dependency: dependency,
         dependency_files: fetcher.files,
         config: config_entry,
@@ -184,12 +185,34 @@ module Dependabot
       )
     end
 
+    # Close obsolete merge requests
+    #
+    # @param [String] dependency_name
+    # @return [void]
+    def close_obsolete_mrs(dependency_name)
+      return if AppConfig.standalone?
+
+      obsolete_mrs = project.merge_requests
+                            .where(main_dependency: dependency_name, state: "opened")
+                            .compact
+
+      return if obsolete_mrs.length.zero?
+
+      obsolete_mrs.each do |mr|
+        log(:info, "  closing obsolete merge request !#{mr.iid} because dependency version is up to date")
+        mr.close
+        Gitlab::BranchRemover.call(project_name, mr.branch)
+      rescue StandardError => e
+        log_error(e)
+      end
+    end
+
     # Create or update merge request
     #
-    # @param [Dependabot::UpdatedDependency] updated_dep
+    # @param [Dependabot::Dependencies::UpdatedDependency] updated_dep
     # @return [Gitlab::ObjectifiedHash]
     def create_mr(updated_dep)
-      Dependabot::MergeRequest::CreateService.call(
+      MergeRequest::CreateService.call(
         project: project,
         fetcher: fetcher,
         config: config_entry,

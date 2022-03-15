@@ -9,6 +9,12 @@ module Dependabot
     class UpdateChecker < ApplicationService # rubocop:disable Metrics/ClassLength
       using Rainbow
 
+      HAS_UPDATES = 1
+      UP_TO_DATE = 2
+      UPDATE_IMPOSSIBLE = 3
+      SKIPPED = 4
+      ERROR = 5
+
       # @param [Dependabot::Dependency] dependency
       # @param [Array<Dependabot::DependencyFile>] dependency_files
       # @param [Array<Hash>] allow
@@ -23,13 +29,15 @@ module Dependabot
         @repo_contents_path = repo_contents_path
       end
 
+      delegate :name, to: :dependency, prefix: :dependency
+
       # Get updated dependencies
       #
       # @return [Dependabot::UpdatedDependency, nil]
       def call
         return skipped unless rule_handler.allowed?
 
-        log(:info, "Fetching info for #{dependency.name.bright}")
+        log(:info, "Fetching info for #{dependency_name.bright}")
         return up_to_date if checker.up_to_date?
         return update_impossible if requirements_to_unlock == :update_not_possible
 
@@ -39,11 +47,11 @@ module Dependabot
           :info,
           "  skipping #{dependency.name.bright} update due to ignored versions rule: #{checker.ignored_versions}"
         )
-        nil
+        UpdatedDependency.new(name: dependency_name, state: SKIPPED)
       rescue StandardError => e
         log_error(e)
         capture_error(e)
-        nil
+        UpdatedDependency.new(name: dependency_name, state: ERROR)
       end
 
       private
@@ -62,11 +70,11 @@ module Dependabot
         @credentials ||= [*Credentials.call, *config[:registries]]
       end
 
-      # Full dependency name
+      # Dependency name with version
       #
       # @return [String]
       def name
-        @name ||= "#{dependency.name}: #{dependency.version}".bright
+        @name ||= "#{dependency_name}: #{dependency.version}".bright
       end
 
       # Rule handler
@@ -85,7 +93,7 @@ module Dependabot
       # @return [nil]
       def skipped
         log(:debug, "Skipping '#{name}' due to allow rules: #{config[:allow]}")
-        nil
+        UpdatedDependency.new(name: dependency.name, state: SKIPPED)
       end
 
       # Print up to date message
@@ -93,7 +101,7 @@ module Dependabot
       # @return [nil]
       def up_to_date
         log(:info, "  #{name} is up to date")
-        nil
+        UpdatedDependency.new(name: dependency.name, state: UP_TO_DATE)
       end
 
       # Print update impossible message
@@ -104,8 +112,7 @@ module Dependabot
         unless checker.conflicting_dependencies.empty?
           log(:warn, "  following conflicting dependencies are present: #{checker.conflicting_dependencies}")
         end
-
-        nil
+        UpdatedDependency.new(name: dependency.name, state: UPDATE_IMPOSSIBLE)
       end
 
       # Versioning strategy set to lock file only
@@ -122,8 +129,9 @@ module Dependabot
         log(:info, "  updating #{name} => #{checker.latest_version.to_s.bright}")
         updated_dependencies = checker.updated_dependencies(requirements_to_unlock: requirements_to_unlock)
 
-        Dependabot::Dependencies::UpdatedDependency.new(
+        UpdatedDependency.new(
           name: dependency.name,
+          state: HAS_UPDATES,
           updated_dependencies: updated_dependencies,
           updated_files: updated_files(updated_dependencies),
           vulnerable: checker.vulnerable?,

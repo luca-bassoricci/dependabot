@@ -40,13 +40,13 @@ module Webhooks
       { reopened_merge_request: true }
     end
 
-    # Set internal mr state to closed
+    # Close merge request
     #
     # @return [Hash]
     def close_mr
       log(:info, "Setting merge request !#{mr.iid} state to closed for project #{project_name}!")
 
-      mr.update_attributes!(state: "closed")
+      mr.close
 
       Gitlab::BranchRemover.call(project_name, mr.branch)
       Gitlab::MergeRequest::Commenter.call(project_name, mr.iid, ignore_comment)

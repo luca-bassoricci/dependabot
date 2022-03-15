@@ -20,4 +20,11 @@ class MergeRequest
   field :commit_message, type: String
 
   belongs_to :project
+
+  # Set merge request status to closed
+  #
+  # @return [void]
+  def close
+    update_attributes!(state: "closed")
+  end
 end

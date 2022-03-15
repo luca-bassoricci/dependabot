@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Dependabot::UpdateService, integration: true, epic: :services, feature: :dependabot do
+describe Dependabot::UpdateService, :integration, epic: :services, feature: :dependabot do
   subject(:update_dependencies) do
     described_class.call(
       project_name: repo,
@@ -39,6 +39,7 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
   let(:updated_rspec) do
     Dependabot::Dependencies::UpdatedDependency.new(
       name: "rspec",
+      state: Dependabot::Dependencies::UpdateChecker::HAS_UPDATES,
       updated_dependencies: ["updated_rspec"],
       updated_files: [],
       vulnerable: false,
@@ -50,6 +51,7 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
   let(:updated_config) do
     Dependabot::Dependencies::UpdatedDependency.new(
       name: "config",
+      state: Dependabot::Dependencies::UpdateChecker::HAS_UPDATES,
       updated_dependencies: ["updated_config"],
       updated_files: [],
       vulnerable: false,
@@ -121,7 +123,7 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
       project.save!
     end
 
-    context "without specific dependency" do
+    context "without specific dependency", :aggregate_failures do
       it "runs dependency updates for all defined dependencies" do
         update_dependencies
 
@@ -140,6 +142,39 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
       end
     end
 
+    context "with dependency already up to date", :aggregate_failures do
+      let(:updated_rspec) do
+        Dependabot::Dependencies::UpdatedDependency.new(
+          name: "rspec",
+          state: Dependabot::Dependencies::UpdateChecker::UP_TO_DATE
+        )
+      end
+
+      let(:saved_mr) do
+        MergeRequest.new(
+          project: project,
+          id: 1,
+          iid: 1,
+          main_dependency: rspec_dep.name,
+          state: "opened",
+          branch: "mr-branch"
+        )
+      end
+
+      before do
+        allow(Gitlab::BranchRemover).to receive(:call)
+
+        saved_mr.save!
+      end
+
+      it "closes mr for up to date dependency" do
+        update_dependencies
+
+        expect(saved_mr.reload.state).to eq("closed")
+        expect(Gitlab::BranchRemover).to have_received(:call).with(repo, saved_mr.branch)
+      end
+    end
+
     # rubocop:disable RSpec/NestedGroups
     context "with mr limit" do
       let(:config) { Config.new([dependabot_config.first.merge(open_merge_requests_limit: 2)]) }
@@ -152,6 +187,7 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
       let(:updated_puma) do
         Dependabot::Dependencies::UpdatedDependency.new(
           name: "puma",
+          state: Dependabot::Dependencies::UpdateChecker::HAS_UPDATES,
           updated_dependencies: ["updated_puma"],
           updated_files: [],
           vulnerable: true,
@@ -163,6 +199,7 @@ describe Dependabot::UpdateService, integration: true, epic: :services, feature:
       let(:updated_rails) do
         Dependabot::Dependencies::UpdatedDependency.new(
           name: "rails",
+          state: Dependabot::Dependencies::UpdateChecker::HAS_UPDATES,
           updated_dependencies: ["updated_rails"],
           updated_files: [],
           vulnerable: false,

@@ -94,7 +94,7 @@ module Gitlab
       def close_superseeded_mrs
         superseeded_mrs.each do |superseeded_mr|
           BranchRemover.call(project.name, superseeded_mr.branch)
-          superseeded_mr.update_attributes!(state: "closed")
+          superseeded_mr.close
           next if target_project_id
 
           Commenter.call(
@@ -104,7 +104,7 @@ module Gitlab
           )
         end
         # close leftover mrs, primarily for forked projects without webhooks
-        existing_mrs.each { |existing_mr| existing_mr.update_attributes!(state: "closed") }
+        existing_mrs.each(&:close)
       end
 
       # Get assignee ids
