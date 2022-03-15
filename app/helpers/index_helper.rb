@@ -25,15 +25,18 @@ module IndexHelper
     project.merge_requests.where(package_ecosystem: package_ecosystem, directory: directory, state: "opened")
   end
 
+  # :reek:LongParameterList
+
   # Open merge requests url
   #
   # @param [Porject] project
+  # @param [Config] config
   # @param [String] package_ecosystem
   # @param [String] directory
   # @return [String]
-  def open_mrs_url(project, package_ecosystem, directory)
+  def open_mrs_url(project, config, package_ecosystem, directory)
     package_manager = Dependabot::Config::Parser::PACKAGE_ECOSYSTEM_MAPPING.fetch(package_ecosystem, package_ecosystem)
-    entry = project.config.entry(package_ecosystem: package_ecosystem, directory: directory)
+    entry = config.entry(package_ecosystem: package_ecosystem, directory: directory)
     labels = entry[:custom_labels] || (["dependencies"] << LANGUAGE_LABELS.fetch(package_manager, package_manager))
 
     project_name = project.forked_from_name || project.name
