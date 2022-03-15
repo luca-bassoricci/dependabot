@@ -33,7 +33,7 @@ group :development, :test do
   gem "reek", "~> 6.1", require: false
   gem "rubocop", "~> 1.26.0", require: false
   gem "rubocop-performance", "~> 1.13.3", require: false
-  gem "rubocop-rails", "~> 2.13", require: false
+  gem "rubocop-rails", "~> 2.14", require: false
   gem "rubocop-rspec", "~> 2.9", require: false
 end
 
