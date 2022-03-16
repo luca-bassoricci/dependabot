@@ -1,3 +1,31 @@
+## 0.16.0 (2022-03-16)
+
+### 🚀 New features (2 changes)
+
+- [Close obsolete merge requests if dependency is up to date](dependabot-gitlab/dependabot@6f643a388283d2e1d6401175643780cb4e99be3f) by @andrcuns. See merge request dependabot-gitlab/dependabot!1398
+- [[BREAKING] Add option to rebase mr on approval event](dependabot-gitlab/dependabot@bb1d11441069c6c7d355ed62c24646906f6ca211) by @andrcuns. See merge request dependabot-gitlab/dependabot!1395
+
+### 🔬 Improvements (2 changes)
+
+- [Add link to open mr list](dependabot-gitlab/dependabot@9a49e65c85ee32eef48239392ed35a3469336f24) by @andrcuns. See merge request dependabot-gitlab/dependabot!1388
+- [Include group milestones in milestone search](dependabot-gitlab/dependabot@8b5b866d5d638438aafbcd2b2eefe19e1f8ddb62) by @andrcuns. See merge request dependabot-gitlab/dependabot!1387
+
+### 🐞 Bug Fixes (3 changes)
+
+- [Improve poor load speed of open merge requests links](dependabot-gitlab/dependabot@f2bc80cf5518f0c6e080fd489c9273aaa7607125) by @andrcuns. See merge request dependabot-gitlab/dependabot!1400
+- [Correctly update project fork attributes](dependabot-gitlab/dependabot@68c289fe3329ee2ba0be92b86e8c6249af937ab2) by @andrcuns. See merge request dependabot-gitlab/dependabot!1393
+- [Use correct url for open merge requests link](dependabot-gitlab/dependabot@f90235f3f7a21788e7f9a5a689da708667335817) by @andrcuns. See merge request dependabot-gitlab/dependabot!1391
+
+### 📦 Dependency updates (2 changes)
+
+- [dep-dev: bump rubocop-rails from 2.13.2 to 2.14.0](dependabot-gitlab/dependabot@b0a39e08484f127eba2925622c9ed6783560fd13) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1399
+- [dep: bump dependabot-omnibus from 0.178.0 to 0.178.1](dependabot-gitlab/dependabot@521acd73aa76e033c1db10d6905e35eb6f651f43) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1396
+
+### 🛠️ Chore (2 changes)
+
+- [Pass auto-merge option to pull request creator](dependabot-gitlab/dependabot@19ff4c5a11b4eb02595bf8c71aa026a98d4e9be1) by @andrcuns. See merge request dependabot-gitlab/dependabot!1390
+- [Load updated rails defaults](dependabot-gitlab/dependabot@c2d8e3866b82c2e36bb9fdcb50fb2e96ee1a58c9) by @andrcuns. See merge request dependabot-gitlab/dependabot!1389
+
 ## 0.15.3 (2022-03-12)
 
 ### 🐞 Bug Fixes (1 change)
