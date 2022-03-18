@@ -2,6 +2,6 @@
 
 class DependabotController < ApplicationController
   def index
-    @projects = Project.not(config: [])
+    @projects = Project.not(configuration: nil)
   end
 end
