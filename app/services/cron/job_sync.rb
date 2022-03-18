@@ -11,7 +11,7 @@ module Cron
     #
     # @return [Array<UpdateJob>]
     def call
-      return if config.empty?
+      return unless config
 
       sync_jobs
       saved_project_jobs
@@ -24,9 +24,9 @@ module Cron
 
     # Dependabot configuration
     #
-    # @return [Hash]
+    # @return [Config]
     def config
-      @config ||= project.config
+      @config ||= project.configuration
     end
 
     # Destroy jobs not present in config anymore
@@ -47,7 +47,7 @@ module Cron
     #
     # @return [Sidekiq::Cron::Job]
     def saved_project_jobs
-      @saved_project_jobs ||= config.map { |opts| save_project_job(opts) }
+      @saved_project_jobs ||= config.updates.map { |opts| save_project_job(opts) }
     end
 
     # Persist project dependency update job

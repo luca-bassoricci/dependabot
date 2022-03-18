@@ -3,14 +3,15 @@
 describe JobController, :integration, epic: :controllers do
   include_context "with dependabot helper"
 
-  let(:config) { dependabot_config.first }
-  let(:project) { Project.create!(name: repo, config: dependabot_config) }
+  let(:project) { Project.create!(name: repo, configuration: Configuration.new(updates: updates_config)) }
+  let(:config_entry) { updates_config.first }
+
   let(:update_job) do
     UpdateJob.new(
       project_id: project._id,
-      package_ecosystem: config[:package_ecosystem],
-      directory: config[:directory],
-      cron: config[:cron]
+      package_ecosystem: config_entry[:package_ecosystem],
+      directory: config_entry[:directory],
+      cron: config_entry[:cron]
     )
   end
 

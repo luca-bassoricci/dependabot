@@ -9,12 +9,13 @@ module Dependabot
 
       # @param [Dependabot::Files::Fetchers::Base] fetcher
       # @param [Project] project
-      # @param [Hash] config
+      # @param [Hash] config_entry
       # @param [Dependabot::UpdatedDependency] updated_dependency
-      def initialize(fetcher:, project:, config:, updated_dependency:, recreate: false)
+      # @param [Boolean] recreate
+      def initialize(fetcher:, project:, config_entry:, updated_dependency:, recreate: false)
         @fetcher = fetcher
         @project = project
-        @config = config
+        @config_entry = config_entry
         @updated_dependency = updated_dependency
         @recreate = recreate
       end
@@ -40,7 +41,7 @@ module Dependabot
       attr_reader :project,
                   :fetcher,
                   :updated_dependency,
-                  :config,
+                  :config_entry,
                   :recreate
 
       # Create mr
@@ -112,7 +113,7 @@ module Dependabot
       def target_project_id
         return @target_project_id if defined?(@target_project_id)
 
-        @target_project_id = config[:fork] ? project.forked_from_id : nil
+        @target_project_id = config_entry[:fork] ? project.forked_from_id : nil
       end
 
       # Get existing mr
@@ -126,14 +127,14 @@ module Dependabot
       #
       # @return [Boolean]
       def rebase?
-        config.dig(:rebase_strategy, :strategy) == "auto"
+        config_entry.dig(:rebase_strategy, :strategy) == "auto"
       end
 
       # Automatically rebase all mr's
       #
       # @return [Boolean]
       def rebase_all?
-        config.dig(:rebase_strategy, :strategy) == "all"
+        config_entry.dig(:rebase_strategy, :strategy) == "all"
       end
 
       # Check if mr should be updated
@@ -163,7 +164,7 @@ module Dependabot
           project: project,
           fetcher: fetcher,
           updated_dependency: updated_dependency,
-          config: config,
+          config_entry: config_entry,
           target_project_id: target_project_id
         )
       end

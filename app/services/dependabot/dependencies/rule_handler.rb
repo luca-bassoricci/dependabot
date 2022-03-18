@@ -17,12 +17,12 @@ module Dependabot
         "security" => proc { |_, checker| checker.vulnerable? }
       }.freeze
 
-      def initialize(dependency:, checker:, config:)
+      def initialize(dependency:, checker:, config_entry:)
         @dependency = dependency
         @checker = checker
-        @allow = config[:allow]
-        @ignore = config[:ignore]
-        @versioning_strategy = config[:versioning_strategy]
+        @allow = config_entry[:allow]
+        @ignore = config_entry[:ignore]
+        @versioning_strategy = config_entry[:versioning_strategy]
       end
 
       # Version conditions for dependency

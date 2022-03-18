@@ -42,19 +42,21 @@ module Dependabot
         validate_dependabot_config(DependabotConfigContract, yml)
         validate_dependabot_config(UpdatesConfigContract, { updates: yml[:updates] })
 
-        yml[:updates].map do |configuration|
-          {
-            **registries_options(configuration),
-            **insecure_code_execution_options(configuration),
-            **general_options(configuration),
-            **branch_options(configuration),
-            **commit_message_options(configuration),
-            **filter_options(configuration),
-            **schedule_options(configuration),
-            **auto_merge_options(configuration),
-            **rebase_options(configuration)
-          }.compact
-        end
+        {
+          registries: RegistriesParser.call(registries: yml[:registries]),
+          updates: yml[:updates].map do |configuration|
+            {
+              **insecure_code_execution_options(configuration),
+              **general_options(configuration),
+              **branch_options(configuration),
+              **commit_message_options(configuration),
+              **filter_options(configuration),
+              **schedule_options(configuration),
+              **auto_merge_options(configuration),
+              **rebase_options(configuration)
+            }.compact
+          end
+        }
       end
 
       private
@@ -81,20 +83,6 @@ module Dependabot
       # @return [Hash<Symbol, Object>]
       def yml
         @yml ||= YAML.safe_load(config, symbolize_names: true)
-      end
-
-      # Allowed registries options
-      #
-      # @param [Hash] opts
-      # @return [Array<Hash>]
-      def registries_options(opts)
-        allowed = opts[:registries] || "*"
-        defined_registries = yml[:registries] || {}
-        registries = allowed == "*" ? defined_registries.values : allowed.map { |reg| defined_registries[reg.to_sym] }
-
-        {
-          registries: RegistriesParser.call(registries: registries)
-        }
       end
 
       # Insecure code execution options
@@ -134,6 +122,7 @@ module Dependabot
           # https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates#package-ecosystem
           package_manager: PACKAGE_ECOSYSTEM_MAPPING.fetch(package_ecosystem, package_ecosystem),
           package_ecosystem: package_ecosystem,
+          fork: yml[:fork],
           vendor: opts[:vendor],
           directory: opts[:directory],
           milestone: opts[:milestone],
@@ -141,9 +130,9 @@ module Dependabot
           reviewers: opts[:reviewers],
           approvers: opts[:approvers],
           custom_labels: opts[:labels],
-          open_merge_requests_limit: opts[:"open-pull-requests-limit"] || DependabotConfig.open_pull_request_limit,
+          registries: opts[:registries] || "*",
           versioning_strategy: versioning_strategy(opts[:"versioning-strategy"]),
-          fork: yml[:fork]
+          open_merge_requests_limit: opts[:"open-pull-requests-limit"] || DependabotConfig.open_pull_request_limit
         }
       end
 

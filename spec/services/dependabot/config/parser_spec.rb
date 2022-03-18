@@ -9,11 +9,7 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
     let(:config_yml) { File.read("spec/fixture/gitlab/responses/dependabot.yml") }
 
     it "returns parsed configuration" do
-      expect(parser).to eq(dependabot_config)
-    end
-
-    it "sets reject_external_code: true by default" do
-      expect(parser.first[:reject_external_code]).to eq(true)
+      expect(parser).to eq({ updates: updates_config, registries: registries })
     end
   end
 
@@ -42,18 +38,12 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
       YAML
     end
 
-    it "returns parsed configuration with explicitly allowed registries" do
-      expect(parser.first[:registries]).to eq(
-        [{
-          "type" => "npm_registry",
-          "registry" => "npm.pkg.github.com",
-          "token" => "test_token"
-        }]
-      )
+    it "sets reject_external_code: true" do
+      expect(parser[:updates].first[:reject_external_code]).to eq(true)
     end
   end
 
-  context "with valid config and no registries" do
+  context "without registries" do
     let(:config_yml) do
       <<~YAML
         version: 2
@@ -66,7 +56,7 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
     end
 
     it "sets reject_external_code: false by default" do
-      expect(parser.first[:reject_external_code]).to eq(false)
+      expect(parser[:updates].first[:reject_external_code]).to eq(false)
     end
   end
 
@@ -85,7 +75,7 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
     end
 
     it "sets reject_external_code: false by default" do
-      expect(parser.first[:rebase_strategy]).to eq({ strategy: "auto", on_approval: true })
+      expect(parser[:updates].first[:rebase_strategy]).to eq({ strategy: "auto", on_approval: true })
     end
   end
 

@@ -20,7 +20,8 @@ namespace :dependabot do # rubocop:disable Metrics/BlockLength
     )
     exit(1)
   rescue StandardError => e
-    ApplicationHelper.log(:error, "Dependency update execution failed with error: #{e}")
+    ApplicationHelper.log(:error, "Dependency update execution failed with error:")
+    ApplicationHelper.log_error(e)
     exit(1)
   end
 

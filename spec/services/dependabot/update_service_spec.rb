@@ -23,9 +23,9 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
   end
 
   let(:branch) { "master" }
-  let(:config) { Config.new(dependabot_config) }
-  let(:config_entry) { config.first }
-  let(:project) { Project.new(name: repo, config: config) }
+  let(:config) { Configuration.new(updates: updates_config, registries: registries) }
+  let(:config_entry) { config.updates.first }
+  let(:project) { Project.new(name: repo, configuration: config) }
   let(:dependency_name) { nil }
 
   let(:mr) do
@@ -71,7 +71,7 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
     {
       project: project,
       fetcher: fetcher,
-      config: config_entry,
+      config_entry: config_entry,
       updated_dependency: updated_config
     }
   end
@@ -80,20 +80,28 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
     {
       project: project,
       fetcher: fetcher,
-      config: config_entry,
+      config_entry: config_entry,
       updated_dependency: updated_rspec
     }
   end
 
   before do
-    allow(Dependabot::Files::Fetcher).to receive(:call).with(repo, config_entry, nil) { fetcher }
+    allow(Dependabot::Files::Fetcher).to receive(:call)
+      .with(
+        project_name: repo,
+        config_entry: config_entry,
+        repo_contents_path: nil,
+        registries: registries.values
+      )
+      .and_return(fetcher)
 
     allow(Dependabot::Files::Parser).to receive(:call)
       .with(
         source: fetcher.source,
         dependency_files: fetcher.files,
         repo_contents_path: nil,
-        config: config_entry
+        config_entry: config_entry,
+        registries: registries.values
       )
       .and_return(dependencies)
 
@@ -101,8 +109,9 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
       .with(
         dependency: rspec_dep,
         dependency_files: fetcher.files,
-        config: config_entry,
-        repo_contents_path: nil
+        config_entry: config_entry,
+        repo_contents_path: nil,
+        registries: registries.values
       )
       .and_return(updated_rspec)
 
@@ -110,8 +119,9 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
       .with(
         dependency: config_dep,
         dependency_files: fetcher.files,
-        config: config_entry,
-        repo_contents_path: nil
+        config_entry: config_entry,
+        repo_contents_path: nil,
+        registries: registries.values
       )
       .and_return(updated_config)
 
@@ -177,7 +187,10 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
 
     # rubocop:disable RSpec/NestedGroups
     context "with mr limit" do
-      let(:config) { Config.new([dependabot_config.first.merge(open_merge_requests_limit: 2)]) }
+      let(:config) do
+        Configuration.new(updates: [updates_config.first.merge(open_merge_requests_limit: 2)], registries: registries)
+      end
+
       let(:second_mr) { Gitlab::ObjectifiedHash.new(iid: 2) }
       let(:third_mr) { Gitlab::ObjectifiedHash.new(iid: 3) }
 
@@ -213,8 +226,9 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
           .with(
             dependency: puma_dep,
             dependency_files: fetcher.files,
-            config: config_entry,
-            repo_contents_path: nil
+            config_entry: config_entry,
+            repo_contents_path: nil,
+            registries: registries.values
           )
           .and_return(updated_puma)
 
@@ -222,8 +236,9 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
           .with(
             dependency: rails_dep,
             dependency_files: fetcher.files,
-            config: config_entry,
-            repo_contents_path: nil
+            config_entry: config_entry,
+            repo_contents_path: nil,
+            registries: registries.values
           )
           .and_return(updated_rails)
       end

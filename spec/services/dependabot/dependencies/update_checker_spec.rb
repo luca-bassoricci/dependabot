@@ -5,8 +5,9 @@ describe Dependabot::Dependencies::UpdateChecker, epic: :services, feature: :dep
     described_class.call(
       dependency: dependency,
       dependency_files: fetcher.files,
-      config: config,
-      repo_contents_path: nil
+      config_entry: config_entry,
+      repo_contents_path: nil,
+      registries: registries.values
     )
   end
 
@@ -24,7 +25,7 @@ describe Dependabot::Dependencies::UpdateChecker, epic: :services, feature: :dep
   let(:can_update_none_unlock) { true }
   let(:versioning_strategy) { :bump_versions }
   let(:can_update) { true }
-  let(:credentials) { [*Dependabot::Credentials.call, *dependabot_config.first[:registries]] }
+  let(:credentials) { [*Dependabot::Credentials.call, *registries.values] }
 
   let(:skipped_dep) do
     Dependabot::Dependencies::UpdatedDependency.new(
@@ -47,9 +48,9 @@ describe Dependabot::Dependencies::UpdateChecker, epic: :services, feature: :dep
     )
   end
 
-  let(:config) do
+  let(:config_entry) do
     {
-      **dependabot_config.first,
+      **updates_config.first,
       allow: allow_conf,
       ignore: ignore_conf,
       versioning_strategy: versioning_strategy
@@ -82,7 +83,7 @@ describe Dependabot::Dependencies::UpdateChecker, epic: :services, feature: :dep
     allow(Dependabot::Dependencies::RuleHandler).to receive(:new).with(
       dependency: dependency,
       checker: checker,
-      config: config
+      config_entry: config_entry
     ).and_return(rule_handler)
     allow(rule_handler).to receive(:allowed?) { can_update }
 

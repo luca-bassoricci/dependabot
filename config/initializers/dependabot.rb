@@ -160,15 +160,15 @@ module Dependabot
     def self.sanitize_args(args) # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
       if args.is_a?(Hash) && args[:credentials]
         args.merge({
-          credentials: args[:credentials].map { |cred| cred.except(*::Config::AUTH_FIELDS) }
+          credentials: args[:credentials].map { |cred| cred.except(*::Configuration::AUTH_FIELDS) }
         })
       elsif args.is_a?(Array)
         args.map do |arg|
           next arg unless arg.is_a?(Array) && arg.any? do |item|
-            item.is_a?(Hash) && ::Config::AUTH_FIELDS.any? { |key| item.key?(key) }
+            item.is_a?(Hash) && ::Configuration::AUTH_FIELDS.any? { |key| item.key?(key) }
           end
 
-          arg.map { |cred| cred.except(*::Config::AUTH_FIELDS) }
+          arg.map { |cred| cred.except(*::Configuration::AUTH_FIELDS) }
         end
       else
         args

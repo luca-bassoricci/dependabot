@@ -30,7 +30,7 @@ module IndexHelper
   # Open merge requests url
   #
   # @param [Porject] project
-  # @param [Config] config
+  # @param [Configuration] config
   # @param [String] package_ecosystem
   # @param [String] directory
   # @return [String]

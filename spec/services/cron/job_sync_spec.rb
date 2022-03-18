@@ -3,10 +3,11 @@
 describe Cron::JobSync, integration: true, epic: :services, feature: :cron do
   include_context "with dependabot helper"
 
-  let(:project) { Project.new(name: repo, config: config) }
+  let(:project) { Project.new(name: repo, configuration: Configuration.new(updates: config)) }
+
   let(:config) do
     [
-      *dependabot_config,
+      *updates_config,
       {
         package_ecosystem: "docker",
         directory: "/",
@@ -19,6 +20,7 @@ describe Cron::JobSync, integration: true, epic: :services, feature: :cron do
       }
     ]
   end
+
   let(:cron_jobs) do
     config.map do |conf|
       package_ecosystem = conf[:package_ecosystem]
@@ -34,6 +36,7 @@ describe Cron::JobSync, integration: true, epic: :services, feature: :cron do
       )
     end
   end
+
   let(:jobs) do
     config.map do |conf|
       package_ecosystem = conf[:package_ecosystem]
@@ -52,24 +55,22 @@ describe Cron::JobSync, integration: true, epic: :services, feature: :cron do
     project.save!
   end
 
-  context "with new configuration" do
+  context "with new configuration", :aggregate_failures do
     it "creates jobs" do
       described_class.call(project)
 
-      aggregate_failures do
-        expect(Sidekiq::Cron::Job.all.count { |job| job.name.include?(repo) }).to eq(3)
-        expect(project.update_jobs.size).to eq(3)
-      end
+      expect(Sidekiq::Cron::Job.all.count { |job| job.name.include?(repo) }).to eq(3)
+      expect(project.update_jobs.size).to eq(3)
     end
   end
 
-  context "with changed configuration" do
+  context "with changed configuration", :aggregate_failures do
     let(:modified_config) { config.dup.tap(&:pop) }
 
     before do
       jobs.each(&:save!)
       cron_jobs.each(&:save)
-      project.update_attributes!(config: modified_config)
+      project.configuration.update_attributes!(updates: modified_config)
     end
 
     it "removes non existing job" do
@@ -82,10 +83,8 @@ describe Cron::JobSync, integration: true, epic: :services, feature: :cron do
                                              .select { |job| cron_jobs[0..1].any? { |jb| jb.name == job.name } }
                                              .map(&cron_args_mapper)
 
-      aggregate_failures do
-        expect(expected_cron_jobs).to match_array(cron_jobs[0..1].map(&cron_args_mapper))
-        expect(expected_persisted_job).to match_array(jobs[0..1])
-      end
+      expect(expected_cron_jobs).to match_array(cron_jobs[0..1].map(&cron_args_mapper))
+      expect(expected_persisted_job).to match_array(jobs[0..1])
     end
   end
 end

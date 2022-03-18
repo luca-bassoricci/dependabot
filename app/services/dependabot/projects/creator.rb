@@ -45,7 +45,7 @@ module Dependabot
       def save_project
         project.id = gitlab_project.id
         project.web_url = gitlab_project.web_url
-        project.config = config if config
+        project.configuration = config if config
         project.forked_from_id = forked_from[:forked_from_id]
         project.forked_from_name = forked_from[:forked_from_name]
         project.save!

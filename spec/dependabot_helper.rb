@@ -69,8 +69,19 @@ RSpec.shared_context("with dependabot helper") do
     ]
   end
 
-  # Parsed version of spec/gitlab_mock/responses/gitlab/dependabot.yml
-  let(:dependabot_config) do
+  let(:registries) do
+    {
+      "dockerhub" => {
+        "type" => "docker_registry",
+        "registry" => "registry.hub.docker.com",
+        "username" => "octocat",
+        "password" => "password"
+      }
+    }
+  end
+
+  # Parsed version of spec/fixture/gitlab/responses/dependabot.yml
+  let(:updates_config) do
     [
       {
         package_manager: "bundler",
@@ -91,6 +102,7 @@ RSpec.shared_context("with dependabot helper") do
         versioning_strategy: :lockfile_only,
         reject_external_code: true,
         auto_merge: auto_merge_rules,
+        registries: "*",
         commit_message_options: {
           prefix: "dep",
           prefix_development: "bundler-dev",
@@ -98,15 +110,7 @@ RSpec.shared_context("with dependabot helper") do
           trailers: {
             changelog: "dep"
           }
-        },
-        registries: [
-          {
-            "type" => "docker_registry",
-            "registry" => "registry.hub.docker.com",
-            "username" => "octocat",
-            "password" => "password"
-          }
-        ]
+        }
       }
     ]
   end

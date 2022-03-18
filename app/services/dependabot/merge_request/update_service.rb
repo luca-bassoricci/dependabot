@@ -25,6 +25,8 @@ module Dependabot
 
       private
 
+      delegate :configuration, to: :project, prefix: :project
+
       attr_reader :project_name, :mr_iid, :recreate
 
       # Rebase merge request
@@ -64,15 +66,17 @@ module Dependabot
           source: fetcher.source,
           dependency_files: fetcher.files,
           repo_contents_path: repo_contents_path,
-          config: config
+          config_entry: config_entry,
+          registries: registries
         ).find { |dep| dep.name == mr.main_dependency }
         return unless dependency
 
         Dependabot::Dependencies::UpdateChecker.call(
           dependency: dependency,
           dependency_files: fetcher.files,
-          config: config,
-          repo_contents_path: repo_contents_path
+          config_entry: config_entry,
+          repo_contents_path: repo_contents_path,
+          registries: registries
         )
       end
 
@@ -87,7 +91,12 @@ module Dependabot
       #
       # @return [Dependabot::Files::Fetcher]
       def fetcher
-        @fetcher ||= Dependabot::Files::Fetcher.call(project_name, config, repo_contents_path)
+        @fetcher ||= Dependabot::Files::Fetcher.call(
+          project_name: project_name,
+          config_entry: config_entry,
+          repo_contents_path: repo_contents_path,
+          registries: registries
+        )
       end
 
       # Get cloned repository path
@@ -96,14 +105,24 @@ module Dependabot
       def repo_contents_path
         return @repo_contents_path if defined?(@repo_contents_path)
 
-        @repo_contents_path = DependabotCoreHelper.repo_contents_path(project_name, config)
+        @repo_contents_path = DependabotCoreHelper.repo_contents_path(project_name, config_entry)
       end
 
       # Fetch config entry for update
       #
       # @return [Hash]
-      def config
-        @config ||= project.config.entry(package_ecosystem: mr.package_ecosystem, directory: mr.directory)
+      def config_entry
+        @config_entry ||= project_configuration.entry(package_ecosystem: mr.package_ecosystem, directory: mr.directory)
+      end
+
+      # Private registries configuration
+      #
+      # @return [Array<Hash>]
+      def registries
+        @registries ||= project_configuration.allowed_registries(
+          package_ecosystem: mr.package_ecosystem,
+          directory: mr.directory
+        )
       end
 
       # Find merge request

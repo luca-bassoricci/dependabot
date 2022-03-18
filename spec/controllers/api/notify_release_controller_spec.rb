@@ -14,14 +14,14 @@ describe Api::NotifyReleaseController, epic: :controllers do
   let(:project_bundler) do
     Project.new(
       name: Faker::Alphanumeric.unique.alpha(number: 15),
-      config: dependabot_config
+      configuration: Configuration.new(updates: updates_config)
     )
   end
 
   let(:project_npm) do
     Project.new(
       name: Faker::Alphanumeric.unique.alpha(number: 15),
-      config: [{ package_ecosystem: "npm", directory: "/" }]
+      configuration: Configuration.new(updates: [{ package_ecosystem: "npm", directory: "/" }])
     )
   end
 
@@ -42,7 +42,7 @@ describe Api::NotifyReleaseController, epic: :controllers do
       expect(NotifyReleaseJob).to have_received(:perform_later).with(
         dependency_name,
         package_ecosystem,
-        [{ directory: dependabot_config.first[:directory], project_name: project_bundler.name }]
+        [{ directory: updates_config.first[:directory], project_name: project_bundler.name }]
       )
     end
   end

@@ -124,7 +124,7 @@ module Webhooks
     #
     # @return [Hash]
     def config
-      @config ||= project.config.entry(package_ecosystem: mr.package_ecosystem, directory: mr.directory)
+      @config ||= project.configuration.entry(package_ecosystem: mr.package_ecosystem, directory: mr.directory)
     end
 
     # Merge requests to update
