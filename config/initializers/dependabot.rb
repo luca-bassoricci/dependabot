@@ -145,8 +145,10 @@ module Dependabot
     # @param [Hash] args
     # @return [void]
     def self.log_helper_result(level, error_context, response)
-      debug_message = error_context.merge({ response: response, args: sanitize_args(error_context[:args]) })
-      msg = (level == :error ? "core helpers failure: " : "core helpers output: ") + debug_message.to_json
+      msg = lambda do
+        debug_message = error_context.merge({ response: response, args: sanitize_args(error_context[:args]) })
+        (level == :error ? "core helpers failure: " : "core helpers output: ") + debug_message.to_json
+      end
 
       ApplicationHelper.log(level, msg)
     rescue StandardError => e
@@ -160,15 +162,15 @@ module Dependabot
     def self.sanitize_args(args) # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
       if args.is_a?(Hash) && args[:credentials]
         args.merge({
-          credentials: args[:credentials].map { |cred| cred.except(*::Configuration::AUTH_FIELDS) }
+          credentials: args[:credentials].map { |cred| cred.except(*::Registries::AUTH_FIELDS) }
         })
       elsif args.is_a?(Array)
         args.map do |arg|
           next arg unless arg.is_a?(Array) && arg.any? do |item|
-            item.is_a?(Hash) && ::Configuration::AUTH_FIELDS.any? { |key| item.key?(key) }
+            item.is_a?(Hash) && ::Registries::AUTH_FIELDS.any? { |key| item.key?(key) }
           end
 
-          arg.map { |cred| cred.except(*::Configuration::AUTH_FIELDS) }
+          arg.map { |cred| cred.except(*::Registries::AUTH_FIELDS) }
         end
       else
         args

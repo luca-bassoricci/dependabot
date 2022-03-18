@@ -29,11 +29,11 @@ module ApplicationHelper
   # Log tagged message with dependency context
   #
   # @param [Symbol] level
-  # @param [String] message
+  # @param [String, Proc] message
   # @param [String] tag
   # @return [void]
   def log(level, message, tag = nil)
-    logger = proc { Rails.logger.send(level, message) }
+    logger = proc { Rails.logger.send(level, message.is_a?(Proc) ? message.call : message) }
     tags = [execution_context, tag].compact
     tags.empty? ? logger.call : Rails.logger.tagged(tags, &logger)
   end
