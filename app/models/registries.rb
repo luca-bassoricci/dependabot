@@ -46,11 +46,11 @@ class Registries
 
     # Convert object to database compatible form
     #
-    # @param [Array, Config] object
-    # @return [Array]
+    # @param [Hash, Registries] object
+    # @return [Hash]
     def mongoize(object)
       case object
-      when Array then Registries.new(object).mongoize
+      when Hash then Registries.new(object).mongoize
       when Registries then object.mongoize
       else object
       end
@@ -73,7 +73,7 @@ class Registries
     # @param [Symbol] method
     # @return [Hash]
     def update_auth_fields(registries, method)
-      registries.transform_values do |registry|
+      registries.deep_dup.transform_values do |registry|
         AUTH_FIELDS.each do |field|
           registry[field] = EncryptHelper.send(method, registry[field]) if registry.key?(field)
         end
