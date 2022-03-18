@@ -6,13 +6,14 @@ module IndexHelper
     "cargo" => "rust",
     "composer" => "php",
     "pub" => "dart",
-    "hex" => "elixir",
-    "go_modules" => "go",
+    "mix" => "elixir",
+    "gomod" => "go",
     "maven" => "java",
     "gradle" => "java",
     "bundler" => "ruby",
     "pip" => "python",
-    "npm_and_yarn" => "javascript"
+    "npm" => "javascript",
+    "gitsubmodule" => "submodules"
   }.freeze
 
   # Fetch specific merge requests
@@ -30,14 +31,12 @@ module IndexHelper
   # Open merge requests url
   #
   # @param [Porject] project
-  # @param [Configuration] config
   # @param [String] package_ecosystem
   # @param [String] directory
   # @return [String]
-  def open_mrs_url(project, config, package_ecosystem, directory)
-    package_manager = Dependabot::Config::Parser::PACKAGE_ECOSYSTEM_MAPPING.fetch(package_ecosystem, package_ecosystem)
-    entry = config.entry(package_ecosystem: package_ecosystem, directory: directory)
-    labels = entry[:custom_labels] || (["dependencies"] << LANGUAGE_LABELS.fetch(package_manager, package_manager))
+  def open_mrs_url(project, package_ecosystem, directory)
+    entry = project.configuration.entry(package_ecosystem: package_ecosystem, directory: directory)
+    labels = entry[:custom_labels] || (["dependencies"] << LANGUAGE_LABELS.fetch(package_ecosystem, package_ecosystem))
 
     project_name = project.forked_from_name || project.name
     base_url = "#{AppConfig.gitlab_url}/#{project_name}/-/merge_requests"
