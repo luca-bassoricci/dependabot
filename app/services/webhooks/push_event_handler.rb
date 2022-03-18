@@ -20,7 +20,7 @@ module Webhooks
 
       Dependabot::Projects::Creator.call(project_name)
                                    .tap { |project| Cron::JobSync.call(project) }
-                                   .sanitized_hash
+                                   .to_hash
     end
 
     private

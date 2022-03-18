@@ -5,7 +5,7 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
     described_class.call(
       project: project,
       fetcher: fetcher,
-      config: config,
+      config_entry: config_entry,
       updated_dependency: updated_dependency,
       target_project_id: nil
     )
@@ -24,8 +24,11 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
     )
   end
 
-  let(:project) { Project.new(name: repo, config: dependabot_config, forked_from_id: 1) }
-  let(:config) { dependabot_config.first }
+  let(:project) do
+    Project.new(name: repo, configuration: Configuration.new(updates: updates_config), forked_from_id: 1)
+  end
+
+  let(:config_entry) { updates_config.first }
   let(:commit_message) { "commit-message" }
   let(:source_branch) { "dependabot-bundler-.-master-config-2.2.1" }
   let(:milestone_id) { 1 }
@@ -63,7 +66,7 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
       reviewers: { reviewers: reviewers, approvers: approvers },
       milestone: milestone_id,
       label_language: true,
-      **config.select { |key, _value| mr_opt_keys.include?(key) }
+      **config_entry.select { |key, _value| mr_opt_keys.include?(key) }
     }
   end
 
@@ -103,8 +106,8 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
       project: project,
       id: id,
       iid: iid,
-      package_ecosystem: config[:package_ecosystem],
-      directory: config[:directory],
+      package_ecosystem: config_entry[:package_ecosystem],
+      directory: config_entry[:directory],
       state: state,
       auto_merge: updated_dependency.auto_mergeable?,
       update_to: updated_dependency.current_versions,
@@ -120,10 +123,10 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
   before do
     stub_gitlab
 
-    allow(Gitlab::UserFinder).to receive(:call).with(config[:assignees]) { assignees }
-    allow(Gitlab::UserFinder).to receive(:call).with(config[:reviewers]) { reviewers }
-    allow(Gitlab::UserFinder).to receive(:call).with(config[:approvers]) { approvers }
-    allow(Gitlab::MilestoneFinder).to receive(:call).with(repo, config[:milestone]) { milestone_id }
+    allow(Gitlab::UserFinder).to receive(:call).with(config_entry[:assignees]) { assignees }
+    allow(Gitlab::UserFinder).to receive(:call).with(config_entry[:reviewers]) { reviewers }
+    allow(Gitlab::UserFinder).to receive(:call).with(config_entry[:approvers]) { approvers }
+    allow(Gitlab::MilestoneFinder).to receive(:call).with(repo, config_entry[:milestone]) { milestone_id }
     allow(Dependabot::PullRequestCreator).to receive(:new).with(**creator_args) { pr_creator }
 
     project.save!

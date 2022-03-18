@@ -12,7 +12,7 @@ describe Webhooks::PipelineEventHandler, integration: true, epic: :services, fea
   let(:event_source) { "merge_request_event" }
   let(:pipeline_status) { "success" }
 
-  let(:project) { Project.new(name: project_name, config: dependabot_config) }
+  let(:project) { Project.new(name: project_name, configuration: Configuration.new(updates: updates_config)) }
 
   let(:merge_request) do
     MergeRequest.new(

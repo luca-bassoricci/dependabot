@@ -1,7 +1,14 @@
 # frozen_string_literal: true
 
 describe Dependabot::Files::Fetcher, epic: :services, feature: :dependabot do
-  subject { described_class.call(repo, dependabot_config.first, nil) }
+  subject do
+    described_class.call(
+      project_name: repo,
+      config_entry: updates_config.first,
+      repo_contents_path: nil,
+      registries: registries.values
+    )
+  end
 
   include_context "with webmock"
   include_context "with dependabot helper"

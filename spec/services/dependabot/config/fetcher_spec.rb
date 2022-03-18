@@ -7,7 +7,7 @@ describe Dependabot::Config::Fetcher, epic: :services, feature: :configuration d
 
   let(:project) { "project" }
   let(:default_branch) { "main" }
-  let(:config) { Config.new(dependabot_config) }
+  let(:config) { Configuration.new(updates: updates_config, registries: registries) }
 
   let(:gitlab) do
     instance_double("Gitlab::client", project: Gitlab::ObjectifiedHash.new(default_branch: default_branch))

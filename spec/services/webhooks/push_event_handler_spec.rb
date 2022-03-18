@@ -6,7 +6,7 @@ describe Webhooks::PushEventHandler, :aggregate_failures, integration: true, epi
   include_context "with dependabot helper"
 
   let(:job) { instance_double("Sidekiq::Cron::Job", name: "#{repo}:bundler:/", destroy: true) }
-  let(:project) { Project.new(name: repo, config: dependabot_config) }
+  let(:project) { Project.new(name: repo, configuration: Configuration.new(updates: updates_config)) }
 
   def commits(added: [], modified: [], removed: [])
     [{

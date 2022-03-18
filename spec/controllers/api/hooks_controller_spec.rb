@@ -12,7 +12,7 @@ describe Api::HooksController, :aggregate_failures, epic: :controllers do
   end
 
   context "with successful response" do
-    let(:project) { Project.new(name: "mike/diaspora") }
+    let(:project) { Project.new(name: "mike/diaspora", configuration: Configuration.new) }
     let(:merge_request) do
       MergeRequest.new(
         iid: 1,
@@ -25,7 +25,7 @@ describe Api::HooksController, :aggregate_failures, epic: :controllers do
     end
 
     before do
-      allow(Webhooks::PushEventHandler).to receive(:call) { project.sanitized_hash }
+      allow(Webhooks::PushEventHandler).to receive(:call) { project.to_hash }
       allow(Webhooks::MergeRequestEventHandler).to receive(:call).and_return({ closed_merge_request: true })
       allow(Webhooks::CommentEventHandler).to receive(:call).and_return(nil)
       allow(Webhooks::PipelineEventHandler).to receive(:call).and_return(nil)
@@ -42,7 +42,7 @@ describe Api::HooksController, :aggregate_failures, epic: :controllers do
         receive_webhook
 
         expect_status(200)
-        expect_json(project.sanitized_hash)
+        expect_json(project.to_hash)
         expect(Webhooks::PushEventHandler).to have_received(:call).with(
           project_name: project.name,
           commits: body[:commits].map { |it| params(it.slice(:added, :modified, :removed)) }

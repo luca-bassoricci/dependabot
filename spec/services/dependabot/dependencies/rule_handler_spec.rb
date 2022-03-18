@@ -5,7 +5,7 @@ describe Dependabot::Dependencies::RuleHandler, epic: :services, feature: :depen
     described_class.new(
       dependency: dependency,
       checker: checker,
-      config: config
+      config_entry: config_entry
     ).allowed?
   end
 
@@ -15,9 +15,9 @@ describe Dependabot::Dependencies::RuleHandler, epic: :services, feature: :depen
   let(:checker) { instance_double("Dependabot::Bundler::UpdateChecker") }
   let(:latest_version) { "2.2.1" }
   let(:versioning_strategy) { :bump_versions }
-  let(:config) do
+  let(:config_entry) do
     {
-      **dependabot_config.first,
+      **updates_config.first,
       allow: allow_conf,
       ignore: ignore_conf,
       versioning_strategy: versioning_strategy

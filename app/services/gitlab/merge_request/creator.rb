@@ -14,13 +14,13 @@ module Gitlab
 
       # @param [Project] project
       # @param [Dependabot::Files::Fetchers::Base] fetcher
-      # @param [Hash] config
+      # @param [Hash] config_entry
       # @param [Dependabot::UpdatedDependency] updated_dependency
       # @param [Number] target_project_id
-      def initialize(project:, fetcher:, config:, updated_dependency:, target_project_id:)
+      def initialize(project:, fetcher:, config_entry:, updated_dependency:, target_project_id:)
         @project = project
         @fetcher = fetcher
-        @config = config
+        @config_entry = config_entry
         @updated_dependency = updated_dependency
         @target_project_id = target_project_id
       end
@@ -44,7 +44,7 @@ module Gitlab
       attr_reader :project,
                   :fetcher,
                   :updated_dependency,
-                  :config,
+                  :config_entry,
                   :target_project_id,
                   :mr
 
@@ -74,8 +74,8 @@ module Gitlab
           project: project,
           id: mr.id,
           iid: mr.iid,
-          package_ecosystem: config[:package_ecosystem],
-          directory: config[:directory],
+          package_ecosystem: config_entry[:package_ecosystem],
+          directory: config_entry[:directory],
           state: "opened",
           auto_merge: updated_dependency.auto_mergeable?,
           update_from: updated_dependency.previous_versions,
@@ -111,25 +111,25 @@ module Gitlab
       #
       # @return [Array<Number>]
       def assignees
-        @assignees ||= UserFinder.call(config[:assignees])
+        @assignees ||= UserFinder.call(config_entry[:assignees])
       end
 
       # Get reviewer ids
       #
       # @return [Array<Number>]
       def reviewers
-        @reviewers ||= UserFinder.call(config[:reviewers])
+        @reviewers ||= UserFinder.call(config_entry[:reviewers])
       end
 
       # Get approver ids
       #
       # @return [Array<Number>]
       def approvers
-        @approvers ||= UserFinder.call(config[:approvers])
+        @approvers ||= UserFinder.call(config_entry[:approvers])
       end
 
       def milestone_id
-        @milestone_id ||= MilestoneFinder.call(fetcher.source.repo, config[:milestone])
+        @milestone_id ||= MilestoneFinder.call(fetcher.source.repo, config_entry[:milestone])
       end
 
       # Merge request specific options from config
@@ -141,7 +141,7 @@ module Gitlab
           assignees: assignees,
           reviewers: { approvers: approvers, reviewers: reviewers }.compact,
           milestone: milestone_id,
-          **config.select { |key, _value| MR_OPTIONS.include?(key) }
+          **config_entry.select { |key, _value| MR_OPTIONS.include?(key) }
         }
       end
 
@@ -153,7 +153,7 @@ module Gitlab
                                     .where(
                                       update_from: updated_dependency.previous_versions,
                                       state: "opened",
-                                      directory: config[:directory]
+                                      directory: config_entry[:directory]
                                     )
                                     .not(iid: mr.iid)
                                     .compact

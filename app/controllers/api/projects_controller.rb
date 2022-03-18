@@ -6,14 +6,14 @@ module Api
     #
     # @return [String]
     def index
-      json_response(body: Project.all.map(&:sanitized_hash))
+      json_response(body: Project.all.map(&:to_hash))
     end
 
     # Return single project
     #
     # @return [String]
     def show
-      json_response(body: project.sanitized_hash)
+      json_response(body: project.to_hash)
     end
 
     # Add new project or update existing one and schedule jobs
@@ -23,7 +23,7 @@ module Api
       log(:info, "Registering project '#{project_name}'")
       project = Dependabot::Projects::Creator.call(project_name)
       Cron::JobSync.call(project)
-      json_response(body: project.sanitized_hash)
+      json_response(body: project.to_hash)
     rescue ActionController::ParameterMissing
       json_response(body: { status: 400, error: "Missing parameter 'project'" }, status: 400)
     end
@@ -40,7 +40,7 @@ module Api
         :web_url,
         :config
       ))
-      json_response(body: project.sanitized_hash)
+      json_response(body: project.to_hash)
     end
 
     # Remove project

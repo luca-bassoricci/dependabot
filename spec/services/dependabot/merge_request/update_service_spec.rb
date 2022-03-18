@@ -12,8 +12,11 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
   let(:conflicts) { false }
   let(:recreate) { false }
 
-  let(:project) { Project.new(name: repo, config: dependabot_config) }
-  let(:config) { dependabot_config.first }
+  let(:project) do
+    Project.new(name: repo, configuration: Configuration.new(updates: updates_config, registries: registries))
+  end
+
+  let(:config_entry) { updates_config.first }
   let(:update_to_versions) { updated_dependency.current_versions }
   let(:gitlab_mr) { Gitlab::ObjectifiedHash.new(iid: mr.iid, state: state, web_url: "url", has_conflicts: conflicts) }
   let(:dependencies) { [instance_double("Dependabot::Dependency", name: "config")] }
@@ -25,8 +28,8 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
     MergeRequest.new(
       project: project,
       iid: 1,
-      package_ecosystem: config[:package_ecosystem],
-      directory: config[:directory],
+      package_ecosystem: config_entry[:package_ecosystem],
+      directory: config_entry[:directory],
       main_dependency: "config",
       commit_message: "original-commit",
       update_to: update_to_versions,
@@ -60,13 +63,21 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
 
   before do
     allow(Gitlab).to receive(:client) { gitlab }
-    allow(Dependabot::Files::Fetcher).to receive(:call).with(repo, config, nil) { fetcher }
+    allow(Dependabot::Files::Fetcher).to receive(:call)
+      .with(
+        project_name: repo,
+        config_entry: config_entry,
+        repo_contents_path: nil,
+        registries: registries.values
+      )
+      .and_return(fetcher)
     allow(Dependabot::Files::Parser).to receive(:call)
       .with(
         source: fetcher.source,
         dependency_files: fetcher.files,
         repo_contents_path: nil,
-        config: config
+        config_entry: config_entry,
+        registries: registries.values
       )
       .and_return(dependencies)
 
@@ -74,8 +85,9 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
       .with(
         dependency: dependencies[0],
         dependency_files: fetcher.files,
-        config: config,
-        repo_contents_path: nil
+        config_entry: config_entry,
+        repo_contents_path: nil,
+        registries: registries.values
       )
       .and_return(updated_dependency)
 

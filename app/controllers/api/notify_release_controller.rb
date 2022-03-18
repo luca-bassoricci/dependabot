@@ -35,7 +35,7 @@ module Api
     # @return [Array<Hash<Symbol, String>>]
     def configurations
       @configurations ||= ::Project.all.map do |project|
-        configs = project.config.select { |conf| conf[:package_ecosystem] == package_ecosystem }
+        configs = project.configuration.entries(package_ecosystem: package_ecosystem)
         next if configs.empty?
 
         configs.map { |conf| { project_name: project.name, directory: conf[:directory] } }

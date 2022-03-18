@@ -27,7 +27,7 @@ module Dependabot
           )
         end
 
-        ::Config.new(Parser.call(raw_config, project_name))
+        ::Configuration.new(**Parser.call(raw_config, project_name))
       end
 
       private

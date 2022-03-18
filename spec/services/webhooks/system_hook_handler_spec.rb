@@ -19,14 +19,14 @@ describe Webhooks::SystemHookHandler, integration: true, epic: :services, featur
 
   context "with project_create event", :aggregate_failures do
     let(:event) { "project_create" }
-    let(:project) { Project.new(name: project_name) }
+    let(:project) { Project.new(name: project_name, configuration: Configuration.new) }
 
     before do
       allow(Dependabot::Projects::Creator).to receive(:call) { project }
     end
 
     it "creates new project" do
-      expect(result).to eq(project.sanitized_hash)
+      expect(result).to eq(project.to_hash)
 
       expect(Dependabot::Projects::Creator).to have_received(:call).with(project_name)
       expect(Cron::JobSync).to have_received(:call).with(project)

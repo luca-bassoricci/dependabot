@@ -11,7 +11,7 @@ describe Dependabot::Projects::Creator, integration: true, epic: :services, feat
   let(:hook_id) { Faker::Number.number(digits: 10) }
   let(:upstream_hook_id) { hook_id }
   let(:config_exists?) { true }
-  let(:config) { Config.new(dependabot_config.map(&:deep_stringify_keys)) }
+  let(:config) { Configuration.new(updates: updates_config.map(&:deep_stringify_keys), registries: registries) }
 
   let(:gitlab_project) do
     Gitlab::ObjectifiedHash.new(
@@ -43,7 +43,7 @@ describe Dependabot::Projects::Creator, integration: true, epic: :services, feat
       it "creates new project and hook" do
         expect(create_project).to eq(persisted_project)
         expect(persisted_project.name).to eq(repo)
-        expect(persisted_project.config).to eq(config)
+        expect(persisted_project.configuration).to eq(config)
         expect(persisted_project.webhook_id).to eq(hook_id)
       end
     end
@@ -64,7 +64,7 @@ describe Dependabot::Projects::Creator, integration: true, epic: :services, feat
         project.save!
 
         expect(create_project).to eq(persisted_project)
-        expect(persisted_project.config).to eq(config)
+        expect(persisted_project.configuration).to eq(config)
 
         expect(Gitlab::Hooks::Updater).to have_received(:call).with(repo, branch, hook_id)
         expect(Gitlab::Hooks::Creator).not_to have_received(:call)
@@ -75,7 +75,7 @@ describe Dependabot::Projects::Creator, integration: true, epic: :services, feat
         project.save!
 
         expect(create_project).to eq(persisted_project)
-        expect(persisted_project.config).to eq(config)
+        expect(persisted_project.configuration).to eq(config)
         expect(persisted_project.webhook_id).to eq(upstream_hook_id)
 
         expect(Gitlab::Hooks::Updater).to have_received(:call).with(repo, branch, hook_id)
@@ -103,7 +103,7 @@ describe Dependabot::Projects::Creator, integration: true, epic: :services, feat
     it "creates new project with empty config" do
       create_project
 
-      expect(persisted_project.config).to be_empty
+      expect(persisted_project.configuration).to be_nil
     end
   end
 end

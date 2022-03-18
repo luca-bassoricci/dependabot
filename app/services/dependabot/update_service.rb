@@ -45,7 +45,12 @@ module Dependabot
 
     private
 
-    attr_reader :project_name, :package_ecosystem, :directory, :dependency_name
+    delegate :configuration, to: :project, prefix: :project
+
+    attr_reader :project_name,
+                :package_ecosystem,
+                :directory,
+                :dependency_name
 
     # Project
     #
@@ -56,7 +61,7 @@ module Dependabot
 
         # Fetch config from Gitlab if deployment is not integrated with webhooks to make sure it is up to date
         Project.find_by(name: project_name).tap do |existing_project|
-          existing_project.config = config unless AppConfig.integrated?
+          existing_project.configuration = config unless AppConfig.integrated?
         end
       end
     end
@@ -69,7 +74,7 @@ module Dependabot
       raise_missing_entry_error unless @config_entry
 
       fork_id = config_entry[:fork] ? gitlab.project(project_name).to_h.dig("forked_from_project", "id") : nil
-      Project.new(name: project_name, config: config, forked_from_id: fork_id)
+      Project.new(name: project_name, configuration: config, forked_from_id: fork_id)
     end
 
     # Open mr limit
@@ -90,16 +95,31 @@ module Dependabot
     #
     # @return [Hash]
     def config_entry
-      @config_entry ||= project.config.entry(package_ecosystem: package_ecosystem, directory: directory).tap do |entry|
-        raise_missing_entry_error unless entry
-      end
+      @config_entry ||= project_configuration
+                        .entry(package_ecosystem: package_ecosystem, directory: directory)
+                        .tap { |entry| raise_missing_entry_error unless entry }
+    end
+
+    # Allowed private registries
+    #
+    # @return [Array<Hash>]
+    def registries
+      @registries ||= project_configuration.allowed_registries(
+        package_ecosystem: package_ecosystem,
+        directory: directory
+      )
     end
 
     # Get file fetcher
     #
     # @return [Dependabot::FileFetcher]
     def fetcher
-      @fetcher ||= Files::Fetcher.call(project_name, config_entry, repo_contents_path)
+      @fetcher ||= Files::Fetcher.call(
+        project_name: project_name,
+        config_entry: config_entry,
+        registries: registries,
+        repo_contents_path: repo_contents_path
+      )
     end
 
     # Get cloned repository path
@@ -167,7 +187,8 @@ module Dependabot
           source: fetcher.source,
           dependency_files: fetcher.files,
           repo_contents_path: repo_contents_path,
-          config: config_entry
+          config_entry: config_entry,
+          registries: registries
         )
         dependency_name ? deps.select { |dep| dep.name == dependency_name } : deps
       end
@@ -180,8 +201,9 @@ module Dependabot
       Dependencies::UpdateChecker.call(
         dependency: dependency,
         dependency_files: fetcher.files,
-        config: config_entry,
-        repo_contents_path: repo_contents_path
+        config_entry: config_entry,
+        repo_contents_path: repo_contents_path,
+        registries: registries
       )
     end
 
@@ -215,7 +237,7 @@ module Dependabot
       MergeRequest::CreateService.call(
         project: project,
         fetcher: fetcher,
-        config: config_entry,
+        config_entry: config_entry,
         updated_dependency: updated_dep
       )
     end

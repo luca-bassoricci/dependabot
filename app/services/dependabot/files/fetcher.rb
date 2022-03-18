@@ -5,27 +5,32 @@ module Dependabot
     class Fetcher < ApplicationService
       # Get specific file fetcher
       # @param [String] project_name
-      # @param [Hash] config
+      # @param [Hash] config_entry
+      # @param [Array<Hash>] registries
       # @param [String] repo_contents_path
-      def initialize(project_name, config, repo_contents_path)
+      def initialize(project_name:, config_entry:, registries:, repo_contents_path:)
         @project_name = project_name
-        @config = config
+        @config_entry = config_entry
+        @registries = registries
         @repo_contents_path = repo_contents_path
       end
 
-      attr_reader :project_name, :config, :repo_contents_path
+      attr_reader :project_name,
+                  :config_entry,
+                  :registries,
+                  :repo_contents_path
 
       # Get FileFetcher
       #
       # @return [Dependabot::FileFetcher]
       def call
-        Dependabot::FileFetchers.for_package_manager(config[:package_manager]).new(
-          credentials: [*Credentials.call, *config[:registries]],
+        Dependabot::FileFetchers.for_package_manager(config_entry[:package_manager]).new(
+          credentials: [*Credentials.call, *registries],
           repo_contents_path: repo_contents_path,
           source: Dependabot::DependabotSource.call(
             repo: project_name,
-            branch: config[:branch],
-            directory: config[:directory]
+            branch: config_entry[:branch],
+            directory: config_entry[:directory]
           )
         )
       end

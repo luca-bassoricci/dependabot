@@ -17,16 +17,17 @@ module Dependabot
 
       # @param [Dependabot::Dependency] dependency
       # @param [Array<Dependabot::DependencyFile>] dependency_files
-      # @param [Array<Hash>] allow
-      # @param [Array<Hash>] ignore
-      # @param [String] versioning_strategy
-      def initialize(dependency:, dependency_files:, config:, repo_contents_path:)
+      # @param [Hash] config_entry
+      # @param [String] repo_contents_path
+      # @param [Array<Hash>] registries
+      def initialize(dependency:, dependency_files:, config_entry:, repo_contents_path:, registries:)
         @dependency = dependency
         @dependency_files = dependency_files
-        @config = config
-        @versioning_strategy = config[:versioning_strategy]
-        @package_manager = config[:package_manager]
+        @config_entry = config_entry
+        @versioning_strategy = config_entry[:versioning_strategy]
+        @package_manager = config_entry[:package_manager]
         @repo_contents_path = repo_contents_path
+        @registries = registries
       end
 
       delegate :name, to: :dependency, prefix: :dependency
@@ -58,16 +59,17 @@ module Dependabot
 
       attr_reader :dependency,
                   :dependency_files,
-                  :config,
+                  :config_entry,
                   :versioning_strategy,
                   :package_manager,
-                  :repo_contents_path
+                  :repo_contents_path,
+                  :registries
 
       # Fetch combined credentials
       #
       # @return [Array<Hash>]
       def credentials
-        @credentials ||= [*Credentials.call, *config[:registries]]
+        @credentials ||= [*Credentials.call, *registries]
       end
 
       # Dependency name with version
@@ -84,7 +86,7 @@ module Dependabot
         @rule_handler ||= RuleHandler.new(
           dependency: dependency,
           checker: checker,
-          config: config
+          config_entry: config_entry
         )
       end
 
@@ -92,7 +94,7 @@ module Dependabot
       #
       # @return [nil]
       def skipped
-        log(:debug, "Skipping '#{name}' due to allow rules: #{config[:allow]}")
+        log(:debug, "Skipping '#{name}' due to allow rules: #{config_entry[:allow]}")
         UpdatedDependency.new(name: dependency.name, state: SKIPPED)
       end
 
@@ -136,7 +138,7 @@ module Dependabot
           updated_files: updated_files(updated_dependencies),
           vulnerable: checker.vulnerable?,
           security_advisories: checker.security_advisories,
-          auto_merge_rules: config[:auto_merge]
+          auto_merge_rules: config_entry[:auto_merge]
         )
       end
 
@@ -149,7 +151,7 @@ module Dependabot
             dependency: dependency,
             dependency_files: dependency_files,
             credentials: credentials,
-            ignored_versions: RuleHandler.version_conditions(dependency, config[:ignore]),
+            ignored_versions: RuleHandler.version_conditions(dependency, config_entry[:ignore]),
             raise_on_ignored: true
           }
           args[:requirements_update_strategy] = versioning_strategy if versioning_strategy && !lockfile_only?

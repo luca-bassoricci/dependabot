@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe NotifyReleaseJob, epic: :jobs do
+describe NotifyReleaseJob, epic: :jobs, type: :job do
   include ActiveJob::TestHelper
 
   subject(:job) { described_class }
@@ -14,7 +14,7 @@ describe NotifyReleaseJob, epic: :jobs do
   let(:configs) do
     [{
       project_name: project_name,
-      directory: dependabot_config.first[:directory]
+      directory: updates_config.first[:directory]
     }]
   end
 
@@ -37,7 +37,7 @@ describe NotifyReleaseJob, epic: :jobs do
       dependency_name: dependency_name,
       package_ecosystem: package_ecosystem,
       project_name: project_name,
-      directory: dependabot_config.first[:directory]
+      directory: updates_config.first[:directory]
     )
   end
 end

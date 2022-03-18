@@ -7,17 +7,25 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
     instance_double("Gitlab::Client", create_branch: nil, accept_merge_request: nil, rebase_merge_request: nil)
   end
 
-  let(:config) { dependabot_config.first }
   let(:mr_iid) { 1 }
   let(:args) { { project_name: repo, mr_iid: mr_iid, action: action, merge_status: "can_be_merged" } }
-  let(:project) { Project.new(name: repo, config: dependabot_config) }
+
+  let(:config_entry) { updates_config.first }
+  let(:config) { Configuration.new(updates: updates_config) }
+
+  let(:project) do
+    Project.new(
+      name: repo,
+      configuration: config
+    )
+  end
 
   let(:merge_request) do
     MergeRequest.new(
       project: project,
-      directory: config[:directory],
+      directory: config_entry[:directory],
       iid: 1,
-      package_ecosystem: config[:package_ecosystem],
+      package_ecosystem: config_entry[:package_ecosystem],
       state: "opened",
       auto_merge: false,
       update_from: "test-0.1",
@@ -28,9 +36,9 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
   let(:open_merge_request) do
     MergeRequest.new(
       project: project,
-      directory: config[:directory],
+      directory: config_entry[:directory],
       iid: 3,
-      package_ecosystem: config[:package_ecosystem],
+      package_ecosystem: config_entry[:package_ecosystem],
       state: "opened",
       auto_merge: false,
       update_from: "test-0.1"
@@ -52,9 +60,9 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
   let(:closed_merge_request) do
     MergeRequest.new(
       project: project,
-      directory: config[:directory],
+      directory: config_entry[:directory],
       iid: 5,
-      package_ecosystem: config[:package_ecosystem],
+      package_ecosystem: config_entry[:package_ecosystem],
       state: "closed",
       auto_merge: false,
       update_from: "test-0.1",
@@ -154,11 +162,8 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
     end
 
     context "with auto-rebase disabled" do
-      let(:project) do
-        Project.new(
-          name: repo,
-          config: [dependabot_config.first.merge({ rebase_strategy: { strategy: "none" } })]
-        )
+      let(:config) do
+        Configuration.new(updates: [updates_config.first.merge({ rebase_strategy: { strategy: "none" } })])
       end
 
       it "skips update for auto-rebase: none option" do
@@ -171,10 +176,17 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
 
   context "with mr approved action" do
     let(:action) { "approved" }
-    let(:project) do
-      Project.new(
-        name: repo,
-        config: [dependabot_config.first.merge({ rebase_strategy: { on_approval: true, strategy: "none" } })]
+    let(:config) do
+      Configuration.new(
+        updates: [
+          updates_config.first.merge(
+            {
+              rebase_strategy: {
+                on_approval: true, strategy: "none"
+              }
+            }
+          )
+        ]
       )
     end
 

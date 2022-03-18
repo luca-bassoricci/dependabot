@@ -27,12 +27,13 @@ module Dependabot
 
       # Fetch configured registries
       #
-      # @return [Array<Hash>]
+      # @return [Hash]
       def call
-        return unless registries
+        return {} unless registries
 
         registries
-          .map { |registry| transform_registry_values(registry) }
+          .stringify_keys
+          .transform_values { |registry| transform_registry_values(registry) }
           .compact
       end
 

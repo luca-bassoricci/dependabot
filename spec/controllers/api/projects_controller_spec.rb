@@ -9,7 +9,7 @@ describe Api::ProjectsController, :aggregate_failures, epic: :controllers do
   let(:project) do
     Project.new(
       name: "#{Faker::Alphanumeric.unique.alpha(number: 5)}/#{Faker::Alphanumeric.unique.alpha(number: 5)}",
-      config: dependabot_config,
+      configuration: Configuration.new(updates: updates_config),
       id: Faker::Number.number(digits: 10)
     )
   end
@@ -23,7 +23,7 @@ describe Api::ProjectsController, :aggregate_failures, epic: :controllers do
       get(path)
 
       expect_status(200)
-      expect(response.body).to eq([project.sanitized_hash].to_json)
+      expect(response.body).to eq([project.to_hash].to_json)
     end
   end
 
@@ -36,7 +36,7 @@ describe Api::ProjectsController, :aggregate_failures, epic: :controllers do
       get("#{path}/#{CGI.escape(project.name)}")
 
       expect_status(200)
-      expect(response.body).to eq(project.sanitized_hash.to_json)
+      expect(response.body).to eq(project.to_hash.to_json)
     end
   end
 
@@ -50,7 +50,7 @@ describe Api::ProjectsController, :aggregate_failures, epic: :controllers do
       post_json(path, { project: project.name })
 
       expect_status(200)
-      expect(response.body).to eq(project.sanitized_hash.to_json)
+      expect(response.body).to eq(project.to_hash.to_json)
       expect(Dependabot::Projects::Creator).to have_received(:call).with(project.name)
       expect(Cron::JobSync).to have_received(:call).with(project)
     end
@@ -73,7 +73,7 @@ describe Api::ProjectsController, :aggregate_failures, epic: :controllers do
       project.reload
 
       expect_status(200)
-      expect(response.body).to eq(project.sanitized_hash.to_json)
+      expect(response.body).to eq(project.to_hash.to_json)
       expect(project.name).to eq("updated-name")
     end
   end
