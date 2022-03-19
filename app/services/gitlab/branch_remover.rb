@@ -11,7 +11,7 @@ module Gitlab
     #
     # @return [void]
     def call
-      return unless branch
+      return unless branch && branch_exists?
 
       log(:debug, "Removing branch '#{branch}'")
       gitlab.delete_branch(project_name, branch)
@@ -20,5 +20,14 @@ module Gitlab
     private
 
     attr_reader :project_name, :branch
+
+    # Check branch existance
+    #
+    # @return [Boolean]
+    def branch_exists?
+      !!gitlab.branch(project_name, branch)
+    rescue Gitlab::Error::NotFound
+      false
+    end
   end
 end
