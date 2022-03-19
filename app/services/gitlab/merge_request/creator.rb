@@ -93,18 +93,14 @@ module Gitlab
       # @return [void]
       def close_superseeded_mrs
         superseeded_mrs.each do |superseeded_mr|
-          BranchRemover.call(project.name, superseeded_mr.branch)
           superseeded_mr.close
-          next if target_project_id
-
+          BranchRemover.call(project.name, superseeded_mr.branch)
           Commenter.call(
-            project.name,
+            target_project_id || project.name,
             superseeded_mr.iid,
             "This merge request has been superseeded by #{mr.web_url}"
           )
         end
-        # close leftover mrs, primarily for forked projects without webhooks
-        existing_mrs.each(&:close)
       end
 
       # Get assignee ids
@@ -157,16 +153,6 @@ module Gitlab
                                     )
                                     .not(iid: mr.iid)
                                     .compact
-      end
-
-      # List of open existing mrs
-      #
-      # @return [Mongoid::Criteria]
-      def existing_mrs
-        @existing_mrs ||= project.merge_requests
-                                 .where(main_dependency: updated_dependency.name, state: "opened")
-                                 .not(iid: mr.iid)
-                                 .compact
       end
 
       # MR message footer with available commands
