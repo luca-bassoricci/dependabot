@@ -68,7 +68,7 @@ module Dependabot
       # @return [void]
       def update_mr
         return log(:info, " merge request #{mr.web_url.bright} doesn't require updating") unless update_mr?
-        return rebase_mr unless recreate || mr["has_conflicts"] || target_project_id
+        return rebase_mr unless recreate || mr["has_conflicts"]
 
         Dependabot::PullRequestUpdater.new(
           credentials: Dependabot::Credentials.call,
@@ -90,7 +90,7 @@ module Dependabot
       #
       # @return [void]
       def rebase_mr
-        gitlab.rebase_merge_request(project.name, mr.iid)
+        gitlab.rebase_merge_request(target_project_id || project.name, mr.iid)
         log(:info, "  rebased merge request #{mr.web_url.bright}")
       end
 
