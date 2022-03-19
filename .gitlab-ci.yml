@@ -4,13 +4,10 @@
 stages:
   - build
   - static analysis
-  - unit test
-  - e2e test
+  - test
   - report
   - release
   - deploy
-  # needed for templates to work
-  - test
 
 variables:
   CURRENT_TAG: ${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}
@@ -95,19 +92,16 @@ container-scan:
     - build-app-image
 
 # ======================================================================================================================
-# Unit Test Stage
+# Test Stage
 # ======================================================================================================================
-rspec:
+unit:
   extends:
     - .rspec
     - .rules:main
   needs:
     - cache-dependencies
 
-# ======================================================================================================================
-# E2E Test Stage
-# ======================================================================================================================
-standalone:
+standalone-e2e:
   extends:
     - .standalone
     - .rules:main:e2e
@@ -122,7 +116,7 @@ publish-allure-reports:
     - .allure_report
     - .rules:allure-reports
   needs:
-    - rspec
+    - unit
 
 # ======================================================================================================================
 # Release Stage
