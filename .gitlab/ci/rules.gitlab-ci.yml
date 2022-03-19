@@ -7,6 +7,8 @@
   if: '$CI_COMMIT_TAG =~ /^v[0-9.]+$/ && $CI_PIPELINE_SOURCE == "push"'
 .fork: &fork
   if: '$CI_PROJECT_ROOT_NAMESPACE != "dependabot-gitlab"'
+.fork-mr: &fork-mr
+  if: '$CI_PROJECT_ROOT_NAMESPACE != "dependabot-gitlab" && $CI_PIPELINE_SOURCE == "merge_request_event"'
 
 .deploy_changes: &deploy_changes
   - app/**/*
@@ -32,7 +34,7 @@
 
 .rules:main:e2e:
   rules:
-    - <<: *fork
+    - <<: *fork-mr
       variables:
         DIND_IMAGE: docker:20.10.12-dind
     - <<: *mr
@@ -82,7 +84,7 @@
 
 .rules:build-image:
   rules:
-    - <<: *fork
+    - <<: *fork-mr
       variables:
         BUILDKIT_IMAGE: moby/buildkit:v0.9.3
     - <<: *master
@@ -95,7 +97,7 @@
 
 .rules:build-ci-image:
   rules:
-    - <<: *fork
+    - <<: *fork-mr
       changes:
         - .gitlab/docker/ci/Dockerfile
       variables:

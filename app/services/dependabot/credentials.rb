@@ -28,7 +28,7 @@ module Dependabot
     # @return [Hash]
     def github_credentials
       token = CredentialsConfig.github_access_token
-      unless token
+      if token.blank?
         log(:warn, "Missing github_access_token. Dependency updates may fail if api rate limit is exceeded.")
         return
       end
