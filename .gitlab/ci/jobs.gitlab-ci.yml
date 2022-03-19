@@ -141,10 +141,10 @@ include:
     DOCKER_IMAGE: $APP_IMAGE
 
 # ----------------------------------------------------------------------------------------------------------------------
-# unit test stage
+# test stage
 #
 .rspec:
-  stage: unit test
+  stage: test
   extends: .ruby_runner
   services:
     - name: bitnami/redis:6.2-debian-10
@@ -176,11 +176,8 @@ include:
     expire_in: 1 day
     when: always
 
-# ----------------------------------------------------------------------------------------------------------------------
-# e2e test stage
-#
 .standalone:
-  stage: e2e test
+  stage: test
   extends: .docker_runner
   variables:
     COMPOSE_PROJECT_NAME: dependabot
