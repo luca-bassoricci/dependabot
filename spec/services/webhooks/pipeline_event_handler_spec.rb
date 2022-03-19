@@ -7,10 +7,7 @@ describe Webhooks::PipelineEventHandler, integration: true, epic: :services, fea
 
   let(:project_name) { repo }
   let(:auto_merge) { true }
-  let(:merge_status) { "can_be_merged" }
   let(:mr_iid) { 1 }
-  let(:event_source) { "merge_request_event" }
-  let(:pipeline_status) { "success" }
 
   let(:project) { Project.new(name: project_name, configuration: Configuration.new(updates: updates_config)) }
 
@@ -26,9 +23,26 @@ describe Webhooks::PipelineEventHandler, integration: true, epic: :services, fea
     )
   end
 
-  def event_result(source: event_source, status: pipeline_status, name: project_name, iid: mr_iid, merge: merge_status)
-    described_class.call(source: source, status: status, project_name: name, mr_iid: iid, merge_status: merge)
+  # rubocop:disable Metrics/ParameterLists
+  def event_result(
+    name: project_name,
+    iid: mr_iid,
+    source: "merge_request_event",
+    status: "success",
+    merge: "can_be_merged",
+    target_project_id: 1
+  )
+    described_class.call(
+      source: source,
+      status: status,
+      project_name: name,
+      mr_iid: iid,
+      merge_status: merge,
+      source_project_id: 1,
+      target_project_id: target_project_id
+    )
   end
+  # rubocop:enable Metrics/ParameterLists
 
   before do
     project.save!
@@ -63,6 +77,10 @@ describe Webhooks::PipelineEventHandler, integration: true, epic: :services, fea
 
     it "skips merge if mr cannot be merged" do
       expect(event_result(merge: "cannot_be_merged")).to eq(nil)
+    end
+
+    it "skips merge if forked mr pipeline" do
+      expect(event_result(target_project_id: 2)).to eq(nil)
     end
   end
 

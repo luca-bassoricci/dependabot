@@ -97,7 +97,9 @@ describe Api::HooksController, :aggregate_failures, epic: :controllers do
           status: body.dig(:object_attributes, :status),
           project_name: body.dig(:project, :path_with_namespace),
           mr_iid: body.dig(:merge_request, :iid),
-          merge_status: body.dig(:merge_request, :merge_status)
+          merge_status: body.dig(:merge_request, :merge_status),
+          source_project_id: body.dig(:merge_request, :source_project_id),
+          target_project_id: body.dig(:merge_request, :target_project_id)
         )
       end
     end

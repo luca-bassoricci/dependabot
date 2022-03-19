@@ -6,7 +6,9 @@
   },
    "merge_request": {
      "iid": 1,
-     "merge_status": "can_be_merged"
+     "merge_status": "can_be_merged",
+     "source_project_id": 1,
+     "target_project_id": 2
   },
   "project":{
      "path_with_namespace": "dependabot-gitlab/test"
