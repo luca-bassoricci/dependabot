@@ -82,7 +82,12 @@ module Api
       args = params.permit(
         object_attributes: %i[source status],
         project: [:path_with_namespace],
-        merge_request: %i[iid merge_status]
+        merge_request: %i[
+          iid
+          merge_status
+          source_project_id
+          target_project_id
+        ]
       )
 
       Webhooks::PipelineEventHandler.call(
@@ -90,7 +95,9 @@ module Api
         status: args.dig(:object_attributes, :status),
         project_name: args.dig(:project, :path_with_namespace),
         mr_iid: args.dig(:merge_request, :iid),
-        merge_status: args.dig(:merge_request, :merge_status)
+        merge_status: args.dig(:merge_request, :merge_status),
+        source_project_id: args.dig(:merge_request, :source_project_id),
+        target_project_id: args.dig(:merge_request, :target_project_id)
       )
     end
   end
