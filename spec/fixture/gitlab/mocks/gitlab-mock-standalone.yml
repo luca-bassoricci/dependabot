@@ -393,7 +393,7 @@
     method: POST
     body:
       matcher: ShouldContainSubstring
-      value: name=dependency-updates&approvals_required=0&user_ids%5B%5D=3
+      value: name=dependency-updates&approvals_required=1&user_ids%5B%5D=3
   response:
     status: 200
     headers:
