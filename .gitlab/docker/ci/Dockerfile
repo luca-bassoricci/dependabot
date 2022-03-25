@@ -1,5 +1,5 @@
 FROM registry.gitlab.com/gitlab-org/release-cli:v0.11.0 as release-cli
-FROM docker:20.10.13
+FROM docker:20.10.14
 
 ARG pip_version=21.3.1
 ARG kubectl_version=v1.23.3
