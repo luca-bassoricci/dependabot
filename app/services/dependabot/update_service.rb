@@ -215,7 +215,7 @@ module Dependabot
       return if AppConfig.standalone?
 
       obsolete_mrs = project.merge_requests
-                            .where(main_dependency: dependency_name, state: "opened")
+                            .where(main_dependency: dependency_name, directory: directory, state: "opened")
                             .compact
 
       return if obsolete_mrs.length.zero?

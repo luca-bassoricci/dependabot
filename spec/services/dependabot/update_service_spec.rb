@@ -167,7 +167,8 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
           iid: 1,
           main_dependency: rspec_dep.name,
           state: "opened",
-          branch: "mr-branch"
+          branch: "mr-branch",
+          directory: "/"
         )
       end
 
