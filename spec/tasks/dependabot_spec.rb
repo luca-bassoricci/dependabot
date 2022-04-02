@@ -31,7 +31,7 @@ describe "rake", epic: :tasks do # rubocop:disable RSpec/DescribeClass
       expect { task.invoke(*args.values[0..1]) }.to raise_error(SystemExit)
     end
 
-    context "with errors in dependency updates" do
+    context "with errors in dependency updates", feature: "dependabot:update" do
       let(:errors) { ["Some error!"] }
       let(:task_name) { "dependabot:update" }
 

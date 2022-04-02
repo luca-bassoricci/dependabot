@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe MergeRequestUpdateJob, epic: :jobs, type: :job do
+describe MergeRequestUpdateJob, epic: :jobs, feature: "mr update", type: :job do
   include ActiveJob::TestHelper
 
   subject(:job) { described_class }

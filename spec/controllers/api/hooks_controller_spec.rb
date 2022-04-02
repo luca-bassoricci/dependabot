@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Api::HooksController, :aggregate_failures, epic: :controllers, type: :request do
+describe Api::HooksController, :aggregate_failures, type: :request, epic: :controllers, feature: :api, story: :hooks do
   subject(:receive_webhook) { post_json("/api/hooks", body, auth_token) }
 
   include_context "with api helper"

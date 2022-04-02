@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe DependabotController, :integration, epic: :controllers, type: :request do
+describe DependabotController, :integration, type: :request, epic: :controllers, feature: "index page" do
   include_context "with dependabot helper"
 
   let(:project) { Project.create!(name: repo, configuration: Configuration.new(updates: updates_config)) }

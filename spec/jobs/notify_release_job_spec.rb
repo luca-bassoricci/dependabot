@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe NotifyReleaseJob, epic: :jobs, type: :job do
+describe NotifyReleaseJob, epic: :jobs, type: :job, feature: "notify release" do
   include ActiveJob::TestHelper
 
   subject(:job) { described_class }

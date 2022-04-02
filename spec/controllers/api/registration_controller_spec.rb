@@ -10,7 +10,7 @@ RSpec.shared_examples "registration controller" do
   end
 end
 
-describe Api::RegistrationController, epic: :controllers, type: :request do
+describe Api::RegistrationController, type: :request, epic: :controllers, feature: :api, story: :registration do
   include_context "with api helper"
 
   let(:path) { "/api/projects/registration" }

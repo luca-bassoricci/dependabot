@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
-describe Api::ProjectsController, :aggregate_failures, epic: :controllers, type: :request do
+describe Api::ProjectsController, :aggregate_failures, {
+  type: :request,
+  epic: :controllers,
+  feature: :api,
+  story: :projects
+} do
   include_context "with api helper"
   include_context "with dependabot helper"
 
