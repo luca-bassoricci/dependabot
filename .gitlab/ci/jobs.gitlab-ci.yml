@@ -27,6 +27,7 @@ include:
     BUNDLE_FROZEN: "true"
     BUNDLE_SUPPRESS_INSTALL_USING_MESSAGES: "true"
   before_script:
+    - gem install bundler -v 2.3.10 --no-document
     - bundle install
   cache:
     - *gem_cache
@@ -70,6 +71,40 @@ include:
     - '[[ "$CI_JOB_NAME" != "release-image" ]] || echo "$DOCKERHUB_PASSWORD" | docker login -u $DOCKERHUB_USERNAME --password-stdin'
     - while ! test -f "$DOCKER_CERT_PATH/ca.pem"; do sleep 2; done
   interruptible: true
+
+.rspec_runner:
+  stage: test
+  extends: .ruby_runner
+  services:
+    - name: ${REDIS_IMAGE}
+      alias: redis
+    - name: ${MONGODB_IMAGE}
+      alias: mongodb
+  variables:
+    REDIS_URL: redis://redis:6379
+    REDIS_PASSWORD: $REDIS_PASSWORD
+    MONGODB_URL: mongodb:27017
+    MAX_ROWS: 5
+    OUTPUT_STYLE: block
+    COVERAGE: "true"
+    COV_DIR: reports/coverage/${CI_JOB_NAME}
+  script:
+    - |
+      bundle exec rspec \
+        --tag ${RSPEC_TAGS} \
+        --format documentation \
+        --format RspecJunitFormatter --out tmp/rspec.xml
+  cache:
+    - *gem_cache
+  artifacts:
+    reports:
+      junit: tmp/rspec.xml
+    paths:
+      - reports/allure-results
+      - reports/coverage
+      - log/*.out
+    expire_in: 1 day
+    when: always
 
 # ======================================================================================================================
 # Jobs
@@ -143,38 +178,24 @@ include:
 # ----------------------------------------------------------------------------------------------------------------------
 # test stage
 #
-.rspec:
-  stage: test
-  extends: .ruby_runner
+.unit:
+  extends: .rspec_runner
+  variables:
+    RSPEC_TAGS: ~system
+
+.system:
+  extends: .rspec_runner
   services:
-    - name: bitnami/redis:6.2-debian-10
+    - name: ${MOCK_IMAGE}
+      alias: gitlab
+    - name: ${REDIS_IMAGE}
       alias: redis
-    - name: bitnami/mongodb:4.4-debian-10
+    - name: ${MONGODB_IMAGE}
       alias: mongodb
   variables:
-    REDIS_URL: redis://redis:6379
-    REDIS_PASSWORD: $REDIS_PASSWORD
-    MONGODB_URL: mongodb:27017
-    COVERAGE: "true"
-    MAX_ROWS: 5
-    OUTPUT_STYLE: block
-    NO_COLOR: 1
-  coverage: /^COVERAGE:\s+(\d{1,3}\.\d{1,2})\%/
-  script:
-    - bundle exec rspec --format documentation --format RspecJunitFormatter --out tmp/rspec.xml
-  after_script:
-    - ./codacy-coverage-reporter-$CODACY_VERSION report -r coverage/coverage.xml
-  cache:
-    - *gem_cache
-    - *coverage_cache
-  artifacts:
-    reports:
-      cobertura: coverage/coverage.xml
-      junit: tmp/rspec.xml
-    paths:
-      - reports/allure-results
-    expire_in: 1 day
-    when: always
+    MOCK_URL: http://gitlab:8081
+    GITLAB_URL: http://gitlab:8080
+    RSPEC_TAGS: system
 
 .standalone:
   stage: test
@@ -192,7 +213,7 @@ include:
 .allure_report:
   stage: report
   image:
-    name: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/andrcuns/allure-report-publisher:0.4.1
+    name: ${ALLURE_IMAGE}
     entrypoint: [""]
   variables:
     GITLAB_AUTH_TOKEN: $GITLAB_ACCESS_TOKEN
@@ -207,6 +228,25 @@ include:
         --update-pr="comment" \
         --copy-latest \
         --color
+
+.coverage:
+  stage: report
+  extends: .ruby_runner
+  variables:
+    MAX_ROWS: 5
+    OUTPUT_STYLE: block
+    NO_COLOR: 1
+  coverage: /^COVERAGE:\s+(\d{1,3}\.\d{1,2})\%/
+  script:
+    - bundle exec rake coverage:merge
+  after_script:
+    - ./codacy-coverage-reporter-$CODACY_VERSION report -r coverage/coverage.xml
+  cache:
+    - *coverage_cache
+    - *gem_cache
+  artifacts:
+    reports:
+      cobertura: coverage/coverage.xml
 
 # ----------------------------------------------------------------------------------------------------------------------
 # release stage

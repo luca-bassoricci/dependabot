@@ -10,11 +10,18 @@ stages:
   - deploy
 
 variables:
+  # App tags
   CURRENT_TAG: ${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}
   APP_IMAGE: ${CI_REGISTRY_IMAGE}:${CURRENT_TAG}
-  BUILDKIT_IMAGE: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/moby/buildkit:v0.9.3
-  DIND_IMAGE: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:20.10.14-dind
+  # Docker images
+  BUILDKIT_IMAGE: moby/buildkit:v0.9.3
+  DIND_IMAGE: docker:20.10.14-dind
+  REDIS_IMAGE: bitnami/redis:6.2-debian-10
+  MONGODB_IMAGE: bitnami/mongodb:4.4-debian-10
+  MOCK_IMAGE: thiht/smocker:0.18.0
+  ALLURE_IMAGE: andrcuns/allure-report-publisher:0.4.2
   CI_IMAGE: registry.gitlab.com/dependabot-gitlab/dependabot/ci:latest
+  # Misc
   CODACY_VERSION: "13.5.3"
   DEPENDENCY_SCANNING_DISABLED: "true"
   SAST_DISABLED: "true"
@@ -96,15 +103,22 @@ container-scan:
 # ======================================================================================================================
 unit:
   extends:
-    - .rspec
+    - .unit
     - .rules:main
   needs:
     - cache-dependencies
 
-standalone-e2e:
+system:
+  extends:
+    - .system
+    - .rules:main:system
+  needs:
+    - cache-dependencies
+
+standalone:
   extends:
     - .standalone
-    - .rules:main:e2e
+    - .rules:main:standalone
   needs:
     - build-app-image
 
@@ -117,6 +131,15 @@ publish-allure-reports:
     - .rules:allure-reports
   needs:
     - unit
+    - system
+
+publish-coverage:
+  extends:
+    - .coverage
+    - .rules:coverage
+  needs:
+    - unit
+    - system
 
 # ======================================================================================================================
 # Release Stage

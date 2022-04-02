@@ -9,7 +9,6 @@ describe Dependabot::Dependencies::RuleHandler, epic: :services, feature: :depen
     ).allowed?
   end
 
-  include_context "with webmock"
   include_context "with dependabot helper"
 
   let(:checker) { instance_double("Dependabot::Bundler::UpdateChecker") }

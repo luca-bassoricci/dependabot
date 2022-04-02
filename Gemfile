@@ -27,29 +27,26 @@ gem "yabeda-prometheus-mmap", "~> 0.3.0"
 gem "yabeda-puma-plugin", "~> 0.6.0"
 gem "yabeda-sidekiq", "~> 0.8.1"
 
-group :development, :test do
-  gem "pry-byebug", "~> 3.9"
-  gem "pry-rails", "~> 0.3.9"
-  gem "reek", "~> 6.1", require: false
-  gem "rubocop", "~> 1.26.1", require: false
-  gem "rubocop-performance", "~> 1.13.3", require: false
-  gem "rubocop-rails", "~> 2.14", require: false
-  gem "rubocop-rspec", "~> 2.9", require: false
-end
-
 group :test do
   gem "airborne", "~> 0.3.7"
   gem "allure-rspec", "~> 2.16.2"
+  gem "capybara", "~> 3.36"
   gem "faker", "~> 2.20"
-  gem "rails-controller-testing", "~> 1.0"
+  gem "httparty", "~> 0.20.0"
+  gem "pry-byebug", "~> 3.9"
+  gem "pry-rails", "~> 0.3.9"
+  gem "reek", "~> 6.1", require: false
   gem "rspec", "~> 3.11"
   gem "rspec_junit_formatter", "~> 0.5.1"
   gem "rspec-rails", "~> 5.1.1"
   gem "rspec-sidekiq", "~> 3.1", require: false
+  gem "rubocop", "~> 1.26.1", require: false
+  gem "rubocop-performance", "~> 1.13.3", require: false
+  gem "rubocop-rails", "~> 2.14", require: false
+  gem "rubocop-rspec", "~> 2.9", require: false
   gem "simplecov", "~> 0.21.2", require: false
-  gem "simplecov-cobertura", "~> 2.1.0"
-  gem "simplecov-console", "~> 0.9.1"
-  gem "webmock", "~> 3.14"
+  gem "simplecov-cobertura", "~> 2.1.0", require: false
+  gem "simplecov-console", "~> 0.9.1", require: false
 end
 
 group :development do
@@ -57,5 +54,5 @@ group :development do
   gem "semver2", "~> 3.4", require: false
   gem "solargraph", "~> 0.44.3", require: false
   gem "spring", "~> 4.0.0", require: false
-  gem "spring-commands-rspec", "~> 1.0.4"
+  gem "spring-commands-rspec", "~> 1.0.4", require: false
 end

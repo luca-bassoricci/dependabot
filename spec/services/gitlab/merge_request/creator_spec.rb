@@ -12,7 +12,6 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
   end
 
   include_context "with dependabot helper"
-  include_context "with webmock"
 
   let(:pr_creator) { instance_double("Dependabot::PullRequestCreator", gitlab_creator: gitlab_creator) }
   let(:gitlab_creator) do
@@ -121,8 +120,6 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
   end
 
   before do
-    stub_gitlab
-
     allow(Gitlab::UserFinder).to receive(:call).with(config_entry[:assignees]) { assignees }
     allow(Gitlab::UserFinder).to receive(:call).with(config_entry[:reviewers]) { reviewers }
     allow(Gitlab::UserFinder).to receive(:call).with(config_entry[:approvers]) { approvers }

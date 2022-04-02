@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
 describe Dependabot::Files::Parser, epic: :services, feature: :dependabot do
-  include_context "with webmock"
   include_context "with dependabot helper"
 
-  let(:parser) { instance_double("Dependabot::Bundler::FileParser") }
+  let(:parser) { instance_double("Dependabot::Bundler::FileParser", parse: nil) }
   let(:config_entry) { updates_config.first }
 
   let(:args) do
@@ -16,10 +15,10 @@ describe Dependabot::Files::Parser, epic: :services, feature: :dependabot do
   end
 
   before do
-    stub_gitlab
-
+    allow(Dependabot::FileParsers).to receive(:for_package_manager)
+      .with("bundler")
+      .and_return(Dependabot::Bundler::FileParser)
     allow(Dependabot::Bundler::FileParser).to receive(:new) { parser }
-    allow(parser).to receive(:parse)
   end
 
   it "parses dependecy files", :aggregate_failures do

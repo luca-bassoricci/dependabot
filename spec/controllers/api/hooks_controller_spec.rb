@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Api::HooksController, :aggregate_failures, epic: :controllers do
+describe Api::HooksController, :aggregate_failures, epic: :controllers, type: :request do
   subject(:receive_webhook) { post_json("/api/hooks", body, auth_token) }
 
   include_context "with api helper"
@@ -60,7 +60,7 @@ describe Api::HooksController, :aggregate_failures, epic: :controllers do
         expect_json({ closed_merge_request: true })
         expect(Webhooks::MergeRequestEventHandler).to have_received(:call).with(
           project_name: "dependabot-gitlab/test",
-          mr_iid: 69,
+          mr_iid: "69",
           action: "close",
           merge_status: "can_be_merged"
         )
@@ -79,7 +79,7 @@ describe Api::HooksController, :aggregate_failures, epic: :controllers do
           discussion_id: body.dig(:object_attributes, :discussion_id),
           note: body.dig(:object_attributes, :note),
           project_name: body.dig(:project, :path_with_namespace),
-          mr_iid: body.dig(:merge_request, :iid)
+          mr_iid: body.dig(:merge_request, :iid).to_s
         )
       end
     end
@@ -96,10 +96,10 @@ describe Api::HooksController, :aggregate_failures, epic: :controllers do
           source: body.dig(:object_attributes, :source),
           status: body.dig(:object_attributes, :status),
           project_name: body.dig(:project, :path_with_namespace),
-          mr_iid: body.dig(:merge_request, :iid),
+          mr_iid: body.dig(:merge_request, :iid).to_s,
           merge_status: body.dig(:merge_request, :merge_status),
-          source_project_id: body.dig(:merge_request, :source_project_id),
-          target_project_id: body.dig(:merge_request, :target_project_id)
+          source_project_id: body.dig(:merge_request, :source_project_id).to_s,
+          target_project_id: body.dig(:merge_request, :target_project_id).to_s
         )
       end
     end

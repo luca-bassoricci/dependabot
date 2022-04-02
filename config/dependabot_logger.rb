@@ -33,10 +33,12 @@ class DependabotLogger
 
   # Common tagged logger
   #
+  # @param [String] log_source
   # @return [ActiveSupport::TaggedLogging]
-  def self.logger
+  def self.logger(log_source)
+    logdev = AppConfig.log_path ? "#{AppConfig.log_path}/#{log_source}.out" : $stdout
     ActiveSupport::TaggedLogging.new(
-      Logger.new($stdout).tap do |log|
+      Logger.new(logdev).tap do |log|
         log.formatter = SimpleLogFormatter.new
         log.datetime_format = DATETIME_FORMAT
         log.level = AppConfig.log_level

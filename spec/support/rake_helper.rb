@@ -7,7 +7,7 @@ RSpec.shared_context "with rake helper" do
 
   let(:task_name) { self.class.description }
 
-  before(:all) do # rubocop:disable RSpec/BeforeAfterAll
+  before(:all) do
     Rails.application.load_tasks
   end
 
