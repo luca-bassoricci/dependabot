@@ -11,7 +11,6 @@ describe Dependabot::Files::Updater, epic: :services, feature: :dependabot do
     )
   end
 
-  include_context "with webmock"
   include_context "with dependabot helper"
 
   let(:files) { fetcher.files }
@@ -19,8 +18,6 @@ describe Dependabot::Files::Updater, epic: :services, feature: :dependabot do
   let(:credentials) { Dependabot::Credentials.call }
 
   before do
-    stub_gitlab
-
     allow(Dependabot::Bundler::FileUpdater).to receive(:new) { updater }
     allow(updater).to receive(:updated_dependency_files) { updated_dependencies }
   end

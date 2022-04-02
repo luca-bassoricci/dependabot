@@ -8,6 +8,7 @@ class AppConfig < ApplicationConfig
               standalone: false,
               log_level: "info",
               log_color: false,
+              log_path: nil,
               create_project_hook: true,
               # mr command prefix
               commands_prefix: "$dependabot",

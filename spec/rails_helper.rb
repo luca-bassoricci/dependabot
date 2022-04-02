@@ -1,20 +1,19 @@
 # frozen_string_literal: true
 
 ENV["RAILS_ENV"] ||= "test"
-ENV["SETTINGS__LOG_LEVEL"] ||= "fatal"
+ENV["MOCK_URL"] ||= "localhost:8081"
+ENV["SETTINGS__LOG_PATH"] ||= "log"
 ENV["SETTINGS__PROJECT_REGISTRATION"] ||= "system_hook"
 
-require_relative "simplecov_helper"
-require_relative "webmock_helper"
-require_relative "dependabot_helper"
-require_relative "api_helper"
-require_relative "rake_helper"
+require_relative "support/simplecov_helper"
+require_relative "support/dependabot_helper"
+require_relative "support/system_helper"
+require_relative "support/rake_helper"
 require_relative "../config/environment"
 
 require "rspec-sidekiq"
 require "rspec/rails"
 require "allure-rspec"
-require "anyway/testing/helpers"
 
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 
@@ -46,15 +45,14 @@ RSpec.configure do |config|
   config.around do |example|
     env = {
       "SETTINGS__GITLAB_ACCESS_TOKEN" => "test_token",
-      "SETTINGS__DEPENDABOT_URL" => "https://dependabot-gitlab.com"
+      "SETTINGS__DEPENDABOT_URL" => "https://dependabot-gitlab.com",
+      "SETTINGS__GITLAB_URL" => ENV["GITLAB_URL"] || "http://localhost:8080"
     }
 
     AppConfig.instance_variable_set(:@instance, nil)
     CredentialsConfig.instance_variable_set(:@instance, nil)
 
-    with_env(env) do
-      example.run
-    end
+    with_env(env) { example.run }
   end
 end
 

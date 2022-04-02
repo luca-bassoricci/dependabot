@@ -2,7 +2,6 @@
 
 describe Dependabot::MergeRequest::CreateService, integration: true, epic: :services, feature: :dependabot do
   include_context "with dependabot helper"
-  include_context "with webmock"
 
   let(:gitlab) { instance_double("Gitlab::Client", rebase_merge_request: nil, accept_merge_request: nil) }
   let(:pr_updater) { instance_double("Dependabot::PullRequestUpdater", update: nil) }
@@ -94,8 +93,6 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
   end
 
   before do
-    stub_gitlab
-
     allow(Gitlab).to receive(:client) { gitlab }
     allow(Gitlab::MergeRequest::Finder).to receive(:call).with(
       project: project.name,

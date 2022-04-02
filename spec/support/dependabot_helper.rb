@@ -16,6 +16,10 @@ RSpec.shared_context("with dependabot helper") do
 
   let(:auto_merge_rules) { { allow: [{ dependency_name: "*" }] } }
 
+  let(:fetcher) do
+    instance_double("Dependabot::FileFetcher", files: "files", source: source, commit: "commit")
+  end
+
   let(:source) do
     Dependabot::Source.new(
       provider: "gitlab",
@@ -24,13 +28,6 @@ RSpec.shared_context("with dependabot helper") do
       repo: repo,
       directory: "/",
       branch: "master"
-    )
-  end
-
-  let(:fetcher) do
-    Dependabot::FileFetchers.for_package_manager(package_manager).new(
-      source: source,
-      credentials: Dependabot::Credentials.call
     )
   end
 

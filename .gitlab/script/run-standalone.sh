@@ -12,7 +12,7 @@ version: "3"
 
 services:
   gitlab:
-    image: thiht/smocker:0.18.0
+    image: ${MOCK_IMAGE}
     ports:
       - 8080:8080
       - 8081:8081

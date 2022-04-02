@@ -7,7 +7,9 @@ repos:
       - id: reek
       - id: rubocop
       - id: rspec
-        args: [--tag=~integration]
+        args:
+          - --tag=~integration
+          - --tag=~system
         stages: [push]
   - repo: https://github.com/jumanjihouse/pre-commit-hooks
     rev: 2.1.5

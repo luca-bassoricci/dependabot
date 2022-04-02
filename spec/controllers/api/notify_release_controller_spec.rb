@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Api::NotifyReleaseController, epic: :controllers do
+describe Api::NotifyReleaseController, epic: :controllers, type: :request do
   subject(:request) do
     post_json("/api/notify_release", { name: dependency_name, package_ecosystem: package_ecosystem })
   end

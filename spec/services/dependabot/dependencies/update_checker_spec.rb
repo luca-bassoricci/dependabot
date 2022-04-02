@@ -11,7 +11,6 @@ describe Dependabot::Dependencies::UpdateChecker, epic: :services, feature: :dep
     )
   end
 
-  include_context "with webmock"
   include_context "with dependabot helper"
 
   let(:checker) { instance_double("Dependabot::Bundler::UpdateChecker") }
@@ -70,8 +69,6 @@ describe Dependabot::Dependencies::UpdateChecker, epic: :services, feature: :dep
   end
 
   before do
-    stub_gitlab
-
     allow(Dependabot::Files::Updater).to receive(:call).with(
       dependencies: updated_dependencies,
       dependency_files: fetcher.files,
