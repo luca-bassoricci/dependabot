@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe ProjectRegistrationJob, epic: :jobs do
+describe ProjectRegistrationJob, epic: :jobs, feature: "project registration" do
   include ActiveJob::TestHelper
 
   subject(:job) { described_class }

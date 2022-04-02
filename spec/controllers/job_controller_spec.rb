@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe JobController, :integration, epic: :controllers, type: :request do
+describe JobController, :integration, type: :request, epic: :controllers, feature: "jobs" do
   include_context "with dependabot helper"
 
   let(:project) { Project.create!(name: repo, configuration: Configuration.new(updates: updates_config)) }

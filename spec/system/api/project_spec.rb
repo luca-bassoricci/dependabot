@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "Project", :system, type: :system do
+describe "Project", :system, type: :system, epic: :system do
   include_context "with system helper"
   include_context "with dependabot helper"
 
