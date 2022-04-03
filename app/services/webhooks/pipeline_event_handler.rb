@@ -85,13 +85,6 @@ module Webhooks
       source_project_id != target_project_id
     end
 
-    # Config entry for particular ecosystem and directory
-    #
-    # @return [Hash]
-    def config
-      @config ||= project.config.entry(package_ecosystem: mr.package_ecosystem, directory: mr.directory)
-    end
-
     # Merge request
     #
     # @return [MergeRequest]

@@ -10,14 +10,7 @@ describe Api::ProjectsController, :aggregate_failures, {
   include_context "with dependabot helper"
 
   let(:path) { "/api/projects" }
-
-  let(:project) do
-    Project.new(
-      name: "#{Faker::Alphanumeric.unique.alpha(number: 5)}/#{Faker::Alphanumeric.unique.alpha(number: 5)}",
-      configuration: Configuration.new(updates: updates_config),
-      id: Faker::Number.number(digits: 10)
-    )
-  end
+  let(:project) { build(:project) }
 
   describe "#index" do
     before do
@@ -32,12 +25,10 @@ describe Api::ProjectsController, :aggregate_failures, {
     end
   end
 
-  describe "#show" do
-    before do
-      project.save!
-    end
+  describe "#show", :integration do
+    let(:project) { create(:project) }
 
-    it "returns single project", :integration do
+    it "returns single project" do
       get("#{path}/#{CGI.escape(project.name)}")
 
       expect_status(200)
@@ -67,12 +58,10 @@ describe Api::ProjectsController, :aggregate_failures, {
     end
   end
 
-  describe "#update" do
-    before do
-      project.save!
-    end
+  describe "#update", :integration do
+    let(:project) { create(:project) }
 
-    it "updates project", :integration do
+    it "updates project" do
       put_json("#{path}/#{project.id}", { name: "updated-name" })
 
       project.reload
@@ -83,16 +72,14 @@ describe Api::ProjectsController, :aggregate_failures, {
     end
   end
 
-  describe "#destroy" do
-    before do
-      allow(Dependabot::Projects::Remover).to receive(:call)
-    end
+  describe "#destroy", :integration do
+    let(:project) { create(:project) }
 
     it "removes registered project and jobs" do
       delete("#{path}/#{project.id}")
 
       expect_status(204)
-      expect(Dependabot::Projects::Remover).to have_received(:call).with(project.id)
+      expect(Project.where(id: project.id).first).to be_nil
     end
   end
 end

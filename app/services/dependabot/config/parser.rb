@@ -30,6 +30,7 @@ module Dependabot
       }.freeze
 
       # @param [String] config dependabot.yml configuration file
+      # @param [String] project name of the project
       def initialize(config, project)
         @config = config
         @project = project

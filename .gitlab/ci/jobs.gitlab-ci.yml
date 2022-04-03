@@ -23,11 +23,11 @@ include:
 .ruby_runner:
   image: ruby:2.7-bullseye
   variables:
-    BUNDLE_PATH: vendor/bundle
-    BUNDLE_FROZEN: "true"
     BUNDLE_SUPPRESS_INSTALL_USING_MESSAGES: "true"
   before_script:
-    - gem install bundler -v 2.3.10 --no-document
+    - unset BUNDLE_APP_CONFIG
+    - gem install bundler -v 2.3.9 --no-document
+    - bundle config set --local path vendor/bundle
     - bundle install
   cache:
     - *gem_cache
@@ -116,6 +116,8 @@ include:
 .cache_dependencies:
   stage: .pre
   extends: .ruby_runner
+  variables:
+    BUNDLE_FROZEN: "true"
   script:
     - .gitlab/script/download-coverage.sh
   cache:
@@ -196,6 +198,9 @@ include:
     MOCK_URL: http://gitlab:8081
     GITLAB_URL: http://gitlab:8080
     RSPEC_TAGS: system
+  before_script:
+    - !reference [.ruby_runner, before_script]
+    - .gitlab/script/build-bundler-helpers.sh
 
 .standalone:
   stage: test

@@ -31,6 +31,7 @@ group :test do
   gem "airborne", "~> 0.3.7"
   gem "allure-rspec", "~> 2.16.2"
   gem "capybara", "~> 3.36"
+  gem "factory_bot_rails", "~> 6.2"
   gem "faker", "~> 2.20"
   gem "httparty", "~> 0.20.0"
   gem "pry-byebug", "~> 3.9"
