@@ -21,8 +21,8 @@ RSpec.shared_context "with system helper" do
     resp = mock.verify
     aggregate_failures do
       expect(resp.dig(:mocks, :verified)).to eq(true), "Expected all mocks to be verified"
-      expect(resp.dig(:mocks, :all_used)).to eq(true), "Expected all mocks to be used"
-      expect(resp.dig(:history, :failures)).to eq(nil), "Expected to not have any mocked call errors"
+      expect(resp.dig(:mocks, :unused)).to eq(nil)
+      expect(resp.dig(:history, :failures)).to eq(nil)
     end
   end
 end

@@ -322,7 +322,7 @@ module Support
       YAML
     end
 
-    def branches_check_mock(dependency:)
+    def no_branch_mock(dependency:)
       <<~YAML
         - request:
             method: GET
@@ -340,6 +340,24 @@ module Support
       YAML
     end
 
+    def branch_mock(dependency:)
+      <<~YAML
+        - request:
+            method: GET
+            path:
+              matcher: ShouldStartWith
+              value: /api/v4/projects/#{project_name}/repository/branches/dependabot-bundler-#{dependency}
+          response:
+            status: 200
+            headers:
+              Content-Type: application/json
+            body: |
+              {
+                "name": "dependabot-bundler-#{dependency}"
+              }
+      YAML
+    end
+
     def create_commits_mock(dependency:)
       <<~YAML
         - request:
@@ -353,6 +371,61 @@ module Support
             headers:
               Content-Type: application/json
             body: "[]"
+      YAML
+    end
+
+    def mr_mock(iid:, update_to:)
+      <<~YAML
+        - request:
+            method: GET
+            path: /api/v4/projects/#{project_name}/merge_requests/#{iid}
+          response:
+            status: 200
+            headers:
+              Content-Type: application/json
+            body: |
+              {
+                "state": "opened",
+                "source_branch": "dependabot-bundler-#{update_to}",
+                "target_branch": "main",
+                "web_url": "#{AppConfig.gitlab_url}/#{project_name}/-/merge_requests/#{iid}"
+              }
+      YAML
+    end
+
+    def find_mr_mock(dependency:, id:, iid:, has_conflicts: true)
+      <<~YAML
+        - request:
+            path: /api/v4/projects/#{project_name}/merge_requests
+            method: GET
+            query_params:
+              source_branch:
+                matcher: ShouldStartWith
+                value: dependabot-bundler-#{dependency}
+              state:
+                matcher: ShouldNotEqual
+                value: closed
+          response:
+            status: 200
+            headers:
+              Content-Type: application/json
+            body: |
+              [
+                {
+                  "id": #{id},
+                  "iid": #{iid},
+                  "project_id": 32058529,
+                  "web_url": "#{AppConfig.gitlab_url}/#{project_name}/-/merge_requests/#{iid}",
+                  "reference": "!#{iid}",
+                  "references": {
+                    "short": "!#{iid}",
+                    "relative": "!#{iid}",
+                    "full": "#{project_name}!#{iid}"
+                  },
+                  "sha": "bd101cbfe6c71201abdb03e3193766de42f64560",
+                  "has_conflicts": #{has_conflicts}
+                }
+              ]
       YAML
     end
 
@@ -381,6 +454,19 @@ module Support
                   "full": "#{project_name}!#{iid}"
                 }
               }
+      YAML
+    end
+
+    def rebase_mock(iid:)
+      <<~YAML
+        - request:
+            path: /api/v4/projects/#{project_name}/merge_requests/#{iid}/rebase
+            method: PUT
+          response:
+            status: 200
+            headers:
+              Content-Type: application/json
+            body: ""
       YAML
     end
   end
