@@ -27,8 +27,8 @@ module Support
     #
     # @param [String] mock
     # @return [Hash]
-    def add(mock)
-      resp = self.class.post("/mocks", body: mock, headers: { "content-type" => "application/x-yaml" })
+    def add(*mock)
+      resp = self.class.post("/mocks", body: mock.join("\n"), headers: { "content-type" => "application/x-yaml" })
       response(resp)
     end
 

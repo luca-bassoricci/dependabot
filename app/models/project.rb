@@ -28,7 +28,7 @@ class Project
       forked_from_name: forked_from_name,
       webhook_id: webhook_id,
       web_url: web_url,
-      config: configuration.updates
+      config: configuration&.updates
     }
   end
 end

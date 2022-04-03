@@ -7,8 +7,8 @@ ENV["SETTINGS__PROJECT_REGISTRATION"] ||= "system_hook"
 
 require_relative "support/simplecov_helper"
 require_relative "support/dependabot_helper"
-require_relative "support/system_helper"
 require_relative "support/rake_helper"
+require_relative "support/system/system_helper"
 require_relative "../config/environment"
 
 require "rspec-sidekiq"
@@ -18,7 +18,8 @@ require "allure-rspec"
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 
 RSpec.configure do |config|
-  include Anyway::Testing::Helpers
+  config.include Anyway::Testing::Helpers
+  config.include FactoryBot::Syntax::Methods
 
   # Remove this line to enable support for ActiveRecord
   config.use_active_record = false
@@ -46,7 +47,8 @@ RSpec.configure do |config|
     env = {
       "SETTINGS__GITLAB_ACCESS_TOKEN" => "test_token",
       "SETTINGS__DEPENDABOT_URL" => "https://dependabot-gitlab.com",
-      "SETTINGS__GITLAB_URL" => ENV["GITLAB_URL"] || "http://localhost:8080"
+      "SETTINGS__GITLAB_URL" => ENV["GITLAB_URL"] || "http://localhost:8080",
+      "DEPENDABOT_NATIVE_HELPERS_PATH" => Rails.root.join("helpers").to_s
     }
 
     AppConfig.instance_variable_set(:@instance, nil)

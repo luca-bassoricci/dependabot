@@ -1,17 +1,42 @@
 # frozen_string_literal: true
 
-describe "Project", :system, type: :system, epic: :system do
+describe "Project", :system, type: :system, epic: :system, feature: :projects do
   include_context "with system helper"
   include_context "with dependabot helper"
 
+  let(:project_name) { repo }
+  let(:created_project) { Project.where(name: project_name).first }
+  let(:created_job) { created_project.update_jobs.first }
+
   before do
-    mock_project_create
+    mock.add(*mock_definitions)
   end
 
-  it "adds a project" do
-    post_json("/api/projects", { project: repo })
+  context "with configuration file", :aggregate_failures do
+    let(:mock_definitions) { [project_mock, hook_mock, set_hook_mock, present_config_mock, raw_config_mock] }
 
-    expect_status(200)
-    verify_mocks
+    it "adds a project" do
+      post_json("/api/projects", { project: project_name })
+
+      expect_status(200)
+      expect(created_project).to be_truthy
+      expect(created_job.package_ecosystem).to eq("bundler")
+      expect(created_job.directory).to eq("/")
+      expect_all_mocks_called
+    end
+  end
+
+  context "without configuration file", :aggregate_failures do
+    let(:mock_definitions) { [project_mock, hook_mock, set_hook_mock, missing_config_mock] }
+
+    it "adds project without configuration" do
+      post_json("/api/projects", { project: project_name })
+
+      expect_status(200)
+      expect(created_project).to be_truthy
+      expect(created_project.configuration).to be_nil
+      expect(created_job).to be_nil
+      expect_all_mocks_called
+    end
   end
 end
