@@ -21,10 +21,6 @@ describe Dependabot::Config::RegistriesParser, epic: :services, feature: :depend
       }
     end
 
-    before do
-      ENV["NPM_TEST_TOKEN"] = "test_token"
-    end
-
     it "returns parsed registries" do
       expect(parsed_registries).to eq(
         {
@@ -37,7 +33,7 @@ describe Dependabot::Config::RegistriesParser, epic: :services, feature: :depend
           "npm" => {
             "type" => "npm_registry",
             "registry" => "npm.pkg.github.com",
-            "token" => "test_token"
+            "token" => "${{NPM_TEST_TOKEN}}"
           }
         }
       )

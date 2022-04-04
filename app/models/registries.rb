@@ -2,12 +2,13 @@
 
 class Registries
   AUTH_FIELDS = %w[token key password].freeze
+  SECRET_PATTERN = /\${{(\S+)}}/.freeze
 
   def initialize(registries)
     @registries = registries
   end
 
-  delegate :values, :slice, to: :registries
+  delegate :values, :slice, to: :parsed_registries
 
   # Convert object to database compatible form
   #
@@ -23,17 +24,41 @@ class Registries
     self.class == other.class && registries == other.registries
   end
 
-  # Registries hash
-  #
-  # @return [Hash]
-  def to_h
-    registries
-  end
-
   protected
 
   # @return [Hash]
   attr_reader :registries
+
+  private
+
+  # Registries hash with evaluated auth fields
+  #
+  # @return [Hash]
+  def parsed_registries
+    @parsed_registries ||= registries.map do |name, registry|
+      [
+        name,
+        registry.map { |key, value| [key, env_value(name, key, value)] }.to_h
+      ]
+    end.to_h
+  end
+
+  # Fetch value from environment for auth field
+  #
+  # @param [String] registry_name
+  # @param [String] key
+  # @param [Object] value
+  # @return [Object]
+  def env_value(registry_name, key, value)
+    return value unless ["username", *AUTH_FIELDS].include?(key) && value.match?(SECRET_PATTERN)
+
+    env_val = ENV[value.match(SECRET_PATTERN)[1]] || ""
+    if env_val.blank?
+      ApplicationHelper.log(:warn, "Detected empty value for '#{key}' in configuration of '#{registry_name}' registry")
+    end
+
+    env_val
+  end
 
   class << self
     # Convert object to Config
@@ -67,18 +92,19 @@ class Registries
       end
     end
 
-    # Encrypt or decrypt auth fields in registries definition
+    # Encrypt or decrypt auth fields in registries definition if stored in plain text
     #
     # @param [Hash] registries
     # @param [Symbol] method
     # @return [Hash]
     def update_auth_fields(registries, method)
       registries.deep_dup.transform_values do |registry|
-        AUTH_FIELDS.each do |field|
-          registry[field] = EncryptHelper.send(method, registry[field]) if registry.key?(field)
-        end
-
-        registry
+        registry.map do |key, value|
+          [
+            key,
+            AUTH_FIELDS.include?(key) && !value.match?(SECRET_PATTERN) ? EncryptHelper.send(method, value) : value
+          ]
+        end.to_h
       end
     end
   end
