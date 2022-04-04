@@ -7,7 +7,6 @@ module Dependabot
     # Registries configuration parser
     #
     class RegistriesParser < ApplicationService
-      SECRET_PATTERN = /\${{(\S+)}}/.freeze
       TYPE_MAPPING = {
         "maven-repository" => { type: "maven_repository", url: "url" },
         "docker-registry" => { type: "docker_registry", url: "registry" },
@@ -118,8 +117,8 @@ module Dependabot
 
         {
           "type" => mapped_type[:type],
-          mapped_type[:url] => strip_protocol(type, env_value(registry[:url])),
-          **registry.except(:type, :url).map { |key, value| [key.to_s, env_value(value)] }.to_h
+          mapped_type[:url] => strip_protocol(type, registry[:url]),
+          **registry.except(:type, :url).transform_keys(&:to_s)
         }
       end
 

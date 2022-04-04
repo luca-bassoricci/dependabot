@@ -19,8 +19,38 @@ describe Configuration, :integration, epic: :models do
   end
 
   describe "#registries" do
-    it "returns persisted credentials" do
-      expect(project.configuration.registries.to_h).to eq(registries)
+    context "without value from environment variable" do
+      it "returns registries credentials" do
+        expect(project.configuration.registries.values).to eq(registries.values)
+      end
+    end
+
+    context "with value from environment variable" do
+      let(:password) { "docker-password" }
+
+      let(:registries) do
+        {
+          "dockerhub" => {
+            "type" => "docker_registry",
+            "registry" => "registry.hub.docker.com",
+            "username" => "octocat",
+            "password" => "${{DOCKERHUB_PASSWORD}}"
+          }
+        }
+      end
+
+      around do |example|
+        with_env("DOCKERHUB_PASSWORD" => password) { example.run }
+      end
+
+      it "returns registries credentials with correct password" do
+        expect(project.configuration.registries.values).to eq([{
+          "type" => "docker_registry",
+          "registry" => "registry.hub.docker.com",
+          "username" => "octocat",
+          "password" => password
+        }])
+      end
     end
   end
 end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Dependabot
-  # Git and registries credentials
+  # Gitlab and Github credentials
   #
   class Credentials < ApplicationService
     # Fetch credentials object
