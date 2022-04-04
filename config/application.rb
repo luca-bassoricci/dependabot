@@ -24,6 +24,7 @@ module DependabotGitlab
     DependabotLogger.logger("app").tap do |logger|
       config.logger = logger
       config.mongoid.logger = logger
+      config.log_level = AppConfig.log_level
     end
 
     config.after_initialize do
