@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 namespace :dependabot do # rubocop:disable Metrics/BlockLength
-  desc "update project dependencies"
+  desc "Update project dependencies"
   task(:update, %i[project package_ecosystem directory] => :environment) do |_task, args|
     blank_keys = %i[project package_ecosystem directory].reject { |key| args[key] }
     raise(ArgumentError, "#{blank_keys} must not be blank") unless blank_keys.empty?
@@ -25,7 +25,7 @@ namespace :dependabot do # rubocop:disable Metrics/BlockLength
     exit(1)
   end
 
-  desc "add dependency updates for repository"
+  desc "Add dependency updates for repository"
   task(:register, [:projects] => :environment) do |_task, args|
     args[:projects].split(" ").each do |project_name|
       ApplicationHelper.log(:info, "Registering project '#{project_name}'")
@@ -35,12 +35,12 @@ namespace :dependabot do # rubocop:disable Metrics/BlockLength
     end
   end
 
-  desc "remove dependency update for repository"
+  desc "Remove dependency update for repository"
   task(:remove, [:project] => :environment) do |_task, args|
     Dependabot::Projects::Remover.call(args[:project])
   end
 
-  desc "validate config file"
+  desc "Validate config file"
   task(:validate, [:project] => :environment) do |_task, args|
     ApplicationHelper.log(:info, "Validating config '#{DependabotConfig.config_filename}'")
     Dependabot::Config::Fetcher.call(args[:project], update_cache: true)
@@ -51,7 +51,7 @@ namespace :dependabot do # rubocop:disable Metrics/BlockLength
     exit(1)
   end
 
-  desc "check db connection"
+  desc "Check db connection"
   task(check_db: :environment) do
     include ApplicationHelper
 
@@ -68,7 +68,7 @@ namespace :dependabot do # rubocop:disable Metrics/BlockLength
     exit(1)
   end
 
-  desc "check redis connection"
+  desc "Check redis connection"
   task(check_redis: :environment) do
     include ApplicationHelper
 
@@ -82,7 +82,7 @@ namespace :dependabot do # rubocop:disable Metrics/BlockLength
     exit(1)
   end
 
-  desc "check pending migrations"
+  desc "Check pending migrations"
   task(check_migrations: :environment) do
     include ApplicationHelper
 

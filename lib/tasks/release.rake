@@ -11,17 +11,17 @@ require_relative "../task_helpers/standalone_release_helper"
 # rubocop:disable Rails/RakeEnvironment
 
 namespace :release do
-  desc "create new release tag"
+  desc "Create new release tag"
   task(:app, [:version]) do |_task, args|
     ReleaseCreator.call(args[:version])
   end
 
-  desc "update helm chart version"
+  desc "Update helm chart version"
   task(:chart, [:version]) do |_task, args|
     ChartReleaseHelper.call(args[:version])
   end
 
-  desc "update standalone version"
+  desc "Update standalone version"
   task(:standalone, [:version]) do |_task, args|
     StandaloneReleaseHelper.call(args[:version])
   end
