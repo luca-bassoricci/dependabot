@@ -1,3 +1,42 @@
+## 0.17.0 (2022-04-04)
+
+### 🐞 Bug Fixes (5 changes)
+
+- [Allow replaces-base key in registries configuration](dependabot-gitlab/dependabot@b44838259fb4adcea927bdae8726bc3e85413cd4) by @andrcuns. See merge request dependabot-gitlab/dependabot!1433
+- [Correctly close obsolete merge requests](dependabot-gitlab/dependabot@d347d072ac74668b2e732aded409178811ed3f50) by @andrcuns. See merge request dependabot-gitlab/dependabot!1429
+- [Correctly handle forked project webhooks](dependabot-gitlab/dependabot@151782c1a5335ddc61dc6401578a4fa82244b6dd) by @andrcuns. See merge request dependabot-gitlab/dependabot!1418
+- [Correctly handle obsolete mr closing for forks](dependabot-gitlab/dependabot@5bbc0e713c55ad5ecb93e679efa7d57d7978677e) by @andrcuns. See merge request dependabot-gitlab/dependabot!1417
+- [Rebase fork merge requests on no conflicts](dependabot-gitlab/dependabot@de093bf39e9a4f4fd334409cf4efdc25d45924c8) by @andrcuns. See merge request dependabot-gitlab/dependabot!1414
+
+### 📦 Dependency updates (12 changes)
+
+- [dep: bump mongoid from 7.3.4 to 7.4.0](dependabot-gitlab/dependabot@c1614fcc173985a84d42770d583e658c02d9dc6d) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1427
+- [dep: bump puma from 5.6.2 to 5.6.4](dependabot-gitlab/dependabot@f55f1777917c2139d467eba745e8a0f4778bc995) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1428
+- [dep: bump lograge from 0.11.2 to 0.12.0](dependabot-gitlab/dependabot@5f43541012ac0e9f5bca2a37b6d75fc33801142e) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1426
+- [dep: bump dependabot-omnibus from 0.180.1 to 0.180.2](dependabot-gitlab/dependabot@2a8e48cec2e3bd14ac28eb44059d1304892eac69) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1424
+- [[BREAKING] dep: bump dependabot/dependabot-core from 0.180.0 to 0.180.1](dependabot-gitlab/dependabot@2468d28c80d045a40022020bdef610b0673599da) by @andrcuns. See merge request dependabot-gitlab/dependabot!1423
+- [dep-dev: bump docker from 20.10.13 to 20.10.14 in /.gitlab/docker/ci](dependabot-gitlab/dependabot@e1d66fdca9b4eaac427b021f43f53dd43f992282) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1422
+- [dep-dev: bump rubocop from 1.26.0 to 1.26.1](dependabot-gitlab/dependabot@afb0a7a77c073f7d52f63be382ad0531b5185cec) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1420
+- [dep: bump dependabot-omnibus from 0.179.0 to 0.180.0](dependabot-gitlab/dependabot@ed30a525d5d7b908ca91b74585256c6267de1121) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1408
+- [dep: bump sentry-rails, sentry-ruby and sentry-sidekiq](dependabot-gitlab/dependabot@89b25b2708bb539018eb1f6de8a6188b5c7719cc) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1409
+- [dep-dev: bump rubocop-rails from 2.14.1 to 2.14.2](dependabot-gitlab/dependabot@059a738877bad49be18fe2b5536e29a29f5f0cfe) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1412
+- [dep: bump dependabot-omnibus from 0.178.1 to 0.179.0](dependabot-gitlab/dependabot@625676825ac402ff5622ebc5b4a1ddacb620a86c) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1401
+- [dep-dev: bump rubocop-rails from 2.14.0 to 2.14.1](dependabot-gitlab/dependabot@aa6537b8d9ca73077695cc365bd1ee78ec4b0838) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1402
+
+### 🔧 CI changes (2 changes)
+
+- [Fix pipeline definitions for forked projects](dependabot-gitlab/dependabot@ba16ce5c7d3257e5c96249a08b4e342654f5c399) by @andrcuns. See merge request dependabot-gitlab/dependabot!1416
+- [Run all tests in parallel in single stage](dependabot-gitlab/dependabot@3a553c02cb3b8641de1d50fffa28cf2bca996150) by @andrcuns. See merge request dependabot-gitlab/dependabot!1415
+
+### 🛠️ Chore (6 changes)
+
+- [Capitalise rake task descriptions](dependabot-gitlab/dependabot@f5ae611209cc5739cedef566ae8350d76e050efa) by @andrcuns.
+- [Mr update system spec](dependabot-gitlab/dependabot@f11f45e92597636368cd85cd8554d9dec58615cd) by @andrcuns. See merge request dependabot-gitlab/dependabot!1432
+- [Improve system test coverage](dependabot-gitlab/dependabot@ec5ac69b9d961ae6661180671a71c2b9a886b365) by @andrcuns. See merge request dependabot-gitlab/dependabot!1431
+- [Add tags for test reports](dependabot-gitlab/dependabot@ca63e1ee058a63e3cb9579fdb3dffdec22dafecc) by @andrcuns. See merge request dependabot-gitlab/dependabot!1430
+- [Add system test setup](dependabot-gitlab/dependabot@7200a87f2b632bfd11b16c563703a30d55f3e4a4) by @andrcuns. See merge request dependabot-gitlab/dependabot!1419
+- [Extract dependabot configuration in to separate model](dependabot-gitlab/dependabot@315fd495659ac030f9ccf345d5676e839c67aedc) by @andrcuns. See merge request dependabot-gitlab/dependabot!1404
+
 ## 0.16.0 (2022-03-16)
 
 ### 🚀 New features (2 changes)
