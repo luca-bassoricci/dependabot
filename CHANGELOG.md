@@ -1,3 +1,13 @@
+## 0.17.1 (2022-04-04)
+
+### 🔬 Improvements (1 change)
+
+- [Always evaluate private registries auth fields from environment variables](dependabot-gitlab/dependabot@eab98234d5905e356311ab426ef2e84f5d46a68a) by @andrcuns. See merge request dependabot-gitlab/dependabot!1434
+
+### 🐞 Bug Fixes (1 change)
+
+- [Add back log level rails config](dependabot-gitlab/dependabot@bd76e1fcb22667393c409741ef1dd73bdc26e66a) by @andrcuns. See merge request dependabot-gitlab/dependabot!1436
+
 ## 0.17.0 (2022-04-04)
 
 ### 🐞 Bug Fixes (5 changes)
