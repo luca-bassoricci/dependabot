@@ -65,6 +65,7 @@ module Dependabot
           required(:url).filled(:string)
           required(:username).filled(:string)
           required(:password).filled(:string)
+          optional(:"replaces-base").filled(:bool?) # used in python-index
         end
       end
 
@@ -78,6 +79,7 @@ module Dependabot
           required(:type).filled(:string)
           required(:url).filled(:string)
           required(:token).filled(:string)
+          optional(:"replaces-base").filled(:bool?) # used in python-index
         end
       end
 
@@ -152,10 +154,10 @@ module Dependabot
 
       # Fetch value from environment
       #
-      # @param [String] value
-      # @return [String]
+      # @param [String, Boolean] value
+      # @return [String, Boolean]
       def env_value(value)
-        return value unless value&.match?(SECRET_PATTERN)
+        return value unless value.is_a?(String) && value.match?(SECRET_PATTERN)
 
         ENV[value.match(SECRET_PATTERN)[1]] || ""
       end
