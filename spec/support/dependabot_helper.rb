@@ -2,7 +2,7 @@
 
 # Common objects and constants used in most specs
 RSpec.shared_context("with dependabot helper") do
-  let(:repo) { Faker::Alphanumeric.unique.alpha(number: 15) }
+  let(:project_name) { Faker::Alphanumeric.unique.alpha(number: 15) }
   let(:package_manager) { "bundler" }
   let(:raw_config) { File.read("spec/fixture/gitlab/responses/dependabot.yml") }
 
@@ -25,7 +25,7 @@ RSpec.shared_context("with dependabot helper") do
       provider: "gitlab",
       hostname: URI(AppConfig.gitlab_url),
       api_endpoint: "#{AppConfig.gitlab_url}/api/v4",
-      repo: repo,
+      repo: project_name,
       directory: "/",
       branch: "master"
     )

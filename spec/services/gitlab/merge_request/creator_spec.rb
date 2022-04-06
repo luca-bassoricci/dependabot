@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: :gitlab do
-  subject(:create) do
+  subject(:creator_call) do
     described_class.call(
       project: project,
       fetcher: fetcher,
@@ -13,7 +13,26 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
 
   include_context "with dependabot helper"
 
+  let(:config_yaml) do
+    <<~YAML
+      version: 2
+      updates:
+        - package-ecosystem: bundler
+          directory: "/"
+          schedule:
+            interval: weekly
+          assignees:
+            - john_doe
+          reviewers:
+            - john_smith
+          approvers:
+            - jane_smith
+          milestone: "0.0.1"
+    YAML
+  end
+
   let(:pr_creator) { instance_double("Dependabot::PullRequestCreator", gitlab_creator: gitlab_creator) }
+
   let(:gitlab_creator) do
     instance_double(
       "Dependabot::PullRequestCreator::Gitlab",
@@ -23,11 +42,9 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
     )
   end
 
-  let(:project) do
-    Project.new(name: repo, configuration: Configuration.new(updates: updates_config), forked_from_id: 1)
-  end
+  let(:project) { create(:project, config_yaml: config_yaml, name: project_name, forked_from_id: 1) }
 
-  let(:config_entry) { updates_config.first }
+  let(:config_entry) { project.configuration.entry(package_ecosystem: "bundler") }
   let(:commit_message) { "commit-message" }
   let(:source_branch) { "dependabot-bundler-.-master-config-2.2.1" }
   let(:milestone_id) { 1 }
@@ -123,15 +140,13 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
     allow(Gitlab::UserFinder).to receive(:call).with(config_entry[:assignees]) { assignees }
     allow(Gitlab::UserFinder).to receive(:call).with(config_entry[:reviewers]) { reviewers }
     allow(Gitlab::UserFinder).to receive(:call).with(config_entry[:approvers]) { approvers }
-    allow(Gitlab::MilestoneFinder).to receive(:call).with(repo, config_entry[:milestone]) { milestone_id }
+    allow(Gitlab::MilestoneFinder).to receive(:call).with(project.name, config_entry[:milestone]) { milestone_id }
     allow(Dependabot::PullRequestCreator).to receive(:new).with(**creator_args) { pr_creator }
-
-    project.save!
   end
 
   context "without existing older mr", :aggregate_failures do
     it "creates and persists merge request" do
-      expect(create).to eq(mr)
+      expect(creator_call).to eq(mr)
       expect(MergeRequest.find_by(project: project, id: mr.id).attributes.except("_id")).to eq(
         mr_db.attributes.except("_id")
       )
@@ -152,11 +167,11 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
     end
 
     it "closes old merge request and removes branch" do
-      expect(create).to eq(mr)
+      expect(creator_call).to eq(mr)
       expect(superseeded_mr.reload.state).to eq("closed")
-      expect(Gitlab::BranchRemover).to have_received(:call).with(repo, superseeded_mr.branch)
+      expect(Gitlab::BranchRemover).to have_received(:call).with(project.name, superseeded_mr.branch)
       expect(Gitlab::MergeRequest::Commenter).to have_received(:call).with(
-        repo,
+        project.name,
         superseeded_mr.iid,
         "This merge request has been superseeded by #{mr.web_url}"
       ).once

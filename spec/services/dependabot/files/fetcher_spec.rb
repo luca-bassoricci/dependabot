@@ -3,14 +3,14 @@
 describe Dependabot::Files::Fetcher, epic: :services, feature: :dependabot do
   subject do
     described_class.call(
-      project_name: repo,
-      config_entry: updates_config.first,
+      project_name: project.name,
+      config_entry: project.configuration.entry(package_ecosystem: "bundler"),
       repo_contents_path: nil,
-      registries: registries.values
+      registries: project.configuration.registries.values
     )
   end
 
-  include_context "with dependabot helper"
+  let(:project) { build(:project) }
 
   it { is_expected.to be_an_instance_of(Dependabot::Bundler::FileFetcher) }
 end

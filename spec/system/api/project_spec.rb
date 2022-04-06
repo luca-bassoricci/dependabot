@@ -2,10 +2,10 @@
 
 describe "Project", :system, type: :system, epic: :system, feature: :projects do
   include_context "with system helper"
-  include_context "with dependabot helper"
 
-  let(:project_name) { repo }
-  let(:created_project) { Project.where(name: project_name).first }
+  let(:project) { build(:project) }
+  let(:project_name) { project.name }
+  let(:created_project) { Project.where(name: project.name).first }
   let(:created_job) { created_project.update_jobs.first }
 
   before do
@@ -16,7 +16,7 @@ describe "Project", :system, type: :system, epic: :system, feature: :projects do
     let(:mock_definitions) { [project_mock, hook_mock, set_hook_mock, present_config_mock, raw_config_mock] }
 
     it "adds a project" do
-      post_json("/api/projects", { project: project_name })
+      post_json("/api/projects", { project: project.name })
 
       expect_status(200)
       expect(created_project).to be_truthy
@@ -30,7 +30,7 @@ describe "Project", :system, type: :system, epic: :system, feature: :projects do
     let(:mock_definitions) { [project_mock, hook_mock, set_hook_mock, missing_config_mock] }
 
     it "adds project without configuration" do
-      post_json("/api/projects", { project: project_name })
+      post_json("/api/projects", { project: project.name })
 
       expect_status(200)
       expect(created_project).to be_truthy

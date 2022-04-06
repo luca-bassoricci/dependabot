@@ -15,18 +15,30 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
     )
   end
 
-  let(:conflicts) { false }
-
-  let(:project) do
-    Project.new(name: repo, configuration: Configuration.new(updates: updates_config), forked_from_id: 1)
+  let(:fetcher) do
+    instance_double(
+      "Dependabot::FileFetcher",
+      files: "files",
+      commit: "commit",
+      source: Dependabot::Source.new(
+        provider: "gitlab",
+        hostname: URI(AppConfig.gitlab_url),
+        api_endpoint: "#{AppConfig.gitlab_url}/api/v4",
+        repo: project.name,
+        directory: "/",
+        branch: "master"
+      )
+    )
   end
 
+  let(:project) { create(:project, forked_from_id: target_project_id) }
   let(:source_branch) { "dependabot-bundler-.-master-config-2.2.1" }
   let(:target_branch) { "master" }
-  let(:config_entry) { updates_config.first }
+  let(:config_entry) { project.configuration.entry(package_ecosystem: "bundler") }
   let(:has_conflicts) { true }
   let(:target_project_id) { nil }
   let(:commit_message) { "update-commit" }
+  let(:conflicts) { false }
 
   let(:existing_mr) { mr }
   let(:closed_mr) { nil }
@@ -35,8 +47,8 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
   let(:mr) do
     Gitlab::ObjectifiedHash.new(
       web_url: "mr-url",
-      id: unique_id,
-      iid: unique_id,
+      id: Faker::Number.unique.number(digits: 10),
+      iid: Faker::Number.unique.number(digits: 10),
       sha: "5f92cc4d9939",
       has_conflicts: has_conflicts,
       references: { short: "!1" },
@@ -78,7 +90,7 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
     }
   end
 
-  def create(recreate: false)
+  def create_mr(recreate: false)
     described_class.call(
       project: project,
       fetcher: fetcher,
@@ -86,10 +98,6 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
       recreate: recreate,
       updated_dependency: updated_dependency
     )
-  end
-
-  def unique_id
-    Faker::Number.unique.number(digits: 10)
   end
 
   before do
@@ -110,8 +118,6 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
     allow(Gitlab::MergeRequest::Creator).to receive(:new).with(**creator_args) { mr_creator }
     allow(Dependabot::PullRequestUpdater).to receive(:new).with(**updater_args) { pr_updater }
     allow(Gitlab::MergeRequest::Commenter).to receive(:call)
-
-    project.save!
   end
 
   describe "standalone", :aggregate_failures do
@@ -123,7 +129,7 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
 
     context "with auto-merge" do
       it "creates merge request and sets to be merged automatically" do
-        expect(create).to eq(mr)
+        expect(create_mr).to eq(mr)
         expect(mr_creator).to have_received(:call)
         expect(gitlab).to have_received(:accept_merge_request).with(
           mr.project_id,
@@ -137,7 +143,7 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
       let(:auto_merge_rules) { nil }
 
       it "creates merge request and doesn't set to be merged automatically" do
-        expect(create).to eq(mr)
+        expect(create_mr).to eq(mr)
         expect(mr_creator).to have_received(:call)
         expect(gitlab).not_to have_received(:accept_merge_request)
       end
@@ -151,7 +157,7 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
 
       context "without fork" do
         it "gets created in same project" do
-          expect(create).to eq(mr)
+          expect(create_mr).to eq(mr)
           expect(mr_creator).to have_received(:call)
           expect(gitlab).not_to have_received(:accept_merge_request)
         end
@@ -178,7 +184,7 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
         end
 
         it "gets created in forked project" do
-          expect(create).to eq(mr)
+          expect(create_mr).to eq(mr)
           expect(mr_creator).to have_received(:call)
           expect(gitlab).not_to have_received(:accept_merge_request)
         end
@@ -189,7 +195,7 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
       let(:create_mr_return) { nil }
 
       it "gets updated" do
-        expect(create).to eq(mr)
+        expect(create_mr).to eq(mr)
         expect(pr_updater).to have_received(:update)
       end
     end
@@ -198,7 +204,7 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
       let(:closed_mr) { mr }
 
       it "skips mr creation" do
-        expect(create).to eq(nil)
+        expect(create_mr).to eq(nil)
         expect(mr_creator).not_to have_received(:call)
         expect(pr_updater).not_to have_received(:update)
         expect(gitlab).not_to have_received(:accept_merge_request)
@@ -214,12 +220,12 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
       end
 
       it "skips updating" do
-        expect(create).to eq(mr)
+        expect(create_mr).to eq(mr)
         expect(pr_updater).not_to have_received(:update)
       end
 
       it "updates on recreate flag" do
-        expect(create(recreate: true)).to eq(mr)
+        expect(create_mr(recreate: true)).to eq(mr)
         expect(pr_updater).to have_received(:update)
       end
     end
@@ -233,13 +239,13 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
       end
 
       it "skips updating" do
-        expect(create).to eq(mr)
+        expect(create_mr).to eq(mr)
         expect(pr_updater).not_to have_received(:update)
         expect(gitlab).not_to have_received(:rebase_merge_request)
       end
 
       it "updates on recreate flag" do
-        expect(create(recreate: true)).to eq(mr)
+        expect(create_mr(recreate: true)).to eq(mr)
         expect(pr_updater).to have_received(:update)
       end
     end
@@ -253,7 +259,7 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
       end
 
       it "triggers merge request rebase" do
-        expect(create).to eq(mr)
+        expect(create_mr).to eq(mr)
         expect(pr_updater).not_to have_received(:update)
         expect(gitlab).to have_received(:rebase_merge_request)
       end
@@ -268,12 +274,12 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
       end
 
       it "skips updating" do
-        expect(create).to eq(mr)
+        expect(create_mr).to eq(mr)
         expect(pr_updater).not_to have_received(:update)
       end
 
       it "recreates on recreate flag" do
-        expect(create(recreate: true)).to eq(mr)
+        expect(create_mr(recreate: true)).to eq(mr)
         expect(pr_updater).to have_received(:update)
       end
     end
@@ -287,12 +293,12 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
       end
 
       it "recreates on conflict" do
-        expect(create).to eq(mr)
+        expect(create_mr).to eq(mr)
         expect(pr_updater).to have_received(:update)
       end
 
       it "recreates on recreate flag" do
-        expect(create(recreate: true)).to eq(mr)
+        expect(create_mr(recreate: true)).to eq(mr)
         expect(pr_updater).to have_received(:update)
       end
     end
@@ -306,7 +312,7 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
       end
 
       it "recreates on conflict" do
-        expect(create).to eq(mr)
+        expect(create_mr).to eq(mr)
         expect(pr_updater).to have_received(:update)
       end
     end
@@ -328,7 +334,7 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
         let(:gitlab_error) { Gitlab::Error::Conflict.new(response_mock) }
 
         it "rescues error and performs mr update" do
-          expect(create).to eq(mr)
+          expect(create_mr).to eq(mr)
           expect(pr_updater).to have_received(:update)
         end
       end
@@ -337,7 +343,7 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
         let(:gitlab_error) { Gitlab::Error::NotFound.new(response_mock) }
 
         it "rescues error and returns mr" do
-          expect(create).to eq(mr)
+          expect(create_mr).to eq(mr)
           expect(pr_updater).not_to have_received(:update)
         end
       end
@@ -350,7 +356,7 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
         end
 
         it "raises initial error" do
-          expect { create }.to raise_error(Gitlab::Error::ServiceUnavailable)
+          expect { create_mr }.to raise_error(Gitlab::Error::ServiceUnavailable)
         end
       end
     end

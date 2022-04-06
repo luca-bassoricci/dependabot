@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dependabot, integration: true do
-  subject(:update) { described_class.call(project_name: repo, mr_iid: mr.iid, recreate: recreate) }
+  subject(:update) { described_class.call(project_name: project.name, mr_iid: mr.iid, recreate: recreate) }
 
   include_context "with dependabot helper"
 
@@ -9,33 +9,26 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
   let(:fetcher) { instance_double("Dependabot::FileFetcher", files: "files", source: "source", commit: "commit") }
   let(:pr_updater) { instance_double("Dependabot::PullRequestUpdater", update: nil) }
 
-  let(:conflicts) { false }
-  let(:recreate) { false }
-
   let(:project) do
-    Project.new(name: repo, configuration: Configuration.new(updates: updates_config, registries: registries))
+    create(
+      :project_with_mr,
+      dependency: "config",
+      commit_message: "original-commit",
+      update_to: update_to_versions,
+      branch: branch
+    )
   end
 
-  let(:config_entry) { updates_config.first }
+  let(:mr) { project.merge_requests.first }
+  let(:config_entry) { project.configuration.entry(package_ecosystem: "bundler") }
   let(:update_to_versions) { updated_dependency.current_versions }
   let(:gitlab_mr) { Gitlab::ObjectifiedHash.new(iid: mr.iid, state: state, web_url: "url", has_conflicts: conflicts) }
   let(:dependencies) { [instance_double("Dependabot::Dependency", name: "config")] }
   let(:state) { "opened" }
   let(:dependency_state) { Dependabot::Dependencies::UpdateChecker::HAS_UPDATES }
   let(:branch) { "update-branch" }
-
-  let(:mr) do
-    MergeRequest.new(
-      project: project,
-      iid: 1,
-      package_ecosystem: config_entry[:package_ecosystem],
-      directory: config_entry[:directory],
-      main_dependency: "config",
-      commit_message: "original-commit",
-      update_to: update_to_versions,
-      branch: branch
-    )
-  end
+  let(:conflicts) { false }
+  let(:recreate) { false }
 
   let(:updated_dependency) do
     Dependabot::Dependencies::UpdatedDependency.new(
@@ -65,7 +58,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
     allow(Gitlab).to receive(:client) { gitlab }
     allow(Dependabot::Files::Fetcher).to receive(:call)
       .with(
-        project_name: repo,
+        project_name: project.name,
         config_entry: config_entry,
         repo_contents_path: nil,
         registries: registries.values
@@ -92,9 +85,6 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
       .and_return(updated_dependency)
 
     allow(Dependabot::PullRequestUpdater).to receive(:new).with(**updater_args) { pr_updater }
-
-    project.save!
-    mr.save!
   end
 
   context "with successfull update", :aggregate_failures do
@@ -102,7 +92,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
       it "rebases merge request" do
         update
 
-        expect(gitlab).to have_received(:rebase_merge_request).with(repo, mr.iid)
+        expect(gitlab).to have_received(:rebase_merge_request).with(project.name, mr.iid)
         expect(pr_updater).not_to have_received(:update)
       end
     end
@@ -170,7 +160,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
       it "closes existing merge request" do
         update
 
-        expect(Gitlab::BranchRemover).to have_received(:call).with(repo, branch)
+        expect(Gitlab::BranchRemover).to have_received(:call).with(project.name, branch)
         expect(mr.reload.state).to eq("closed")
       end
     end

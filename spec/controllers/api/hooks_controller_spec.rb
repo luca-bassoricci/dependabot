@@ -12,17 +12,7 @@ describe Api::HooksController, :aggregate_failures, type: :request, epic: :contr
   end
 
   context "with successful response" do
-    let(:project) { Project.new(name: "mike/diaspora", configuration: Configuration.new) }
-    let(:merge_request) do
-      MergeRequest.new(
-        iid: 1,
-        package_ecosystem: "bundler",
-        state: "closed",
-        auto_merge: false,
-        dependencies: "test",
-        project: project
-      )
-    end
+    let(:project) { build(:project, name: "mike/diaspora") }
 
     before do
       allow(Webhooks::PushEventHandler).to receive(:call) { project.to_hash }

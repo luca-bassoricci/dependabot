@@ -1,21 +1,38 @@
 # frozen_string_literal: true
 
+# rubocop:disable RSpec/NestedGroups
 describe Dependabot::Projects::Creator, integration: true, epic: :services, feature: :dependabot do
-  subject(:create_project) { described_class.call(repo) }
+  subject(:create_project) { described_class.call(project.name) }
 
-  include_context "with dependabot helper"
+  let(:config_yaml) do
+    <<~YAML
+      version: 2
+      registries:
+        dockerhub:
+          type: docker-registry
+          url: registry.hub.docker.com
+          username: octocat
+          password: password
+      updates:
+        - package-ecosystem: bundler
+          directory: "/"
+          schedule:
+            interval: weekly
+    YAML
+  end
 
-  let(:branch) { "master" }
   let(:gitlab) { instance_double("Gitlab::client") }
-  let(:project) { Project.new(name: repo) }
+  let(:project) { build(:project, config_yaml: config_yaml) }
+  let(:branch) { "master" }
   let(:hook_id) { Faker::Number.number(digits: 10) }
   let(:upstream_hook_id) { hook_id }
   let(:config_exists?) { true }
-  let(:config) { Configuration.new(updates: updates_config.map(&:deep_stringify_keys), registries: registries) }
+  let(:config_entry) { project.configuration.entry(package_ecosystem: "bundler") }
+  let(:registries) { project.configuration.registries }
 
   let(:gitlab_project) do
     Gitlab::ObjectifiedHash.new(
-      id: 1,
+      id: project.id,
       web_url: "project-url",
       default_branch: branch,
       forked_from_project: { id: 1 }
@@ -23,14 +40,14 @@ describe Dependabot::Projects::Creator, integration: true, epic: :services, feat
   end
 
   let(:persisted_project) do
-    Project.find_by(name: repo)
+    Project.find_by(name: project.name)
   end
 
   before do
     allow(Gitlab).to receive(:client) { gitlab }
-    allow(gitlab).to receive(:project).with(repo) { gitlab_project }
-    allow(Gitlab::ConfigFile::Checker).to receive(:call).with(repo, branch) { config_exists? }
-    allow(Gitlab::ConfigFile::Fetcher).to receive(:call).with(repo, branch) { raw_config }
+    allow(gitlab).to receive(:project).with(project.name) { gitlab_project }
+    allow(Gitlab::ConfigFile::Checker).to receive(:call).with(project.name, branch) { config_exists? }
+    allow(Gitlab::ConfigFile::Fetcher).to receive(:call).with(project.name, branch) { config_yaml }
     allow(Gitlab::Hooks::Creator).to receive(:call) { hook_id }
     allow(Gitlab::Hooks::Updater).to receive(:call) { hook_id }
     allow(Gitlab::Hooks::Finder).to receive(:call) { upstream_hook_id }
@@ -42,44 +59,69 @@ describe Dependabot::Projects::Creator, integration: true, epic: :services, feat
 
       it "creates new project and hook" do
         expect(create_project).to eq(persisted_project)
-        expect(persisted_project.name).to eq(repo)
-        expect(persisted_project.configuration).to eq(config)
+        expect(persisted_project.name).to eq(project.name)
+        expect(persisted_project.configuration.entry(package_ecosystem: "bundler")).to eq(config_entry)
+        expect(persisted_project.configuration.registries).to eq(registries)
         expect(persisted_project.webhook_id).to eq(hook_id)
       end
     end
 
     context "with hook creation disabled" do
-      it "skips hook creation" do
-        with_env("SETTINGS__CREATE_PROJECT_HOOK" => "false") do
-          create_project
+      around do |example|
+        with_env("SETTINGS__CREATE_PROJECT_HOOK" => "false") { example.run }
+      end
 
-          expect(persisted_project.webhook_id).to be_nil
-        end
+      it "skips hook creation" do
+        create_project
+
+        expect(persisted_project.webhook_id).to be_nil
       end
     end
 
     context "with existing project", :aggregate_failures do
-      it "updates existing project and hook" do
-        project.webhook_id = hook_id
-        project.save!
+      context "with out of sync hooks" do
+        it "updates existing project and hook" do
+          project.webhook_id = hook_id
+          project.save!
 
-        expect(create_project).to eq(persisted_project)
-        expect(persisted_project.configuration).to eq(config)
+          expect(create_project).to eq(persisted_project)
 
-        expect(Gitlab::Hooks::Updater).to have_received(:call).with(repo, branch, hook_id)
-        expect(Gitlab::Hooks::Creator).not_to have_received(:call)
-        expect(Gitlab::Hooks::Finder).not_to have_received(:call)
+          expect(Gitlab::Hooks::Updater).to have_received(:call).with(project.name, branch, hook_id)
+          expect(Gitlab::Hooks::Creator).not_to have_received(:call)
+          expect(Gitlab::Hooks::Finder).not_to have_received(:call)
+        end
+
+        it "updates existing upstream hook and local webhook id" do
+          project.save!
+
+          expect(create_project).to eq(persisted_project)
+          expect(persisted_project.webhook_id).to eq(upstream_hook_id)
+
+          expect(Gitlab::Hooks::Updater).to have_received(:call).with(project.name, branch, hook_id)
+          expect(Gitlab::Hooks::Creator).not_to have_received(:call)
+        end
       end
 
-      it "updates existing upstream hook and local webhook id" do
-        project.save!
+      context "with out of sync config" do
+        let(:config_yaml) do
+          <<~YAML
+            version: 2
+            updates:
+              - package-ecosystem: bundler
+                directory: "/test"
+                schedule:
+                  interval: weekly
+          YAML
+        end
 
-        expect(create_project).to eq(persisted_project)
-        expect(persisted_project.configuration).to eq(config)
-        expect(persisted_project.webhook_id).to eq(upstream_hook_id)
+        it "updates config" do
+          project.save!
 
-        expect(Gitlab::Hooks::Updater).to have_received(:call).with(repo, branch, hook_id)
-        expect(Gitlab::Hooks::Creator).not_to have_received(:call)
+          expect(create_project).to eq(persisted_project)
+          expect(persisted_project.configuration.entry(package_ecosystem: "bundler")).to eq(
+            Dependabot::Config::Parser.call(config_yaml, project.name)[:updates].first
+          )
+        end
       end
     end
   end
@@ -107,3 +149,4 @@ describe Dependabot::Projects::Creator, integration: true, epic: :services, feat
     end
   end
 end
+# rubocop:enable RSpec/NestedGroups
