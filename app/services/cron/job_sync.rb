@@ -45,7 +45,7 @@ module Cron
 
     # Persist project jobs
     #
-    # @return [Sidekiq::Cron::Job]
+    # @return [UpdateJob]
     def saved_project_jobs
       @saved_project_jobs ||= config.updates.map { |opts| save_project_job(opts) }
     end
@@ -68,7 +68,7 @@ module Cron
       ).tap(&:save)
 
       UpdateJob.find_or_create_by(
-        project_id: project._id,
+        project: project,
         package_ecosystem: package_ecosystem,
         directory: directory
       ).tap do |job|

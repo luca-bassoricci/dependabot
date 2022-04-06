@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
-  subject(:parser) { described_class.call(config_yml, repo) }
+  subject(:parser) { described_class.call(config_yml, project_name) }
 
   include_context "with dependabot helper"
 

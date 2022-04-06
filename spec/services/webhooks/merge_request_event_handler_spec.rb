@@ -1,37 +1,41 @@
 # frozen_string_literal: true
 
 describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services, feature: :webhooks do
-  include_context "with dependabot helper"
-
   let(:gitlab) do
     instance_double("Gitlab::Client", create_branch: nil, accept_merge_request: nil, rebase_merge_request: nil)
   end
 
-  let(:mr_iid) { 1 }
-  let(:args) { { project_name: repo, mr_iid: mr_iid, action: action, merge_status: "can_be_merged" } }
-
-  let(:config_entry) { updates_config.first }
-  let(:config) { Configuration.new(updates: updates_config) }
-
-  let(:project) do
-    Project.new(
-      name: repo,
-      configuration: config
-    )
+  let(:config_yaml) do
+    <<~YAML
+      version: 2
+      updates:
+        - package-ecosystem: bundler
+          directory: "/"
+          schedule:
+            interval: weekly
+          rebase-strategy:
+            strategy: #{rebase_strategy}
+            on-approval: #{rebase_on_approval}
+    YAML
   end
 
-  let(:merge_request) do
-    MergeRequest.new(
-      project: project,
-      directory: config_entry[:directory],
-      iid: 1,
-      package_ecosystem: config_entry[:package_ecosystem],
+  let(:project) do
+    create(
+      :project_with_mr,
+      config_yaml: config_yaml,
       state: "opened",
       auto_merge: false,
       update_from: "test-0.1",
       branch: "dep-update"
     )
   end
+
+  let(:merge_request) { project.merge_requests.first }
+  let(:config_entry) { project.configuration.entry(package_ecosystem: "bundler") }
+  let(:mr_iid) { merge_request.iid }
+  let(:args) { { project_name: project.name, mr_iid: mr_iid, action: action, merge_status: "can_be_merged" } }
+  let(:rebase_strategy) { "auto" }
+  let(:rebase_on_approval) { false }
 
   let(:open_merge_request) do
     MergeRequest.new(
@@ -81,15 +85,12 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
   before do
     allow(Gitlab).to receive(:client) { gitlab }
     allow(MergeRequestUpdateJob).to receive(:perform_later)
-
-    project.save!
-    merge_request.save!
   end
 
   context "with mr reopen action", :aggregate_failures do
-    let(:mr_iid) { 5 }
-    let(:action) { "reopen" }
     let(:mr) { closed_merge_request }
+    let(:mr_iid) { closed_merge_request.iid }
+    let(:action) { "reopen" }
 
     before do
       allow(Dependabot::MergeRequest::UpdateService).to receive(:call)
@@ -156,15 +157,13 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
       it "closes saved mr and triggers update of open mrs for same package_ecosystem" do
         described_class.call(**args)
 
-        expect(MergeRequestUpdateJob).to have_received(:perform_later).with(repo, open_merge_request.iid)
+        expect(MergeRequestUpdateJob).to have_received(:perform_later).with(project.name, open_merge_request.iid)
         expect(merge_request.reload.state).to eq("merged")
       end
     end
 
     context "with auto-rebase disabled" do
-      let(:config) do
-        Configuration.new(updates: [updates_config.first.merge({ rebase_strategy: { strategy: "none" } })])
-      end
+      let(:rebase_strategy) { "none" }
 
       it "skips update for auto-rebase: none option" do
         described_class.call(**args)
@@ -176,24 +175,13 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
 
   context "with mr approved action" do
     let(:action) { "approved" }
-    let(:config) do
-      Configuration.new(
-        updates: [
-          updates_config.first.merge(
-            {
-              rebase_strategy: {
-                on_approval: true, strategy: "none"
-              }
-            }
-          )
-        ]
-      )
-    end
+    let(:rebase_strategy) { "auto" }
+    let(:rebase_on_approval) { true }
 
     it "rebases merge request" do
       described_class.call(**args)
 
-      expect(gitlab).to have_received(:rebase_merge_request).with(repo, merge_request.iid)
+      expect(gitlab).to have_received(:rebase_merge_request).with(project.name, merge_request.iid)
     end
   end
 end

@@ -1,55 +1,68 @@
 # frozen_string_literal: true
 
 describe Configuration, :integration, epic: :models do
-  subject(:config) { described_class.new(updates: updates_config, registries: registries) }
+  let!(:project) { create(:project, config_yaml: config_yaml) }
 
-  include_context "with dependabot helper"
+  let(:persisted_project) { Project.find_by(name: project.name) }
+  let(:password) { "docker-password" }
+  let(:parsed_password) { password }
 
-  let(:project) { Project.find_by(name: repo) }
-  let(:password) { "password" }
-
-  before do
-    Project.create!(name: repo, configuration: config)
+  let(:config_yaml) do
+    <<~YAML
+      version: 2
+      registries:
+        dockerhub:
+          type: docker-registry
+          url: registry.hub.docker.com
+          username: octocat
+          password: #{password}
+      updates:
+        - package-ecosystem: bundler
+          directory: "/"
+          schedule:
+            interval: weekly
+    YAML
   end
 
-  describe "#updates" do
+  let(:registries) do
+    {
+      "dockerhub" => {
+        "type" => "docker_registry",
+        "registry" => "registry.hub.docker.com",
+        "username" => "octocat",
+        "password" => parsed_password
+      }
+    }
+  end
+
+  describe "#updates", feature: "updates config" do
     it "returns persisted config" do
-      expect(project.configuration.entry(package_ecosystem: "bundler")).to eq(updates_config.first)
+      expect(
+        persisted_project.configuration.entry(package_ecosystem: "bundler").slice(:package_ecosystem, :directory)
+      ).to eq(
+        package_ecosystem: "bundler",
+        directory: "/"
+      )
     end
   end
 
-  describe "#registries" do
+  describe "#registries", feature: "registries config" do
     context "without value from environment variable" do
       it "returns registries credentials" do
-        expect(project.configuration.registries.values).to eq(registries.values)
+        expect(persisted_project.configuration.registries.values).to eq(registries.values)
       end
     end
 
     context "with value from environment variable" do
-      let(:password) { "docker-password" }
-
-      let(:registries) do
-        {
-          "dockerhub" => {
-            "type" => "docker_registry",
-            "registry" => "registry.hub.docker.com",
-            "username" => "octocat",
-            "password" => "${{DOCKERHUB_PASSWORD}}"
-          }
-        }
-      end
+      let(:password) { "${{DOCKERHUB_PASSWORD}}" }
+      let(:parsed_password) { "docker-password" }
 
       around do |example|
-        with_env("DOCKERHUB_PASSWORD" => password) { example.run }
+        with_env("DOCKERHUB_PASSWORD" => parsed_password) { example.run }
       end
 
       it "returns registries credentials with correct password" do
-        expect(project.configuration.registries.values).to eq([{
-          "type" => "docker_registry",
-          "registry" => "registry.hub.docker.com",
-          "username" => "octocat",
-          "password" => password
-        }])
+        expect(persisted_project.configuration.registries.values).to eq(registries.values)
       end
     end
   end

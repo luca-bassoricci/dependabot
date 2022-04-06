@@ -3,7 +3,7 @@
 describe Dependabot::UpdateService, :integration, epic: :services, feature: :dependabot do
   subject(:update_dependencies) do
     described_class.call(
-      project_name: repo,
+      project_name: project.name,
       package_ecosystem: package_manager,
       directory: "/",
       dependency_name: dependency_name
@@ -11,6 +11,25 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
   end
 
   include_context "with dependabot helper"
+
+  let(:config_yaml) do
+    <<~YAML
+      version: 2
+      fork: #{forked_project}
+      registries:
+        dockerhub:
+          type: docker-registry
+          url: registry.hub.docker.com
+          username: octocat
+          password: password
+      updates:
+        - package-ecosystem: bundler
+          directory: "/"
+          schedule:
+            interval: weekly
+          open-pull-requests-limit: #{mr_limit}
+    YAML
+  end
 
   let(:gitlab) do
     instance_double("Gitlab::client", project: Gitlab::ObjectifiedHash.new({
@@ -22,11 +41,13 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
     instance_double("Dependabot::FileFetcher", files: "files", source: "source")
   end
 
+  let(:config) { project.configuration }
+  let(:config_entry) { config.entry(package_ecosystem: "bundler") }
+
   let(:branch) { "master" }
-  let(:config) { Configuration.new(updates: updates_config, registries: registries) }
-  let(:config_entry) { config.updates.first }
-  let(:project) { Project.new(name: repo, configuration: config) }
   let(:dependency_name) { nil }
+  let(:mr_limit) { 5 }
+  let(:forked_project) { false }
 
   let(:mr) do
     Gitlab::ObjectifiedHash.new(iid: 1)
@@ -88,7 +109,7 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
   before do
     allow(Dependabot::Files::Fetcher).to receive(:call)
       .with(
-        project_name: repo,
+        project_name: project.name,
         config_entry: config_entry,
         repo_contents_path: nil,
         registries: registries.values
@@ -129,9 +150,7 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
   end
 
   context "with deployed version" do
-    before do
-      project.save!
-    end
+    let(:project) { create(:project, config_yaml: config_yaml) }
 
     context "without specific dependency", :aggregate_failures do
       it "runs dependency updates for all defined dependencies" do
@@ -153,15 +172,9 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
     end
 
     context "with dependency already up to date", :aggregate_failures do
-      let(:updated_rspec) do
-        Dependabot::Dependencies::UpdatedDependency.new(
-          name: "rspec",
-          state: Dependabot::Dependencies::UpdateChecker::UP_TO_DATE
-        )
-      end
-
-      let(:saved_mr) do
-        MergeRequest.new(
+      let!(:saved_mr) do
+        create(
+          :merge_request,
           project: project,
           id: 1,
           iid: 1,
@@ -172,25 +185,28 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
         )
       end
 
+      let(:updated_rspec) do
+        Dependabot::Dependencies::UpdatedDependency.new(
+          name: "rspec",
+          state: Dependabot::Dependencies::UpdateChecker::UP_TO_DATE
+        )
+      end
+
       before do
         allow(Gitlab::BranchRemover).to receive(:call)
-
-        saved_mr.save!
       end
 
       it "closes mr for up to date dependency" do
         update_dependencies
 
         expect(saved_mr.reload.state).to eq("closed")
-        expect(Gitlab::BranchRemover).to have_received(:call).with(repo, saved_mr.branch)
+        expect(Gitlab::BranchRemover).to have_received(:call).with(project.name, saved_mr.branch)
       end
     end
 
     # rubocop:disable RSpec/NestedGroups
     context "with mr limit" do
-      let(:config) do
-        Configuration.new(updates: [updates_config.first.merge(open_merge_requests_limit: 2)], registries: registries)
-      end
+      let(:mr_limit) { 2 }
 
       let(:second_mr) { Gitlab::ObjectifiedHash.new(iid: 2) }
       let(:third_mr) { Gitlab::ObjectifiedHash.new(iid: 3) }
@@ -290,10 +306,10 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
   end
 
   context "with errors" do
+    let(:project) { create(:project, config_yaml: config_yaml) }
+
     before do
       allow(Dependabot::Files::Parser).to receive(:call).and_raise(error)
-
-      project.save!
     end
 
     context "with github too many requests error" do
@@ -334,13 +350,14 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
   end
 
   context "with standalone version" do
+    let(:project) { build(:project, config_yaml: config_yaml) }
     let(:arg_keys) { %i[fetcher config updated_dependency] }
     let(:create_calls) { [] }
 
     before do
       allow(Gitlab).to receive(:client) { gitlab }
 
-      allow(Dependabot::Config::Fetcher).to receive(:call).with(repo) { config }
+      allow(Dependabot::Config::Fetcher).to receive(:call).with(project.name) { config }
       allow(Dependabot::MergeRequest::CreateService).to receive(:call) do |args|
         create_calls << args
         mr
@@ -358,15 +375,13 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
         expect(Dependabot::MergeRequest::CreateService).to have_received(:call).twice
         expect(create_calls.first).to include(rspec_mr_args.slice(:fetcher, :config, :updated_dependency))
         expect(create_calls.last).to include(config_mr_args.slice(:fetcher, :config, :updated_dependency))
-        expect(create_calls.first[:project].name).to eq(repo)
+        expect(create_calls.first[:project].name).to eq(project.name)
         expect(create_calls.first[:project].forked_from_id).to be_nil
       end
     end
 
     context "with fork configuration" do
-      before do
-        config_entry[:fork] = true
-      end
+      let(:forked_project) { true }
 
       it "run dependency update for forked repository" do
         update_dependencies

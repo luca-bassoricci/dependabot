@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 describe Gitlab::Hooks::Creator, epic: :services, feature: :gitlab do
-  include_context "with dependabot helper"
-
-  let(:id) { Faker::Number.number(digits: 10) }
   let(:gitlab) { instance_double("Gitlab::Client") }
+  let(:project_name) { "project_name" }
   let(:branch) { "master" }
   let(:dependabot_url) { "https://test.com" }
   let(:hook_url) { "#{AppConfig.dependabot_url}/api/hooks" }
+  let(:id) { 1 }
+
   let(:hook_args) do
     {
       merge_requests_events: true,
@@ -25,8 +25,8 @@ describe Gitlab::Hooks::Creator, epic: :services, feature: :gitlab do
 
   it "creates webhook" do
     aggregate_failures do
-      expect(described_class.call(repo, branch)).to eq(id)
-      expect(gitlab).to have_received(:add_project_hook).with(repo, hook_url, hook_args)
+      expect(described_class.call(project_name, branch)).to eq(id)
+      expect(gitlab).to have_received(:add_project_hook).with(project_name, hook_url, hook_args)
     end
   end
 end

@@ -3,10 +3,8 @@
 describe Webhooks::PushEventHandler, :aggregate_failures, integration: true, epic: :services, feature: :webhooks do
   subject { described_class }
 
-  include_context "with dependabot helper"
-
-  let(:job) { instance_double("Sidekiq::Cron::Job", name: "#{repo}:bundler:/", destroy: true) }
-  let(:project) { Project.new(name: repo, configuration: Configuration.new(updates: updates_config)) }
+  let(:job) { instance_double("Sidekiq::Cron::Job", name: "#{project.name}:bundler:/", destroy: true) }
+  let(:project) { create(:project) }
 
   def commits(added: [], modified: [], removed: [])
     [{
@@ -20,13 +18,11 @@ describe Webhooks::PushEventHandler, :aggregate_failures, integration: true, epi
     allow(Sidekiq::Cron::Job).to receive(:all)
     allow(Cron::JobSync).to receive(:call)
     allow(Dependabot::Projects::Creator).to receive(:call) { project }
-
-    project.save!
   end
 
   context "with non config changes" do
     it "skips scheduling jobs" do
-      described_class.call(project_name: repo, commits: commits)
+      described_class.call(project_name: project.name, commits: commits)
 
       expect(Sidekiq::Cron::Job).not_to have_received(:all)
       expect(Cron::JobSync).not_to have_received(:call)
@@ -39,18 +35,18 @@ describe Webhooks::PushEventHandler, :aggregate_failures, integration: true, epi
     end
 
     it "removes project" do
-      described_class.call(project_name: repo, commits: commits(removed: [DependabotConfig.config_filename]))
+      described_class.call(project_name: project.name, commits: commits(removed: [DependabotConfig.config_filename]))
 
       expect(job).to have_received(:destroy)
-      expect(Project.where(name: repo).first).to be_nil
+      expect(Project.where(name: project.name).first).to be_nil
     end
   end
 
   context "with config update" do
     it "triggers dependency update" do
-      described_class.call(project_name: repo, commits: commits(modified: [DependabotConfig.config_filename]))
+      described_class.call(project_name: project.name, commits: commits(modified: [DependabotConfig.config_filename]))
 
-      expect(Dependabot::Projects::Creator).to have_received(:call).with(repo)
+      expect(Dependabot::Projects::Creator).to have_received(:call).with(project.name)
       expect(Cron::JobSync).to have_received(:call).with(project)
     end
   end

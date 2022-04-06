@@ -5,19 +5,12 @@ describe DependencyUpdateJob, :integration, type: :job, epic: :jobs, feature: "d
 
   subject(:job) { described_class }
 
-  let(:project) { Project.new(name: args["project_name"]) }
-
-  let(:update_job) do
-    UpdateJob.find_by(
-      project_id: project._id,
-      package_ecosystem: args["package_ecosystem"],
-      directory: args["directory"]
-    )
-  end
+  let(:project) { create(:project) }
+  let(:update_job) { project.update_jobs.first }
 
   let(:args) do
     {
-      "project_name" => Faker::Alphanumeric.unique.alpha(number: 15),
+      "project_name" => project.name,
       "package_ecosystem" => "bundler",
       "directory" => "/"
     }
@@ -25,8 +18,6 @@ describe DependencyUpdateJob, :integration, type: :job, epic: :jobs, feature: "d
 
   before do
     allow(Dependabot::UpdateService).to receive(:call)
-
-    project.save!
   end
 
   context "without errors" do
@@ -40,7 +31,7 @@ describe DependencyUpdateJob, :integration, type: :job, epic: :jobs, feature: "d
       perform_enqueued_jobs { job.perform_later(args) }
 
       expect(Dependabot::UpdateService).to have_received(:call).with(args.symbolize_keys)
-      expect(update_job.last_executed).not_to be_nil
+      expect(update_job.reload.last_executed).not_to be_nil
     end
   end
 
@@ -51,7 +42,7 @@ describe DependencyUpdateJob, :integration, type: :job, epic: :jobs, feature: "d
 
     it "saves run errors", :aggregate_failures do
       expect { job.perform_now(args) }.to raise_error(StandardError, "Some error!")
-      expect(update_job.run_errors).to eq(["Some error!"])
+      expect(update_job.reload.run_errors).to eq(["Some error!"])
     end
   end
 end

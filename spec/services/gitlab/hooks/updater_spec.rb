@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 
 describe Gitlab::Hooks::Updater, epic: :services, feature: :gitlab do
-  include_context "with dependabot helper"
-
-  let(:id) { Faker::Number.number(digits: 10) }
+  let(:gitlab) { instance_double("Gitlab::Client") }
+  let(:project_name) { "project name" }
   let(:branch) { "master" }
   let(:token) { "token" }
-  let(:gitlab) { instance_double("Gitlab::Client") }
   let(:dependabot_url) { "http://test.com" }
   let(:hook_url) { "#{AppConfig.dependabot_url}/api/hooks" }
+  let(:id) { 1 }
 
   before do
     allow(CredentialsConfig).to receive(:gitlab_auth_token) { token }
@@ -17,9 +16,9 @@ describe Gitlab::Hooks::Updater, epic: :services, feature: :gitlab do
   end
 
   it "updates existing webhook" do
-    expect(described_class.call(repo, branch, id)).to eq(id)
+    expect(described_class.call(project_name, branch, id)).to eq(id)
     expect(gitlab).to have_received(:edit_project_hook).with(
-      repo,
+      project_name,
       id,
       hook_url,
       merge_requests_events: true,

@@ -5,28 +5,22 @@ describe Webhooks::PipelineEventHandler, integration: true, epic: :services, fea
 
   let(:gitlab) { instance_double("Gitlab::Client", accept_merge_request: nil) }
 
-  let(:project_name) { repo }
-  let(:auto_merge) { true }
-  let(:mr_iid) { 1 }
-
-  let(:project) { Project.new(name: project_name, configuration: Configuration.new(updates: updates_config)) }
-
-  let(:merge_request) do
-    MergeRequest.new(
-      project: project,
-      iid: mr_iid,
+  let(:project) do
+    create(
+      :project_with_mr,
       auto_merge: auto_merge,
-      package_ecosystem: "bundler",
-      directory: "/",
       state: "opened",
       update_from: "test-0.1"
     )
   end
 
+  let(:merge_request) { project.merge_requests.first }
+  let(:auto_merge) { true }
+
   # rubocop:disable Metrics/ParameterLists
   def event_result(
-    name: project_name,
-    iid: mr_iid,
+    name: project.name,
+    iid: merge_request.iid,
     source: "merge_request_event",
     status: "success",
     merge: "can_be_merged",
@@ -45,16 +39,13 @@ describe Webhooks::PipelineEventHandler, integration: true, epic: :services, fea
   # rubocop:enable Metrics/ParameterLists
 
   before do
-    project.save!
-    merge_request.save!
-
     allow(Gitlab::Client).to receive(:new) { gitlab }
   end
 
   context "with actionable conditions" do
     it "accepts merge request" do
       expect(event_result).to eq({ merge_request_accepted: true })
-      expect(gitlab).to have_received(:accept_merge_request).with(project_name, mr_iid)
+      expect(gitlab).to have_received(:accept_merge_request).with(project.name, merge_request.iid)
     end
   end
 

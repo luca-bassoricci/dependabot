@@ -7,7 +7,6 @@ describe Api::ProjectsController, :aggregate_failures, {
   story: :projects
 } do
   include_context "with api helper"
-  include_context "with dependabot helper"
 
   let(:path) { "/api/projects" }
   let(:project) { build(:project) }

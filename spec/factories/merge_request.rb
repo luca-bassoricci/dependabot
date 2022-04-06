@@ -9,11 +9,7 @@ FactoryBot.define do
     state { "opened" }
     branch { "dependabot-bundler-#{main_dependency}-#{update_to}" }
     target_branch { "main" }
-    commit_message { "" }
     auto_merge { false }
-    update_from { nil }
-    update_to { nil }
-    main_dependency { nil }
 
     project
   end

@@ -12,13 +12,6 @@ describe "dependency updates", :system, type: :system, epic: :system, feature: "
 
   include_context "with system helper"
 
-  let(:project) { create(:project, config_yaml: config_yaml) }
-  let(:project_name) { project.name }
-  let(:package_ecosystem) { "bundler" }
-  let(:dependency_name) { nil }
-  let(:directory) { "/" }
-  let(:mrs) { project.reload.merge_requests }
-
   let(:config_yaml) do
     <<~YAML
       version: 2
@@ -37,6 +30,13 @@ describe "dependency updates", :system, type: :system, epic: :system, feature: "
           rebase-strategy: "all"
     YAML
   end
+
+  let(:project) { create(:project, config_yaml: config_yaml) }
+  let(:project_name) { project.name }
+  let(:package_ecosystem) { "bundler" }
+  let(:dependency_name) { nil }
+  let(:directory) { "/" }
+  let(:mrs) { project.reload.merge_requests }
 
   before do
     mock.add(*mock_definitions)
