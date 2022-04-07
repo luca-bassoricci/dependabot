@@ -68,7 +68,6 @@ include:
     DOCKER_CREDENTIALS: $DOCKERHUB_USERNAME:$DOCKERHUB_PASSWORD
     DOCKER_REGISTRY: https://index.docker.io/v1/
   before_script:
-    - '[[ "$CI_JOB_NAME" != "release-image" ]] || echo "$DOCKERHUB_PASSWORD" | docker login -u $DOCKERHUB_USERNAME --password-stdin'
     - while ! test -f "$DOCKER_CERT_PATH/ca.pem"; do sleep 2; done
   interruptible: true
 
@@ -180,12 +179,12 @@ include:
 # ----------------------------------------------------------------------------------------------------------------------
 # test stage
 #
-.unit:
+.unit-test:
   extends: .rspec_runner
   variables:
     RSPEC_TAGS: ~system
 
-.system:
+.system-test:
   extends: .rspec_runner
   services:
     - name: ${MOCK_IMAGE}
@@ -202,7 +201,7 @@ include:
     - !reference [.ruby_runner, before_script]
     - .gitlab/script/build-bundler-helpers.sh
 
-.standalone:
+.standalone-test:
   stage: test
   extends: .docker_runner
   variables:
@@ -211,6 +210,22 @@ include:
     - .gitlab/script/run-standalone.sh
   after_script:
     - curl -X POST -s "http://docker:8081/sessions/verify" | jq
+
+.deploy-test:
+  stage: test
+  extends: .docker_runner
+  variables:
+    SETTINGS__GITLAB_URL: http://gitlab:8080
+    SETTINGS__DEPENDABOT_URL: http://ci-test.com
+    SETTINGS__GITLAB_ACCESS_TOKEN: e2e-test
+    COMPOSE_PROJECT_NAME: dependabot
+  before_script:
+    - !reference [.docker_runner, before_script]
+    - .gitlab/script/run-deploy.sh
+  script:
+    - .gitlab/script/test-deploy.sh
+  after_script:
+    - docker-compose logs migration web worker
 
 # ----------------------------------------------------------------------------------------------------------------------
 # test report stage
@@ -261,6 +276,9 @@ include:
   extends: .docker_runner
   variables:
     RELEASE_IMAGE: docker.io/andrcuns/dependabot-gitlab
+  before_script:
+    - !reference [.docker_runner, before_script]
+    - echo "$DOCKERHUB_PASSWORD" | docker login -u $DOCKERHUB_USERNAME --password-stdin
   script:
     - export RELEASE_VERSION=$(echo $CI_COMMIT_TAG | grep -oP 'v\K[0-9.]+')
     - docker pull "$APP_IMAGE"

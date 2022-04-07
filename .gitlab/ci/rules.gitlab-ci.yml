@@ -30,7 +30,7 @@
     - *release
     - *master
 
-.rules:main:standalone:
+.rules:main:standalone-test:
   rules:
     - <<: *mr
       changes:
@@ -43,7 +43,21 @@
     - *master
     - *release
 
-.rules:main:system:
+.rules:main:deploy-test:
+  rules:
+    - <<: *mr
+      changes:
+        - Gemfile
+        - Gemfile.lock
+        - Dockerfile
+        - docker-compose.yml
+    - <<: *mr
+      when: manual
+      allow_failure: true
+    - *master
+    - *release
+
+.rules:main:system-test:
   rules:
     - *mr
     - *master

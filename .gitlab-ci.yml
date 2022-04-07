@@ -101,24 +101,31 @@ container-scan:
 # ======================================================================================================================
 # Test Stage
 # ======================================================================================================================
-unit:
+unit-test:
   extends:
-    - .unit
+    - .unit-test
     - .rules:main
   needs:
     - cache-dependencies
 
-system:
+system-test:
   extends:
-    - .system
-    - .rules:main:system
+    - .system-test
+    - .rules:main:system-test
   needs:
     - cache-dependencies
 
-standalone:
+standalone-test:
   extends:
-    - .standalone
-    - .rules:main:standalone
+    - .standalone-test
+    - .rules:main:standalone-test
+  needs:
+    - build-app-image
+
+deploy-test:
+  extends:
+    - .deploy-test
+    - .rules:main:deploy-test
   needs:
     - build-app-image
 
@@ -130,16 +137,16 @@ publish-allure-reports:
     - .allure_report
     - .rules:allure-reports
   needs:
-    - unit
-    - system
+    - unit-test
+    - system-test
 
 publish-coverage:
   extends:
     - .coverage
     - .rules:coverage
   needs:
-    - unit
-    - system
+    - unit-test
+    - system-test
 
 # ======================================================================================================================
 # Release Stage

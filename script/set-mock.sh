@@ -2,8 +2,11 @@
 
 # Must be executed from project root
 
-mocks="$(cat spec/fixture/gitlab/mocks/gitlab-mock-$1.yml)"
+mock="${1}"
+host="${2:-gitlab}"
+
+mocks="$(cat spec/fixture/gitlab/mocks/gitlab-mock-${mock}.yml)"
 curl -s -X POST \
   --header "content-type: application/x-yaml" \
   --data "$mocks" \
-  "gitlab:8081/mocks?reset=true"
+  "http://${host}:8081/mocks?reset=true"

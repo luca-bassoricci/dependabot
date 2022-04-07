@@ -4,8 +4,6 @@ set -euo pipefail
 
 source "$(dirname "$0")/utils.sh"
 
-project="$CI_JOB_NAME"
-
 log "Setup gitlab mock"
 cat <<"YML" | docker-compose -f /dev/stdin up -d --quiet-pull
 version: "3"
