@@ -87,6 +87,7 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
           - package-ecosystem: bundler
             vendor: "true"
             schedule:
+              interval: daily
               time: "19:00"
             milestone: 4
             ignore:
@@ -97,10 +98,10 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
                 - changelog: "dep"
       YAML
     end
+
     let(:invalid_config_error) do
       <<~ERR.strip
         key 'updates.0.directory' is missing
-        key 'updates.0.schedule.interval' is missing
         key 'updates.0.ignore.0.dependency-name' is missing
         key 'updates.0.milestone' must be a string
         key 'updates.0.vendor' must be boolean
