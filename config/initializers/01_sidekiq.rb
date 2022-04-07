@@ -53,30 +53,3 @@ module Sidekiq
     end
   end
 end
-
-module Sidekiq
-  module Cron
-    # Patch 'all' method to get rid of deprecation warnings until it is fixed upstream
-    class Job
-      # :reek:UncommunicativeVariableName
-      # :reek:NestedIterators
-      def self.all
-        job_hashes = nil
-
-        Sidekiq.redis do |conn|
-          set_members = conn.smembers(jobs_key)
-          job_hashes = conn.pipelined do |pipeline|
-            set_members.each do |key|
-              pipeline.hgetall(key)
-            end
-          end
-        end
-
-        job_hashes.compact.reject(&:empty?).collect do |h|
-          # no need to fetch missing args from redis since we just got this hash from there
-          Sidekiq::Cron::Job.new(h.merge(fetch_missing_args: false))
-        end
-      end
-    end
-  end
-end
