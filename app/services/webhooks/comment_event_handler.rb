@@ -14,9 +14,11 @@ module Webhooks
     end
 
     def call
-      return unless actionable_comment?
+      return unless actionable_comment? && mr?
 
       send(action)
+    rescue Mongoid::Errors::DocumentNotFound
+      nil
     end
 
     private
@@ -52,6 +54,15 @@ module Webhooks
     def recreate
       MergeRequestRecreationJob.perform_later(project_name, mr_iid, discussion_id)
       { recreate_in_progress: true }
+    end
+
+    # Check mr exists
+    #
+    # @return [MergeRequest]
+    def mr?
+      Project.find_by(name: project_name)
+             .merge_requests
+             .find_by(iid: mr_iid)
     end
 
     # Valid comment

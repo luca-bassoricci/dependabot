@@ -64,6 +64,20 @@ FactoryBot.define do
         auto_merge { false }
       end
 
+      after(:build) do |project, evaluator|
+        build(
+          :merge_request,
+          project: project,
+          main_dependency: evaluator.dependency,
+          update_from: evaluator.update_from,
+          update_to: evaluator.update_to,
+          state: evaluator.state,
+          commit_message: evaluator.commit_message,
+          branch: evaluator.branch,
+          auto_merge: evaluator.auto_merge
+        )
+      end
+
       after(:create) do |project, evaluator|
         create(
           :merge_request,
@@ -76,6 +90,8 @@ FactoryBot.define do
           branch: evaluator.branch,
           auto_merge: evaluator.auto_merge
         )
+
+        project.reload
       end
     end
   end
