@@ -38,7 +38,7 @@ describe Dependabot::Projects::Registration::JobCreator, integration: true, epic
       it "does not create project registration job" do
         described_class.call
 
-        expect(created_job.name).to be_nil
+        expect(created_job).to be_nil
       end
     end
 
@@ -50,7 +50,7 @@ describe Dependabot::Projects::Registration::JobCreator, integration: true, epic
       it "deletes job" do
         described_class.call
 
-        expect(created_job.name).to be_nil
+        expect(created_job).to be_nil
       end
     end
   end
@@ -62,7 +62,7 @@ describe Dependabot::Projects::Registration::JobCreator, integration: true, epic
     it "does not create project registration job" do
       described_class.call
 
-      expect(created_job.name).to be_nil
+      expect(created_job).to be_nil
     end
   end
 
