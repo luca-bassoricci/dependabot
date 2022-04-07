@@ -20,6 +20,8 @@ x-environment: &environment_variables
   SETTINGS__LOG_COLOR:
   # Log level: debug, info, warn, error, fatal
   SETTINGS__LOG_LEVEL:
+  # Project registration mode
+  SETTINGS__PROJECT_REGISTRATION:
   # Rest of the possible configuration options
   # https://gitlab.com/dependabot-gitlab/dependabot/-/blob/master/doc/environment.md
 x-volumes: &service_volumes
