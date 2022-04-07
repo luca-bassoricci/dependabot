@@ -10,9 +10,9 @@ module Dependabot
         #
         # @return [void]
         def call
-          if mode == "automatic" && !job.cron&.include?(cron)
+          if mode == "automatic" && !job_synced?
             create
-          elsif %w[manual system_hook].include?(mode) && job.name
+          elsif %w[manual system_hook].include?(mode) && job
             destroy
           end
         end
@@ -44,6 +44,13 @@ module Dependabot
         # @return [Sidekiq::Cron::Job]
         def job
           @job ||= Sidekiq::Cron::Job.find(JOB_NAME)
+        end
+
+        # Job with synced cron
+        #
+        # @return [Boolean]
+        def job_synced?
+          job&.cron&.include?(cron)
         end
 
         # Job cron
