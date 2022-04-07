@@ -16,7 +16,6 @@ config/environments/
 config/spring.rb
 
 !kube/
-kube/helm/
 !tmp/
 tmp/*
 !log/

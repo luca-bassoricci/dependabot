@@ -1,68 +1,61 @@
 # frozen_string_literal: true
 
-describe Dependabot::Projects::Sync, integration: true, epic: :services, feature: :dependabot do
+describe Dependabot::Projects::Registration::Service, integration: true, epic: :services, feature: :dependabot do
   subject(:sync) { described_class }
 
   let(:gitlab) { instance_double("Gitlab::Client", projects: projects_response) }
   let(:projects_response) { instance_double("Gitlab::PaginatedResponse") }
 
-  let(:cron) { "0 1 * * * UTC" }
-  let(:project_name) { random_name }
-  let(:project_id) { random_id }
-  let(:default_branch) { "main" }
-  let(:projects) { [project] }
+  let(:config_yaml) do
+    <<~YAML
+      version: 2
+      updates:
+        - package-ecosystem: bundler
+          directory: "/"
+          schedule:
+            interval: daily
+            time: "01:00"
+        - package-ecosystem: npm
+          directory: "/"
+          schedule:
+            interval: daily
+            time: "01:00"
+    YAML
+  end
 
-  let(:project) do
+  let(:cron) { "00 01 * * * UTC" }
+  let(:default_branch) { "main" }
+
+  let(:project) { build(:project, config_yaml: config_yaml) }
+
+  let(:gitlab_project) do
     Gitlab::ObjectifiedHash.new(
-      id: project_id,
-      path_with_namespace: project_name,
+      id: project.id,
+      path_with_namespace: project.name,
       default_branch: default_branch
     )
   end
 
-  let(:config) do
-    [
-      {
-        package_ecosystem: "npm",
-        directory: "/",
-        cron: cron
-      },
-      {
-        package_ecosystem: "bundler",
-        directory: "/",
-        cron: cron
-      }
-    ]
-  end
-
   let(:jobs) do
     [
-      Sidekiq::Cron::Job.new(name: "#{project_name}:bundler:/", cron: cron),
-      Sidekiq::Cron::Job.new(name: "#{project_name}:npm:/", cron: cron)
+      Sidekiq::Cron::Job.new(name: "#{project.name}:bundler:/", cron: cron),
+      Sidekiq::Cron::Job.new(name: "#{project.name}:npm:/", cron: cron)
     ]
-  end
-
-  let(:saved_project) { Project.new(name: project_name, id: project_id) }
-
-  def random_id
-    Faker::Number.number(digits: 10)
-  end
-
-  def random_name
-    Faker::Alphanumeric.unique.alpha(number: 15)
   end
 
   before do
     allow(Gitlab::Client).to receive(:new) { gitlab }
-    allow(projects_response).to receive(:auto_paginate).and_yield(*projects)
-    allow(Dependabot::Projects::Creator).to receive(:call).with(project.path_with_namespace) { saved_project }
-    allow(Cron::JobSync).to receive(:call).with(saved_project)
+    allow(projects_response).to receive(:auto_paginate).and_yield(gitlab_project)
+    allow(Dependabot::Projects::Creator).to receive(:call).with(gitlab_project.path_with_namespace) { project }
+    allow(Cron::JobSync).to receive(:call).with(project)
 
     allow(Dependabot::Config::Fetcher).to receive(:call)
       .with(
-        project.path_with_namespace, branch: project.default_branch, update_cache: true
+        gitlab_project.path_with_namespace,
+        branch: gitlab_project.default_branch,
+        update_cache: true
       )
-      .and_return(config)
+      .and_return(project.configuration)
   end
 
   context "with ignored project" do
@@ -86,8 +79,8 @@ describe Dependabot::Projects::Sync, integration: true, epic: :services, feature
       it "skips registering project" do
         sync.call
 
-        expect(Dependabot::Projects::Creator).not_to have_received(:call).with(project_name)
-        expect(Cron::JobSync).not_to have_received(:call).with(saved_project)
+        expect(Dependabot::Projects::Creator).not_to have_received(:call).with(project.name)
+        expect(Cron::JobSync).not_to have_received(:call).with(project)
       end
     end
 
@@ -95,8 +88,8 @@ describe Dependabot::Projects::Sync, integration: true, epic: :services, feature
       it "registers project" do
         sync.call
 
-        expect(Dependabot::Projects::Creator).to have_received(:call).with(project_name)
-        expect(Cron::JobSync).to have_received(:call).with(saved_project)
+        expect(Dependabot::Projects::Creator).to have_received(:call).with(project.name)
+        expect(Cron::JobSync).to have_received(:call).with(project)
       end
     end
 
@@ -112,20 +105,18 @@ describe Dependabot::Projects::Sync, integration: true, epic: :services, feature
   end
 
   context "with existing project" do
-    before do
-      saved_project.save!
-    end
+    let(:project) { create(:project, config_yaml: config_yaml) }
 
     context "without config" do
       before do
         allow(Dependabot::Config::Fetcher).to receive(:call).and_raise(Dependabot::Config::MissingConfigurationError)
-        allow(Dependabot::Projects::Remover).to receive(:call).with(project_name)
+        allow(Dependabot::Projects::Remover).to receive(:call).with(project.name)
       end
 
       it "removes project" do
         sync.call
 
-        expect(Dependabot::Projects::Remover).to have_received(:call).with(project_name)
+        expect(Dependabot::Projects::Remover).to have_received(:call).with(project.name)
       end
     end
 
@@ -137,8 +128,8 @@ describe Dependabot::Projects::Sync, integration: true, epic: :services, feature
       it "syncs project and jobs" do
         sync.call
 
-        expect(Dependabot::Projects::Creator).to have_received(:call).with(project_name)
-        expect(Cron::JobSync).to have_received(:call).with(saved_project)
+        expect(Dependabot::Projects::Creator).to have_received(:call).with(project.name)
+        expect(Cron::JobSync).to have_received(:call).with(project)
       end
     end
 
@@ -150,17 +141,18 @@ describe Dependabot::Projects::Sync, integration: true, epic: :services, feature
       it "skips project" do
         sync.call
 
-        expect(Dependabot::Projects::Creator).not_to have_received(:call).with(project_name)
-        expect(Cron::JobSync).not_to have_received(:call).with(saved_project)
+        expect(Dependabot::Projects::Creator).not_to have_received(:call).with(project.name)
+        expect(Cron::JobSync).not_to have_received(:call).with(project)
       end
     end
 
     context "with renamed project", :aggregate_failures do
-      let(:new_name) { random_name }
+      let!(:old_name) { project.name }
+      let!(:new_name) { Faker::Alphanumeric.unique.alpha(number: 15) }
 
-      let(:project) do
+      let(:gitlab_project) do
         Gitlab::ObjectifiedHash.new(
-          id: project_id,
+          id: project.id,
           path_with_namespace: new_name,
           default_branch: default_branch
         )
@@ -173,9 +165,9 @@ describe Dependabot::Projects::Sync, integration: true, epic: :services, feature
       it "renames existing project" do
         sync.call
 
-        expect(saved_project.reload.name).to eq(new_name)
-        expect(Cron::JobRemover).to have_received(:call).with(project_name)
-        expect(Cron::JobSync).to have_received(:call).with(saved_project)
+        expect(project.reload.name).to eq(new_name)
+        expect(Cron::JobRemover).to have_received(:call).with(old_name)
+        expect(Cron::JobSync).to have_received(:call).with(project)
       end
     end
   end

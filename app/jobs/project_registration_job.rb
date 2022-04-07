@@ -5,6 +5,6 @@ class ProjectRegistrationJob < ApplicationJob
 
   def perform
     log(:info, "Checking for projects to register or update")
-    Dependabot::Projects::Sync.call
+    Dependabot::Projects::Registration::Service.call
   end
 end
