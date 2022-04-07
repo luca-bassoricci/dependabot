@@ -4,16 +4,24 @@ x-environment: &environment_variables
   REDIS_URL: redis://redis:6379
   MONGODB_URL: mongodb:27017
   RAILS_ENV: production
-  SENTRY_DSN:
-  SETTINGS__LOG_LEVEL:
-  # Optional gitlab instance url, https://gitlab.com by default
-  SETTINGS__GITLAB_URL:
   # Gitlab api token
   SETTINGS__GITLAB_ACCESS_TOKEN:
   # Github api token
   SETTINGS__GITHUB_ACCESS_TOKEN:
   # Custom secret used for password encryption, https://apidock.com/rails/v6.0.0/Rails/Application/secret_key_base
   SECRET_KEY_BASE: ${SECRET_KEY_BASE:-key}
+  # Optional gitlab instance url, https://gitlab.com by default
+  SETTINGS__GITLAB_URL:
+  # Optional dependabot url
+  SETTINGS__DEPENDABOT_URL:
+  # Optional sentry dsn for error reporting
+  SENTRY_DSN:
+  # Enhanced colorized logging
+  SETTINGS__LOG_COLOR:
+  # Log level: debug, info, warn, error, fatal
+  SETTINGS__LOG_LEVEL:
+  # Rest of the possible configuration options
+  # https://gitlab.com/dependabot-gitlab/dependabot/-/blob/master/doc/environment.md
 x-volumes: &service_volumes
   volumes:
     - tmp:/home/dependabot/app/tmp

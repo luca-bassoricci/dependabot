@@ -1,0 +1,64 @@
+- request:
+    method: GET
+    path: /api/v4/projects/deploy-test
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |
+      {
+        "id": 1,
+        "description": "Project for deploy test",
+        "default_branch": "main",
+        "web_url": "https://example.com/deploy-test"
+      }
+
+- request:
+    method: GET
+    path: /api/v4/projects/deploy-test/hooks
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |
+      []
+
+- request:
+    method: POST
+    path: /api/v4/projects/deploy-test/hooks
+  response:
+    status: 200
+    headers:
+      Content-Type: application/json
+    body: |
+      {
+        "id": 1
+      }
+
+- request:
+    method: GET
+    path: /api/v4/projects/deploy-test/repository/files/.gitlab%2Fdependabot.yml
+  response:
+    status: 200
+    headers:
+      Content-Type: text/plain
+    body: |
+      {
+        "file_name": "dependabot.yml",
+        "file_path": ".gitlab/dependabot.yml"
+      }
+
+- request:
+    method: GET
+    path: /api/v4/projects/deploy-test/repository/files/.gitlab%2Fdependabot.yml/raw
+  response:
+    status: 200
+    headers:
+      Content-Type: text/plain
+    body: |
+      version: 2
+      updates:
+        - package-ecosystem: bundler
+          directory: "/"
+          schedule:
+            interval: daily
