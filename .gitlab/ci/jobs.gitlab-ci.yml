@@ -276,16 +276,14 @@ include:
   stage: release
   extends: .docker_runner
   variables:
-    RELEASE_IMAGE: docker.io/andrcuns/dependabot-gitlab
+    DOCKERHUB: docker.io/andrcuns/dependabot-gitlab
+    GITLAB: $CI_REGISTRY_IMAGE
   before_script:
     - !reference [.docker_runner, before_script]
     - echo "$DOCKERHUB_PASSWORD" | docker login -u $DOCKERHUB_USERNAME --password-stdin
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
   script:
-    - export RELEASE_VERSION=$(echo $CI_COMMIT_TAG | grep -oP 'v\K[0-9.]+')
-    - docker pull "$APP_IMAGE"
-    - docker tag "$APP_IMAGE" "$RELEASE_IMAGE:$RELEASE_VERSION"
-    - docker tag "$APP_IMAGE" "$RELEASE_IMAGE:latest"
-    - docker push "$RELEASE_IMAGE:$RELEASE_VERSION" && docker push "$RELEASE_IMAGE:latest"
+    - .gitlab/script/release-image.sh
   interruptible: false
 
 .gitlab_release:
