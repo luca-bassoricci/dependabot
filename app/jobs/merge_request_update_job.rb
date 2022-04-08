@@ -10,12 +10,18 @@ class MergeRequestUpdateJob < ApplicationJob
   #
   # @param [String] project_name
   # @param [Number] mr_iid
+  # @param [String] action
   # @return [void]
-  def perform(project_name, mr_iid)
+  def perform(project_name, mr_iid, action)
     save_execution_context(project_name, mr_iid)
 
-    Dependabot::MergeRequest::UpdateService.call(project_name: project_name, mr_iid: mr_iid, recreate: false)
+    Dependabot::MergeRequest::UpdateService.call(
+      project_name: project_name,
+      mr_iid: mr_iid,
+      action: action
+    )
   rescue StandardError => e
+    log_error(e)
     Gitlab::MergeRequest::Commenter.call(
       project_name,
       mr_iid,

@@ -1,7 +1,13 @@
 # frozen_string_literal: true
 
 describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dependabot, integration: true do
-  subject(:update) { described_class.call(project_name: project.name, mr_iid: mr.iid, recreate: recreate) }
+  subject(:update) do
+    described_class.call(
+      project_name: project.name,
+      mr_iid: mr.iid,
+      action: action
+    )
+  end
 
   include_context "with dependabot helper"
 
@@ -28,7 +34,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
   let(:dependency_state) { Dependabot::Dependencies::UpdateChecker::HAS_UPDATES }
   let(:branch) { "update-branch" }
   let(:conflicts) { false }
-  let(:recreate) { false }
+  let(:action) { Dependabot::MergeRequest::UpdateService::UPDATE }
 
   let(:updated_dependency) do
     Dependabot::Dependencies::UpdatedDependency.new(
@@ -98,7 +104,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
     end
 
     context "with recreate merge request option" do
-      let(:recreate) { true }
+      let(:action) { Dependabot::MergeRequest::UpdateService::RECREATE }
 
       it "recreates merge request" do
         update
@@ -109,7 +115,6 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
     end
 
     context "with merge request conflicts" do
-      let(:recreate) { false }
       let(:conflicts) { true }
 
       it "recreates merge request" do
@@ -154,7 +159,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
       let(:dependency_state) { Dependabot::Dependencies::UpdateChecker::UP_TO_DATE }
 
       before do
-        allow(Gitlab::BranchRemover).to receive(:call)
+        allow(Gitlab::BranchRemover).to receive(:call).and_return(true)
       end
 
       it "closes existing merge request" do

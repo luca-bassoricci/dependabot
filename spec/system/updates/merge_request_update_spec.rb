@@ -2,7 +2,11 @@
 
 describe "merge request update", :system, type: :system, epic: :system, feature: "merge request update" do
   subject(:update_mr) do
-    Dependabot::MergeRequest::UpdateService.call(project_name: project_name, mr_iid: mr.iid)
+    Dependabot::MergeRequest::UpdateService.call(
+      project_name: project_name,
+      mr_iid: mr.iid,
+      action: Dependabot::MergeRequest::UpdateService::RECREATE
+    )
   end
 
   include_context "with system helper"

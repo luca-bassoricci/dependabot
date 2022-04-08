@@ -29,7 +29,8 @@ describe MergeRequestRecreationJob, epic: :jobs, feature: "mr recreate", type: :
 
       expect(Dependabot::MergeRequest::UpdateService).to have_received(:call).with(
         project_name: project_name,
-        mr_iid: mr_iid
+        mr_iid: mr_iid,
+        action: Dependabot::MergeRequest::UpdateService::RECREATE
       )
     end
 

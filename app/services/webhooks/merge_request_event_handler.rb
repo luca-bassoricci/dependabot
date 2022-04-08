@@ -34,8 +34,12 @@ module Webhooks
       log(:info, "Reopening merge request !#{mr(state: 'closed').iid} for project #{project_name}!")
 
       mr.update_attributes!(state: "opened")
-      recreate_branch
-      MergeRequestUpdateJob.perform_later(project_name, mr_iid)
+      recreated = recreate_branch
+      MergeRequestUpdateJob.perform_later(
+        project_name,
+        mr_iid,
+        recreated ? Dependabot::MergeRequest::UpdateService::RECREATE : Dependabot::MergeRequest::UpdateService::UPDATE
+      )
 
       { reopened_merge_request: true }
     end
@@ -152,11 +156,11 @@ module Webhooks
 
     # Recreate mr branch if it doesn't exist
     #
-    # @return [void]
+    # @return [Boolean]
     def recreate_branch
-      gitlab.branch(project_name, mr.branch)
+      gitlab.branch(project_name, mr.branch) && false
     rescue Gitlab::Error::NotFound
-      gitlab.create_branch(project_name, mr.branch, mr.target_branch)
+      gitlab.create_branch(project_name, mr.branch, mr.target_branch) && true
     end
 
     # Closed mr message
