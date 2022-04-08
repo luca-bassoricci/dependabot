@@ -1,3 +1,25 @@
+## 0.17.2 (2022-04-08)
+
+### 🐞 Bug Fixes (2 changes)
+
+- [Ignore dependabot commands for non dependabot merge requests](dependabot-gitlab/dependabot@fd4e2c364842da8fc1e76b835d495f2f8092816a) by @andrcuns. See merge request dependabot-gitlab/dependabot!1448
+- [Correctly pass configuration when updating out of sync jobs](dependabot-gitlab/dependabot@48d83f64f015b5c7e921e69dde83f57e8a3c412c) by @andrcuns. See merge request dependabot-gitlab/dependabot!1445
+
+### 📦 Dependency updates (6 changes)
+
+- [dep: bump dependabot-omnibus from 0.180.4 to 0.180.5](dependabot-gitlab/dependabot@ef80501e7af166d4f599b87ba3bdbd7c8bbdc68e) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1449
+- [dep: bump sidekiq_alive from 2.1.4 to 2.1.5](dependabot-gitlab/dependabot@e30b00dfd70f0dcf46bc4e986ac70a0dbcb66710) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1450
+- [dep: bump sidekiq-cron from 1.2.0 to 1.3.0](dependabot-gitlab/dependabot@8825e705aa7fe59ff7c262c73df15cb0235b9360) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1442
+- [dep: bump dependabot-omnibus from 0.180.3 to 0.180.4](dependabot-gitlab/dependabot@86173a7b8385007bc016d2eb0465212034171583) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1441
+- [dep: bump dependabot-omnibus from 0.180.2 to 0.180.3](dependabot-gitlab/dependabot@558995d0d3040454308a549a13a9354fa70d3a7c) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1437
+- [dep-dev: bump allure-rspec from 2.16.2 to 2.17.0](dependabot-gitlab/dependabot@a4afdceb317b01c2dad80df02d37d5cdbe631b2a) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1438
+
+### 🛠️ Chore (3 changes)
+
+- [Fix flaky configuration parser spec](dependabot-gitlab/dependabot@6f04c761c88a37dc5fbc4cf8280daeb319719d6e) by @andrcuns. See merge request dependabot-gitlab/dependabot!1447
+- [Add docker-compose deploy test](dependabot-gitlab/dependabot@c33aaae170494b00372ebb134b6c2f928bafcc81) by @andrcuns. See merge request dependabot-gitlab/dependabot!1444
+- [Use factories for object fabrication in tests](dependabot-gitlab/dependabot@48199118f3277fdd9c3e90ec38c0eb3a48f277e9) by @andrcuns. See merge request dependabot-gitlab/dependabot!1440
+
 ## 0.17.1 (2022-04-04)
 
 ### 🔬 Improvements (1 change)
