@@ -6,17 +6,7 @@ set -e
 
 source "$(dirname "$0")/utils.sh"
 
-if [ -z "$DOCKER_IMAGE" ]; then
-  IMAGE="$CI_REGISTRY_IMAGE"
-else
-  IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE"
-fi
-
-if [ ! -z "$BUILDKIT_ADDRESS" ]; then
-  COMMAND="buildctl --addr tcp://${BUILDKIT_ADDRESS} --tlskey ${BUILDKIT_KEY} --tlscert ${BUILDKIT_CERT} --tlscacert ${BUILDKIT_CA}"
-else
-  COMMAND="buildctl-daemonless.sh"
-fi
+IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE"
 
 if [ -z "$CI_COMMIT_TAG" ]; then
   TAGS="$IMAGE:$CURRENT_TAG,$IMAGE:${LATEST_TAG:-$CI_COMMIT_REF_SLUG-latest}"
@@ -29,7 +19,7 @@ dockerfile="${DOCKER_FILE:-$context}"
 
 log "Building image: $IMAGE:$CURRENT_TAG"
 
-$COMMAND build \
+buildctl-daemonless.sh build \
   --frontend=dockerfile.v0 \
   --local context="$context" \
   --local dockerfile="$dockerfile" \

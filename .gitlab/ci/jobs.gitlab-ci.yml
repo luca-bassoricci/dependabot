@@ -132,13 +132,15 @@ include:
   stage: build
   extends: .buildkit_runner
   needs: []
+  variables:
+    DOCKER_IMAGE: app
 
 .build_ci_image:
   stage: build
   extends: .buildkit_runner
   needs: []
   variables:
-    DOCKER_FILE: .gitlab/docker/ci
+    DOCKER_FILE: .gitlab/docker
     DOCKER_IMAGE: ci
 
 # ----------------------------------------------------------------------------------------------------------------------
