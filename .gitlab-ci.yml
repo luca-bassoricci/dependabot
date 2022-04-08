@@ -14,7 +14,7 @@ variables:
   CURRENT_TAG: ${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}
   # Docker images
   APP_IMAGE: ${CI_REGISTRY_IMAGE}/app:${CURRENT_TAG}
-  BUILDKIT_IMAGE: moby/buildkit:v0.9.3
+  BUILDKIT_IMAGE: moby/buildkit:v0.10.1
   DIND_IMAGE: docker:20.10.14-dind
   REDIS_IMAGE: bitnami/redis:6.2-debian-10
   MONGODB_IMAGE: bitnami/mongodb:4.4-debian-10
