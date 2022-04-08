@@ -120,9 +120,9 @@
   rules:
     - <<: *mr
       changes:
-        - .gitlab/docker/ci/Dockerfile
+        - .gitlab/docker/Dockerfile
     - <<: *master
       changes:
-        - .gitlab/docker/ci/Dockerfile
+        - .gitlab/docker/Dockerfile
       variables:
         LATEST_TAG: latest

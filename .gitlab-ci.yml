@@ -12,8 +12,8 @@ stages:
 variables:
   # App tags
   CURRENT_TAG: ${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}
-  APP_IMAGE: ${CI_REGISTRY_IMAGE}:${CURRENT_TAG}
   # Docker images
+  APP_IMAGE: ${CI_REGISTRY_IMAGE}/app:${CURRENT_TAG}
   BUILDKIT_IMAGE: moby/buildkit:v0.9.3
   DIND_IMAGE: docker:20.10.14-dind
   REDIS_IMAGE: bitnami/redis:6.2-debian-10
