@@ -28,17 +28,7 @@ updates:
     assignees:
       - andrcuns
   - package-ecosystem: docker
-    directory: /.gitlab/docker/test
-    schedule:
-      interval: daily
-    commit-message:
-      prefix: dep-dev
-      trailers:
-        - changelog: dependency
-    assignees:
-      - andrcuns
-  - package-ecosystem: docker
-    directory: /.gitlab/docker/ci
+    directory: /.gitlab/docker
     schedule:
       interval: daily
     commit-message:
