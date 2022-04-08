@@ -50,7 +50,7 @@ include:
       }
       EOF
   script:
-    - .gitlab/script/build-image.sh
+    - .gitlab/script/build-image.sh $IMAGE_TYPE
   retry: 2
   interruptible: true
 
@@ -133,7 +133,7 @@ include:
   extends: .buildkit_runner
   needs: []
   variables:
-    DOCKER_IMAGE: app
+    IMAGE_TYPE: app
 
 .build_ci_image:
   stage: build
@@ -141,7 +141,7 @@ include:
   needs: []
   variables:
     DOCKER_FILE: .gitlab/docker
-    DOCKER_IMAGE: ci
+    IMAGE_TYPE: ci
 
 # ----------------------------------------------------------------------------------------------------------------------
 # 'static analysis' stage
