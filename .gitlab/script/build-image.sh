@@ -6,18 +6,20 @@ set -e
 
 source "$(dirname "$0")/utils.sh"
 
-IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE"
+image_type="$1"
 
-if [ -z "$CI_COMMIT_TAG" ]; then
-  TAGS="$IMAGE:$CURRENT_TAG,$IMAGE:${LATEST_TAG:-$CI_COMMIT_REF_SLUG-latest}"
-else
-  TAGS="$IMAGE:$CURRENT_TAG"
-fi
-
+image="$CI_REGISTRY_IMAGE/$image_type"
 context="${DOCKER_CONTEXT:-.}"
 dockerfile="${DOCKER_FILE:-$context}"
+latest_tag="${LATEST_TAG:-$CI_COMMIT_REF_SLUG-latest}"
 
-log "Building image: $IMAGE:$CURRENT_TAG"
+if [ -z "$CI_COMMIT_TAG" ]; then
+  images="${image}:${CURRENT_TAG},${image}:${latest_tag}"
+else
+  images="${image}:${CURRENT_TAG}"
+fi
+
+log "Building image '${image}:${CURRENT_TAG}'"
 
 buildctl-daemonless.sh build \
   --frontend=dockerfile.v0 \
@@ -26,6 +28,6 @@ buildctl-daemonless.sh build \
   --opt build-arg:COMMIT_SHA="$CI_COMMIT_SHA" \
   --opt build-arg:PROJECT_URL="$CI_PROJECT_URL" \
   --opt build-arg:VERSION="${CI_COMMIT_TAG:-$CURRENT_TAG}" \
-  --output type=image,\"name="$TAGS"\",push=true \
-  --export-cache type=inline \
-  --import-cache type=registry,ref="$IMAGE:${LATEST_TAG:-$CI_COMMIT_REF_SLUG-latest}"
+  --output type=image,\"name="$images"\",push=true \
+  --import-cache type=registry,ref="${image}:${latest_tag}" \
+  --export-cache type=inline
