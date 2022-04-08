@@ -3,11 +3,15 @@
 module Dependabot
   # :reek:InstanceVariableAssumption
   module MergeRequest
-    class UpdateService < ApplicationService
-      def initialize(project_name:, mr_iid:, recreate: true)
+    class UpdateService < ApplicationService # rubocop:disable Metrics/ClassLength
+      RECREATE = "recreate"
+      UPDATE = "update"
+      AUTO_REBASE = "auto_rebase"
+
+      def initialize(project_name:, mr_iid:, action:)
         @project_name = project_name
         @mr_iid = mr_iid
-        @recreate = recreate
+        @action = action
       end
 
       # Trigger merge request update
@@ -15,8 +19,8 @@ module Dependabot
       # @return [void]
       def call
         log(:info, "Running update for merge request !#{mr_iid}")
-        return log(:info, " merge request not in opened state, skipping") unless gitlab_mr.state == "opened"
-        return rebase_mr unless recreate || gitlab_mr["has_conflicts"]
+        return skip_mr unless gitlab_mr.state == "opened"
+        return rebase_mr unless recreate? || gitlab_mr["has_conflicts"]
 
         Semaphore.synchronize { update }
       ensure
@@ -27,7 +31,35 @@ module Dependabot
 
       delegate :configuration, to: :project, prefix: :project
 
-      attr_reader :project_name, :mr_iid, :recreate
+      attr_reader :project_name, :mr_iid, :action
+
+      # Perform recreate action
+      #
+      # @return [Boolean] <description>
+      def recreate?
+        action == "recreate"
+      end
+
+      # Perform update without force recreate
+      #
+      # @return [Boolean]
+      def update?
+        action == "update"
+      end
+
+      # Perform auto-rebase on other mr merge
+      #
+      # @return [Boolean]
+      def auto_rebase?
+        action == "auto-rebase"
+      end
+
+      # Log mr update skipped
+      #
+      # @return [void]
+      def skip_mr
+        log(:info, " merge request not in opened state, skipping")
+      end
 
       # Rebase merge request
       #
@@ -78,6 +110,14 @@ module Dependabot
           repo_contents_path: repo_contents_path,
           registries: registries
         )
+      end
+
+      # Close obsolete merge request
+      #
+      # @return [void]
+      def close_mr
+        log(:info, "  dependency is already up to date, closing mr!")
+        Gitlab::BranchRemover.call(project_name, mr.branch) && mr.close
       end
 
       # Find project
@@ -143,19 +183,7 @@ module Dependabot
       #
       # @return [Boolean]
       def same_version?
-        # TODO: backwards compatibility for mrs create without update_to field, remove in minor next release
-        return true unless mr.update_to
-
         mr.update_to == updated_dependency.current_versions
-      end
-
-      # Close obsolete merge request
-      #
-      # @return [void]
-      def close_mr
-        log(:info, "  dependency is already up to date, closing mr!")
-        mr.close
-        Gitlab::BranchRemover.call(project_name, mr.branch)
       end
     end
   end

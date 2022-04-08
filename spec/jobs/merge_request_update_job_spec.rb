@@ -7,6 +7,7 @@ describe MergeRequestUpdateJob, epic: :jobs, feature: "mr update", type: :job do
 
   let(:project_name) { "project" }
   let(:mr_iid) { 1 }
+  let(:action) { Dependabot::MergeRequest::UpdateService::UPDATE }
 
   before do
     allow(Dependabot::MergeRequest::UpdateService).to receive(:call)
@@ -14,12 +15,12 @@ describe MergeRequestUpdateJob, epic: :jobs, feature: "mr update", type: :job do
 
   context "with successfull update" do
     it "performs enqued job" do
-      perform_enqueued_jobs { job.perform_later(project_name, mr_iid) }
+      perform_enqueued_jobs { job.perform_later(project_name, mr_iid, action) }
 
       expect(Dependabot::MergeRequest::UpdateService).to have_received(:call).with(
         project_name: project_name,
         mr_iid: mr_iid,
-        recreate: false
+        action: action
       )
     end
   end
@@ -31,7 +32,7 @@ describe MergeRequestUpdateJob, epic: :jobs, feature: "mr update", type: :job do
     end
 
     it "adds a comment on failed mr update" do
-      perform_enqueued_jobs { job.perform_later(project_name, mr_iid) }
+      perform_enqueued_jobs { job.perform_later(project_name, mr_iid, action) }
 
       expect(Gitlab::MergeRequest::Commenter).to have_received(:call).with(
         project_name,

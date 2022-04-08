@@ -2,7 +2,7 @@
 
 describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services, feature: :webhooks do
   let(:gitlab) do
-    instance_double("Gitlab::Client", create_branch: nil, accept_merge_request: nil, rebase_merge_request: nil)
+    instance_double("Gitlab::Client", create_branch: "response", accept_merge_request: nil, rebase_merge_request: nil)
   end
 
   let(:config_yaml) do
@@ -113,7 +113,11 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
       expect(result).to eq({ reopened_merge_request: true })
       expect(closed_merge_request.reload.state).to eq("opened")
       expect(gitlab).to have_received(:create_branch).with(project.name, mr.branch, mr.target_branch)
-      expect(MergeRequestUpdateJob).to have_received(:perform_later).with(project.name, mr_iid)
+      expect(MergeRequestUpdateJob).to have_received(:perform_later).with(
+        project.name,
+        mr_iid,
+        Dependabot::MergeRequest::UpdateService::RECREATE
+      )
     end
   end
 

@@ -19,10 +19,14 @@ RSpec.shared_context "with system helper" do
 
   def expect_all_mocks_called
     resp = mock.verify
+    verified = resp.dig(:mocks, :verified)
+    unused = resp.dig(:mocks, :unused)
+    failures = resp.dig(:history, :failures)
+
     aggregate_failures do
-      expect(resp.dig(:mocks, :verified)).to eq(true), "Expected all mocks to be verified"
-      expect(resp.dig(:mocks, :unused)).to eq(nil)
-      expect(resp.dig(:history, :failures)).to eq(nil)
+      expect(verified).to eq(true), "Expected all mocks to be verified"
+      expect(unused).to eq(nil), "Expected no unused mocks: #{JSON.pretty_generate(unused)}"
+      expect(failures).to eq(nil), "Expected to not have failures: #{JSON.pretty_generate(failures)}"
     end
   end
 end
