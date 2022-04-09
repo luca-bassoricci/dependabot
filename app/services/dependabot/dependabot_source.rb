@@ -21,7 +21,7 @@ module Dependabot
     def call
       Dependabot::Source.new(
         provider: "gitlab",
-        hostname: URI(AppConfig.gitlab_url).host,
+        hostname: AppConfig.gitlab_url.host,
         api_endpoint: "#{AppConfig.gitlab_url}/api/v4",
         repo: repo,
         directory: directory,

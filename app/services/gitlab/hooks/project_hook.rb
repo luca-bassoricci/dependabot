@@ -28,7 +28,7 @@ module Gitlab
             note_events: true,
             pipeline_events: true,
             push_events_branch_filter: default_branch,
-            enable_ssl_verification: URI(dependabot_url).scheme == "https"
+            enable_ssl_verification: dependabot_url.scheme == "https"
           }
           CredentialsConfig.gitlab_auth_token.tap { |token| args[:token] = token if token }
           args
