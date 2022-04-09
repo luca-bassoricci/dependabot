@@ -131,13 +131,28 @@ If webhooks for deployed version are configured, when dependency update MR is me
 
 ### rebase on mr approval
 
-It is possible to trigger automatic rebase of merge request when it is approved. If `strategy` is omitted, it is set to `auto` by default.
+It is possible to trigger automatic rebase/recreate of merge request when it is approved. If `strategy` is omitted, it is set to `auto` by default.
 Approval option is limited only to rebase, it will not recreate merge request if it has conflicts because it can lead to unwanted loss of local changes.
 
 ```yml
 rebase-strategy:
   on-approval: true
 ```
+
+### rebase with assignee
+
+It is possible to configure auto rebase/recreate of merge request only when it has a specific assignee.
+
+This allows to create a workflow where by default merge requests are assigned to a specific user
+(for example owner of the gitlab access token used by the app) and as soon
+as another user takes over ownership, dependabot stops updating merge request automatically.
+
+```yml
+rebase-strategy:
+  with-assignee: dependabot
+```
+
+* `with-assignee` - assignee username
 
 ## auto-merge
 

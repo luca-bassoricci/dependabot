@@ -161,8 +161,12 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
       it "closes saved mr and triggers update of open mrs for same package_ecosystem" do
         described_class.call(**args)
 
-        expect(MergeRequestUpdateJob).to have_received(:perform_later).with(project.name, open_merge_request.iid)
         expect(merge_request.reload.state).to eq("merged")
+        expect(MergeRequestUpdateJob).to have_received(:perform_later).with(
+          project.name,
+          open_merge_request.iid,
+          Dependabot::MergeRequest::UpdateService::AUTO_REBASE
+        )
       end
     end
 

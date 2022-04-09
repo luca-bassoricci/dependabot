@@ -19,7 +19,7 @@ module Dependabot
       # @return [void]
       def call
         log(:info, "Running update for merge request !#{mr_iid}")
-        return skip_mr unless gitlab_mr.state == "opened"
+        return skip_mr unless updateable?
         return rebase_mr unless recreate? || gitlab_mr["has_conflicts"]
 
         Semaphore.synchronize { update }
@@ -33,32 +33,36 @@ module Dependabot
 
       attr_reader :project_name, :mr_iid, :action
 
-      # Perform recreate action
+      # Performing recreate action
       #
       # @return [Boolean] <description>
       def recreate?
         action == "recreate"
       end
 
-      # Perform update without force recreate
-      #
-      # @return [Boolean]
-      def update?
-        action == "update"
-      end
-
-      # Perform auto-rebase on other mr merge
+      # Performing auto-rebase after other merge request merged
       #
       # @return [Boolean]
       def auto_rebase?
-        action == "auto-rebase"
+        action == "auto_rebase"
+      end
+
+      # Is mr updateable
+      # * mr in open state
+      # * mr has correct assignee when configured and auto-rebase action performed
+      #
+      # @return [Boolean]
+      def updateable?
+        gitlab_mr.state == "opened" && (!auto_rebase? || !rebase_assignee || rebase_assignee == mr_assignee)
       end
 
       # Log mr update skipped
       #
       # @return [void]
       def skip_mr
-        log(:info, " merge request not in opened state, skipping")
+        return log(:info, " merge request not in opened state, skipping") unless gitlab_mr.state == "opened"
+
+        log(:info, "  merge request assignee doesn't match configured, skipping")
       end
 
       # Rebase merge request
@@ -146,6 +150,20 @@ module Dependabot
         return @repo_contents_path if defined?(@repo_contents_path)
 
         @repo_contents_path = DependabotCoreHelper.repo_contents_path(project_name, config_entry)
+      end
+
+      # Auto-rebase assignee option
+      #
+      # @return [Boolean]
+      def rebase_assignee
+        @rebase_assignee ||= config_entry.dig(:rebase_strategy, :with_assignee)
+      end
+
+      # Merge request assignee
+      #
+      # @return [String]
+      def mr_assignee
+        @mr_assignee ||= gitlab_mr.to_h.dig("assignee", "username")
       end
 
       # Fetch config entry for update
