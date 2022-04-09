@@ -322,3 +322,13 @@ include:
   trigger:
     project: dependabot-gitlab/deploy
     strategy: depend
+
+# ----------------------------------------------------------------------------------------------------------------------
+# issue triage stage
+#
+.triage_issues:
+  extends: .ruby_runner
+  stage: triage
+  script:
+    - bundle exec rake triage:update_stale_issues
+  interruptible: false
