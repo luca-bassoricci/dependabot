@@ -8,6 +8,7 @@ stages:
   - report
   - release
   - deploy
+  - triage
 
 variables:
   # App tags
@@ -182,3 +183,11 @@ deploy:
   extends:
     - .deploy
     - .rules:deploy
+
+# ======================================================================================================================
+# Scheduled jobs
+# ======================================================================================================================
+triage-issues:
+  extends:
+    - .triage_issues
+    - .rules:triage-issues

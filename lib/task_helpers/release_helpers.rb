@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "util"
+
 # Create release tag and update VERSION file
 #
 class ReleaseCreator
@@ -42,6 +44,8 @@ class ReleaseCreator
   end
 
   private
+
+  include Util
 
   attr_reader :ref_from, :version
 
@@ -89,12 +93,5 @@ class ReleaseCreator
   # @return [SemVer]
   def semver(ref_from)
     SemVer.parse(ref_from)
-  end
-
-  # Logger instance
-  #
-  # @return [Logger]
-  def logger
-    @logger ||= Logger.new($stdout)
   end
 end
