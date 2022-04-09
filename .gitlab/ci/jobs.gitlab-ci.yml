@@ -290,12 +290,9 @@ include:
 
 .gitlab_release:
   stage: release
-  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  image: ${CI_IMAGE}
   variables:
     RELEASE_NOTES_FILE: release_notes.md
-    SETTINGS__GITLAB_ACCESS_TOKEN: $GITLAB_ACCESS_TOKEN
-  before_script:
-    - apk --no-cache add -q jq bash curl grep
   script:
     - .gitlab/script/changelog.sh
   release:

@@ -12,7 +12,8 @@ data="version=${release_version}&trailer=changelog"
 
 log "Fetching release notes"
 curl -s --header "${header}" "${changelog_endpoint}?${data}" | jq -r ".notes" > ${RELEASE_NOTES_FILE}
-cat ${RELEASE_NOTES_FILE}
+log_success "done!"
 
 log "Updating CHANGELOG.md"
-curl -X POST --header "${header}" --data "${data}" "${changelog_endpoint}"
+curl -X POST -s --header "${header}" --data "${data}" "${changelog_endpoint}"
+log_success "done!"
