@@ -303,8 +303,6 @@ include:
 .update_chart:
   extends: .ruby_runner
   stage: release
-  variables:
-    SETTINGS__GITLAB_ACCESS_TOKEN: $GITLAB_ACCESS_TOKEN
   script:
     - bundle exec rake "release:chart[$CI_COMMIT_TAG]"
   interruptible: false
@@ -312,8 +310,6 @@ include:
 .update_standalone:
   extends: .ruby_runner
   stage: release
-  variables:
-    SETTINGS__GITLAB_ACCESS_TOKEN: $GITLAB_ACCESS_TOKEN
   script:
     - bundle exec rake "release:standalone[$CI_COMMIT_TAG]"
   interruptible: false
