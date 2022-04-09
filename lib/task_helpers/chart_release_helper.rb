@@ -37,7 +37,7 @@ class ChartReleaseHelper
   def gitlab
     @gitlab ||= Gitlab.client(
       endpoint: "https://gitlab.com/api/v4",
-      private_token: ENV["SETTINGS__GITLAB_ACCESS_TOKEN"]
+      private_token: ENV["GITLAB_ACCESS_TOKEN"]
     )
   end
 
