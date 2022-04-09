@@ -326,6 +326,10 @@ include:
 #
 .deploy:
   stage: deploy
+  inherit:
+    variables: false
+  variables:
+    TF_VAR_image_tag: ${CURRENT_TAG}
   trigger:
     project: dependabot-gitlab/deploy
     strategy: depend
