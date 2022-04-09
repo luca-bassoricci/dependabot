@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class AppConfig < ApplicationConfig
+  URL_REGEX = %r{^(.*?)(/+)?$}.freeze
+
   env_prefix :settings_
 
   attr_config :dependabot_url,
@@ -23,6 +25,20 @@ class AppConfig < ApplicationConfig
               # sentry sample rate
               sentry_traces_sample_rate: 0.0
 
+  # Gitlab url with removed trailing slash
+  #
+  # @return [String]
+  def gitlab_url
+    sanitize_url(super)
+  end
+
+  # Dependabot url with removed trailing slash
+  #
+  # @return [String]
+  def dependabot_url
+    sanitize_url(super)
+  end
+
   # Configurable sidekiq retry
   #
   # @return [Numeric, Boolean]
@@ -35,5 +51,17 @@ class AppConfig < ApplicationConfig
   # @return [Boolean]
   def integrated?
     dependabot_url && create_project_hook
+  end
+
+  private
+
+  # Remove trailing slash from url
+  #
+  # @param [String] url
+  # @return [URI]
+  def sanitize_url(url)
+    return unless url
+
+    URI.parse(url.match(URL_REGEX)[1])
   end
 end
