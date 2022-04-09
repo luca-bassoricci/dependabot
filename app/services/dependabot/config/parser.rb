@@ -146,7 +146,8 @@ module Dependabot
         {
           rebase_strategy: {
             strategy: strategy[:strategy] || "auto",
-            on_approval: strategy[:"on-approval"]
+            on_approval: strategy[:"on-approval"],
+            with_assignee: strategy[:"with-assignee"]
           }
         }
       end

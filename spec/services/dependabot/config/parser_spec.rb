@@ -74,8 +74,12 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
       YAML
     end
 
-    it "sets reject_external_code: false by default" do
-      expect(parser[:updates].first[:rebase_strategy]).to eq({ strategy: "auto", on_approval: true })
+    it "sets 'auto' strategy by default" do
+      expect(parser[:updates].first[:rebase_strategy]).to eq({
+        strategy: "auto",
+        on_approval: true,
+        with_assignee: nil
+      })
     end
   end
 

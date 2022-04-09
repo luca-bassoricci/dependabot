@@ -7,6 +7,7 @@ class RebaseStrategyConfigContract < Dry::Validation::Contract
     required(:"rebase-strategy").hash do
       optional(:strategy).filled(:string)
       optional(:"on-approval").filled(:bool?)
+      optional(:"with-assignee").filled(:string)
     end
   end
 end
