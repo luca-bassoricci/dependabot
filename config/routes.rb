@@ -9,6 +9,7 @@ Rails.application.routes.draw do
 
   root "dependabot#index"
   put "/jobs/:id/execute", to: "job#execute", as: "job_execute"
+  put "/projects/:id/update", to: "project#update", as: "project_update"
 
   namespace :api, defaults: { format: :json } do
     resources :hooks, only: [:create]

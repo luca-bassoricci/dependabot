@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Webhooks::CommentEventHandler, epic: :services, feature: :webhooks do
+describe Webhooks::CommentEventHandler, :integration, epic: :services, feature: :webhooks do
   include ActiveJob::TestHelper
 
   subject(:action) do
