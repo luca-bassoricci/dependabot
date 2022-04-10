@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe DependabotController, type: :request, epic: :controllers, feature: "index page" do
-  let(:project) { build(:project_with_mr) }
+describe DependabotController, :integration, type: :request, epic: :controllers, feature: "index page" do
+  let(:project) { create(:project_with_mr) }
   let(:config_entry) { updates_config.first }
 
   before do

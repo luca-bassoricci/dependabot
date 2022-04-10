@@ -44,6 +44,7 @@
     <h1>Projects</h1>
     <% @projects.each do |project| %>
       <h2><%= link_to_if project.web_url, project.name, project.web_url %></h2>
+      <%= button_to "Sync", project_update_path(project.id), method: "put", title: "Sync project configuration" %>
 
       <table class="blueTable">
         <thead>
