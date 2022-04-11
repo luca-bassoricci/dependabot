@@ -79,13 +79,6 @@ brakeman:
   needs:
     - cache-dependencies
 
-bundle-audit:
-  extends:
-    - .bundle_audit
-    - .rules:main
-  needs:
-    - cache-dependencies
-
 dependency-scan:
   extends:
     - .dependency_scan
