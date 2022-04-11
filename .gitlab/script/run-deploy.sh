@@ -5,17 +5,17 @@ set -euo pipefail
 source "$(dirname "$0")/utils.sh"
 
 log "Setting up dependabot app"
-echo "** Pulling image '${APP_IMAGE}' **"
+log_info "** Pulling image '${APP_IMAGE}' **"
 docker pull --quiet $APP_IMAGE
 
-echo "** Starting app **"
+log_info "** Starting app **"
 docker compose up -d --quiet-pull
 
 log "Setting up gitlab mock"
-echo "** Pulling image '${MOCK_IMAGE}'"
+log_info "** Pulling image '${MOCK_IMAGE}' **"
 docker pull --quiet $MOCK_IMAGE
 
-echo "** Starting gitlab mock service **"
+log_info "** Starting gitlab mock service **"
 docker run -d \
   --network "${COMPOSE_PROJECT_NAME}_default" \
   --name gitlab \
@@ -23,7 +23,7 @@ docker run -d \
   -p 8081:8081 \
   ${MOCK_IMAGE}
 
-echo "** Setting mock expectations **"
+log_info "** Setting mock expectations **"
 script/set-mock.sh deploy docker
 
 log "Waiting for dependabot to be ready"

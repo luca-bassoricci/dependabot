@@ -4,33 +4,31 @@ set -euo pipefail
 
 source "$(dirname "$0")/utils.sh"
 
+network="dependabot"
+
 log "Setup gitlab mock"
-cat <<"YML" | docker compose -f /dev/stdin up -d --quiet-pull
-version: "3"
+log_info "** Createing '${network}' network **"
+docker network create $network
 
-services:
-  gitlab:
-    image: ${MOCK_IMAGE}
-    ports:
-      - 8080:8080
-      - 8081:8081
+log_info "** Pulling image '${MOCK_IMAGE}' **"
+docker pull --quiet $MOCK_IMAGE
 
-  setup:
-    image: alpine/curl:3.14
-    working_dir: /build
-    depends_on:
-      - gitlab
-    volumes:
-      - ${CI_PROJECT_DIR}:/build
-    command: script/set-mock.sh standalone
-YML
+log_info "** Starting gitlab mock service **"
+docker run -d \
+  --network $network \
+  --name gitlab \
+  -p 8080:8080 \
+  -p 8081:8081 \
+  ${MOCK_IMAGE}
 
-log "Run standalone dependency updates"
-echo "** Pulling image '${APP_IMAGE}' **"
+log_info "** Setting mock expectations **"
+script/set-mock.sh standalone docker
+
+log "Running standalone dependency updates"
+log_info "** Pulling image '${APP_IMAGE}' **"
 docker pull --quiet $APP_IMAGE
 
-echo ""
-echo "Running rake task 'dependabot:update[dependabot-gitlab/testing,bundler,/]'"
+log_info "** Running rake task 'dependabot:update[dependabot-gitlab/testing,bundler,/]' **"
 docker run --rm -i \
   -e RAILS_ENV=production \
   -e SETTINGS__GITLAB_URL=http://gitlab:8080 \
@@ -39,6 +37,6 @@ docker run --rm -i \
   -e SETTINGS__STANDALONE=true \
   -e SETTINGS__LOG_LEVEL=debug \
   -e SETTINGS__LOG_COLOR=true \
-  --network "${COMPOSE_PROJECT_NAME}_default" \
+  --network $network \
   $APP_IMAGE \
   rake 'dependabot:update[dependabot-gitlab/testing,bundler,/]'

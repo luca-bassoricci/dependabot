@@ -43,9 +43,9 @@ if [[ "$response" == "$expected_response" ]]; then
   log_success "Successfully registered project!"
 else
   log_error "Project registration unsuccessful!"
-  echo "Expected response:"
+  log_info "Expected response:"
   echo "$expected_response"
-  echo "Actual response:"
+  log_info "Actual response:"
   echo "$response"
   exit 1
 fi
