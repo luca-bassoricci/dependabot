@@ -161,15 +161,9 @@ include:
   stage: static analysis
   extends: brakeman-sast
 
-.bundle_audit:
-  stage: static analysis
-  extends: bundler-audit-dependency_scanning
-
 .dependency_scan:
   stage: static analysis
   extends: gemnasium-dependency_scanning
-  variables:
-    DS_REMEDIATE: "false"
 
 .container_scanning:
   stage: static analysis
