@@ -39,6 +39,7 @@
         - Gemfile
         - Gemfile.lock
         - Dockerfile
+        - .gitlab/script/*
     - <<: *mr
       when: manual
       allow_failure: true
@@ -53,6 +54,7 @@
         - Gemfile.lock
         - Dockerfile
         - docker-compose.yml
+        - .gitlab/script/*
     - <<: *mr
       when: manual
       allow_failure: true

@@ -11,3 +11,7 @@ function log_error() {
 function log_success() {
   echo -e "\033[1;32m$1\033[0m"
 }
+
+function log_info() {
+  echo -e "\033[1;35m$1\033[0m"
+}
