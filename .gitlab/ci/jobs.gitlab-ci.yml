@@ -26,7 +26,7 @@ include:
     BUNDLE_SUPPRESS_INSTALL_USING_MESSAGES: "true"
   before_script:
     - unset BUNDLE_APP_CONFIG
-    - gem install bundler -v 2.3.9 --no-document
+    - gem install bundler -v ${BUNDLER_VERSION} --no-document
     - bundle config set --local path vendor/bundle
     - bundle install
   cache:

@@ -24,6 +24,7 @@ variables:
   CI_IMAGE: registry.gitlab.com/dependabot-gitlab/dependabot/ci:latest
   # Misc
   CODACY_VERSION: "13.5.3"
+  BUNDLER_VERSION: "2.3.10"
   DEPENDENCY_SCANNING_DISABLED: "true"
   SAST_DISABLED: "true"
   CONTAINER_SCANNING_DISABLED: "true"
