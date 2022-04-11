@@ -149,6 +149,7 @@ publish-coverage:
   needs:
     - unit-test
     - system-test
+    - cache-dependencies
 
 # ======================================================================================================================
 # Release Stage

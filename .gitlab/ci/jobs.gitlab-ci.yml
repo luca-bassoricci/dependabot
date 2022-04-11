@@ -21,12 +21,11 @@ include:
   policy: pull
 
 .ruby_runner:
-  image: ruby:2.7-bullseye
+  image: ${CI_IMAGE}
   variables:
     BUNDLE_SUPPRESS_INSTALL_USING_MESSAGES: "true"
   before_script:
     - unset BUNDLE_APP_CONFIG
-    - gem install bundler -v ${BUNDLER_VERSION} --no-document
     - bundle config set --local path vendor/bundle
     - bundle install
   cache:
@@ -68,7 +67,7 @@ include:
     DOCKER_CREDENTIALS: $DOCKERHUB_USERNAME:$DOCKERHUB_PASSWORD
     DOCKER_REGISTRY: https://index.docker.io/v1/
   before_script:
-    - while ! test -f "$DOCKER_CERT_PATH/ca.pem"; do sleep 2; done
+    - while ! test -f "${DOCKER_CERT_PATH}/ca.pem"; do sleep 2; done
   interruptible: true
 
 .rspec_runner:
@@ -228,7 +227,7 @@ include:
   script:
     - .gitlab/script/test-deploy.sh
   after_script:
-    - docker-compose logs migration web worker
+    - docker compose logs migration web worker
 
 # ----------------------------------------------------------------------------------------------------------------------
 # test report stage
