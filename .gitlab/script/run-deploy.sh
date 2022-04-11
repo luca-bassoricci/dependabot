@@ -9,7 +9,7 @@ echo "** Pulling image '${APP_IMAGE}' **"
 docker pull --quiet $APP_IMAGE
 
 echo "** Starting app **"
-docker-compose up -d --quiet-pull
+docker compose up -d --quiet-pull
 
 log "Setting up gitlab mock"
 echo "** Pulling image '${MOCK_IMAGE}'"

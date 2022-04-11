@@ -14,6 +14,7 @@ fi
 
 if [ ! -f "$EXECUTABLE_CODACY" ]; then
   log "Downloading codacy coverage reporter"
-  curl -L -o "$EXECUTABLE_CODACY" "https://github.com/codacy/codacy-coverage-reporter/releases/download/${CODACY_VERSION}/codacy-coverage-reporter-linux"
+  curl -s -L -o "$EXECUTABLE_CODACY" "https://github.com/codacy/codacy-coverage-reporter/releases/download/${CODACY_VERSION}/codacy-coverage-reporter-linux"
   chmod +x "$EXECUTABLE_CODACY"
+  log_success "done!"
 fi
