@@ -14,9 +14,9 @@ updates:
     auto-merge:
       ignore:
         - dependency-name: dependabot-omnibus
-        - dependency-name: sentry-rails
-        - dependency-name: sentry-ruby
-        - dependency-name: sentry-sidekiq
+    ignore:
+      - dependency-name: sentry-ruby
+      - dependency-name: sentry-sidekiq
   - package-ecosystem: docker
     directory: /
     schedule:
@@ -37,3 +37,6 @@ updates:
         - changelog: dependency
     assignees:
       - andrcuns
+    ignore:
+      - dependency-name: ruby
+        update-types: ["version-update:semver-major"]
