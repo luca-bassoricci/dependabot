@@ -62,7 +62,8 @@ describe Dependabot::Dependencies::UpdateChecker, epic: :services, feature: :dep
       dependency_files: fetcher.files,
       credentials: credentials,
       ignored_versions: [],
-      raise_on_ignored: true
+      raise_on_ignored: true,
+      options: config_entry[:updater_options]
     }
     args[:requirements_update_strategy] = versioning_strategy if versioning_strategy != :lockfile_only
     args
@@ -72,9 +73,9 @@ describe Dependabot::Dependencies::UpdateChecker, epic: :services, feature: :dep
     allow(Dependabot::Files::Updater).to receive(:call).with(
       dependencies: updated_dependencies,
       dependency_files: fetcher.files,
-      package_manager: package_manager,
       repo_contents_path: nil,
-      credentials: credentials
+      credentials: credentials,
+      config_entry: config_entry
     ).and_return(updated_files)
 
     allow(Dependabot::Dependencies::RuleHandler).to receive(:new).with(

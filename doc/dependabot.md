@@ -38,6 +38,7 @@ updates:
     assignees: 'default: none'
     reviewers: 'default: none'
     approvers: 'default: none'
+    updater-options: 'default: none'
 ```
 
 ## fork
@@ -180,15 +181,6 @@ auto-merge:
       update-types: ["version-update:semver-major"]
 ```
 
-### on-approval
-
-If mandatory approvals are set for merge requests, it is possible to set auto merging based on approval event rather than successful pipeline event:
-
-```yml
-auto-merge:
-  on-approval: true
-```
-
 ### Standalone
 
 In standalone mode this feature is not guaranteed to work due to gitlab limitation of accepting merge request before pipeline has been triggered. If pipeline
@@ -216,4 +208,19 @@ commit-message:
   trailers:
     - changelog: "dependency"
     - approved-by: "someone"
+```
+
+## updater-options
+
+It is possible to pass custom options to internal `dependabot-core` classes. Hash defined under `updater-options` is passed to following classes:
+
+* [file_parsers](https://github.com/dependabot/dependabot-core/tree/main/common/lib/dependabot/file_parsers)
+* [file_updaters](https://github.com/dependabot/dependabot-core/tree/main/common/lib/dependabot/file_updaters)
+* [update_checkers](https://github.com/dependabot/dependabot-core/tree/main/common/lib/dependabot/update_checkers)
+
+This option require knowledge of inner workings of `dependabot-core`, use at your own risk as input is not validated and can lead to failures.
+
+```yml
+updater-options:
+  goprivate: "custom-value"
 ```

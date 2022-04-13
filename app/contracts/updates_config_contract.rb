@@ -62,6 +62,7 @@ class UpdatesConfigContract < Dry::Validation::Contract
       optional(:"target-branch").filled(:string)
       optional(:"versioning-strategy").filled(:string)
       optional(:"insecure-external-code-execution").filled(:string)
+      optional(:"updater-options").hash
     end
   end
 

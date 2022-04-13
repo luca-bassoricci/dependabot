@@ -27,6 +27,7 @@ describe Dependabot::Files::Parser, epic: :services, feature: :dependabot do
     expect(Dependabot::Bundler::FileParser).to have_received(:new).with(
       credentials: [*Dependabot::Credentials.call, *registries.values],
       reject_external_code: config_entry[:reject_external_code],
+      options: config_entry[:updater_options],
       **args
     )
     expect(parser).to have_received(:parse)
