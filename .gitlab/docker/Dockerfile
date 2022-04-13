@@ -1,5 +1,5 @@
 FROM registry.gitlab.com/gitlab-org/release-cli:v0.11.0 as release-cli
-FROM ruby:2.7.5-slim-bullseye
+FROM ruby:2.7.6-slim-bullseye
 
 ARG pip_version=21.3.1
 ARG kubectl_version=v1.23.3
