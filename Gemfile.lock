@@ -343,7 +343,7 @@ GEM
       timeout
     netrc (0.11.0)
     nio4r (2.5.8)
-    nokogiri (1.13.3)
+    nokogiri (1.13.4)
       mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
     octokit (4.22.0)
@@ -352,7 +352,7 @@ GEM
     oj (3.13.11)
     parallel (1.22.1)
     parseconfig (1.0.8)
-    parser (3.1.1.0)
+    parser (3.1.2.0)
       ast (~> 2.4.1)
     prometheus-client-mmap (0.14.0)
     pry (0.13.1)
@@ -624,4 +624,4 @@ RUBY VERSION
    ruby 2.7.5p203
 
 BUNDLED WITH
-   2.2.32
+   2.3.10
