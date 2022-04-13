@@ -47,8 +47,8 @@ module Dependabot
           registries: RegistriesParser.call(registries: yml[:registries]),
           updates: yml[:updates].map do |configuration|
             {
-              **insecure_code_execution_options(configuration),
               **general_options(configuration),
+              **insecure_code_execution_options(configuration),
               **branch_options(configuration),
               **commit_message_options(configuration),
               **filter_options(configuration),
@@ -133,7 +133,8 @@ module Dependabot
           custom_labels: opts[:labels],
           registries: opts[:registries] || "*",
           versioning_strategy: versioning_strategy(opts[:"versioning-strategy"]),
-          open_merge_requests_limit: opts[:"open-pull-requests-limit"] || DependabotConfig.open_pull_request_limit
+          open_merge_requests_limit: opts[:"open-pull-requests-limit"] || DependabotConfig.open_pull_request_limit,
+          updater_options: opts[:"updater-options"] || {}
         }
       end
 

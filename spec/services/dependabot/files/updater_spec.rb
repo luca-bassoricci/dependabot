@@ -5,17 +5,18 @@ describe Dependabot::Files::Updater, epic: :services, feature: :dependabot do
     described_class.call(
       dependencies: updated_dependencies,
       dependency_files: fetcher.files,
-      package_manager: package_manager,
       repo_contents_path: nil,
-      credentials: credentials
+      credentials: credentials,
+      config_entry: config_entry
     )
   end
 
   include_context "with dependabot helper"
 
-  let(:files) { fetcher.files }
   let(:updater) { instance_double("Dependabot::Bundler::FileUpdater") }
   let(:credentials) { Dependabot::Credentials.call }
+  let(:files) { fetcher.files }
+  let(:config_entry) { updates_config.first }
 
   before do
     allow(Dependabot::Bundler::FileUpdater).to receive(:new) { updater }
@@ -28,7 +29,8 @@ describe Dependabot::Files::Updater, epic: :services, feature: :dependabot do
       dependencies: updated_dependencies,
       dependency_files: fetcher.files,
       credentials: credentials,
-      repo_contents_path: nil
+      repo_contents_path: nil,
+      options: config_entry[:updater_options]
     )
   end
 end

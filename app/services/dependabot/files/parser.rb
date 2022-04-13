@@ -25,7 +25,8 @@ module Dependabot
           source: source,
           credentials: [*Credentials.call, *registries],
           repo_contents_path: repo_contents_path,
-          reject_external_code: config_entry[:reject_external_code]
+          reject_external_code: config_entry[:reject_external_code],
+          options: config_entry[:updater_options]
         ).parse
       end
 

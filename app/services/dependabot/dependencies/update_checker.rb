@@ -152,11 +152,12 @@ module Dependabot
             dependency_files: dependency_files,
             credentials: credentials,
             ignored_versions: RuleHandler.version_conditions(dependency, config_entry[:ignore]),
-            raise_on_ignored: true
+            raise_on_ignored: true,
+            options: config_entry[:updater_options]
           }
           args[:requirements_update_strategy] = versioning_strategy if versioning_strategy && !lockfile_only?
 
-          Dependabot::UpdateCheckers.for_package_manager(dependency.package_manager).new(**args)
+          Dependabot::UpdateCheckers.for_package_manager(package_manager).new(**args)
         end
       end
 
@@ -182,9 +183,9 @@ module Dependabot
         Dependabot::Files::Updater.call(
           dependencies: updated_dependencies,
           dependency_files: dependency_files,
-          package_manager: package_manager,
           repo_contents_path: repo_contents_path,
-          credentials: credentials
+          credentials: credentials,
+          config_entry: config_entry
         )
       end
     end

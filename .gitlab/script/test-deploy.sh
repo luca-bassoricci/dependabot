@@ -15,12 +15,13 @@ expected_response=\
   "web_url": "https://example.com/deploy-test",
   "config": [
     {
-      "reject_external_code": false,
       "package_manager": "bundler",
       "package_ecosystem": "bundler",
       "directory": "/",
       "registries": "*",
       "open_merge_requests_limit": 5,
+      "updater_options": {},
+      "reject_external_code": false,
       "branch_name_prefix": "dependabot",
       "branch_name_separator": "-",
       "allow": [
