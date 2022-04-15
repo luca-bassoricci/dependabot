@@ -99,6 +99,7 @@
   rules:
     - <<: *fork
       when: never
+    - *mr
     - *master
 
 .rules:coverage:

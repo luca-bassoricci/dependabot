@@ -241,7 +241,8 @@ include:
         --results-glob="reports/allure-results/*" \
         --bucket="allure-test-reports" \
         --prefix="dependabot-gitlab/$CI_COMMIT_REF_SLUG" \
-        --update-pr="comment" \
+        --update-pr="description" \
+        --summary="behaviors" \
         --copy-latest \
         --color
 
