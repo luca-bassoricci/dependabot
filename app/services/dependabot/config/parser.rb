@@ -16,11 +16,12 @@ module Dependabot
     class Parser < ApplicationService
       # @return [Hash<String, String>]
       PACKAGE_ECOSYSTEM_MAPPING = {
-        "npm" => "npm_and_yarn",
-        "gomod" => "go_modules",
-        "gitsubmodule" => "submodules",
-        "mix" => "hex"
+        Ecosystem::NPM => "npm_and_yarn",
+        Ecosystem::GO => "go_modules",
+        Ecosystem::GIT => "submodules",
+        Ecosystem::MIX => "hex"
       }.freeze
+
       # @return [Hash<String, Symbol>] mapping for versioning strategies option
       VERSIONING_STRATEGIES = {
         "lockfile-only" => :lockfile_only,

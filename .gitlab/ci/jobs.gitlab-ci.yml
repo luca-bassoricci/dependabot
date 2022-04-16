@@ -183,14 +183,14 @@ include:
   extends: .rspec_runner
   services:
     - name: ${MOCK_IMAGE}
-      alias: gitlab
+      alias: smocker
     - name: ${REDIS_IMAGE}
       alias: redis
     - name: ${MONGODB_IMAGE}
       alias: mongodb
   variables:
-    MOCK_URL: http://gitlab:8081
-    GITLAB_URL: http://gitlab:8080
+    MOCK_HOST: smocker
+    GITLAB_URL: http://${MOCK_HOST}:8080
     RSPEC_TAGS: system
   before_script:
     - !reference [.ruby_runner, before_script]

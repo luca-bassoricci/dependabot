@@ -38,10 +38,6 @@ describe "dependency updates", :system, type: :system, epic: :system, feature: "
   let(:directory) { "/" }
   let(:mrs) { project.reload.merge_requests }
 
-  before do
-    mock.add(*mock_definitions)
-  end
-
   context "without existing mrs", :aggregate_failures do
     let(:mock_definitions) do
       [

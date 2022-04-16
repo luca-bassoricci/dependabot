@@ -7,7 +7,7 @@ require_relative "../api_helper"
 RSpec.shared_context "with system helper" do
   include_context "with api helper"
 
-  include Support::Mocks
+  include Support::Mocks::Gitlab
 
   let(:mock) { Support::Smocker.new }
 
@@ -15,6 +15,7 @@ RSpec.shared_context "with system helper" do
     driven_by(:rack_test)
 
     mock.reset
+    mock.add(*mock_definitions)
   end
 
   def expect_all_mocks_called

@@ -37,6 +37,7 @@ module DependabotGitlab
         end
 
         Dependabot::Projects::Registration::JobCreator.call
+        Github::Vulnerabilities::UpdateJobCreator.call
       end
     end
   end
