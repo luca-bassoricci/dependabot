@@ -46,11 +46,27 @@ module ApplicationHelper
     Sidekiq::Cron::Job.all.select { |job| job.name.match?(/^#{project_name}:.*/) }
   end
 
-  # Current dependency update execution context - project_name + package_ecosystem + directory
+  # Current job execution context
   #
   # @return [String]
   def execution_context
     Thread.current[:context]
+  end
+
+  # Set current job execution context
+  #
+  # @param [String] context
+  # @return [void]
+  def set_execution_context(context) # rubocop:disable Naming/AccessorMethodName
+    Thread.current[:context] = context
+  end
+
+  # Clear current job execution context
+  # Sidekiq can reuse threads, should be cleared in case next job doesn't reset it
+  #
+  # @return [void]
+  def clear_execution_context
+    Thread.current[:context] = nil
   end
 
   module_function :gitlab,

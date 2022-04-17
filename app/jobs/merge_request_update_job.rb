@@ -13,7 +13,7 @@ class MergeRequestUpdateJob < ApplicationJob
   # @param [String] action
   # @return [void]
   def perform(project_name, mr_iid, action)
-    save_execution_context(project_name, mr_iid)
+    set_execution_context("#{project_name}=>!#{mr_iid}")
 
     Dependabot::MergeRequest::UpdateService.call(
       project_name: project_name,
@@ -29,23 +29,5 @@ class MergeRequestUpdateJob < ApplicationJob
     )
   ensure
     clear_execution_context
-  end
-
-  private
-
-  # Save job execution context
-  #
-  # @param [String] project_name
-  # @param [Number] mr_iid
-  # @return [void]
-  def save_execution_context(project_name, mr_iid)
-    Thread.current[:context] = "#{project_name}=>!#{mr_iid}"
-  end
-
-  # Clear job execution context
-  #
-  # @return [void]
-  def clear_execution_context
-    Thread.current[:context] = nil
   end
 end
