@@ -31,7 +31,7 @@ describe "merge request update", :system, type: :system, epic: :system, feature:
     mock.add(*mock_definitions)
   end
 
-  it "updates single merge request" do
+  xit "updates single merge request" do
     update_mr
 
     expect_all_mocks_called
