@@ -8,7 +8,6 @@ describe Dependabot::Dependencies::UpdatedDependency, epic: :services, feature: 
       updated_dependencies: updated_dependencies,
       updated_files: updated_files,
       vulnerable: false,
-      security_advisories: [],
       auto_merge_rules: merge_rules
     )
   end

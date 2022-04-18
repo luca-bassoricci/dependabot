@@ -12,7 +12,7 @@ describe "dependency updates" do
 
     include_context "with system helper"
 
-    let(:project) { create(:project_with_mr, dependency: "git") }
+    let(:project) { create(:project_with_mr, dependency: "rspec-retry", update_from: "0.6.1", update_to: "0.6.2") }
     let(:project_name) { project.name }
     let(:mr) { project.merge_requests.first }
 

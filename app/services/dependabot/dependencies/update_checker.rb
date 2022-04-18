@@ -137,8 +137,8 @@ module Dependabot
           updated_dependencies: updated_dependencies,
           updated_files: updated_files(updated_dependencies),
           vulnerable: checker.vulnerable?,
-          security_advisories: checker.security_advisories,
-          auto_merge_rules: config_entry[:auto_merge]
+          auto_merge_rules: config_entry[:auto_merge],
+          fixed_vulnerabilities: fixed_vulnerabilities(updated_dependencies)
         )
       end
 
@@ -152,6 +152,7 @@ module Dependabot
             dependency_files: dependency_files,
             credentials: credentials,
             ignored_versions: RuleHandler.version_conditions(dependency, config_entry[:ignore]),
+            security_advisories: vulnerabilities.map { |entry| entry[:advisory] },
             raise_on_ignored: true,
             options: config_entry[:updater_options]
           }
@@ -187,6 +188,43 @@ module Dependabot
           credentials: credentials,
           config_entry: config_entry
         )
+      end
+
+      # List of advisories for dependency
+      #
+      # @return [Array<Hash>]
+      def vulnerabilities
+        @vulnerabilities ||= begin
+          return [] if AppConfig.standalone?
+
+          Vulnerability
+            .where(
+              package: dependency.name,
+              package_ecosystem: config_entry[:package_ecosystem],
+              withdrawn_at: nil
+            )
+            .map do |vulnerability|
+            {
+              vulnerability: vulnerability,
+              advisory: Dependabot::SecurityAdvisory.new(
+                dependency_name: dependency.name,
+                package_manager: config_entry[:package_manager],
+                vulnerable_versions: [vulnerability.vulnerable_version_range],
+                safe_versions: [vulnerability.first_patched_version]
+              )
+            }
+          end
+        end
+      end
+
+      # Vulnerabilities fixed by this update
+      #
+      # @param [Array<Dependabot::Dependency>] updated_dependencies
+      # @return [Array<Vulnerability>]
+      def fixed_vulnerabilities(updated_dependencies)
+        vulnerabilities
+          .select { |entry| updated_dependencies.any? { |dep| entry[:advisory].fixed_by?(dep) } }
+          .map { |entry| entry[:vulnerability] }
       end
     end
   end

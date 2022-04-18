@@ -64,7 +64,6 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
       updated_dependencies: ["updated_rspec"],
       updated_files: [],
       vulnerable: false,
-      security_advisories: [],
       auto_merge_rules: nil
     )
   end
@@ -76,7 +75,6 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
       updated_dependencies: ["updated_config"],
       updated_files: [],
       vulnerable: false,
-      security_advisories: [],
       auto_merge_rules: nil
     )
   end
@@ -221,7 +219,6 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
           updated_dependencies: ["updated_puma"],
           updated_files: [],
           vulnerable: true,
-          security_advisories: [],
           auto_merge_rules: nil
         )
       end
@@ -233,7 +230,6 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
           updated_dependencies: ["updated_rails"],
           updated_files: [],
           vulnerable: false,
-          security_advisories: [],
           auto_merge_rules: nil
         )
       end

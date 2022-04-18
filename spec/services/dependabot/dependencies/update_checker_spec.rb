@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Dependabot::Dependencies::UpdateChecker, epic: :services, feature: :dependabot do
+describe Dependabot::Dependencies::UpdateChecker, :integration, epic: :services, feature: :dependabot do
   subject(:update_checker) do
     described_class.call(
       dependency: dependency,
@@ -25,6 +25,7 @@ describe Dependabot::Dependencies::UpdateChecker, epic: :services, feature: :dep
   let(:versioning_strategy) { :bump_versions }
   let(:can_update) { true }
   let(:credentials) { [*Dependabot::Credentials.call, *registries.values] }
+  let(:advisories) { [] }
 
   let(:skipped_dep) do
     Dependabot::Dependencies::UpdatedDependency.new(
@@ -63,6 +64,7 @@ describe Dependabot::Dependencies::UpdateChecker, epic: :services, feature: :dep
       credentials: credentials,
       ignored_versions: [],
       raise_on_ignored: true,
+      security_advisories: advisories,
       options: config_entry[:updater_options]
     }
     args[:requirements_update_strategy] = versioning_strategy if versioning_strategy != :lockfile_only
@@ -151,14 +153,13 @@ describe Dependabot::Dependencies::UpdateChecker, epic: :services, feature: :dep
         updated_files: updated_files,
         updated_dependencies: updated_dependencies,
         vulnerable: checker.vulnerable?,
-        security_advisories: checker.security_advisories,
         auto_merge_rules: auto_merge_rules
       )
     end
 
     before do
       allow(checker).to receive(:latest_version) { latest_version }
-      allow(checker).to receive(:security_advisories).and_return([])
+      allow(checker).to receive(:security_advisories).and_return(advisories)
       allow(checker).to receive(:updated_dependencies) { updated_dependencies }
     end
 
@@ -193,6 +194,53 @@ describe Dependabot::Dependencies::UpdateChecker, epic: :services, feature: :dep
       it "returns updated dependencies" do
         expect(update_checker).to eq(updated_deps)
         expect(checker).to have_received(:updated_dependencies).with(requirements_to_unlock: :all)
+      end
+    end
+
+    context "when vulnerability exists" do
+      let(:advisories) do
+        array_including(kind_of(Dependabot::SecurityAdvisory))
+      end
+
+      let(:vulnerability) do
+        Vulnerability.new(
+          package: dependency.name,
+          package_ecosystem: config_entry[:package_ecosystem],
+          vulnerable_version_range: "> 1.0.0",
+          first_patched_version: "2.0.0"
+        )
+      end
+
+      let(:received_advisory) do
+        Dependabot::SecurityAdvisory.new(
+          dependency_name: dependency.name,
+          package_manager: package_manager,
+          vulnerable_versions: [vulnerability.vulnerable_version_range],
+          safe_versions: [vulnerability.first_patched_version]
+        )
+      end
+
+      before do
+        allow(Vulnerability).to receive(:where)
+          .with(
+            package: dependency.name,
+            package_ecosystem: config_entry[:package_ecosystem],
+            withdrawn_at: nil
+          )
+          .and_return([vulnerability])
+      end
+
+      it "passes advisories to update checker", :aggregate_failures do
+        expect(update_checker).to eq(updated_deps)
+
+        expect(Dependabot::Bundler::UpdateChecker).to have_received(:new) do |args|
+          advisory = args[:security_advisories].first
+
+          expect(advisory.dependency_name).to eq(dependency.name)
+          expect(advisory.package_manager).to eq(package_manager)
+          expect(advisory.vulnerable_versions).to eq(received_advisory.vulnerable_versions)
+          expect(advisory.safe_versions).to eq(received_advisory.safe_versions)
+        end
       end
     end
   end

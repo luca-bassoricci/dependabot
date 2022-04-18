@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "base64"
+
 module Support
   module Mocks
     module Gitlab # rubocop:disable Metrics/ModuleLength
@@ -172,7 +174,7 @@ module Support
                   "blob_id": "0fa78ba25aee3ed6f754c01441b7eb3d8897c3f7",
                   "commit_id": "d522b9716589980822850be63025b767f0d78768",
                   "last_commit_id": "a561e142fb670429c9661ecafc581acc6a5d16d2",
-                  "content": "IyBmcm96ZW5fc3RyaW5nX2xpdGVyYWw6IHRydWUKCnNvdXJjZSAiaHR0cHM6Ly9ydWJ5Z2Vtcy5vcmciCgpnZW0gImZha2VyIiwgIn4+IDEuOSIKZ2VtICJnaXQiLCAifj4gMS44LjAiCmdlbSAicnVib2NvcCIsICJ+PiAxLjE5LjEiCg=="
+                  "content": "#{Base64.strict_encode64(File.read('spec/fixture/gemfiles/Gemfile'))}"
                 }
           - request:
               method: GET
@@ -194,7 +196,7 @@ module Support
                   "blob_id": "c385e8593f517c93a25360a064a11fd8bb8f9353",
                   "commit_id": "d522b9716589980822850be63025b767f0d78768",
                   "last_commit_id": "a561e142fb670429c9661ecafc581acc6a5d16d2",
-                  "content": "R0VNCiAgcmVtb3RlOiBodHRwczovL3J1YnlnZW1zLm9yZy8KICBzcGVjczoKICAgIGFzdCAoMi40LjIpCiAgICBjb25jdXJyZW50LXJ1YnkgKDEuMS45KQogICAgZmFrZXIgKDEuOS42KQogICAgICBpMThuICg+PSAwLjcpCiAgICBnaXQgKDEuOC4wKQogICAgICByY2hhcmRldCAofj4gMS44KQogICAgaTE4biAoMS44LjExKQogICAgICBjb25jdXJyZW50LXJ1YnkgKH4+IDEuMCkKICAgIHBhcmFsbGVsICgxLjIxLjApCiAgICBwYXJzZXIgKDMuMC4zLjIpCiAgICAgIGFzdCAofj4gMi40LjEpCiAgICByYWluYm93ICgzLjAuMCkKICAgIHJjaGFyZGV0ICgxLjguMCkKICAgIHJlZ2V4cF9wYXJzZXIgKDIuMi4wKQogICAgcmV4bWwgKDMuMi41KQogICAgcnVib2NvcCAoMS4xOS4xKQogICAgICBwYXJhbGxlbCAofj4gMS4xMCkKICAgICAgcGFyc2VyICg+PSAzLjAuMC4wKQogICAgICByYWluYm93ICg+PSAyLjIuMiwgPCA0LjApCiAgICAgIHJlZ2V4cF9wYXJzZXIgKD49IDEuOCwgPCAzLjApCiAgICAgIHJleG1sCiAgICAgIHJ1Ym9jb3AtYXN0ICg+PSAxLjkuMSwgPCAyLjApCiAgICAgIHJ1YnktcHJvZ3Jlc3NiYXIgKH4+IDEuNykKICAgICAgdW5pY29kZS1kaXNwbGF5X3dpZHRoICg+PSAxLjQuMCwgPCAzLjApCiAgICBydWJvY29wLWFzdCAoMS4xNS4wKQogICAgICBwYXJzZXIgKD49IDMuMC4xLjEpCiAgICBydWJ5LXByb2dyZXNzYmFyICgxLjExLjApCiAgICB1bmljb2RlLWRpc3BsYXlfd2lkdGggKDIuMS4wKQoKUExBVEZPUk1TCiAgeDg2XzY0LWRhcndpbi0yMAoKREVQRU5ERU5DSUVTCiAgZmFrZXIgKH4+IDEuOSkKICBnaXQgKH4+IDEuOC4wKQogIHJ1Ym9jb3AgKH4+IDEuMTkuMSkKCkJVTkRMRUQgV0lUSAogICAyLjIuMzEK"
+                  "content": "#{Base64.strict_encode64(File.read('spec/fixture/gemfiles/Gemfile.lock'))}"
                 }
         YAML
       end

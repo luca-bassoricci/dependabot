@@ -12,8 +12,8 @@ module Dependabot
       # @param [Array<Dependabot::Dependency>] updated_dependencies
       # @param [Array<Dependabot::DependencyFile>] updated_files
       # @param [Boolean] vulnerable
-      # @param [Array<String>] security_advisories
       # @param [Hash] auto_merge_rules
+      # @param [Array<Vulnerability>] fixed_vulnerabilities
       # rubocop:disable Metrics/ParameterLists
       def initialize(
         name:,
@@ -21,15 +21,15 @@ module Dependabot
         updated_dependencies: nil,
         updated_files: nil,
         vulnerable: nil,
-        security_advisories: nil,
-        auto_merge_rules: nil
+        auto_merge_rules: nil,
+        fixed_vulnerabilities: []
       )
         @name = name
         @state = state
         @updated_dependencies = updated_dependencies
         @updated_files = updated_files
         @vulnerable = vulnerable
-        @security_advisories = security_advisories
+        @fixed_vulnerabilities = fixed_vulnerabilities
         @auto_merge_rules = auto_merge_rules
       end
       # rubocop:enable Metrics/ParameterLists
@@ -44,8 +44,8 @@ module Dependabot
       attr_reader :updated_files
       # @return [Boolean]
       attr_reader :vulnerable
-      # @return [Array<String>] security advisories
-      attr_reader :security_advisories
+      # @return [Array<Vulnerability>] fixed vulnerabilities
+      attr_reader :fixed_vulnerabilities
       # @return [Hash] merge rules
       attr_reader :auto_merge_rules
 
