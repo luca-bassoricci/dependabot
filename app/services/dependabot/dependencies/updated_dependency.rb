@@ -31,6 +31,8 @@ module Dependabot
         @vulnerable = vulnerable
         @fixed_vulnerabilities = fixed_vulnerabilities
         @auto_merge_rules = auto_merge_rules
+
+        convert_fixed_vulnerabilities
       end
       # rubocop:enable Metrics/ParameterLists
 
@@ -141,6 +143,31 @@ module Dependabot
         updated_dependencies.any? do |dependency|
           RuleHandler.version_conditions(dependency, rules)&.any? do |rule|
             SemanticRange.satisfies?(dependency.version, rule.gsub(",", " ||").tr("a", "x"))
+          end
+        end
+      end
+
+      # Convert fixed vulnerabilities for dependabot pr creator
+      #
+      # @return [Hash]
+      def convert_fixed_vulnerabilities
+        @fixed_vulnerabilities = begin
+          # merge different ranges of same vulnerability
+          by_id = fixed_vulnerabilities.each_with_object({}) do |vuln, hsh|
+            id = vuln.id
+
+            if hsh.key?(id)
+              hsh[id]["patched_versions"] << vuln.first_patched_version
+              hsh[id]["affected_versions"] << vuln.vulnerable_version_range
+              next
+            end
+
+            hsh[id] = vuln.to_hash
+          end
+
+          # group fixed vulnerabilities by package name
+          by_id.values.each_with_object(Hash.new { |hsh, key| hsh[key] = [] }) do |vuln, hsh|
+            hsh[vuln["package"]] << vuln.except("package")
           end
         end
       end

@@ -305,6 +305,10 @@ module Support
                   {
                     "id": 15387019,
                     "name": "ruby"
+                  },
+                  {
+                    "id": 15387020,
+                    "name": "security"
                   }
                 ]
         YAML

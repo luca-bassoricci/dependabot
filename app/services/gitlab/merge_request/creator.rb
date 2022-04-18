@@ -61,6 +61,7 @@ module Gitlab
           github_redirection_service: "github.com",
           pr_message_footer: AppConfig.standalone ? nil : message_footer,
           automerge_candidate: updated_dependency.auto_mergeable?,
+          vulnerabilities_fixed: updated_dependency.fixed_vulnerabilities,
           provider_metadata: { target_project_id: target_project_id },
           **mr_options
         ).send(:gitlab_creator)

@@ -96,6 +96,7 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
       pr_message_footer: footer,
       provider_metadata: { target_project_id: nil },
       automerge_candidate: true,
+      vulnerabilities_fixed: {},
       **mr_params
     }
   end
