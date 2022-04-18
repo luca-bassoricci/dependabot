@@ -214,6 +214,7 @@ include:
     SETTINGS__DEPENDABOT_URL: http://ci-test.com
     SETTINGS__GITLAB_ACCESS_TOKEN: e2e-test
     SETTINGS__PROJECT_REGISTRATION: automatic
+    SETTINGS__LOG_LEVEL: debug
     COMPOSE_PROJECT_NAME: dependabot
   before_script:
     - !reference [.docker_runner, before_script]
@@ -221,7 +222,7 @@ include:
   script:
     - .gitlab/script/test-deploy.sh
   after_script:
-    - docker compose logs migration web worker
+    - docker compose --ansi always logs migration web worker
 
 # ----------------------------------------------------------------------------------------------------------------------
 # test report stage

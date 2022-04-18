@@ -9,7 +9,7 @@ log_info "** Pulling image '${APP_IMAGE}' **"
 docker pull --quiet $APP_IMAGE
 
 log_info "** Starting app **"
-docker compose up -d --quiet-pull
+docker compose --ansi always up -d --quiet-pull
 
 log "Setting up gitlab mock"
 log_info "** Pulling image '${MOCK_IMAGE}' **"

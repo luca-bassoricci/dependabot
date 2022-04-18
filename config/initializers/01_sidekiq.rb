@@ -3,9 +3,10 @@
 redis_conf = {
   password: ENV["REDIS_PASSWORD"],
   timeout: 1,
-  reconnect_attempts: 3
+  reconnect_attempts: 3,
+  logger: DependabotLogger.logger(source: "redis", stdout: false)
 }
-logger = DependabotLogger.logger("sidekiq")
+logger = DependabotLogger.logger(source: "sidekiq")
 
 Sidekiq.configure_server do |config|
   Yabeda::Prometheus::Exporter.start_metrics_server! if AppConfig.metrics
