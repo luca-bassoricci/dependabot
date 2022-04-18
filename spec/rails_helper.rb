@@ -2,8 +2,10 @@
 
 ENV["RAILS_ENV"] ||= "test"
 ENV["MOCK_URL"] ||= "localhost:8081"
-ENV["SETTINGS__LOG_PATH"] ||= "log"
-ENV["SETTINGS__PROJECT_REGISTRATION"] ||= "system_hook"
+ENV["SETTINGS__LOG_STDOUT"] = "false"
+ENV["SETTINGS__LOG_COLOR"] = "false"
+ENV["SETTINGS__LOG_LEVEL"] = "debug"
+ENV["SETTINGS__PROJECT_REGISTRATION"] = "system_hook"
 
 require_relative "support/simplecov_helper"
 require_relative "support/dependabot_helper"

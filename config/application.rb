@@ -21,11 +21,10 @@ module DependabotGitlab
     config.load_defaults 7.0
     config.active_job.queue_adapter = :sidekiq
 
-    DependabotLogger.logger("app").tap do |logger|
-      config.logger = logger
-      config.mongoid.logger = logger
-      config.log_level = AppConfig.log_level
-    end
+    logger = DependabotLogger.logger(source: "app")
+    config.logger = logger
+    config.log_level = AppConfig.log_level
+    config.mongoid.logger = DependabotLogger.logger(source: "mongodb", stdout: false)
 
     config.after_initialize do
       if Sidekiq.server?

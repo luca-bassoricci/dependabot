@@ -31,12 +31,15 @@ class DependabotLogger
     end
   end
 
+  # :reek:ControlParameter
+
   # Common tagged logger
   #
-  # @param [String] log_source
+  # @param [String] source
+  # @param [Boolean] stdout
   # @return [ActiveSupport::TaggedLogging]
-  def self.logger(log_source)
-    logdev = AppConfig.log_path ? "#{AppConfig.log_path}/#{log_source}.out" : $stdout
+  def self.logger(source:, stdout: AppConfig.log_stdout)
+    logdev = stdout ? $stdout : "log/#{source}.out"
     ActiveSupport::TaggedLogging.new(
       Logger.new(logdev).tap do |log|
         log.formatter = SimpleLogFormatter.new
