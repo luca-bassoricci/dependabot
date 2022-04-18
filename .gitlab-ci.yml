@@ -20,7 +20,7 @@ variables:
   REDIS_IMAGE: bitnami/redis:6.2-debian-10
   MONGODB_IMAGE: bitnami/mongodb:4.4-debian-10
   MOCK_IMAGE: thiht/smocker:0.18.0
-  ALLURE_IMAGE: andrcuns/allure-report-publisher:0.5.2
+  ALLURE_IMAGE: andrcuns/allure-report-publisher:0.5.3
   CI_IMAGE: registry.gitlab.com/dependabot-gitlab/dependabot/ci:latest
   # Misc
   CODACY_VERSION: "13.5.3"
