@@ -16,7 +16,7 @@ Application providing automated dependency updates based on [dependabot-core](ht
 
 # Docker image
 
-- [Release](https://hub.docker.com/r/andrcuns/dependabot-gitlab/tags) - `docker.io/andrcuns/dependabot-gitlab:latest`
+- [Dockerhub](https://hub.docker.com/r/andrcuns/dependabot-gitlab/tags) - `docker.io/andrcuns/dependabot-gitlab:latest`
 
 # Usage
 
@@ -84,6 +84,7 @@ Following configuration options are currently supported:
 | `ignore`                           | :white_check_mark: | :white_check_mark:    |
 | `assignees`                        | :white_check_mark: | :white_check_mark:    |
 | `reviewers`                        | :white_check_mark: | :white_check_mark:    |
+| `approvers`                        | :white_check_mark: | :white_check_mark:    |
 | `commit-message`                   | :white_check_mark: | :white_check_mark:    |
 | `insecure-external-code-execution` | :white_check_mark: | :white_check_mark:    |
 | `labels`                           | :white_check_mark: | :white_check_mark:    |
@@ -96,10 +97,12 @@ Following configuration options are currently supported:
 | `versioning-strategy`              | :white_check_mark: | :white_check_mark:    |
 | `registries`                       | :white_check_mark: | :white_check_mark:    |
 | `fork`                             | :white_check_mark: | :white_check_mark:    |
+| `updater-options`                  | :white_check_mark: | :white_check_mark:    |
 | `schedule.interval`                | :white_check_mark: | :x:                   |
 | `schedule.day`                     | :white_check_mark: | :x:                   |
 | `schedule.time`                    | :white_check_mark: | :x:                   |
 | `schedule.timezone`                | :white_check_mark: | :x:                   |
+| `schedule.hours`                   | :white_check_mark: | :x:                   |
 
 ## Application
 
@@ -121,6 +124,14 @@ If `env.dependabotUrl` in helm values or `SETTINGS__DEPENDABOT_URL` is not set, 
 - `Pipeline events`
 
 It is possible to set up system hooks on Gitlab instance level as well. Make sure `SETTINGS__CREATE_PROJECT_HOOK` is set to `false` so project specific hooks are not created automatically.
+
+# Security updates
+
+Application supports syncing with [GitHub Advisory Database](https://github.com/advisories) for security vulnerability data retrieval when performing dependency updates.
+
+This feature requires for github access token to be configured.
+
+_Currently security updates are not supported in standalone mode_
 
 # Adding projects
 
