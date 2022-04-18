@@ -65,7 +65,7 @@ class DependencyUpdateJob < ApplicationJob
     context_values = [project, package_ecosystem]
     context_values << directory unless directory == "/"
 
-    context_values.join("=>")
+    "dependency-update: #{context_values.join('=>')}"
   end
 
   # Save last enqued time

@@ -13,7 +13,7 @@ class MergeRequestUpdateJob < ApplicationJob
   # @param [String] action
   # @return [void]
   def perform(project_name, mr_iid, action)
-    set_execution_context("#{project_name}=>!#{mr_iid}")
+    set_execution_context("mr-update: #{project_name}=>!#{mr_iid}")
 
     Dependabot::MergeRequest::UpdateService.call(
       project_name: project_name,

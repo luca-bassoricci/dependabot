@@ -17,7 +17,7 @@ class MergeRequestRecreationJob < ApplicationJob
     @mr_iid = mr_iid
     @discussion_id = discussion_id
 
-    set_execution_context("#{project_name}=>!#{mr_iid}")
+    set_execution_context("mr-update: #{project_name}=>!#{mr_iid}")
 
     recreate
   rescue StandardError => e
