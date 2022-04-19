@@ -17,12 +17,20 @@ RUN bundle install
 
 FROM core as production
 
-ENV BUNDLE_PATH=vendor/bundle \
-    BUNDLE_WITHOUT="development:test"
+USER root
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    libjemalloc-dev=5.2.1-1ubuntu1 \
+    && rm -rf /var/lib/apt/lists/*
 
 USER dependabot
 
 WORKDIR /home/dependabot/app
+
+ENV BUNDLE_PATH=vendor/bundle \
+    BUNDLE_WITHOUT="development:test" \
+    LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so
 
 # Copy gemfile first so cache can be reused
 COPY --chown=dependabot:dependabot Gemfile Gemfile.lock ./
