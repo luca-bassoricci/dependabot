@@ -3,8 +3,6 @@
   if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
 .master: &master
   if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "web")'
-.schedule: &schedule
-  if: '$CI_PIPELINE_SOURCE == "schedule"'
 .release: &release
   if: '$CI_COMMIT_TAG =~ /^v[0-9.]+$/ && $CI_PIPELINE_SOURCE == "push"'
 .fork: &fork
@@ -131,7 +129,3 @@
         - .gitlab/docker/Dockerfile
       variables:
         LATEST_TAG: latest
-
-.rules:triage-issues:
-  rules:
-    - *schedule
