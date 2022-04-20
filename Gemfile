@@ -44,7 +44,7 @@ group :test do
   gem "rubocop", "~> 1.27.0", require: false
   gem "rubocop-performance", "~> 1.13.3", require: false
   gem "rubocop-rails", "~> 2.14", require: false
-  gem "rubocop-rspec", "~> 2.9", require: false
+  gem "rubocop-rspec", "~> 2.10", require: false
   gem "simplecov", "~> 0.21.2", require: false
   gem "simplecov-cobertura", "~> 2.1.0", require: false
   gem "simplecov-console", "~> 0.9.1", require: false
