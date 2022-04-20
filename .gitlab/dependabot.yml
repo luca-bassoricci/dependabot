@@ -9,7 +9,7 @@ updates:
       prefix-development: dep-dev
       trailers:
         - changelog: dependency
-    assignees:
+    reviewers:
       - andrcuns
     auto-merge:
       ignore:
@@ -25,7 +25,7 @@ updates:
       prefix: dep
       trailers:
         - changelog: dependency
-    assignees:
+    reviewers:
       - andrcuns
   - package-ecosystem: docker
     directory: /.gitlab/docker
@@ -35,7 +35,7 @@ updates:
       prefix: dep-dev
       trailers:
         - changelog: dependency
-    assignees:
+    reviewers:
       - andrcuns
     ignore:
       - dependency-name: ruby
