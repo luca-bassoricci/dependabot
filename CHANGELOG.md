@@ -1,3 +1,53 @@
+## 0.18.0 (2022-04-21)
+
+### 🚀 New features (3 changes)
+
+- [Add support for custom updater options](dependabot-gitlab/dependabot@55debb7d07943ea423e7974b1f9dc730bd78e398) by @andrcuns. See merge request dependabot-gitlab/dependabot!1472
+- [Add project configuration sync button in UI](dependabot-gitlab/dependabot@5f61e97ad3519d32fbf8af0304dbb4edc061d500) by @andrcuns. See merge request dependabot-gitlab/dependabot!1464
+- [Add auto-rebase with-assignee option](dependabot-gitlab/dependabot@88445f45d748db50280de8f099f7b814861bccd8) by @andrcuns. See merge request dependabot-gitlab/dependabot!1458
+
+### 🔬 Improvements (1 change)
+
+- [Improve configured url handling](dependabot-gitlab/dependabot@1a6e9ea642ec56199025348f9f08f3b377754fc4) by @andrcuns. See merge request dependabot-gitlab/dependabot!1460
+
+### 🐞 Bug Fixes (2 changes)
+
+- [Respect config branch option when registering new project](dependabot-gitlab/dependabot@1b29facd766417352a0e39d183bd0531d5bd8e5e) by @andrcuns. See merge request dependabot-gitlab/dependabot!1478
+- [Correctly handle reopened mr with restored branch](dependabot-gitlab/dependabot@911a393750b9ea8c6debc7abe23f422ba4b9e6e0) by @andrcuns. See merge request dependabot-gitlab/dependabot!1456
+
+### 📦 Dependency updates (8 changes)
+
+- [dep-dev: bump reek from 6.1.0 to 6.1.1](dependabot-gitlab/dependabot@3dec16b1bb7215a6b08ace4fde32b7efb4b9e3e2) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1488
+- [dep: bump dependabot/dependabot-core from 0.180.5 to 0.182.0](dependabot-gitlab/dependabot@efee8d15cb828d7f6abf9343af57148910f39839) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1484
+- [dep-dev: bump rubocop-rspec from 2.9.0 to 2.10.0](dependabot-gitlab/dependabot@4c05321eefbfa57a78b494324c46c7ad0171b38b) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1486
+- [dep: bump sidekiq from 6.4.1 to 6.4.2](dependabot-gitlab/dependabot@dca621365b30ef48e05dea8de0178c075a73410e) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1485
+- [dep-dev: bump git from 1.10.2 to 1.11.0](dependabot-gitlab/dependabot@b838734798a60d5bc7550d21bb8cd9abf2f9cacb) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1481
+- [Bump nokogiri to 1.13.4](dependabot-gitlab/dependabot@e61f04f17188d8cb050063abb48445ecfb43053c) by @andrcuns. See merge request dependabot-gitlab/dependabot!1471
+- [dep-dev: bump ruby in /.gitlab/docker](dependabot-gitlab/dependabot@f069551934ffc86e4463ef5d8ed6e4268bd94ba8) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1470
+- [dep-dev: bump rubocop from 1.26.1 to 1.27.0](dependabot-gitlab/dependabot@d03524b4c029ad235a5451c6952a98c07f9f6753) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1457
+
+### 🔧 CI changes (13 changes)
+
+- [Move issue triage to toolbox project](dependabot-gitlab/dependabot@90964ca9cbe9fff9d55881d598b47c4388b56ebd) by @andrcuns. See merge request dependabot-gitlab/dependabot!1482
+- [Bump allure-report-publisher to 0.5.3](dependabot-gitlab/dependabot@fa87e8f85d592396f2eea078c0b3e3b099e78f63) by @andrcuns. See merge request dependabot-gitlab/dependabot!1480
+- [Bump allure-report-publisher to 0.5.2](dependabot-gitlab/dependabot@55df5d76afb753942da0c0de3857908e7b8ee612) by @andrcuns. See merge request dependabot-gitlab/dependabot!1476
+- [Simplify standalone test setup](dependabot-gitlab/dependabot@97d7b03e69e9a44e679beceaa02c619f8f2efde9) by @andrcuns. See merge request dependabot-gitlab/dependabot!1468
+- [Remove deprecated bundle-audit dependency scan](dependabot-gitlab/dependabot@a4a72d9ddc2230fb1af5e913ab1e2e9bae76600c) by @andrcuns. See merge request dependabot-gitlab/dependabot!1467
+- [Ruby based CI image](dependabot-gitlab/dependabot@3a8b225b24d8b918e0913b4d9153bda74555a163) by @andrcuns. See merge request dependabot-gitlab/dependabot!1466
+- [Update bundler ci version](dependabot-gitlab/dependabot@1bcb55e09726bf174d4a86d596fb8221784f3f27) by @andrcuns. See merge request dependabot-gitlab/dependabot!1465
+- [Add automated handling of stale issues](dependabot-gitlab/dependabot@7eb7bb5623199672c055c165fb13d73da9dd81b5) by @andrcuns. See merge request dependabot-gitlab/dependabot!1463
+- [Remove redundant gitlab access token var reassigning for release jobs](dependabot-gitlab/dependabot@c73381f11d6e0d7f1749746cfd9a7e0108f5b663) by @andrcuns. See merge request dependabot-gitlab/dependabot!1462
+- [Use ci image for release job](dependabot-gitlab/dependabot@d103b8ac20941776d3dd2c126e5cf68de398c9a8) by @andrcuns. See merge request dependabot-gitlab/dependabot!1461
+- [Fix deployment job](dependabot-gitlab/dependabot@ec2210d1ad3472ad80e0b656a51c97f22f44c1d4) by @andrcuns. See merge request dependabot-gitlab/dependabot!1459
+- [Update buildkit version to v0.10.1](dependabot-gitlab/dependabot@1ea2f73cfa0a73ef7bf372a340f72d54ca640b11) by @andrcuns. See merge request dependabot-gitlab/dependabot!1454
+- [Push ci generated app images to separate registry](dependabot-gitlab/dependabot@ebb923bbc3b0e174c6bb3a44cabac397789333bb) by @andrcuns. See merge request dependabot-gitlab/dependabot!1452
+
+### 🛠️ Chore (3 changes)
+
+- [Temporary disable broken spec](dependabot-gitlab/dependabot@e538caeb9a29e6d5157d981c9d00c63de277b4f9) by @andrcuns. See merge request dependabot-gitlab/dependabot!1479
+- [Log mongodb, redis and sentry to separate files](dependabot-gitlab/dependabot@96a5e0d395ce766dc55fbcfead6d3bafba78e293) by @andrcuns. See merge request dependabot-gitlab/dependabot!1479
+- [Add missing updater options migration](dependabot-gitlab/dependabot@b89b1bf5b9af7e04faaae7c4092e038b798f9d07) by @andrcuns. See merge request dependabot-gitlab/dependabot!1474
+
 ## 0.17.2 (2022-04-08)
 
 ### 🐞 Bug Fixes (2 changes)
