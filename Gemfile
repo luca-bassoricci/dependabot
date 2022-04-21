@@ -9,6 +9,7 @@ gem "bootsnap", ">= 1.4.2", require: false
 gem "dependabot-omnibus", "~> 0.182.0"
 gem "dry-validation", "~> 1.8"
 gem "gitlab", "~> 4.18"
+gem "graphql-client", "~> 0.17.0"
 gem "lograge", "~> 0.12.0"
 gem "mongoid", "~> 7.4"
 gem "mongoid_rails_migrations", "~> 1.4"
@@ -35,7 +36,6 @@ group :test do
   gem "faker", "~> 2.20"
   gem "httparty", "~> 0.20.0"
   gem "pry-byebug", "~> 3.9"
-  gem "pry-rails", "~> 0.3.9"
   gem "reek", "~> 6.1", require: false
   gem "rspec", "~> 3.11"
   gem "rspec_junit_formatter", "~> 0.5.1"
@@ -52,6 +52,7 @@ end
 
 group :development do
   gem "git", "~> 1.11", require: false
+  gem "pry-rails", "~> 0.3.9"
   gem "semver2", "~> 3.4", require: false
   gem "solargraph", "~> 0.44.3", require: false
   gem "spring", "~> 4.0.0", require: false

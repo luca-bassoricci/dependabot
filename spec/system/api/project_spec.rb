@@ -1,16 +1,12 @@
 # frozen_string_literal: true
 
-describe "Project", :system, type: :system, epic: :system, feature: :projects do
+describe "project", :system, type: :system, epic: :system, feature: :projects do
   include_context "with system helper"
 
   let(:project) { build(:project) }
   let(:project_name) { project.name }
   let(:created_project) { Project.where(name: project.name).first }
   let(:created_job) { created_project.update_jobs.first }
-
-  before do
-    mock.add(*mock_definitions)
-  end
 
   context "with configuration file", :aggregate_failures do
     let(:mock_definitions) { [project_mock, hook_mock, set_hook_mock, present_config_mock, raw_config_mock] }

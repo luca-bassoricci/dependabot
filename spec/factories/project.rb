@@ -55,9 +55,9 @@ FactoryBot.define do
 
     factory :project_with_mr do
       transient do
-        dependency { "git" }
-        update_from { "#{dependency}-1.8.0" }
-        update_to { "#{dependency}-1.10.2" }
+        dependency { "rspec-retry" }
+        update_from { "0.6.1" }
+        update_to { "0.6.2" }
         state { "opened" }
         commit_message { "" }
         branch { "branch" }
@@ -69,8 +69,8 @@ FactoryBot.define do
           :merge_request,
           project: project,
           main_dependency: evaluator.dependency,
-          update_from: evaluator.update_from,
-          update_to: evaluator.update_to,
+          update_from: "#{evaluator.dependency}-#{evaluator.update_from}",
+          update_to: "#{evaluator.dependency}-#{evaluator.update_to}",
           state: evaluator.state,
           commit_message: evaluator.commit_message,
           branch: evaluator.branch,
@@ -83,8 +83,8 @@ FactoryBot.define do
           :merge_request,
           project: project,
           main_dependency: evaluator.dependency,
-          update_from: evaluator.update_from,
-          update_to: evaluator.update_to,
+          update_from: "#{evaluator.dependency}-#{evaluator.update_from}",
+          update_to: "#{evaluator.dependency}-#{evaluator.update_to}",
           state: evaluator.state,
           commit_message: evaluator.commit_message,
           branch: evaluator.branch,

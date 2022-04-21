@@ -5,7 +5,8 @@ require "httparty"
 module Support
   class Smocker
     include HTTParty
-    base_uri ENV["MOCK_URL"]
+
+    base_uri "http://#{ENV['MOCK_HOST']}:8081"
 
     # Reset mock session
     #
@@ -28,6 +29,8 @@ module Support
     # @param [String] mock
     # @return [Hash]
     def add(*mock)
+      return if mock.empty?
+
       resp = self.class.post("/mocks", body: mock.join("\n"), headers: { "content-type" => "application/x-yaml" })
       response(resp)
     end
@@ -39,9 +42,10 @@ module Support
     # @param [Response] resp
     # @return [Hash]
     def response(resp)
-      raise("Invalid call to mock server") if resp.code != 200
+      body = JSON.parse(resp.body, symbolize_names: true)
+      raise("Invalid call to mock server, code: #{resp.code}, body: #{body}") if resp.code != 200
 
-      JSON.parse(resp.body, symbolize_names: true)
+      body
     end
   end
 end

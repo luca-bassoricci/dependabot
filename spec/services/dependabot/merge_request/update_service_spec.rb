@@ -47,7 +47,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
   let(:mr) { project.merge_requests.first }
   let(:config_entry) { project.configuration.entry(package_ecosystem: "bundler") }
   let(:registries) { project.configuration.registries }
-  let(:update_to_versions) { updated_dependency.current_versions }
+  let(:update_to_versions) { updated_dependency.current_versions.gsub("config-", "") }
   let(:dependency_state) { Dependabot::Dependencies::UpdateChecker::HAS_UPDATES }
   let(:action) { Dependabot::MergeRequest::UpdateService::UPDATE }
   let(:state) { "opened" }
@@ -72,7 +72,6 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
       updated_dependencies: updated_dependencies,
       updated_files: updated_files,
       vulnerable: false,
-      security_advisories: [],
       auto_merge_rules: []
     )
   end
@@ -191,7 +190,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
     end
 
     context "with newer versions to update" do
-      let(:update_to_versions) { "config-2.3.0" }
+      let(:update_to_versions) { "2.3.0" }
 
       it "raises newer version exists error" do
         expect { update }.to raise_error("Newer version for update exists, new merge request will be created!")

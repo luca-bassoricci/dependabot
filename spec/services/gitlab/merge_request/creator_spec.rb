@@ -62,7 +62,6 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
       updated_dependencies: updated_dependencies,
       updated_files: updated_files,
       vulnerable: false,
-      security_advisories: [],
       auto_merge_rules: auto_merge_rules
     )
   end
@@ -97,6 +96,7 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
       pr_message_footer: footer,
       provider_metadata: { target_project_id: nil },
       automerge_candidate: true,
+      vulnerabilities_fixed: {},
       **mr_params
     }
   end

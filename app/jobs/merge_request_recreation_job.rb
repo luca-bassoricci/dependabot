@@ -17,7 +17,7 @@ class MergeRequestRecreationJob < ApplicationJob
     @mr_iid = mr_iid
     @discussion_id = discussion_id
 
-    save_execution_context
+    set_execution_context("mr-update: #{project_name}=>!#{mr_iid}")
 
     recreate
   rescue StandardError => e
@@ -65,19 +65,5 @@ class MergeRequestRecreationJob < ApplicationJob
   # @return [void]
   def resolve_discussion
     gitlab.resolve_merge_request_discussion(project_name, mr_iid, discussion_id, resolved: true)
-  end
-
-  # Save job execution context
-  #
-  # @return [void]
-  def save_execution_context
-    Thread.current[:context] = "#{project_name}=>!#{mr_iid}"
-  end
-
-  # Clear job execution context
-  #
-  # @return [void]
-  def clear_execution_context
-    Thread.current[:context] = nil
   end
 end

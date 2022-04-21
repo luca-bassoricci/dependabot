@@ -16,7 +16,7 @@ class DependencyUpdateJob < ApplicationJob
                                                .slice(:project_name, :package_ecosystem, :directory)
                                                .values
     UpdateFailures.reset
-    save_execution_context
+    set_execution_context(job_execution_context)
     save_execution_time
 
     Dependabot::UpdateService.call(symbolized_args)
@@ -56,25 +56,16 @@ class DependencyUpdateJob < ApplicationJob
     update_job.save!
   end
 
-  # Set dependency update execution context
+  # Dependency update execution context
   #
-  # @return [void]
-  def save_execution_context
+  # @return [String]
+  def job_execution_context
     return unless project && package_ecosystem && directory
 
     context_values = [project, package_ecosystem]
     context_values << directory unless directory == "/"
 
-    Thread.current[:context] = context_values.join("=>")
-  end
-
-  # Clear execution context
-  #
-  # Sidekiq can reuse threads, should be cleared in case next job doesn't set it
-  #
-  # @return [void]
-  def clear_execution_context
-    Thread.current[:context] = nil
+    "dependency-update: #{context_values.join('=>')}"
   end
 
   # Save last enqued time

@@ -12,8 +12,8 @@ module Dependabot
       # @param [Array<Dependabot::Dependency>] updated_dependencies
       # @param [Array<Dependabot::DependencyFile>] updated_files
       # @param [Boolean] vulnerable
-      # @param [Array<String>] security_advisories
       # @param [Hash] auto_merge_rules
+      # @param [Array<Vulnerability>] fixed_vulnerabilities
       # rubocop:disable Metrics/ParameterLists
       def initialize(
         name:,
@@ -21,16 +21,18 @@ module Dependabot
         updated_dependencies: nil,
         updated_files: nil,
         vulnerable: nil,
-        security_advisories: nil,
-        auto_merge_rules: nil
+        auto_merge_rules: nil,
+        fixed_vulnerabilities: []
       )
         @name = name
         @state = state
         @updated_dependencies = updated_dependencies
         @updated_files = updated_files
         @vulnerable = vulnerable
-        @security_advisories = security_advisories
+        @fixed_vulnerabilities = fixed_vulnerabilities
         @auto_merge_rules = auto_merge_rules
+
+        convert_fixed_vulnerabilities
       end
       # rubocop:enable Metrics/ParameterLists
 
@@ -44,8 +46,8 @@ module Dependabot
       attr_reader :updated_files
       # @return [Boolean]
       attr_reader :vulnerable
-      # @return [Array<String>] security advisories
-      attr_reader :security_advisories
+      # @return [Array<Vulnerability>] fixed vulnerabilities
+      attr_reader :fixed_vulnerabilities
       # @return [Hash] merge rules
       attr_reader :auto_merge_rules
 
@@ -141,6 +143,31 @@ module Dependabot
         updated_dependencies.any? do |dependency|
           RuleHandler.version_conditions(dependency, rules)&.any? do |rule|
             SemanticRange.satisfies?(dependency.version, rule.gsub(",", " ||").tr("a", "x"))
+          end
+        end
+      end
+
+      # Convert fixed vulnerabilities for dependabot pr creator
+      #
+      # @return [Hash]
+      def convert_fixed_vulnerabilities
+        @fixed_vulnerabilities = begin
+          # merge different ranges of same vulnerability
+          by_id = fixed_vulnerabilities.each_with_object({}) do |vuln, hsh|
+            id = vuln.id
+
+            if hsh.key?(id)
+              hsh[id]["patched_versions"] << vuln.first_patched_version
+              hsh[id]["affected_versions"] << vuln.vulnerable_version_range
+              next
+            end
+
+            hsh[id] = vuln.to_hash
+          end
+
+          # group fixed vulnerabilities by package name
+          by_id.values.each_with_object(Hash.new { |hsh, key| hsh[key] = [] }) do |vuln, hsh|
+            hsh[vuln["package"]] << vuln.except("package")
           end
         end
       end

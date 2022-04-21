@@ -63,7 +63,6 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
       updated_dependencies: updated_dependencies,
       updated_files: updated_files,
       vulnerable: false,
-      security_advisories: [],
       auto_merge_rules: auto_merge_rules
     )
   end

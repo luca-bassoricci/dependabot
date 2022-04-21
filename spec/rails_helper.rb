@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 ENV["RAILS_ENV"] ||= "test"
-ENV["MOCK_URL"] ||= "localhost:8081"
+ENV["MOCK_HOST"] ||= "localhost"
 ENV["SETTINGS__LOG_STDOUT"] = "false"
 ENV["SETTINGS__LOG_COLOR"] = "false"
 ENV["SETTINGS__LOG_LEVEL"] = "debug"
