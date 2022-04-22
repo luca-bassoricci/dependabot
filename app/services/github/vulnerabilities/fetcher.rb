@@ -9,7 +9,6 @@ module Github
         Dependabot::Ecosystem::BUNDLER => "RUBYGEMS",
         Dependabot::Ecosystem::COMPOSER => "COMPOSER",
         Dependabot::Ecosystem::GO => "GO",
-        Dependabot::Ecosystem::GRADLE => "MAVEN",
         Dependabot::Ecosystem::MAVEN => "MAVEN",
         Dependabot::Ecosystem::NPM => "NPM",
         Dependabot::Ecosystem::PIP => "PIP",
