@@ -29,6 +29,7 @@ module Dependabot
             cron: cron,
             class: "ProjectRegistrationJob",
             active_job: true,
+            queue: "project_registration",
             description: "Automatically register projects for update"
           )
         end

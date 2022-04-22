@@ -4,7 +4,7 @@ module Github
   module Vulnerabilities
     class UpdateJobCreator < ApplicationService
       def initialize
-        @job_name = "Vulnerability database sync"
+        @job_name = "Vulnerability database update"
       end
 
       def call
@@ -33,7 +33,8 @@ module Github
           cron: "0 1/12 * * *",
           class: "SecurityVulnerabilityUpdateJob",
           description: "Vulnerability database update",
-          active_job: true
+          active_job: true,
+          queue: "vulnerability_update"
         )
       end
 
@@ -41,7 +42,10 @@ module Github
       #
       # @return [void]
       def destroy
-        Sidekiq::Cron::Job.destroy(job_name) if job_exists?
+        return unless job_exists?
+
+        log(:info, "Removing vulnerability database update job")
+        Sidekiq::Cron::Job.destroy(job_name)
       end
 
       # All db update jobs created and in sync
