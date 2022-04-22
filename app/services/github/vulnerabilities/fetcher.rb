@@ -82,7 +82,7 @@ module Github
       #
       # @return [Array]
       def call
-        log(:info, "Fetching vulnerabilities from GitHub advisory database")
+        log(:debug, "Fetching vulnerabilities from GitHub advisory database")
 
         vulnerabilities = []
         page = 1
