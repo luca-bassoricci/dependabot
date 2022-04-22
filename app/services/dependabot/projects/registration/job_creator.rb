@@ -23,6 +23,7 @@ module Dependabot
         #
         # @return [void]
         def create
+          log(:info, "Creating project registration job")
           Sidekiq::Cron::Job.create(
             name: JOB_NAME,
             cron: cron,
@@ -36,6 +37,7 @@ module Dependabot
         #
         # @return [void]
         def destroy
+          log(:info, "Removing project registration job")
           Sidekiq::Cron::Job.destroy(JOB_NAME)
         end
 
