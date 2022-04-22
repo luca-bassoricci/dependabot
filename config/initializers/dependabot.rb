@@ -38,7 +38,7 @@ module Dependabot
   # Log dependabot helpers output to debug level
   #
   module SharedHelpers
-    # rubocop:disable Metrics/ParameterLists
+    # rubocop:disable Metrics/ParameterLists, Metrics/MethodLength
     def self.run_helper_subprocess(
       command:,
       function:,
@@ -93,7 +93,7 @@ module Dependabot
         error_context: error_context
       )
     end
-    # rubocop:enable Metrics/ParameterLists
+    # rubocop:enable Metrics/ParameterLists, Metrics/MethodLength
 
     # Log helper result
     #

@@ -53,7 +53,7 @@ module Dependabot
         #
         # @param [Gitlab::ObjectifiedHash] project
         # @return [Boolean]
-        def register(project) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+        def register(project) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
           project_name = project.path_with_namespace
 
           existing_project = saved_project(name: project_name) || saved_project(id: project.id)
