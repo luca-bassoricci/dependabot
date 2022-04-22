@@ -1,21 +1,14 @@
 # frozen_string_literal: true
 
 describe Github::Vulnerabilities::UpdateJobCreator, epic: :services, feature: :github do
-  let(:ecosystems) do
-    %w[bundler composer gomod gradle maven npm pip nuget]
-  end
-
   let(:cron_create_args) do
-    ecosystems.each_with_index.map do |ecosystem, index|
-      {
-        name: "#{ecosystem} vulnerability sync",
-        cron: "0 #{index + 1}/12 * * *",
-        args: ecosystem,
-        class: "SecurityVulnerabilityUpdateJob",
-        description: "Update security vulnerabilities for #{ecosystem}",
-        active_job: true
-      }
-    end
+    {
+      name: "Vulnerability database sync",
+      cron: "0 1/12 * * *",
+      class: "SecurityVulnerabilityUpdateJob",
+      description: "Vulnerability database update",
+      active_job: true
+    }
   end
 
   before do
@@ -35,9 +28,7 @@ describe Github::Vulnerabilities::UpdateJobCreator, epic: :services, feature: :g
       it "creates jobs for vulnerability database updates", :aggregate_failures do
         described_class.call
 
-        cron_create_args.each do |args|
-          expect(Sidekiq::Cron::Job).to have_received(:create).with(args)
-        end
+        expect(Sidekiq::Cron::Job).to have_received(:create).with(cron_create_args)
       end
     end
 
@@ -55,7 +46,7 @@ describe Github::Vulnerabilities::UpdateJobCreator, epic: :services, feature: :g
   end
 
   context "without configured github access token" do
-    let(:job_name) { "nuget vulnerability sync" }
+    let(:job_name) { cron_create_args[:name] }
 
     around do |example|
       with_env("SETTINGS__GITHUB_ACCESS_TOKEN" => nil) { example.run }
@@ -63,7 +54,6 @@ describe Github::Vulnerabilities::UpdateJobCreator, epic: :services, feature: :g
 
     before do
       allow(Sidekiq::Cron::Job).to receive(:destroy)
-      allow(Sidekiq::Cron::Job).to receive(:find).with(kind_of(String)).and_return(nil)
       allow(Sidekiq::Cron::Job).to receive(:find).with(job_name).and_return("job")
     end
 

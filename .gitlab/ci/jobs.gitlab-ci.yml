@@ -213,6 +213,7 @@ include:
     SETTINGS__GITLAB_URL: http://gitlab:8080
     SETTINGS__DEPENDABOT_URL: http://ci-test.com
     SETTINGS__GITLAB_ACCESS_TOKEN: e2e-test
+    SETTINGS__GITHUB_ACCESS_TOKEN: e2e-test
     SETTINGS__PROJECT_REGISTRATION: automatic
     SETTINGS__LOG_LEVEL: debug
     COMPOSE_PROJECT_NAME: dependabot
