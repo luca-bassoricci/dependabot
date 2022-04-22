@@ -41,7 +41,7 @@ group :test do
   gem "rspec_junit_formatter", "~> 0.5.1"
   gem "rspec-rails", "~> 5.1.1"
   gem "rspec-sidekiq", "~> 3.1", require: false
-  gem "rubocop", "~> 1.27.0", require: false
+  gem "rubocop", "~> 1.28.1", require: false
   gem "rubocop-performance", "~> 1.13.3", require: false
   gem "rubocop-rails", "~> 2.14", require: false
   gem "rubocop-rspec", "~> 2.10", require: false
