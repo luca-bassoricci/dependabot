@@ -3,11 +3,12 @@
 describe Github::Vulnerabilities::UpdateJobCreator, epic: :services, feature: :github do
   let(:cron_create_args) do
     {
-      name: "Vulnerability database sync",
+      name: "Vulnerability database update",
       cron: "0 1/12 * * *",
       class: "SecurityVulnerabilityUpdateJob",
       description: "Vulnerability database update",
-      active_job: true
+      active_job: true,
+      queue: "vulnerability_update"
     }
   end
 
