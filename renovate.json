@@ -2,11 +2,11 @@
   "enabledManagers": ["gitlabci", "docker-compose"],
   "labels": ["dependencies", "docker"],
   "docker-compose": {
-    "commitMessagePrefix": "dep",
+    "commitMessagePrefix": "dep:",
     "commitBody": "changelog: dependency"
   },
   "gitlabci": {
-    "commitMessagePrefix": "dep-dev",
+    "commitMessagePrefix": "dep-dev:",
     "commitBody": "changelog: ci"
   }
 }
