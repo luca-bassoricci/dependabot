@@ -70,3 +70,4 @@ add necessary webhooks to project
 
 * `SENTRY_DSN` - [sentry dsn](https://docs.sentry.io/platforms/ruby/configuration/options/#environment-variables) value
 * `SETTINGS__SENTRY_TRACES_SAMPLE_RATE` - [traces sample rate](https://docs.sentry.io/platforms/ruby/performance/#configure-the-sample-rate), default: 0.0
+* `SETTINGS__SENTRY_IGNORED_ERRORS` - comma separated string of exceptions to exclude from reporting to sentry

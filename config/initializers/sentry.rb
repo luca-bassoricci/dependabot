@@ -10,4 +10,5 @@ Sentry.init do |config|
   config.skip_rake_integration = true
   config.logger = DependabotLogger.logger(source: "sentry", stdout: false)
   config.traces_sample_rate = AppConfig.sentry_traces_sample_rate
+  config.excluded_exceptions += AppConfig.sentry_ignored_errors
 end
