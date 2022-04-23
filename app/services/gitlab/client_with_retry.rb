@@ -40,9 +40,10 @@ module Gitlab
         yield
       rescue *RETRYABLE_ERRORS => e
         retry_attempt += 1
+        raise unless retry_attempt <= @max_retries
 
         log(:warn, "Gitlab request failed with: '#{e}'. Retrying...")
-        retry_attempt <= @max_retries ? retry : raise
+        retry
       end
     end
   end
