@@ -1,5 +1,5 @@
 {
-  "enabledManagers": ["gitlabci", "docker-compose"],
+  "enabledManagers": ["gitlabci", "docker-compose", "pre-commit"],
   "labels": ["dependencies", "docker"],
   "docker-compose": {
     "commitMessagePrefix": "dep:",
@@ -8,5 +8,9 @@
   "gitlabci": {
     "commitMessagePrefix": "dep-dev:",
     "commitBody": "changelog: ci"
+  },
+  "pre-commit": {
+    "enabled": true,
+    "commitBody": "changelog: chore"
   }
 }
