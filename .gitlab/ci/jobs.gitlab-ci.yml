@@ -34,7 +34,7 @@ include:
 
 .buildkit_runner:
   image:
-    name: ${BUILDKIT_IMAGE}
+    name: moby/buildkit:v0.10.1
     entrypoint: [""]
   before_script:
     - |
@@ -56,7 +56,7 @@ include:
 .docker_runner:
   image: ${CI_IMAGE}
   services:
-    - name: ${DIND_IMAGE}
+    - name: docker:20.10.14-dind
       alias: docker
   variables:
     DOCKER_HOST: tcp://docker:2376
@@ -74,9 +74,9 @@ include:
   stage: test
   extends: .ruby_runner
   services:
-    - name: ${REDIS_IMAGE}
+    - name: bitnami/redis:6.2-debian-10
       alias: redis
-    - name: ${MONGODB_IMAGE}
+    - name: bitnami/mongodb:4.4-debian-10
       alias: mongodb
   variables:
     REDIS_URL: redis://redis:6379
@@ -184,9 +184,9 @@ include:
   services:
     - name: ${MOCK_IMAGE}
       alias: smocker
-    - name: ${REDIS_IMAGE}
+    - name: bitnami/redis:6.2-debian-10
       alias: redis
-    - name: ${MONGODB_IMAGE}
+    - name: bitnami/mongodb:4.4-debian-10
       alias: mongodb
   variables:
     MOCK_HOST: smocker
@@ -231,7 +231,7 @@ include:
 .allure_report:
   stage: report
   image:
-    name: ${ALLURE_IMAGE}
+    name: andrcuns/allure-report-publisher:0.5.3
     entrypoint: [""]
   variables:
     GITLAB_AUTH_TOKEN: $GITLAB_ACCESS_TOKEN
