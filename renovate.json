@@ -1,24 +1,21 @@
 {
-  "labels": ["dependencies", "docker"],
   "enabledManagers": ["gitlabci", "docker-compose"],
+  "labels": ["dependencies", "docker"],
+  "ignorePaths": [".gitlab/ci/*"],
   "regexManagers": [
     {
       "description": "Update docker references in gitlab variables",
-      "fileMatch": ["\\.gitlab-ci\\.yml$"],
+      "fileMatch": ["^\\.gitlab-ci\\.yml$"],
       "matchStrings": [
-        "BUILDKIT_IMAGE:\\s*(?<depName>moby\\/buildkit):(?<currentValue>[a-z0-9.-]+)",
-        "DIND_IMAGE:\\s*(?<depName>docker):(?<currentValue>[a-z0-9.-]+)",
-        "REDIS_IMAGE:\\s*(?<depName>bitnami\\/redis):(?<currentValue>[a-z0-9.-]+)",
-        "MONGODB_IMAGE:\\s*(?<depName>bitnami\\/mongodb):(?<currentValue>[a-z0-9.-]+)",
-        "MOCK_IMAGE:\\s*(?<depName>thiht\\/smocker):(?<currentValue>[a-z0-9.-]+)",
-        "ALLURE_IMAGE:\\s*(?<depName>andrcuns\\/allure-report-publisher):(?<currentValue>[a-z0-9.-]+)"
+        "BUILDKIT_IMAGE:\\s*(?<depName>moby\\/buildkit):(?<currentValue>[a-z0-9.-]+)(?:@(?<currentDigest>sha256:[a-f0-9]+))?",
+        "DIND_IMAGE:\\s*(?<depName>docker):(?<currentValue>[a-z0-9.-]+)(?:@(?<currentDigest>sha256:[a-f0-9]+))?",
+        "REDIS_IMAGE:\\s*(?<depName>bitnami\\/redis):(?<currentValue>[a-z0-9.-]+)(?:@(?<currentDigest>sha256:[a-f0-9]+))?",
+        "MONGODB_IMAGE:\\s*(?<depName>bitnami\\/mongodb):(?<currentValue>[a-z0-9.-]+)(?:@(?<currentDigest>sha256:[a-f0-9]+))?",
+        "MOCK_IMAGE:\\s*(?<depName>thiht\\/smocker):(?<currentValue>[a-z0-9.-]+)(?:@(?<currentDigest>sha256:[a-f0-9]+))?",
+        "ALLURE_IMAGE:\\s*(?<depName>andrcuns\\/allure-report-publisher):(?<currentValue>[a-z0-9.-]+)(?:@(?<currentDigest>sha256:[a-f0-9]+))?"
       ],
       "datasourceTemplate": "docker",
       "versioningTemplate": "docker"
     }
-  ],
-  "gitlabci": {
-    "fileMatch": ["\\.gitlab-ci\\.yml$"],
-    "pinDigests": false
-  }
+  ]
 }
