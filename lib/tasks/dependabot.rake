@@ -101,9 +101,8 @@ namespace :dependabot do # rubocop:disable Metrics/BlockLength
     GraphQL::Client.dump_schema(Github::Graphql::HTTPAdapter, "db/schema.json")
   end
 
-  desc "Update local advisory database"
-  task(:update_vulnerability_db, [:package_ecosystem] => :environment) do |_task, args|
-    package_ecosystem = args[:package_ecosystem] || raise(ArgumentError, "'package_ecosystem' must not be blank")
-    SecurityVulnerabilityUpdateJob.perform_now(package_ecosystem)
+  desc "Update local vulnerability database"
+  task(update_vulnerability_db: :environment) do
+    SecurityVulnerabilityUpdateJob.perform_now
   end
 end

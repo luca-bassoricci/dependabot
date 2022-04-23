@@ -72,7 +72,7 @@ module Github
       # @param [String] package_ecosystem
       def initialize(package_ecosystem)
         @ecosystem = PACKAGE_ECOSYSTEMS.fetch(package_ecosystem)
-        @max_retries = 2
+        @max_retries = 1
       end
 
       # :reek:DuplicateMethodCall
@@ -122,7 +122,7 @@ module Github
           response = client.query(schema, variables: variables)
           raise(QueryError, response.errors[:data].join(", ")) if response.errors.any?
 
-          response.data.security_vulnerabilities
+          response.data.security_vulnerabilities.tap { |it| log(:debug, "  fetched #{it.nodes.size} nodes") }
         end
       end
 
@@ -136,9 +136,10 @@ module Github
           yield
         rescue QueryError => e
           retry_attempt += 1
+          raise unless retry_attempt <= max_retries
 
-          log(:warn, "GitHub request failed with: '#{e}'. Retrying...")
-          retry_attempt <= max_retries ? retry : raise
+          log(:warn, "  graphql query failed with: '#{e}'. Retrying...")
+          retry
         end
       end
     end

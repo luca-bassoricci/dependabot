@@ -10,7 +10,7 @@ module ApplicationHelper
 
   # Log error message and backtrace
   #
-  # @param [StndardError] error
+  # @param [StandardError] error
   # @return [void]
   def log_error(error)
     Sentry.capture_exception(error)
