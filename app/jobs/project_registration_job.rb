@@ -3,6 +3,8 @@
 class ProjectRegistrationJob < ApplicationJob
   queue_as :project_registration
 
+  sidekiq_options retry: 2, dead: false
+
   def perform
     set_execution_context("project-registration")
     log(:info, "Checking for projects to register or update")
