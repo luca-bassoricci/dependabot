@@ -22,8 +22,9 @@ class AppConfig < ApplicationConfig
               project_registration: "manual",
               project_registration_cron: "0 6 * * *",
               project_registration_namespace: nil,
-              # sentry sample rate
-              sentry_traces_sample_rate: 0.0
+              # sentry configuration
+              sentry_traces_sample_rate: 0.0,
+              sentry_ignored_errors: nil
 
   # Gitlab url with removed trailing slash
   #
@@ -37,6 +38,15 @@ class AppConfig < ApplicationConfig
   # @return [String]
   def dependabot_url
     sanitize_url(super)
+  end
+
+  # Ignored sentry errors
+  #
+  # @return [Array]
+  def sentry_ignored_errors
+    return [] unless super
+
+    super.split(",")
   end
 
   # Configurable sidekiq retry
