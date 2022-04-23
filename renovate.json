@@ -1,16 +1,27 @@
 {
-  "enabledManagers": ["gitlabci", "docker-compose", "pre-commit"],
-  "labels": ["dependencies", "docker"],
+  "enabledManagers": [
+    "gitlabci",
+    "docker-compose",
+    "pre-commit"
+  ],
+  "labels": [
+    "dependencies"
+  ],
   "docker-compose": {
     "commitMessagePrefix": "dep:",
-    "commitBody": "changelog: dependency"
+    "commitBody": "changelog: dependency",
+    "addLabels": [
+      "docker"
+    ]
   },
   "gitlabci": {
     "commitMessagePrefix": "dep-dev:",
-    "commitBody": "changelog: ci"
+    "commitBody": "changelog: ci",
+    "addLabels": [
+      "docker"
+    ]
   },
   "pre-commit": {
-    "enabled": true,
     "commitBody": "changelog: chore"
   }
 }
