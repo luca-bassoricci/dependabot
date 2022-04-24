@@ -139,8 +139,10 @@ module Dependabot
         break if count[:security_mr].length >= 10 && count[:mr].length >= mr_limit
 
         updated_dep = updated_dependency(dep)
-        close_obsolete_mrs(dep.name) if updated_dep.up_to_date?
-        next unless updated_dep.updates?
+        unless updated_dep.updates?
+          close_obsolete_mrs(dep.name)
+          next
+        end
 
         if updated_dep.vulnerable
           update_vulnerable_dependency(updated_dep, count)
