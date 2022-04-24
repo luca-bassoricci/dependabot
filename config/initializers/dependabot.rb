@@ -109,7 +109,7 @@ module Dependabot
 
       ApplicationHelper.log(level, msg)
     rescue StandardError => e
-      ApplicationHelper.log(:debug, "failed to log core helper result: #{e}")
+      ApplicationHelper.log(:debug, "Failed to log core helper result: #{e}")
     end
 
     # Remove credentials from arguments
