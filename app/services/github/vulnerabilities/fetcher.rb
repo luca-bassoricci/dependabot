@@ -117,12 +117,12 @@ module Github
         schema = end_cursor ? SecurityVulnerabilityMore : SecurityVulnerabilityIndex
         variables = { package_ecosystem: ecosystem, end_cursor: end_cursor }.compact_blank
 
-        log(:debug, "  running graphql query, page: #{page}")
+        log(:debug, "Running graphql query, page: #{page}")
         retry_query_failures do
           response = client.query(schema, variables: variables)
           raise(QueryError, response.errors[:data].join(", ")) if response.errors.any?
 
-          response.data.security_vulnerabilities.tap { |it| log(:debug, "  fetched #{it.nodes.size} nodes") }
+          response.data.security_vulnerabilities.tap { |it| log(:debug, "Fetched #{it.nodes.size} nodes") }
         end
       end
 

@@ -223,7 +223,7 @@ module Dependabot
       return if obsolete_mrs.length.zero?
 
       obsolete_mrs.each do |mr|
-        log(:info, "  closing obsolete merge request !#{mr.iid} because dependency version is up to date")
+        log(:debug, "Closing obsolete merge request !#{mr.iid} because dependency version is up to date")
         mr.close
         Gitlab::BranchRemover.call(project_name, mr.branch)
       rescue StandardError => e

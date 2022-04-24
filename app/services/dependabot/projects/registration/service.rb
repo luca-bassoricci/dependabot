@@ -31,12 +31,12 @@ module Dependabot
           name = project.path_with_namespace
 
           unless project["default_branch"]
-            log(:debug, " project '#{name}' doesn't have a default branch, skipping")
+            log(:debug, "Project '#{name}' doesn't have a default branch, skipping")
             return
           end
 
           !allowed_pattern || name.match?(Regexp.new(allowed_pattern)).tap do |match|
-            log(:debug, " project '#{name}' doesn't match pattern '#{allowed_pattern}', skipping") unless match
+            log(:debug, "Project '#{name}' doesn't match pattern '#{allowed_pattern}', skipping") unless match
           end
         end
 
