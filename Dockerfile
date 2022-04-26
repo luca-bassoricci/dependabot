@@ -1,4 +1,4 @@
-FROM dependabot/dependabot-core:0.182.0 as core
+FROM dependabot/dependabot-core:0.182.4 as core
 
 FROM core as development
 
