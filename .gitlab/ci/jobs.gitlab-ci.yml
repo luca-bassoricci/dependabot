@@ -170,6 +170,8 @@ include:
   extends: container_scanning
   variables:
     DOCKER_IMAGE: $APP_IMAGE
+    CS_DISABLE_DEPENDENCY_LIST: "true"
+    CS_SEVERITY_THRESHOLD: HIGH
 
 # ----------------------------------------------------------------------------------------------------------------------
 # test stage
