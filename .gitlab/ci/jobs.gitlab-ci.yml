@@ -34,7 +34,7 @@ include:
 
 .buildkit_runner:
   image:
-    name: moby/buildkit:v0.10.1
+    name: moby/buildkit:v0.10.2
     entrypoint: [""]
   before_script:
     - |
