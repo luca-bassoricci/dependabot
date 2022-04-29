@@ -1,3 +1,48 @@
+## 0.19.0 (2022-04-29)
+
+### 🚀 New features (3 changes)
+
+- [Add option to ignore certain sentry errors](dependabot-gitlab/dependabot@c1410ddf00bf3f9f7017f674d4a1cb18f7a84d34) by @andrcuns. See merge request dependabot-gitlab/dependabot!1496
+- [Add fixed vulnerability info to merge requests](dependabot-gitlab/dependabot@9cfb7c35c1283271c6a7def93ea59153dcff4215) by @andrcuns. See merge request dependabot-gitlab/dependabot!1477
+- [Check security advisories when performing dependency update](dependabot-gitlab/dependabot@294d00d5526d783989badfe04e13f1f0fd092644) by @andrcuns. See merge request dependabot-gitlab/dependabot!1477
+
+### 🐞 Bug Fixes (1 change)
+
+- [Consider all dependencies when checking for obsolete mrs](dependabot-gitlab/dependabot@3f80f2366fb5ef3b18dec74ca98a1e3969516fd6) by @andrcuns. See merge request dependabot-gitlab/dependabot!1504
+
+### 📦 Dependency updates (8 changes)
+
+- [dep: bump sidekiq-cron from 1.3.0 to 1.4.0](dependabot-gitlab/dependabot@df0a8731d594866eec77c2c2fd4c8bf99b92ac27) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1518
+- [dep: bump sentry-rails, sentry-ruby and sentry-sidekiq](dependabot-gitlab/dependabot@2ba39d5f8d00770ef23b6ec70a974e8074874e59) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1517
+- [dep: bump rails from 7.0.2.3 to 7.0.2.4](dependabot-gitlab/dependabot@9c3bacd0f23a43b1ea86efe25856023cbd225e01) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1514
+- [dep: bump dependabot-omnibus from 0.182.0 to 0.182.4](dependabot-gitlab/dependabot@169bb14bcdeec315a094fca7fb6de84210b401c1) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1511
+- [dep-dev: bump rubocop from 1.28.1 to 1.28.2](dependabot-gitlab/dependabot@d2cf2139409468c8105ff18a7e2a5309297274f0) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1508
+- [dep-dev: bump rspec-rails from 5.1.1 to 5.1.2](dependabot-gitlab/dependabot@11b2c4895e30873f10e775d3128b30ebd97fe268) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1507
+- [dep-dev: Update dependency thiht/smocker to v0.18.1](dependabot-gitlab/dependabot@0f74ca914903ac5a48523c4ba9640ac930b65662) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1499
+- [dep-dev: bump rubocop from 1.27.0 to 1.28.1](dependabot-gitlab/dependabot@41556f5b0827c5f6ea8dc0ab6f6700a18bca7503) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1489
+
+### 🔧 CI changes (7 changes)
+
+- [Use latest tag as cache for docker build](dependabot-gitlab/dependabot@d4be6d72aa3b12965fc54a63e62b0010c1bc81e8) by @andrcuns. See merge request dependabot-gitlab/dependabot!1520
+- [Remove container-scan job](dependabot-gitlab/dependabot@0eff0a50654de0f37f6b9edb1dacc959eab9294e) by @andrcuns. See merge request dependabot-gitlab/dependabot!1519
+- [dep-dev: Update dependency moby/buildkit to v0.10.2](dependabot-gitlab/dependabot@1af632f1ce09b869babb9af5503a6f51d2bae191) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1516
+- [Update container scanning options](dependabot-gitlab/dependabot@f5837d1c352135eeb80b3dc624b81d919ddd3991) by @andrcuns. See merge request dependabot-gitlab/dependabot!1515
+- [dep-dev: Update dependency andrcuns/allure-report-publisher to v0.6.2](dependabot-gitlab/dependabot@ae1f7ff8ec395551198c30b57952032be6114e12) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1513
+- [dep-dev Update dependency andrcuns/allure-report-publisher to v0.6.0](dependabot-gitlab/dependabot@7e512f058a610f0476f234f5e75096f2958d14d7) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1502
+- [.gitlab-ci and docker-compose dependency updates via renovate](dependabot-gitlab/dependabot@46b13efdf29f9ee5b38c9b59be09651ead07ed36) by @andrcuns. See merge request dependabot-gitlab/dependabot!1498
+
+### 🛠️ Chore (9 changes)
+
+- [Remove external precommit-hooks](dependabot-gitlab/dependabot@78778017bf595c8daed872113dc4008355dca97e) by @andrcuns. See merge request dependabot-gitlab/dependabot!1506
+- [Update debug logger messages](dependabot-gitlab/dependabot@5875252e1b40b594a577fa1b07f1dc6913a85cfc) by @andrcuns. See merge request dependabot-gitlab/dependabot!1505
+- [Update pre-commit hook jumanjihouse/pre-commit-hooks to v2.1.6](dependabot-gitlab/dependabot@50c03197224e76f43dc05841eaa595c802745cbd) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1503
+- [Improve vulnerability database update logging and error handling](dependabot-gitlab/dependabot@ffb860ff71ec9e6acfde8a2d592ccd20a8a4b558) by @andrcuns. See merge request dependabot-gitlab/dependabot!1497
+- [Improve github graphql query error handling](dependabot-gitlab/dependabot@01a5b578f729e77a660b5eca242a3eed8169b439) by @andrcuns. See merge request dependabot-gitlab/dependabot!1495
+- [Add missing vulnerability sidekiq queue](dependabot-gitlab/dependabot@baa0b44dfbebe3416485851653f77024450e2587) by @andrcuns. See merge request dependabot-gitlab/dependabot!1492
+- [Use tagged logger to indicate action instead of class name](dependabot-gitlab/dependabot@147bb952ef42feacaa0e3c984a4e69373ee1893a) by @andrcuns. See merge request dependabot-gitlab/dependabot!1477
+- [Improve job logger context setting](dependabot-gitlab/dependabot@4888893223ce670307d4cd04825bf30581b62dac) by @andrcuns. See merge request dependabot-gitlab/dependabot!1477
+- [Add capability to fetch vulnerability info from Github](dependabot-gitlab/dependabot@36e1dc50fc0dfb7324639de79bb4e1a58e79dcd9) by @andrcuns. See merge request dependabot-gitlab/dependabot!1477
+
 ## 0.18.0 (2022-04-21)
 
 ### 🚀 New features (3 changes)
