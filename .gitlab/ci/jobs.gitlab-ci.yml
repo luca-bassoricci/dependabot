@@ -1,7 +1,6 @@
 include:
   - template: Dependency-Scanning.gitlab-ci.yml
   - template: Security/SAST.gitlab-ci.yml
-  - template: Container-Scanning.gitlab-ci.yml
 
 # ======================================================================================================================
 # Runners
@@ -164,14 +163,6 @@ include:
 .dependency_scan:
   stage: static analysis
   extends: gemnasium-dependency_scanning
-
-.container_scanning:
-  stage: static analysis
-  extends: container_scanning
-  variables:
-    DOCKER_IMAGE: $APP_IMAGE
-    CS_DISABLE_DEPENDENCY_LIST: "true"
-    CS_SEVERITY_THRESHOLD: HIGH
 
 # ----------------------------------------------------------------------------------------------------------------------
 # test stage
