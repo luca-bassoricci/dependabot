@@ -151,13 +151,13 @@ update-helm-chart:
   extends:
     - .update_chart
     - .rules:release
-  dependencies: []
+  needs: [release-image]
 
 update-standalone-repo:
   extends:
     - .update_standalone
     - .rules:release
-  dependencies: []
+  needs: [release-image]
 
 # ======================================================================================================================
 # Deploy Stage
