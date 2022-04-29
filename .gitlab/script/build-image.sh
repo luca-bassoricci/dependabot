@@ -29,5 +29,6 @@ buildctl-daemonless.sh build \
   --opt build-arg:PROJECT_URL="$CI_PROJECT_URL" \
   --opt build-arg:VERSION="${CI_COMMIT_TAG:-$CURRENT_TAG}" \
   --output type=image,\"name="$images"\",push=true \
+  --import-cache type=registry,ref="${image}:latest" \
   --import-cache type=registry,ref="${image}:${latest_tag}" \
   --export-cache type=inline
