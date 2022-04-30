@@ -38,7 +38,7 @@ services:
     environment:
       ALLOW_EMPTY_PASSWORD: "yes"
   mongodb:
-    image: bitnami/mongodb:4.4-debian-10
+    image: bitnami/mongodb:5.0-debian-10
     ports:
       - 27017:27017
     volumes:

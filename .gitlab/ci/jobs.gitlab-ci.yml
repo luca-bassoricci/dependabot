@@ -75,7 +75,7 @@ include:
   services:
     - name: bitnami/redis:6.2-debian-10
       alias: redis
-    - name: bitnami/mongodb:4.4-debian-10
+    - name: bitnami/mongodb:5.0-debian-10
       alias: mongodb
   variables:
     REDIS_URL: redis://redis:6379
@@ -179,7 +179,7 @@ include:
       alias: smocker
     - name: bitnami/redis:6.2-debian-10
       alias: redis
-    - name: bitnami/mongodb:4.4-debian-10
+    - name: bitnami/mongodb:5.0-debian-10
       alias: mongodb
   variables:
     MOCK_HOST: smocker
