@@ -14,7 +14,9 @@ furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
-The underlying dependabot-core component is subject to the following license: https://raw.githubusercontent.com/dependabot/dependabot-core/main/LICENSE
+This license is subject to all the terms of underlying dependabot-core component: https://raw.githubusercontent.com/dependabot/dependabot-core/main/LICENSE
+
+This application integrates with and uses information from Github Advisory Database: https://github.com/advisories
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
