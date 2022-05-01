@@ -14,9 +14,9 @@ variables:
   # App tags
   CURRENT_TAG: ${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}
   # Docker images
-  APP_IMAGE: ${CI_REGISTRY_IMAGE}/app:${CURRENT_TAG}
+  APP_IMAGE: ${CI_REGISTRY_IMAGE}/dev/app:${CURRENT_TAG}
   MOCK_IMAGE: thiht/smocker:0.18.0
-  CI_IMAGE: registry.gitlab.com/dependabot-gitlab/dependabot/ci:latest
+  CI_IMAGE: registry.gitlab.com/dependabot-gitlab/dependabot/dev/ci:latest
   # Misc
   CODACY_VERSION: "13.5.3"
   BUNDLER_VERSION: "2.3.10"
