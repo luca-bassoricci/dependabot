@@ -8,7 +8,7 @@ source "$(dirname "$0")/utils.sh"
 
 image_type="$1"
 
-image="$CI_REGISTRY_IMAGE/$image_type"
+image="$CI_REGISTRY_IMAGE/dev/$image_type"
 context="${DOCKER_CONTEXT:-.}"
 dockerfile="${DOCKER_FILE:-$context}"
 latest_tag="${LATEST_TAG:-$CI_COMMIT_REF_SLUG-latest}"
