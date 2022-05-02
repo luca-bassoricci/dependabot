@@ -9,7 +9,7 @@ gem "bootsnap", ">= 1.4.2", require: false
 gem "dependabot-omnibus", "~> 0.183.0"
 gem "dry-validation", "~> 1.8"
 gem "gitlab", "~> 4.18"
-gem "graphql-client", "~> 0.17.0"
+gem "graphql-client", "~> 0.18.0"
 gem "lograge", "~> 0.12.0"
 gem "mongoid", "~> 7.4"
 gem "mongoid_rails_migrations", "~> 1.4"
