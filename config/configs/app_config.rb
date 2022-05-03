@@ -40,15 +40,6 @@ class AppConfig < ApplicationConfig
     sanitize_url(super)
   end
 
-  # Ignored sentry errors
-  #
-  # @return [Array]
-  def sentry_ignored_errors
-    return [] unless super
-
-    super.split(",")
-  end
-
   # Configurable sidekiq retry
   #
   # @return [Numeric, Boolean]
