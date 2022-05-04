@@ -2,10 +2,18 @@
 
 **This software is Work in Progress: features will appear and disappear, API will be changed, your feedback is always welcome!**
 
-# Supported by
+# Supported
+
+## Supported by
 
 [![jetbrains](images/jetbrains.png)](https://www.jetbrains.com/?from=dependabot-gitlab)
 [![gitlab foss](images/gitlab.png)](https://about.gitlab.com/solutions/open-source/)
+
+## Sponsor
+
+If you find this project useful, you can help me cover hosting costs of my `dependabot-gitlab` test instance:
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/B0B1CI3AV)
 
 ---
 
