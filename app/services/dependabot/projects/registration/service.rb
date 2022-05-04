@@ -18,6 +18,8 @@ module Dependabot
             next unless sync?(project)
 
             register(project)
+          rescue StandardError => e
+            log_error(e)
           end
         end
 
