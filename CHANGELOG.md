@@ -1,3 +1,28 @@
+## 0.19.1 (2022-05-04)
+
+### 🔬 Improvements (1 change)
+
+- [Add manual rake task to trigger automatic project registration](dependabot-gitlab/dependabot@9e6a050d6eb7e747ef4cd1502191a75373bb94ca) by @andrcuns. See merge request dependabot-gitlab/dependabot!1528
+
+### 🐞 Bug Fixes (1 change)
+
+- [Remove custom ignored sentry error parsing](dependabot-gitlab/dependabot@7b43e3f986a6b9fa858b2065075443657fea5db3) by @andrcuns. See merge request dependabot-gitlab/dependabot!1527
+
+### 📦 Dependency updates (3 changes)
+
+- [dep: bump graphql-client from 0.17.0 to 0.18.0](dependabot-gitlab/dependabot@4146cd07a093d95e1b059a229a7d4ca996ba9788) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1526
+- [dep-dev: Update dependency bitnami/mongodb to v5](dependabot-gitlab/dependabot@f4201395989eabf5ffbacec92ddbdb6e5fb490ce) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1524
+- [dep: bump dependabot-omnibus from 0.182.4 to 0.183.0](dependabot-gitlab/dependabot@2acf5b6a783ac7de9d58571eccd0e0b0c12078cc) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1522
+
+### 🔧 CI changes (2 changes)
+
+- [Use dev prefix for temp images](dependabot-gitlab/dependabot@d7df0701c68dd92e40e87d83a8d474e073745919) by @andrcuns. See merge request dependabot-gitlab/dependabot!1525
+- [Wait for image release to update dependent repos](dependabot-gitlab/dependabot@5e3e8cb81a24b4d0e5cd5ee0059b8d6c0eacca75) by @andrcuns. See merge request dependabot-gitlab/dependabot!1521
+
+### 📄 Documentation updates (1 change)
+
+- [Update documentation on `CONFIG_BRANCH` setting](dependabot-gitlab/dependabot@f2ee0bdec29c66dda4d13340ccb96f0d5a6b844e) by @andrcuns.
+
 ## 0.19.0 (2022-04-29)
 
 ### 🚀 New features (3 changes)
