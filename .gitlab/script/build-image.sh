@@ -12,6 +12,7 @@ image="$CI_REGISTRY_IMAGE/dev/$image_type"
 context="${DOCKER_CONTEXT:-.}"
 dockerfile="${DOCKER_FILE:-$context}"
 latest_tag="${LATEST_TAG:-$CI_COMMIT_REF_SLUG-latest}"
+core_version="$(awk '/dependabot-omnibus \([0-9.]+\)/ {print $2}' Gemfile.lock | sed 's/[()]//g')"
 
 if [ -z "$CI_COMMIT_TAG" ]; then
   images="${image}:${CURRENT_TAG},${image}:${latest_tag}"
@@ -28,6 +29,7 @@ buildctl-daemonless.sh build \
   --opt build-arg:COMMIT_SHA="$CI_COMMIT_SHA" \
   --opt build-arg:PROJECT_URL="$CI_PROJECT_URL" \
   --opt build-arg:VERSION="${CI_COMMIT_TAG:-$CURRENT_TAG}" \
+  --opt build-arg:CORE_VERSION="$core_version" \
   --output type=image,\"name="$images"\",push=true \
   --import-cache type=registry,ref="${image}:latest" \
   --import-cache type=registry,ref="${image}:${latest_tag}" \

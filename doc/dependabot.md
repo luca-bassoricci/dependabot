@@ -164,6 +164,10 @@ Automatically accept merge request and set it to merge when pipeline succeeds. I
 * user must be able to merge
 * merge request must be approved if approvals are required
 
+```yml
+auto-merge: true
+```
+
 ### allow/ignore
 
 `auto-merge` key can be configured with optional `allow` or `ignore` rules that function same way as global [ignore](https://docs.github.com/en/code-security/supply-chain-security/keeping-your-dependencies-updated-automatically/configuration-options-for-dependency-updates#ignore). Both `allow` and `ignore` support `dependency-name`, `versions` and `update-types` parameters.\

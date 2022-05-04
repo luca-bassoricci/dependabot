@@ -1,4 +1,6 @@
-FROM dependabot/dependabot-core:0.183.0 as core
+ARG CORE_VERSION=latest
+
+FROM dependabot/dependabot-core:${CORE_VERSION} as core
 
 FROM core as development
 
