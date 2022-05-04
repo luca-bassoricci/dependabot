@@ -11,22 +11,10 @@ updates:
         - changelog: dependency
     reviewers:
       - andrcuns
-    auto-merge:
-      ignore:
-        - dependency-name: dependabot-omnibus
+    auto-merge: true
     ignore:
       - dependency-name: sentry-ruby
       - dependency-name: sentry-sidekiq
-  - package-ecosystem: docker
-    directory: /
-    schedule:
-      interval: daily
-    commit-message:
-      prefix: dep
-      trailers:
-        - changelog: dependency
-    reviewers:
-      - andrcuns
   - package-ecosystem: docker
     directory: /.gitlab/docker
     schedule:
