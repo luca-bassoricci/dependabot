@@ -409,6 +409,14 @@ Manually register project for updates. Repository must have valid dependabot con
 
 `project` - project full path, example: `dependabot-gitlab/dependabot`
 
+## bulk register
+
+Manually trigger [project registration job](README.md#automatically)
+
+```shell
+/home/dependabot/app$ bundle exec rake 'dependabot:automatic_registration'
+```
+
 ## remove
 
 Manually remove project.

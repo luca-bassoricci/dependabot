@@ -58,6 +58,18 @@ describe "rake", epic: :tasks do # rubocop:disable RSpec/DescribeClass
     end
   end
 
+  describe "dependabot:automatic_registration" do
+    before do
+      allow(ProjectRegistrationJob).to receive(:perform_now)
+    end
+
+    it "triggers automatic project registration" do
+      task.invoke
+
+      expect(ProjectRegistrationJob).to have_received(:perform_now)
+    end
+  end
+
   describe "dependabot:remove", integration: true do
     let(:project_name) { "test-project" }
 

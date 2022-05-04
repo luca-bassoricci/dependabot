@@ -3,7 +3,7 @@
 class ProjectRegistrationJob < ApplicationJob
   queue_as :project_registration
 
-  sidekiq_options retry: 2, dead: false
+  sidekiq_options dead: false
 
   def perform
     set_execution_context("project-registration")

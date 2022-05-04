@@ -25,7 +25,7 @@ namespace :dependabot do # rubocop:disable Metrics/BlockLength
     exit(1)
   end
 
-  desc "Add dependency updates for repository"
+  desc "Add dependency updates for project"
   task(:register, [:projects] => :environment) do |_task, args|
     args[:projects].split(" ").each do |project_name|
       ApplicationHelper.log(:info, "Registering project '#{project_name}'")
@@ -35,7 +35,12 @@ namespace :dependabot do # rubocop:disable Metrics/BlockLength
     end
   end
 
-  desc "Remove dependency update for repository"
+  desc "Run automatic project registration"
+  task(automatic_registration: :environment) do
+    ProjectRegistrationJob.perform_now
+  end
+
+  desc "Remove dependency updates for project"
   task(:remove, [:project] => :environment) do |_task, args|
     Dependabot::Projects::Remover.call(args[:project])
   end

@@ -10,6 +10,6 @@ formatters << SimpleCov::Formatter::CoberturaFormatter if ENV["CI_JOB_NAME"] == 
 SimpleCov.configure do
   formatter SimpleCov::Formatter::MultiFormatter.new(formatters)
   enable_coverage :branch
-  add_filter "/lib/"
+  add_filter %r{^/lib/(task_helpers|tasks/coverage_report.rake|tasks/release.rake)}
   coverage_dir ENV["COV_DIR"] || "coverage"
 end
