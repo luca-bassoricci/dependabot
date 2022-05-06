@@ -35,7 +35,7 @@ services:
     command: bundle exec solargraph socket
 
   gitlab:
-    image: thiht/smocker:0.18.1
+    image: thiht/smocker:0.18.2
 
 volumes:
   redis-data:
