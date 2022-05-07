@@ -6,38 +6,41 @@ module Dependabot
     #
     class UpdatedDependency
       # :reek:LongParameterList
+      # rubocop:disable Metrics/ParameterLists
 
-      # @param [String] name
+      # @param [Dependabot::Dependency] dependency
+      # @param [Array<Dependabot::DependencyFile>] dependency_files
       # @param [Integer] state
       # @param [Array<Dependabot::Dependency>] updated_dependencies
       # @param [Array<Dependabot::DependencyFile>] updated_files
       # @param [Boolean] vulnerable
       # @param [Hash] auto_merge_rules
-      # @param [Array<Vulnerability>] fixed_vulnerabilities
-      # rubocop:disable Metrics/ParameterLists
+      # @param [Array<Vulnerability>] vulnerabilities
       def initialize(
-        name:,
+        dependency:,
+        dependency_files:,
         state:,
         updated_dependencies: nil,
         updated_files: nil,
         vulnerable: nil,
         auto_merge_rules: nil,
-        fixed_vulnerabilities: []
+        vulnerabilities: []
       )
-        @name = name
+        @dependency = dependency
+        @dependency_files = dependency_files
         @state = state
         @updated_dependencies = updated_dependencies
         @updated_files = updated_files
         @vulnerable = vulnerable
-        @fixed_vulnerabilities = fixed_vulnerabilities
+        @vulnerabilities = vulnerabilities
         @auto_merge_rules = auto_merge_rules
-
-        convert_fixed_vulnerabilities
       end
       # rubocop:enable Metrics/ParameterLists
 
-      # @return [String] main dependency name
-      attr_reader :name
+      # @return [Dependabot::Dependency] main dependency name
+      attr_reader :dependency
+      # @return [Array<Dependabot::DependencyFile>] dependency files
+      attr_reader :dependency_files
       # @return [Integer] update state
       attr_reader :state
       # @return [Array<Dependabot::Dependency>] updated dependencies
@@ -46,10 +49,23 @@ module Dependabot
       attr_reader :updated_files
       # @return [Boolean]
       attr_reader :vulnerable
-      # @return [Array<Vulnerability>] fixed vulnerabilities
-      attr_reader :fixed_vulnerabilities
+      # @return [Array<Vulnerability>] vulnerabilities
+      attr_reader :vulnerabilities
       # @return [Hash] merge rules
       attr_reader :auto_merge_rules
+
+      delegate :name, to: :dependency
+
+      alias_method :vulnerable?, :vulnerable
+
+      # Main dependency version
+      #
+      # @return [Object]
+      def version
+        @version ||= Dependabot::Utils
+                     .version_class_for_package_manager(dependency.package_manager)
+                     .new(dependency.version)
+      end
 
       # All dependencies to be updated with new versions
       #
@@ -72,11 +88,39 @@ module Dependabot
         @auto_mergeable ||= auto_merge_rules && (allow_automerge && !ignore_automerge)
       end
 
-      # Object comparator
-      # @param [UpdatedDependency] other
-      # @return [Booelan]
-      def ==(other)
-        self.class == other.class && comparable == other.comparable
+      # :reek:TooManyStatements
+
+      # Fixed vulnerabilities in format for pr creator
+      #
+      # @return [Hash]
+      def fixed_vulnerabilities # rubocop:disable Metrics/CyclomaticComplexity
+        @fixed_vulnerabilities ||= begin
+          fixed = vulnerabilities.select { |entry| updated_dependencies&.any? { |dep| entry.fixed_by?(dep) } }
+
+          by_id = fixed.each_with_object({}) do |vuln, hsh|
+            id = vuln.id
+
+            if hsh.key?(id)
+              hsh[id]["patched_versions"] << vuln.first_patched_version
+              hsh[id]["affected_versions"] << vuln.vulnerable_version_range
+              next
+            end
+
+            hsh[id] = vuln.to_hash
+          end
+
+          # group fixed vulnerabilities by package name
+          by_id.values.each_with_object(Hash.new { |hsh, key| hsh[key] = [] }) do |vuln, hsh|
+            hsh[vuln["package"]] << vuln.except("package")
+          end
+        end
+      end
+
+      # Vulnerabilities that affect dependency
+      #
+      # @return [Hash]
+      def actual_vulnerabilities
+        @actual_vulnerabilities ||= vulnerabilities.select { |entry| entry.vulnerable?(version) }
       end
 
       # Updates present
@@ -105,6 +149,13 @@ module Dependabot
       # @return [Boolean]
       def skipped?
         state == UpdateChecker::SKIPPED
+      end
+
+      # Object comparator
+      # @param [UpdatedDependency] other
+      # @return [Booelan]
+      def ==(other)
+        self.class == other.class && comparable == other.comparable
       end
 
       protected
@@ -143,31 +194,6 @@ module Dependabot
         updated_dependencies.any? do |dependency|
           RuleHandler.version_conditions(dependency, rules)&.any? do |rule|
             SemanticRange.satisfies?(dependency.version, rule.gsub(",", " ||").tr("a", "x"))
-          end
-        end
-      end
-
-      # Convert fixed vulnerabilities for dependabot pr creator
-      #
-      # @return [Hash]
-      def convert_fixed_vulnerabilities
-        @fixed_vulnerabilities = begin
-          # merge different ranges of same vulnerability
-          by_id = fixed_vulnerabilities.each_with_object({}) do |vuln, hsh|
-            id = vuln.id
-
-            if hsh.key?(id)
-              hsh[id]["patched_versions"] << vuln.first_patched_version
-              hsh[id]["affected_versions"] << vuln.vulnerable_version_range
-              next
-            end
-
-            hsh[id] = vuln.to_hash
-          end
-
-          # group fixed vulnerabilities by package name
-          by_id.values.each_with_object(Hash.new { |hsh, key| hsh[key] = [] }) do |vuln, hsh|
-            hsh[vuln["package"]] << vuln.except("package")
           end
         end
       end

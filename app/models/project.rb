@@ -13,6 +13,7 @@ class Project
   field :web_url, type: String
 
   has_many :merge_requests, dependent: :destroy
+  has_many :vulnerability_issues, dependent: :destroy
   has_many :update_jobs, dependent: :destroy
 
   embeds_one :configuration

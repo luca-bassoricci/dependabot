@@ -48,11 +48,11 @@ module Dependabot
           :info,
           "  skipping #{dependency.name.bright} update due to ignored versions rule: #{checker.ignored_versions}"
         )
-        UpdatedDependency.new(name: dependency_name, state: SKIPPED)
+        dependency_container(state: SKIPPED)
       rescue StandardError => e
         log_error(e)
         capture_error(e)
-        UpdatedDependency.new(name: dependency_name, state: ERROR)
+        dependency_container(state: ERROR)
       end
 
       private
@@ -90,58 +90,6 @@ module Dependabot
         )
       end
 
-      # Print skipped message
-      #
-      # @return [nil]
-      def skipped
-        log(:debug, "Skipping '#{name}' due to allow rules: #{config_entry[:allow]}")
-        UpdatedDependency.new(name: dependency.name, state: SKIPPED)
-      end
-
-      # Print up to date message
-      #
-      # @return [nil]
-      def up_to_date
-        log(:info, "  #{name} is up to date")
-        UpdatedDependency.new(name: dependency.name, state: UP_TO_DATE)
-      end
-
-      # Print update impossible message
-      #
-      # @return [nil]
-      def update_impossible
-        log(:warn, "  update for '#{name}' is impossible")
-        unless checker.conflicting_dependencies.empty?
-          log(:warn, "  following conflicting dependencies are present: #{checker.conflicting_dependencies}")
-        end
-        UpdatedDependency.new(name: dependency.name, state: UPDATE_IMPOSSIBLE)
-      end
-
-      # Versioning strategy set to lock file only
-      #
-      # @return [Boolean]
-      def lockfile_only?
-        versioning_strategy == :lockfile_only
-      end
-
-      # Get filtered updated dependencies
-      #
-      # @return [Dependabot::UpdatedDependency]
-      def updated_dependency
-        log(:info, "  updating #{name} => #{checker.latest_version.to_s.bright}")
-        updated_dependencies = checker.updated_dependencies(requirements_to_unlock: requirements_to_unlock)
-
-        UpdatedDependency.new(
-          name: dependency.name,
-          state: HAS_UPDATES,
-          updated_dependencies: updated_dependencies,
-          updated_files: updated_files(updated_dependencies),
-          vulnerable: checker.vulnerable?,
-          auto_merge_rules: config_entry[:auto_merge],
-          fixed_vulnerabilities: fixed_vulnerabilities(updated_dependencies)
-        )
-      end
-
       # Get update checker
       #
       # @return [Dependabot::UpdateChecker]
@@ -152,7 +100,7 @@ module Dependabot
             dependency_files: dependency_files,
             credentials: credentials,
             ignored_versions: RuleHandler.version_conditions(dependency, config_entry[:ignore]),
-            security_advisories: vulnerabilities.map { |entry| entry[:advisory] },
+            security_advisories: vulnerabilities.map(&:advisory),
             raise_on_ignored: true,
             options: config_entry[:updater_options]
           }
@@ -177,6 +125,62 @@ module Dependabot
         end
       end
 
+      # List of advisories for dependency
+      #
+      # @return [Array<Vulnerability>]
+      def vulnerabilities
+        @vulnerabilities ||= if AppConfig.standalone?
+                               []
+                             else
+                               Vulnerability.where(
+                                 package: dependency.name,
+                                 package_ecosystem: config_entry[:package_ecosystem],
+                                 withdrawn_at: nil
+                               ).to_a
+                             end
+      end
+
+      # Print skipped message
+      #
+      # @return [nil]
+      def skipped
+        log(:debug, "Skipping '#{name}' due to allow rules: #{config_entry[:allow]}")
+        dependency_container(state: SKIPPED)
+      end
+
+      # Print up to date message
+      #
+      # @return [nil]
+      def up_to_date
+        log(:info, "  #{name} is up to date")
+        dependency_container(state: UP_TO_DATE)
+      end
+
+      # Print update impossible message
+      #
+      # @return [nil]
+      def update_impossible
+        log(:warn, "  update for '#{name}' is impossible")
+        unless checker.conflicting_dependencies.empty?
+          log(:warn, "  following conflicting dependencies are present: #{checker.conflicting_dependencies}")
+        end
+        dependency_container(state: UPDATE_IMPOSSIBLE)
+      end
+
+      # Get filtered updated dependencies
+      #
+      # @return [Dependabot::UpdatedDependency]
+      def updated_dependency
+        log(:info, "  updating #{name} => #{checker.latest_version.to_s.bright}")
+        updated_dependencies = checker.updated_dependencies(requirements_to_unlock: requirements_to_unlock)
+
+        dependency_container(
+          state: HAS_UPDATES,
+          updated_dependencies: updated_dependencies,
+          updated_files: updated_files(updated_dependencies)
+        )
+      end
+
       # Array of updated files
       #
       # @return [Array<Dependabot::DependencyFile>]
@@ -190,41 +194,28 @@ module Dependabot
         )
       end
 
-      # List of advisories for dependency
+      # Versioning strategy set to lock file only
       #
-      # @return [Array<Hash>]
-      def vulnerabilities
-        @vulnerabilities ||= begin
-          return [] if AppConfig.standalone?
-
-          Vulnerability
-            .where(
-              package: dependency.name,
-              package_ecosystem: config_entry[:package_ecosystem],
-              withdrawn_at: nil
-            )
-            .map do |vulnerability|
-            {
-              vulnerability: vulnerability,
-              advisory: Dependabot::SecurityAdvisory.new(
-                dependency_name: dependency.name,
-                package_manager: config_entry[:package_manager],
-                vulnerable_versions: [vulnerability.vulnerable_version_range],
-                safe_versions: [vulnerability.first_patched_version]
-              )
-            }
-          end
-        end
+      # @return [Boolean]
+      def lockfile_only?
+        versioning_strategy == :lockfile_only
       end
 
-      # Vulnerabilities fixed by this update
+      # UpdatedDependency container
       #
-      # @param [Array<Dependabot::Dependency>] updated_dependencies
-      # @return [Array<Vulnerability>]
-      def fixed_vulnerabilities(updated_dependencies)
-        vulnerabilities
-          .select { |entry| updated_dependencies.any? { |dep| entry[:advisory].fixed_by?(dep) } }
-          .map { |entry| entry[:vulnerability] }
+      # @param [Hash] **args
+      # @return [Dependabot::Dependencies::UpdatedDependency]
+      def dependency_container(**args)
+        UpdatedDependency.new(
+          dependency: dependency,
+          dependency_files: dependency_files,
+          vulnerable: checker.vulnerable?,
+          auto_merge_rules: config_entry[:auto_merge],
+          state: args[:state],
+          updated_dependencies: args[:updated_dependencies],
+          updated_files: args[:updated_files],
+          vulnerabilities: vulnerabilities
+        )
       end
     end
   end

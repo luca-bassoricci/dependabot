@@ -13,5 +13,12 @@ module Dependabot
     NUGET = "nuget"
     GIT = "gitsubmodule"
     MIX = "mix"
+
+    PACKAGE_ECOSYSTEM_MAPPING = {
+      NPM => "npm_and_yarn",
+      GO => "go_modules",
+      GIT => "submodules",
+      MIX => "hex"
+    }.freeze
   end
 end

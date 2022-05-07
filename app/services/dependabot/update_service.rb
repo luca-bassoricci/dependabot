@@ -80,8 +80,11 @@ module Dependabot
     # Open mr limit
     #
     # @return [Number]
-    def mr_limit
-      @mr_limit ||= config_entry[:open_merge_requests_limit]
+    def limits
+      @limits ||= {
+        mr: config_entry[:open_merge_requests_limit],
+        security_mr: 10
+      }
     end
 
     # Project configuration fetched from gitlab
@@ -131,55 +134,6 @@ module Dependabot
       @repo_contents_path = DependabotCoreHelper.repo_contents_path(project_name, config_entry)
     end
 
-    # Update project dependencies
-    #
-    # @return [void]
-    def update
-      dependencies.each_with_object({ mr: Set.new, security_mr: Set.new }) do |dep, count|
-        break if count[:security_mr].length >= 10 && count[:mr].length >= mr_limit
-
-        updated_dep = updated_dependency(dep)
-        unless updated_dep.updates?
-          close_obsolete_mrs(dep.name)
-          next
-        end
-
-        if updated_dep.vulnerable
-          update_vulnerable_dependency(updated_dep, count)
-        else
-          update_dependency(updated_dep, count)
-        end
-      end
-    end
-
-    # Update vulnerable dependency
-    #
-    # @param [Dependabot::UpdatedDependency] updated_dependency
-    # @param [Hash] mrs
-    # @return [void]
-    def update_vulnerable_dependency(updated_dependency, mrs)
-      if mrs[:security_mr].length >= 10
-        return log(:info, " skipping update of vulnerable dependency due to max 10 open mr limit!")
-      end
-
-      iid = create_mr(updated_dependency)&.iid
-      mrs[:security_mr] << iid if iid
-    end
-
-    # Update dependency
-    #
-    # @param [Dependabot::UpdatedDependency] updated_dependency
-    # @param [Hash] mrs
-    # @return [void]
-    def update_dependency(updated_dependency, mrs)
-      if mrs[:mr].length >= mr_limit
-        return log(:info, "  skipping update of dependency due to max #{mr_limit} open mr limit!")
-      end
-
-      iid = create_mr(updated_dependency)&.iid
-      mrs[:mr] << iid if iid
-    end
-
     # All project dependencies
     #
     # @return [Array<Dependabot::Dependency>]
@@ -196,6 +150,19 @@ module Dependabot
       end
     end
 
+    # Update project dependencies
+    #
+    # @return [void]
+    def update
+      dependencies.each_with_object({ mr: Set.new, security_mr: Set.new }) do |dep, count|
+        updated_dep = updated_dependency(dep)
+        next update_dependency(updated_dep, count) if updated_dep.updates?
+
+        close_obsolete_mrs(updated_dep.name)
+        create_vulnerability_issues(updated_dep) if updated_dep.vulnerable?
+      end
+    end
+
     # Array of dependencies to update
     #
     # @return [Dependabot::Dependencies::UpdatedDependency]
@@ -206,6 +173,38 @@ module Dependabot
         config_entry: config_entry,
         repo_contents_path: repo_contents_path,
         registries: registries
+      )
+    end
+
+    # Update dependency
+    #
+    # @param [Dependabot::Dependencies::UpdatedDependency] updated_dependency
+    # @param [Hash] mrs
+    # @return [void]
+    def update_dependency(dependency, mrs)
+      type = dependency.vulnerable ? :security_mr : :mr
+
+      if mrs[type].length >= limits[type]
+        return log(
+          :info,
+          "  skipping update of #{type == :mr ? '' : 'vulnerable '}dependency due to max #{limits[type]} open mr limit!"
+        )
+      end
+
+      iid = create_mr(dependency)&.iid
+      mrs[type] << iid if iid
+    end
+
+    # Create or update merge request
+    #
+    # @param [Dependabot::Dependencies::UpdatedDependency] updated_dep
+    # @return [Gitlab::ObjectifiedHash]
+    def create_mr(updated_dep)
+      MergeRequest::CreateService.call(
+        project: project,
+        fetcher: fetcher,
+        config_entry: config_entry,
+        updated_dependency: updated_dep
       )
     end
 
@@ -231,17 +230,18 @@ module Dependabot
       end
     end
 
-    # Create or update merge request
+    # Create security vulnerability issues
     #
-    # @param [Dependabot::Dependencies::UpdatedDependency] updated_dep
-    # @return [Gitlab::ObjectifiedHash]
-    def create_mr(updated_dep)
-      MergeRequest::CreateService.call(
-        project: project,
-        fetcher: fetcher,
-        config_entry: config_entry,
-        updated_dependency: updated_dep
-      )
+    # @param [Dependabot::Dependencies::UpdatedDependency] dependency
+    # @return [void]
+    def create_vulnerability_issues(dependency)
+      dependency.actual_vulnerabilities.each do |vulnerability|
+        Gitlab::Vulnerabilities::IssueCreator.call(
+          project: project,
+          vulnerability: vulnerability,
+          dependency_file: dependency.dependency_files.reject(&:support_file).first
+        )
+      end
     end
 
     # Raise config missing specific entry error
