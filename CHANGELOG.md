@@ -1,3 +1,22 @@
+## 0.19.2 (2022-05-07)
+
+### 🐞 Bug Fixes (1 change)
+
+- [Correctly handle projects without config on release_notification](dependabot-gitlab/dependabot@06fcb6a1255187f6f66adad0f37437274b37ed2d) by @andrcuns. See merge request dependabot-gitlab/dependabot!1535
+
+### 📦 Dependency updates (3 changes)
+
+- [dep-dev: bump rubocop from 1.28.2 to 1.29.0](dependabot-gitlab/dependabot@c821aa7099c5317daf68c2c07b48062cd7369116) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1538
+- [dev-dep: Update dependency thiht/smocker to v0.18.2](dependabot-gitlab/dependabot@adae591932d34070e2bc814e42200aac8b6435f5) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1532
+- [dep: bump dependabot-omnibus from 0.183.0 to 0.184.0](dependabot-gitlab/dependabot@c796c959bf9845ae335a3f86fb4e492a582dc9b1) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1531
+
+### 🔧 CI changes (4 changes)
+
+- [dep-dev: Update dependency moby/buildkit to v0.10.3](dependabot-gitlab/dependabot@e4bd9a6c938564ddfe896181c81093f871a1d1e3) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1537
+- [Fix coverage report publishing](dependabot-gitlab/dependabot@d9e9c8c6fac984deb847c9ffbbe9df04160af15d) by @andrcuns. See merge request dependabot-gitlab/dependabot!1533
+- [dep-dev: Update dependency andrcuns/allure-report-publisher to v0.7.0](dependabot-gitlab/dependabot@33407da542644e467746c5d121607fa598bb866d) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1530
+- [Automatically detect dependabot-core image version](dependabot-gitlab/dependabot@7205072b13d54319e31427a010d5166f6247d28c) by @andrcuns. See merge request dependabot-gitlab/dependabot!1529
+
 ## 0.19.1 (2022-05-04)
 
 ### 🔬 Improvements (1 change)
