@@ -30,7 +30,7 @@ x-volumes: &service_volumes
 
 services:
   redis:
-    image: bitnami/redis:6.2-debian-10
+    image: ${REDIS_IMAGE:-bitnami/redis:6.2-debian-10}
     ports:
       - 6379:6379
     volumes:
@@ -38,7 +38,7 @@ services:
     environment:
       ALLOW_EMPTY_PASSWORD: "yes"
   mongodb:
-    image: bitnami/mongodb:5.0-debian-10
+    image: ${MONGODB_IMAGE:-bitnami/mongodb:5.0-debian-10}
     ports:
       - 27017:27017
     volumes:

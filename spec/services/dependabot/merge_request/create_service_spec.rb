@@ -58,7 +58,8 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
 
   let(:updated_dependency) do
     Dependabot::Dependencies::UpdatedDependency.new(
-      name: dependency.name,
+      dependency: dependency,
+      dependency_files: [instance_double(Dependabot::DependencyFile)],
       state: Dependabot::Dependencies::UpdateChecker::HAS_UPDATES,
       updated_dependencies: updated_dependencies,
       updated_files: updated_files,

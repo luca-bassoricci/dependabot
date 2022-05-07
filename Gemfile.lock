@@ -619,6 +619,7 @@ DEPENDENCIES
   solargraph (~> 0.44.3)
   spring (~> 4.0.0)
   spring-commands-rspec (~> 1.0.4)
+  terminal-table (~> 3.0)
   yabeda-prometheus-mmap (~> 0.3.0)
   yabeda-puma-plugin (~> 0.6.0)
   yabeda-sidekiq (~> 0.8.1)

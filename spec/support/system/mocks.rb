@@ -476,6 +476,23 @@ module Support
               body: ""
         YAML
       end
+
+      def vulnerability_issue_mock(iid: Faker::Number.number(digits: 10))
+        <<~YAML
+          - request:
+              path: /api/v4/projects/#{project_name}/issues
+              method: POST
+            response:
+              status: 200
+              headers:
+                Content-Type: application/json
+              body: |
+                {
+                  "iid": #{iid},
+                  "web_url": "#{AppConfig.gitlab_url}/#{project_name}/-/issues/#{iid}"
+                }
+        YAML
+      end
     end
 
     module Github

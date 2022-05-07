@@ -29,22 +29,31 @@ describe Dependabot::Dependencies::UpdateChecker, :integration, epic: :services,
 
   let(:skipped_dep) do
     Dependabot::Dependencies::UpdatedDependency.new(
-      name: dependency.name,
-      state: Dependabot::Dependencies::UpdateChecker::SKIPPED
+      dependency: dependency,
+      dependency_files: fetcher.files,
+      state: Dependabot::Dependencies::UpdateChecker::SKIPPED,
+      vulnerable: vulnerable,
+      auto_merge_rules: auto_merge_rules
     )
   end
 
   let(:up_to_date_dep) do
     Dependabot::Dependencies::UpdatedDependency.new(
-      name: dependency.name,
-      state: Dependabot::Dependencies::UpdateChecker::UP_TO_DATE
+      dependency: dependency,
+      dependency_files: fetcher.files,
+      state: Dependabot::Dependencies::UpdateChecker::UP_TO_DATE,
+      vulnerable: vulnerable,
+      auto_merge_rules: auto_merge_rules
     )
   end
 
   let(:update_impossible_dep) do
     Dependabot::Dependencies::UpdatedDependency.new(
-      name: dependency.name,
-      state: Dependabot::Dependencies::UpdateChecker::UPDATE_IMPOSSIBLE
+      dependency: dependency,
+      dependency_files: fetcher.files,
+      state: Dependabot::Dependencies::UpdateChecker::UPDATE_IMPOSSIBLE,
+      vulnerable: vulnerable,
+      auto_merge_rules: auto_merge_rules
     )
   end
 
@@ -148,7 +157,8 @@ describe Dependabot::Dependencies::UpdateChecker, :integration, epic: :services,
   context "when dependency can be updated" do
     let(:updated_deps) do
       Dependabot::Dependencies::UpdatedDependency.new(
-        name: dependency.name,
+        dependency: dependency,
+        dependency_files: fetcher.files,
         state: Dependabot::Dependencies::UpdateChecker::HAS_UPDATES,
         updated_files: updated_files,
         updated_dependencies: updated_dependencies,
@@ -206,6 +216,7 @@ describe Dependabot::Dependencies::UpdateChecker, :integration, epic: :services,
         Vulnerability.new(
           package: dependency.name,
           package_ecosystem: config_entry[:package_ecosystem],
+          package_manager: config_entry[:package_manager],
           vulnerable_version_range: "> 1.0.0",
           first_patched_version: "2.0.0"
         )
@@ -231,7 +242,7 @@ describe Dependabot::Dependencies::UpdateChecker, :integration, epic: :services,
       end
 
       it "passes advisories to update checker", :aggregate_failures do
-        expect(update_checker).to eq(updated_deps)
+        expect(update_checker.vulnerabilities.first).to eq(vulnerability)
 
         expect(Dependabot::Bundler::UpdateChecker).to have_received(:new) do |args|
           advisory = args[:security_advisories].first

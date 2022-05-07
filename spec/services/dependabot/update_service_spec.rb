@@ -59,7 +59,8 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
 
   let(:updated_rspec) do
     Dependabot::Dependencies::UpdatedDependency.new(
-      name: "rspec",
+      dependency: instance_double(Dependabot::Dependency, name: "rspec"),
+      dependency_files: [instance_double(Dependabot::DependencyFile)],
       state: Dependabot::Dependencies::UpdateChecker::HAS_UPDATES,
       updated_dependencies: ["updated_rspec"],
       updated_files: [],
@@ -70,7 +71,8 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
 
   let(:updated_config) do
     Dependabot::Dependencies::UpdatedDependency.new(
-      name: "config",
+      dependency: dependency,
+      dependency_files: [instance_double(Dependabot::DependencyFile)],
       state: Dependabot::Dependencies::UpdateChecker::HAS_UPDATES,
       updated_dependencies: ["updated_config"],
       updated_files: [],
@@ -185,7 +187,8 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
 
       let(:updated_rspec) do
         Dependabot::Dependencies::UpdatedDependency.new(
-          name: "rspec",
+          dependency: instance_double(Dependabot::Dependency, name: "rspec"),
+          dependency_files: [instance_double(Dependabot::DependencyFile)],
           state: Dependabot::Dependencies::UpdateChecker::UP_TO_DATE
         )
       end
@@ -214,7 +217,8 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
 
       let(:updated_puma) do
         Dependabot::Dependencies::UpdatedDependency.new(
-          name: "puma",
+          dependency: instance_double(Dependabot::Dependency, name: "puma"),
+          dependency_files: [instance_double(Dependabot::DependencyFile)],
           state: Dependabot::Dependencies::UpdateChecker::HAS_UPDATES,
           updated_dependencies: ["updated_puma"],
           updated_files: [],
@@ -225,7 +229,8 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
 
       let(:updated_rails) do
         Dependabot::Dependencies::UpdatedDependency.new(
-          name: "rails",
+          dependency: instance_double(Dependabot::Dependency, name: "rails"),
+          dependency_files: [instance_double(Dependabot::DependencyFile)],
           state: Dependabot::Dependencies::UpdateChecker::HAS_UPDATES,
           updated_dependencies: ["updated_rails"],
           updated_files: [],

@@ -14,14 +14,6 @@ module Dependabot
 
     # rubocop:disable Metrics/ClassLength
     class Parser < ApplicationService
-      # @return [Hash<String, String>]
-      PACKAGE_ECOSYSTEM_MAPPING = {
-        Ecosystem::NPM => "npm_and_yarn",
-        Ecosystem::GO => "go_modules",
-        Ecosystem::GIT => "submodules",
-        Ecosystem::MIX => "hex"
-      }.freeze
-
       # @return [Hash<String, Symbol>] mapping for versioning strategies option
       VERSIONING_STRATEGIES = {
         "lockfile-only" => :lockfile_only,
@@ -122,7 +114,7 @@ module Dependabot
         {
           # github native implementation modifies some of the names in the config file
           # https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates#package-ecosystem
-          package_manager: PACKAGE_ECOSYSTEM_MAPPING.fetch(package_ecosystem, package_ecosystem),
+          package_manager: Ecosystem::PACKAGE_ECOSYSTEM_MAPPING.fetch(package_ecosystem, package_ecosystem),
           package_ecosystem: package_ecosystem,
           fork: yml[:fork],
           vendor: opts[:vendor],

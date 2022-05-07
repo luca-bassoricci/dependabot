@@ -3,7 +3,8 @@
 describe Dependabot::Dependencies::UpdatedDependency, epic: :services, feature: :dependabot do
   subject(:updated_dependency) do
     described_class.new(
-      name: name,
+      dependency: dependency,
+      dependency_files: [instance_double(Dependabot::DependencyFile)],
       state: Dependabot::Dependencies::UpdateChecker::HAS_UPDATES,
       updated_dependencies: updated_dependencies,
       updated_files: updated_files,
