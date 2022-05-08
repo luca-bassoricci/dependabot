@@ -31,6 +31,8 @@ module Gitlab
           iid: issue.iid,
           project: project,
           directory: directory,
+          package: name,
+          package_ecosystem: vulnerability.package_ecosystem,
           vulnerability: vulnerability
         )
       end
@@ -39,7 +41,7 @@ module Gitlab
 
       attr_reader :project, :vulnerability, :dependency_file
 
-      delegate :directory, to: :dependency_file
+      delegate :directory, :name, to: :dependency_file
 
       # Vulnerability issue template
       #

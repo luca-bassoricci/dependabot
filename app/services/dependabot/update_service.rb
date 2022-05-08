@@ -46,6 +46,7 @@ module Dependabot
     private
 
     delegate :configuration, to: :project, prefix: :project
+    delegate :standalone?, to: "AppConfig"
 
     attr_reader :project_name,
                 :package_ecosystem,
@@ -57,7 +58,7 @@ module Dependabot
     # @return [Project]
     def project
       @project ||= begin
-        return standalone_project if AppConfig.standalone?
+        return standalone_project if standalone?
 
         # Fetch config from Gitlab if deployment is not integrated with webhooks to make sure it is up to date
         Project.find_by(name: project_name).tap do |existing_project|
@@ -77,7 +78,7 @@ module Dependabot
       Project.new(name: project_name, configuration: config, forked_from_id: fork_id)
     end
 
-    # Open mr limit
+    # Open mr limits
     #
     # @return [Number]
     def limits
@@ -157,9 +158,11 @@ module Dependabot
       dependencies.each_with_object({ mr: Set.new, security_mr: Set.new }) do |dep, count|
         updated_dep = updated_dependency(dep)
         next update_dependency(updated_dep, count) if updated_dep.updates?
+        next if standalone?
 
-        close_obsolete_mrs(updated_dep.name)
         create_vulnerability_issues(updated_dep) if updated_dep.vulnerable?
+        close_obsolete_mrs(updated_dep.name)
+        close_obsolete_vulnerability_issues(updated_dep)
       end
     end
 
@@ -176,36 +179,41 @@ module Dependabot
       )
     end
 
-    # Update dependency
+    # Create dependency update merge request
     #
     # @param [Dependabot::Dependencies::UpdatedDependency] updated_dependency
     # @param [Hash] mrs
     # @return [void]
     def update_dependency(dependency, mrs)
       type = dependency.vulnerable ? :security_mr : :mr
+      skip_message = <<~LOG.strip
+        skipping update of #{type == :mr ? '' : 'vulnerable '}dependency due to max #{limits[type]} open mr limit!
+      LOG
 
-      if mrs[type].length >= limits[type]
-        return log(
-          :info,
-          "  skipping update of #{type == :mr ? '' : 'vulnerable '}dependency due to max #{limits[type]} open mr limit!"
-        )
-      end
+      return log(:info, "  #{skip_message}") if mrs[type].length >= limits[type]
 
-      iid = create_mr(dependency)&.iid
-      mrs[type] << iid if iid
-    end
-
-    # Create or update merge request
-    #
-    # @param [Dependabot::Dependencies::UpdatedDependency] updated_dep
-    # @return [Gitlab::ObjectifiedHash]
-    def create_mr(updated_dep)
-      MergeRequest::CreateService.call(
+      iid = MergeRequest::CreateService.call(
         project: project,
         fetcher: fetcher,
         config_entry: config_entry,
-        updated_dependency: updated_dep
-      )
+        updated_dependency: dependency
+      )&.iid
+
+      mrs[type] << iid if iid
+    end
+
+    # Create security vulnerability alert issues
+    #
+    # @param [Dependabot::Dependencies::UpdatedDependency] dependency
+    # @return [void]
+    def create_vulnerability_issues(dependency)
+      dependency.actual_vulnerabilities.each do |vulnerability|
+        Gitlab::Vulnerabilities::IssueCreator.call(
+          project: project,
+          vulnerability: vulnerability,
+          dependency_file: dependency.dependency_files.reject(&:support_file).first
+        )
+      end
     end
 
     # Close obsolete merge requests
@@ -213,8 +221,6 @@ module Dependabot
     # @param [String] dependency_name
     # @return [void]
     def close_obsolete_mrs(dependency_name)
-      return if AppConfig.standalone?
-
       obsolete_mrs = project.merge_requests
                             .where(main_dependency: dependency_name, directory: directory, state: "opened")
                             .compact
@@ -230,18 +236,20 @@ module Dependabot
       end
     end
 
-    # Create security vulnerability issues
+    # Close obsolete vulnerability alerts
     #
     # @param [Dependabot::Dependencies::UpdatedDependency] dependency
     # @return [void]
-    def create_vulnerability_issues(dependency)
-      dependency.actual_vulnerabilities.each do |vulnerability|
-        Gitlab::Vulnerabilities::IssueCreator.call(
-          project: project,
-          vulnerability: vulnerability,
-          dependency_file: dependency.dependency_files.reject(&:support_file).first
+    def close_obsolete_vulnerability_issues(dependency)
+      VulnerabilityIssue
+        .where(
+          directory: directory,
+          package: dependency.name,
+          package_ecosystem: package_ecosystem,
+          status: "opened"
         )
-      end
+        .reject { |issue| issue.vulnerability.vulnerable?(dependency.version) }
+        .each { |issue| Gitlab::Vulnerabilities::IssueCloser.call(issue) }
     end
 
     # Raise config missing specific entry error

@@ -32,9 +32,11 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
   end
 
   let(:gitlab) do
-    instance_double("Gitlab::client", project: Gitlab::ObjectifiedHash.new({
-      "forked_from_project" => { "id" => 1 }
-    }))
+    instance_double(
+      "Gitlab::client",
+      project: Gitlab::ObjectifiedHash.new({ "forked_from_project" => { "id" => 1 } }),
+      close_issue: nil
+    )
   end
 
   let(:fetcher) do
@@ -146,6 +148,8 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
       )
       .and_return(updated_config)
 
+    allow(Gitlab).to receive(:client) { gitlab }
+    allow(Gitlab::Vulnerabilities::IssueCreator).to receive(:call)
     allow(Dependabot::MergeRequest::CreateService).to receive(:call).and_return(mr)
   end
 
@@ -206,6 +210,78 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
     end
 
     # rubocop:disable RSpec/NestedGroups
+    context "with vulnerable dependency" do
+      let(:package_version) { "1.0.0" }
+      let(:vulnerable) { true }
+      let(:dependency_name) { Faker::Alphanumeric.unique.alpha(number: 10) }
+
+      let(:dependency_file) { instance_double(Dependabot::DependencyFile, support_file: false) }
+      let(:vulnerability) { build(:vulnerability, package: dependency_name, vulnerable_version_range: range) }
+      let(:vulnerabilities) { [vulnerability] }
+
+      let(:updated_dep) do
+        Dependabot::Dependencies::UpdatedDependency.new(
+          dependency_files: [dependency_file],
+          state: Dependabot::Dependencies::UpdateChecker::UPDATE_IMPOSSIBLE,
+          vulnerabilities: vulnerabilities,
+          vulnerable: vulnerable,
+          dependency: instance_double(
+            Dependabot::Dependency,
+            name: dependency_name,
+            package_manager: package_manager,
+            version: package_version
+          )
+        )
+      end
+
+      let(:dependencies) { [updated_dep] }
+
+      before do
+        allow(Dependabot::Dependencies::UpdateChecker).to receive(:call).and_return(updated_dep)
+      end
+
+      context "without already existing vulnerability issue" do
+        let(:range) { "<= #{package_version}" }
+
+        it "creates new vulnerability issue" do
+          update_dependencies
+
+          expect(Gitlab::Vulnerabilities::IssueCreator).to have_received(:call).with(
+            project: project,
+            vulnerability: vulnerability,
+            dependency_file: dependency_file
+          )
+        end
+      end
+
+      context "with obsolete vulnerability issue" do
+        let(:vulnerable) { false }
+        let(:range) { "< #{package_version}" }
+
+        let(:vulnerability_issue) do
+          create(
+            :vulnerability_issue,
+            package_ecosystem: vulnerability.package_ecosystem,
+            package: dependency_name,
+            project: project,
+            vulnerability: vulnerability
+          )
+        end
+
+        before do
+          vulnerability_issue.vulnerability.save!
+        end
+
+        it "closes vulnerability issue" do
+          update_dependencies
+
+          expect(Gitlab::Vulnerabilities::IssueCreator).not_to have_received(:call)
+          expect(gitlab).to have_received(:close_issue).with(project.name, vulnerability_issue.iid)
+          expect(vulnerability_issue.reload.status).to eq("closed")
+        end
+      end
+    end
+
     context "with mr limit" do
       let(:mr_limit) { 2 }
 
@@ -356,8 +432,6 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
     let(:create_calls) { [] }
 
     before do
-      allow(Gitlab).to receive(:client) { gitlab }
-
       allow(Dependabot::Config::Fetcher).to receive(:call).with(project.name) { config }
       allow(Dependabot::MergeRequest::CreateService).to receive(:call) do |args|
         create_calls << args

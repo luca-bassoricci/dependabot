@@ -7,6 +7,8 @@ describe Gitlab::Vulnerabilities::IssueTemplate, epic: :services, feature: :gitl
 
   include_context "with dependabot helper"
 
+  let(:vulnerability) { build(:vulnerability) }
+
   let(:expected_template) do
     <<~MARKDOWN
       ⚠️ `dependabot-gitlab` has detected security vulnerability for `nokogiri` in path: `/`, manifest_file: `Gemfile` but was unable to update it! ⚠️
