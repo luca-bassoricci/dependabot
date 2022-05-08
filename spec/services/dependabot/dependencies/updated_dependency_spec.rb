@@ -17,6 +17,7 @@ describe Dependabot::Dependencies::UpdatedDependency, epic: :services, feature: 
 
   let(:name) { "config" }
   let(:merge_rules) { nil }
+  let(:vulnerability) { build(:vulnerability) }
 
   describe "auto-merge" do
     context "without auto-merge configured" do

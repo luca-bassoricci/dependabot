@@ -174,6 +174,7 @@ describe "dependency updates", :system, type: :system, epic: :system, feature: "
 
   context "with existing security vulnerability" do
     let(:dependency_name) { "nokogiri" }
+    let(:vulnerability) { build(:vulnerability) }
     let(:vulnerabilities) { [vulnerability] }
 
     context "with successfull dependency update" do

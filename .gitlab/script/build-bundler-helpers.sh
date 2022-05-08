@@ -4,10 +4,10 @@ set -e
 
 source "$(dirname "$0")/utils.sh"
 
-core_version="$(cat Gemfile.lock | grep -oP 'dependabot-omnibus \(\K[0-9.]+')"
+core_version="$(dependabot_version)"
 core_tgz="tmp/dependabot.tar.gz"
 
-log "Setting up native build helpers"
+log "Setting up native build helpers v${core_version}"
 log_info "** Fetching native bundler helpers **"
 curl -s --fail --location --output $core_tgz \
   "https://github.com/dependabot/dependabot-core/archive/refs/tags/v${core_version}.tar.gz" && \

@@ -16,6 +16,7 @@ reports/
 
 # Ignore integration/e2e test artifacts
 git.store
+helpers
 
 # Ignore IDE
 .vscode

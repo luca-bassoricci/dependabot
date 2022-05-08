@@ -10,7 +10,7 @@ module Dependabot
       # @param [Dependabot::Files::Fetchers::Base] fetcher
       # @param [Project] project
       # @param [Hash] config_entry
-      # @param [Dependabot::UpdatedDependency] updated_dependency
+      # @param [Dependabot::Dependencies::UpdatedDependency] updated_dependency
       # @param [Boolean] recreate
       def initialize(fetcher:, project:, config_entry:, updated_dependency:, recreate: false)
         @fetcher = fetcher
