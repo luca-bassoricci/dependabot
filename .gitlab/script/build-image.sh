@@ -12,7 +12,7 @@ image="$CI_REGISTRY_IMAGE/dev/$image_type"
 context="${DOCKER_CONTEXT:-.}"
 dockerfile="${DOCKER_FILE:-$context}"
 latest_tag="${LATEST_TAG:-$CI_COMMIT_REF_SLUG-latest}"
-core_version="$(awk '/dependabot-omnibus \([0-9.]+\)/ {print $2}' Gemfile.lock | sed 's/[()]//g')"
+core_version="$(dependabot_version)"
 
 if [ -z "$CI_COMMIT_TAG" ]; then
   images="${image}:${CURRENT_TAG},${image}:${latest_tag}"

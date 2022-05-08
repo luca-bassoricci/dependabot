@@ -15,3 +15,7 @@ function log_success() {
 function log_info() {
   echo -e "\033[1;35m$1\033[0m"
 }
+
+function dependabot_version() {
+  echo "$(awk '/dependabot-omnibus \([0-9.]+\)/ {print $2}' Gemfile.lock | sed 's/[()]//g')"
+}
