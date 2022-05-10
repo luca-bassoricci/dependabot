@@ -27,6 +27,7 @@ module Gitlab
             merge_requests_events: true,
             note_events: true,
             pipeline_events: true,
+            issues_events: true,
             push_events_branch_filter: default_branch,
             enable_ssl_verification: dependabot_url.scheme == "https"
           }

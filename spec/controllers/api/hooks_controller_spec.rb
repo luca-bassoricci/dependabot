@@ -19,6 +19,7 @@ describe Api::HooksController, :aggregate_failures, type: :request, epic: :contr
       allow(Webhooks::MergeRequestEventHandler).to receive(:call).and_return({ closed_merge_request: true })
       allow(Webhooks::CommentEventHandler).to receive(:call).and_return(nil)
       allow(Webhooks::PipelineEventHandler).to receive(:call).and_return(nil)
+      allow(Webhooks::IssueEventHandler).to receive(:call).and_return({})
     end
 
     def params(object)
@@ -90,6 +91,21 @@ describe Api::HooksController, :aggregate_failures, type: :request, epic: :contr
           merge_status: body.dig(:merge_request, :merge_status),
           source_project_id: body.dig(:merge_request, :source_project_id).to_s,
           target_project_id: body.dig(:merge_request, :target_project_id).to_s
+        )
+      end
+    end
+
+    context "with issue event" do
+      let(:body) { hash("spec/fixture/gitlab/webhooks/issue.json") }
+
+      it "issue event" do
+        receive_webhook
+
+        expect_status(200)
+        expect_json({})
+        expect(Webhooks::IssueEventHandler).to have_received(:call).with(
+          project_name: body.dig(:project, :path_with_namespace),
+          issue_iid: body.dig(:object_attributes, :iid).to_s
         )
       end
     end

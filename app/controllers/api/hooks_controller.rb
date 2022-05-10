@@ -100,5 +100,21 @@ module Api
         target_project_id: args.dig(:merge_request, :target_project_id)
       )
     end
+
+    # Handle issue hook event
+    #
+    # @return [void]
+    def issue
+      args = params.permit(
+        object_attributes: %i[iid action],
+        project: [:path_with_namespace]
+      )
+      return unless args.dig(:object_attributes, :action) == "close"
+
+      Webhooks::IssueEventHandler.call(
+        project_name: args.dig(:project, :path_with_namespace),
+        issue_iid: args.dig(:object_attributes, :iid)
+      )
+    end
   end
 end

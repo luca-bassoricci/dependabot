@@ -1,0 +1,11 @@
+{
+  "object_kind": "issue",
+  "event_type": "issue",
+  "project": {
+    "path_with_namespace":"gitlabhq/gitlab-test"
+  },
+  "object_attributes": {
+    "iid": 23,
+    "action": "close"
+  }
+}
