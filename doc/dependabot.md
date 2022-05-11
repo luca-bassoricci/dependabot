@@ -39,6 +39,7 @@ updates:
     reviewers: 'default: none'
     approvers: 'default: none'
     updater-options: 'default: none'
+    vulnerability-alerts: 'default: none'
 ```
 
 ## fork
@@ -227,4 +228,14 @@ This option require knowledge of inner workings of `dependabot-core`, use at you
 ```yml
 updater-options:
   goprivate: "custom-value"
+```
+
+## vulnerability alerts
+
+Optional assignees for security vulnerability issue which is created for vulnerable dependencies that could not be updated
+
+```yml
+vulnerability-alerts:
+  assignees:
+    - john_doe
 ```
