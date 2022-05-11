@@ -201,57 +201,27 @@ module Support
         YAML
       end
 
-      def users_mock
-        <<~YAML
-          - request:
-              path: /api/v4/users
-              method: GET
-              query_params:
-                search: andrcuns
-            response:
-              status: 200
-              headers:
-                Content-Type: application/json
-              body: |
-                [
-                  {
-                    "id": 1,
-                    "username": "andrcuns"
-                  }
-                ]
-          - request:
-              path: /api/v4/users
-              method: GET
-              query_params:
-                search: acunskis
-            response:
-              status: 200
-              headers:
-                Content-Type: application/json
-              body: |
-                [
-                  {
-                    "id": 2,
-                    "username": "acunskis"
-                  }
-                ]
-          - request:
-              path: /api/v4/users
-              method: GET
-              query_params:
-                search: jane_smith
-            response:
-              status: 200
-              headers:
-                Content-Type: application/json
-              body: |
-                [
-                  {
-                    "id": 3,
-                    "username": "jane_smith"
-                  }
-                ]
-        YAML
+      def users_mock(users = %w[john jane_smith])
+        users.map do |user|
+          <<~YAML
+            - request:
+                path: /api/v4/users
+                method: GET
+                query_params:
+                  search: #{user}
+              response:
+                status: 200
+                headers:
+                  Content-Type: application/json
+                body: |
+                  [
+                    {
+                      "id": #{Faker::Number.number(digits: 5)},
+                      "username": "#{user}"
+                    }
+                  ]
+          YAML
+        end
       end
 
       def milestone_mock

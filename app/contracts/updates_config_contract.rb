@@ -48,6 +48,10 @@ class UpdatesConfigContract < Dry::Validation::Contract
         optional(:prefix).filled(:string)
       end
 
+      optional(:"vulnerability-alerts").hash do
+        optional(:assignees).array(:str?)
+      end
+
       optional(:"auto-merge") { filled? > bool? | hash? }
       optional(:"rebase-strategy") { filled? > str? | hash? }
 

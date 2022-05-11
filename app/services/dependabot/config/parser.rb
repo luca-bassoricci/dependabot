@@ -127,7 +127,8 @@ module Dependabot
           registries: opts[:registries] || "*",
           versioning_strategy: versioning_strategy(opts[:"versioning-strategy"]),
           open_merge_requests_limit: opts[:"open-pull-requests-limit"] || DependabotConfig.open_pull_request_limit,
-          updater_options: opts[:"updater-options"] || {}
+          updater_options: opts[:"updater-options"] || {},
+          vulnerability_alerts: opts[:"vulnerability-alerts"]
         }
       end
 

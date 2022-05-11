@@ -211,7 +211,8 @@ module Dependabot
         Gitlab::Vulnerabilities::IssueCreator.call(
           project: project,
           vulnerability: vulnerability,
-          dependency_file: dependency.dependency_files.reject(&:support_file).first
+          dependency_file: dependency.dependency_files.reject(&:support_file).first,
+          assignees: config_entry.dig(:vulnerability_alerts, :assignees)
         )
       end
     end

@@ -10,10 +10,12 @@ module Gitlab
       # @param [Project] project_name
       # @param [Vulnerability] vulnerability
       # @param [Dependabot::DependencyFile] dependency_file
-      def initialize(project:, vulnerability:, dependency_file:)
+      # @param [Array] assignees
+      def initialize(project:, vulnerability:, dependency_file:, assignees:)
         @project = project
         @vulnerability = vulnerability
         @dependency_file = dependency_file
+        @assignees = Gitlab::UserFinder.call(assignees)
       end
 
       def call
@@ -23,7 +25,8 @@ module Gitlab
           project.name,
           vulnerability.summary,
           description: issue_body,
-          labels: "security"
+          labels: "security",
+          **assignees_option
         )
         log(:info, "  created security vulnerability issue: #{issue.web_url.bright}")
 
@@ -39,7 +42,7 @@ module Gitlab
 
       private
 
-      attr_reader :project, :vulnerability, :dependency_file
+      attr_reader :project, :vulnerability, :dependency_file, :assignees
 
       delegate :directory, :name, to: :dependency_file
 
@@ -61,6 +64,15 @@ module Gitlab
         )
       rescue Mongoid::Errors::DocumentNotFound
         false
+      end
+
+      # Assignees option
+      #
+      # @return [Hash]
+      def assignees_option
+        return {} unless assignees
+
+        assignees.size == 1 ? { assignee_id: assignees.first } : { assignee_ids: assignees }
       end
     end
   end

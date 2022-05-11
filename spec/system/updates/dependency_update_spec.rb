@@ -28,6 +28,15 @@ describe "dependency updates", :system, type: :system, epic: :system, feature: "
             "prefix-development" => "bundler-dev",
             "include" => "scope"
           },
+          "assignees" => %w[
+            john
+            jane_smith
+          ],
+          "vulnerability-alerts" => {
+            "assignees" => [
+              "john"
+            ]
+          },
           "ignore" => ignored_deps,
           "rebase-strategy" => "all"
         }
@@ -68,6 +77,7 @@ describe "dependency updates", :system, type: :system, epic: :system, feature: "
         branch_head_mock,
         file_tree_mock,
         dep_file_mock,
+        users_mock,
         create_branch_mock,
         labels_mock,
         mr_check_mock,
@@ -105,6 +115,7 @@ describe "dependency updates", :system, type: :system, epic: :system, feature: "
         branch_head_mock,
         file_tree_mock,
         dep_file_mock,
+        users_mock,
         mr_check_mock,
         branch_mock(dependency: mr.main_dependency),
         find_mr_mock(dependency: mr.main_dependency, id: mr.id, iid: mr.iid, has_conflicts: has_conflicts)
@@ -158,6 +169,7 @@ describe "dependency updates", :system, type: :system, epic: :system, feature: "
         dep_file_mock,
         create_branch_mock,
         labels_mock,
+        users_mock,
         mr_check_mock,
         no_branch_mock(dependency: dependency_name),
         create_commits_mock(dependency: dependency_name),
@@ -192,6 +204,7 @@ describe "dependency updates", :system, type: :system, epic: :system, feature: "
           branch_head_mock,
           file_tree_mock,
           dep_file_mock,
+          users_mock,
           create_branch_mock,
           labels_mock,
           mr_check_mock,
@@ -224,6 +237,7 @@ describe "dependency updates", :system, type: :system, epic: :system, feature: "
           branch_head_mock,
           file_tree_mock,
           dep_file_mock,
+          users_mock(["john"]),
           vulnerability_issue_mock
         ]
       end

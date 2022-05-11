@@ -249,7 +249,8 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
           expect(Gitlab::Vulnerabilities::IssueCreator).to have_received(:call).with(
             project: project,
             vulnerability: vulnerability,
-            dependency_file: dependency_file
+            dependency_file: dependency_file,
+            assignees: nil
           )
         end
       end
