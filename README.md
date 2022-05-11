@@ -105,6 +105,7 @@ Following configuration options are currently supported:
 | `registries`                       | :white_check_mark: | :white_check_mark:    |
 | `fork`                             | :white_check_mark: | :white_check_mark:    |
 | `updater-options`                  | :white_check_mark: | :white_check_mark:    |
+| `vulnerability-alerts`             | :white_check_mark: | :x:                   |
 | `schedule.interval`                | :white_check_mark: | :x:                   |
 | `schedule.day`                     | :white_check_mark: | :x:                   |
 | `schedule.time`                    | :white_check_mark: | :x:                   |
@@ -139,6 +140,10 @@ Application supports syncing with [GitHub Advisory Database](https://github.com/
 This feature requires for github access token to be configured.
 
 _Currently security updates are not supported in standalone mode_
+
+## Vulnerability alerts
+
+When `dependabot-gitlab` detects security vulnerability in a dependency but is unable to update it, it will create security vulnerability issue.
 
 # Adding projects
 
