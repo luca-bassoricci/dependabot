@@ -55,7 +55,7 @@ include:
 .docker_runner:
   image: ${CI_IMAGE}
   services:
-    - name: docker:20.10.15-dind
+    - name: docker:20.10.16-dind
       alias: docker
   variables:
     DOCKER_HOST: tcp://docker:2376
