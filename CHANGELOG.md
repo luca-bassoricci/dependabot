@@ -1,3 +1,40 @@
+## 0.20.0 (2022-05-16)
+
+### 🚀 New features (1 change)
+
+- [Security vulnerability alerts](dependabot-gitlab/dependabot@e536cbdd966b7482921bffac3b0c0ce0dadf3ab0) by @andrcuns. See merge request dependabot-gitlab/dependabot!1540
+
+### 🔬 Improvements (3 changes)
+
+- [Add configurable assignee for vulnerability issues](dependabot-gitlab/dependabot@4fa9a92b918bf6d3433773be89526d51791c94a5) by @andrcuns. See merge request dependabot-gitlab/dependabot!1548
+- [Add webhook to close vulnerability issue in local database](dependabot-gitlab/dependabot@1ae97867bfa6c241dc6feb868c0b574ec1dfaf45) by @andrcuns. See merge request dependabot-gitlab/dependabot!1546
+- [Automatically close obsolete vulnerability issues](dependabot-gitlab/dependabot@dd0d29f42551ab8f7e3067e12759d6e41a6c63b1) by @andrcuns. See merge request dependabot-gitlab/dependabot!1541
+
+### 📦 Dependency updates (9 changes)
+
+- [dep-dev: bump faker from 2.20.0 to 2.21.0](dependabot-gitlab/dependabot@b76b91132646245592bee3796e14fcc7ff99694c) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1553
+- [dep: bump dependabot-omnibus from 0.186.1 to 0.187.0](dependabot-gitlab/dependabot@8f406bd9c95c4bd292fd2b471ed69ea9eb57ad14) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1552
+- [dep-dev: bump rubocop from 1.29.0 to 1.29.1](dependabot-gitlab/dependabot@503c5897c26b711e048e41c63e8bc919482b1969) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1551
+- [dep: bump dependabot-omnibus from 0.185.0 to 0.186.1](dependabot-gitlab/dependabot@925e946498c242d01e63acb3cad01aa76bd1579e) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1547
+- [dep-dev: bump capybara from 3.37.0 to 3.37.1](dependabot-gitlab/dependabot@f13f74588f7060a5800685112ffd745368a3853e) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1545
+- [dep: bump rails from 7.0.2.4 to 7.0.3](dependabot-gitlab/dependabot@5fe98f7158dac95b2ebe170f927a2d97d51f369d) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1544
+- [dep: bump dependabot-omnibus from 0.184.0 to 0.185.0](dependabot-gitlab/dependabot@5f38f400d4b4ba864c9223f038e53da923579940) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1543
+- [dep-dev: bump capybara from 3.36.0 to 3.37.0](dependabot-gitlab/dependabot@2d6e11e0583aecb02d8d69fdd6e4c869413faede) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1542
+- [dep-dev: bump rubocop from 1.28.2 to 1.29.0](dependabot-gitlab/dependabot@c821aa7099c5317daf68c2c07b48062cd7369116) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1538
+
+### 🔧 CI changes (2 changes)
+
+- [Update kind to v0.12 and docker to 20.10.15](dependabot-gitlab/dependabot@4c6ad5fadd860fbf221c9c11357c6ea63f40ae0d) by @andrcuns. See merge request dependabot-gitlab/dependabot!1539
+- [dep-dev: Update dependency docker to v20.10.15](dependabot-gitlab/dependabot@13078ce86302efdaad4ce2621c637f1a68188643) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1536
+
+### 🛠️ Chore (1 change)
+
+- [Make helpers build script more portable](dependabot-gitlab/dependabot@10da8a2bafa35e69b07836cade6c9a7e3af93a06) by @andrcuns. See merge request dependabot-gitlab/dependabot!1541
+
+### 📄 Documentation updates (1 change)
+
+- [Document security vulnerability alert issues](dependabot-gitlab/dependabot@5ada980f6894db32d4bb9d53cdfcd75503631961) by @andrcuns. See merge request dependabot-gitlab/dependabot!1549
+
 ## 0.19.2 (2022-05-07)
 
 ### 🐞 Bug Fixes (1 change)
