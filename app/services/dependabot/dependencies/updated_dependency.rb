@@ -4,7 +4,7 @@ module Dependabot
   module Dependencies
     # Updated dependency container
     #
-    class UpdatedDependency
+    class UpdatedDependency # rubocop:disable Metrics/ClassLength
       # :reek:LongParameterList
       # rubocop:disable Metrics/ParameterLists
 
@@ -88,29 +88,15 @@ module Dependabot
         @auto_mergeable ||= auto_merge_rules && (allow_automerge && !ignore_automerge)
       end
 
-      # :reek:TooManyStatements
-
       # Fixed vulnerabilities in format for pr creator
       #
       # @return [Hash]
-      def fixed_vulnerabilities # rubocop:disable Metrics/CyclomaticComplexity
+      def fixed_vulnerabilities
         @fixed_vulnerabilities ||= begin
           fixed = vulnerabilities.select { |entry| updated_dependencies&.any? { |dep| entry.fixed_by?(dep) } }
 
-          by_id = fixed.each_with_object({}) do |vuln, hsh|
-            id = vuln.id
-
-            if hsh.key?(id)
-              hsh[id]["patched_versions"] << vuln.first_patched_version
-              hsh[id]["affected_versions"] << vuln.vulnerable_version_range
-              next
-            end
-
-            hsh[id] = vuln.to_hash
-          end
-
           # group fixed vulnerabilities by package name
-          by_id.values.each_with_object(Hash.new { |hsh, key| hsh[key] = [] }) do |vuln, hsh|
+          merge_vulnerabilities(fixed).values.each_with_object(Hash.new { |hsh, key| hsh[key] = [] }) do |vuln, hsh|
             hsh[vuln["package"]] << vuln.except("package")
           end
         end
@@ -167,6 +153,24 @@ module Dependabot
       end
 
       private
+
+      # Convert vulnerability to hash format and merge vulnerabilities with same id
+      #
+      # @param [Array<Vulnerability>] entries
+      # @return [Hash]
+      def merge_vulnerabilities(entries)
+        entries.each_with_object({}) do |vuln, hsh|
+          id = vuln.id
+
+          if hsh.key?(id)
+            hsh[id]["patched_versions"] << vuln.first_patched_version if vuln.first_patched_version
+            hsh[id]["affected_versions"] << vuln.vulnerable_version_range
+            next
+          end
+
+          hsh[id] = vuln.to_hash
+        end
+      end
 
       # Allow automerge
       #
