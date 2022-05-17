@@ -1,3 +1,20 @@
+## 0.20.1 (2022-05-17)
+
+### 🐞 Bug Fixes (1 change)
+
+- [Correctly handle vulnerabilities without patched version](dependabot-gitlab/dependabot@6d37bdd9e705407f4644ce933b535a8df4b625b1) by @andrcuns. See merge request dependabot-gitlab/dependabot!1557
+
+### 📦 Dependency updates (3 changes)
+
+- [dep: bump dependabot-omnibus from 0.188.0 to 0.189.0](dependabot-gitlab/dependabot@60e31c572115e204af2c4f83385eb61c168ea110) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1558
+- [dep: bump sentry-rails, sentry-ruby and sentry-sidekiq](dependabot-gitlab/dependabot@9b49517843fa3103147eefad3c7a37c4c68ae5ac) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1555
+- [dep: bump dependabot-omnibus from 0.187.0 to 0.188.0](dependabot-gitlab/dependabot@f8b8fa47a1e9cea1ba2960fcce9a5df4de7345ac) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1554
+
+### 🔧 CI changes (2 changes)
+
+- [dep-dev: Update docker to 20.10.16](dependabot-gitlab/dependabot@7aaad62a788c34075eee3e0ffb8459339ea0a47d) by @andrcuns. See merge request dependabot-gitlab/dependabot!1556
+- [dep-dev: Update dependency docker to v20.10.16](dependabot-gitlab/dependabot@4f2979099eb366807c79c3c4403441fe03dc1707) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1550
+
 ## 0.20.0 (2022-05-16)
 
 ### 🚀 New features (1 change)
