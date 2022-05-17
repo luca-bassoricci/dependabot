@@ -7,7 +7,7 @@ ARG helm_version=v3.8.0
 ARG kubeval_version=v0.16.1
 ARG helmdocs_version=1.7.0
 ARG kind_version=v0.12.0
-ARG docker_version=5:20.10.15*
+ARG docker_version=5:20.10.16*
 ARG compose_plugin_version=2.3.3
 
 ARG TARGETARCH=amd64
