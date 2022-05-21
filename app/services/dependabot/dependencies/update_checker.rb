@@ -132,11 +132,10 @@ module Dependabot
         @vulnerabilities ||= if AppConfig.standalone?
                                []
                              else
-                               Vulnerability.where(
-                                 package: dependency.name,
+                               Vulnerability.active_vulnerability(
                                  package_ecosystem: config_entry[:package_ecosystem],
-                                 withdrawn_at: nil
-                               ).to_a
+                                 package: dependency.name
+                               )
                              end
       end
 

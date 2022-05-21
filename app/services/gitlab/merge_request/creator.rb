@@ -146,14 +146,11 @@ module Gitlab
       #
       # @return [Mongoid::Criteria]
       def superseeded_mrs
-        @superseeded_mrs ||= project.merge_requests
-                                    .where(
-                                      update_from: updated_dependency.previous_versions,
-                                      state: "opened",
-                                      directory: config_entry[:directory]
-                                    )
-                                    .not(iid: mr.iid)
-                                    .compact
+        @superseeded_mrs ||= project.superseded_mrs(
+          update_from: updated_dependency.previous_versions,
+          directory: config_entry[:directory],
+          mr_iid: mr.iid
+        )
       end
 
       # MR message footer with available commands
