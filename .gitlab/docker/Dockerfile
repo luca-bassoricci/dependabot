@@ -1,17 +1,10 @@
 FROM registry.gitlab.com/gitlab-org/release-cli:v0.11.0 as release-cli
 FROM ruby:2.7.6-slim-bullseye
 
-ARG bundler_version=2.3.10
-ARG kubectl_version=v1.23.3
-ARG helm_version=v3.8.0
-ARG kubeval_version=v0.16.1
-ARG helmdocs_version=1.7.0
-ARG kind_version=v0.12.0
-ARG docker_version=5:20.10.16*
-ARG compose_plugin_version=2.3.3
-
 ARG TARGETARCH=amd64
 
+# Install base dependencies
+ARG bundler_version=2.3.10
 RUN set -eux; \
   apt-get update && apt-get install --no-install-recommends -y \
   ca-certificates \
@@ -31,13 +24,26 @@ RUN set -eux; \
   bullseye stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 
 # Install kubectl
+ARG kubectl_version=v1.23.3
 RUN set -eux; \
   curl --fail --location --output kubectl \
   "https://storage.googleapis.com/kubernetes-release/release/${kubectl_version}/bin/linux/${TARGETARCH}/kubectl"; \
   \
   chmod +x kubectl && mv kubectl /usr/local/bin/
 
+# Install kubeval
+ARG kubeval_version=v0.16.1
+RUN set -eux; \
+  [ "$TARGETARCH" != "amd64" ] || \
+  (curl --fail --location --output /tmp/kubeval.tar.gz \
+  "https://github.com/instrumenta/kubeval/releases/download/${kubeval_version}/kubeval-linux-${TARGETARCH}.tar.gz" && \
+  \
+  tar -xzf /tmp/kubeval.tar.gz kubeval && \
+  mv kubeval /usr/local/bin/ && \
+  rm -rf tmp/kubeval.tar.gz kubeval)
+
 # Install Helm
+ARG helm_version=v3.8.0
 RUN set -eux;\
   curl --fail --location --output /tmp/helm.tar.gz \
   "https://get.helm.sh/helm-${helm_version}-linux-${TARGETARCH}.tar.gz"; \
@@ -52,6 +58,7 @@ RUN set -eux;\
   [ "$TARGETARCH" != "amd64" ] || helm plugin install https://github.com/mbenabda/helm-local-chart-version
 
 # Install helmdocs
+ARG helmdocs_version=1.7.0
 RUN set -eux; \
   HELM_ARCH=${TARGETARCH} && \
   if [ "${TARGETARCH}" = "amd64" ]; then HELM_ARCH="x86_64"; fi; \
@@ -62,17 +69,8 @@ RUN set -eux; \
   mv helm-docs /usr/local/bin/; \
   rm -rf /tmp/helmdocs.tar.gz helm-docs
 
-# Install kubeval
-RUN set -eux; \
-  [ "$TARGETARCH" != "amd64" ] || \
-  (curl --fail --location --output /tmp/kubeval.tar.gz \
-  "https://github.com/instrumenta/kubeval/releases/download/${kubeval_version}/kubeval-linux-${TARGETARCH}.tar.gz" && \
-  \
-  tar -xzf /tmp/kubeval.tar.gz kubeval && \
-  mv kubeval /usr/local/bin/ && \
-  rm -rf tmp/kubeval.tar.gz kubeval)
-
 # Install kind
+ARG kind_version=v0.12.0
 RUN set -eux; \
   curl --fail --location --output kind https://kind.sigs.k8s.io/dl/${kind_version}/kind-linux-${TARGETARCH}; \
   chmod +x kind; \
@@ -87,11 +85,21 @@ RUN set -eux; \
   rm -f /tmp/gsutil.tar.gz
 
 # Install docker
+ARG docker_version=5:20.10.16*
+ARG compose_plugin_version=2.3.3
+ARG buildx_version=v0.8.2
 RUN set -eux; \
   apt-get update && apt-get install --no-install-recommends -y \
   docker-ce=${docker_version}~debian-bullseye \
   docker-ce-cli=${docker_version}~debian-bullseye \
-  docker-compose-plugin=${compose_plugin_version}~debian-bullseye
+  docker-compose-plugin=${compose_plugin_version}~debian-bullseye; \
+  \
+  curl --fail --location --output docker-buildx \
+  "https://github.com/docker/buildx/releases/download/${buildx_version}/buildx-${buildx_version}.linux-${TARGETARCH}"; \
+  \
+  chmod +x docker-buildx; \
+  mkdir -p /usr/local/lib/docker/cli-plugins; \
+  mv docker-buildx /usr/local/lib/docker/cli-plugins/
 
 # Install release-cli
 COPY --from=release-cli /usr/local/bin/release-cli /usr/local/bin/release-cli
