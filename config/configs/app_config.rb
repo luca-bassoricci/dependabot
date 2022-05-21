@@ -17,7 +17,7 @@ class AppConfig < ApplicationConfig
               # update job retry amount
               update_retry: 2,
               # /metrics endpoint
-              metrics: true,
+              metrics: false,
               # project registration
               project_registration: "manual",
               project_registration_cron: "0 6 * * *",
