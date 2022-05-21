@@ -24,7 +24,7 @@ module DependabotGitlab
     logger = DependabotLogger.logger(source: "app")
     config.logger = logger
     config.log_level = AppConfig.log_level
-    config.mongoid.logger = DependabotLogger.logger(source: "mongodb", stdout: false)
+    config.mongoid.logger = DependabotLogger.logger(source: "mongodb", logdev: :file)
 
     config.after_initialize do
       if Sidekiq.server?

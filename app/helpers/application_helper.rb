@@ -67,6 +67,8 @@ module ApplicationHelper
   # @return [void]
   def clear_execution_context
     Thread.current[:context] = nil
+    UpdateFailures.reset
+    UpdateLog.reset
   end
 
   module_function :gitlab,

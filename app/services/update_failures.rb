@@ -14,7 +14,7 @@ class UpdateFailures
     # @param [Error] error
     # @return [void]
     def save_error(error)
-      errors.push(error.message)
+      errors << error.message
     end
 
     # Current failures

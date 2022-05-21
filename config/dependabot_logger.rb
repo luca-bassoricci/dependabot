@@ -16,10 +16,9 @@ class DependabotLogger
   class SimpleLogFormatter < Sidekiq::Logger::Formatters::Base
     # :reek:LongParameterList
     def call(severity, time, _program_name, message)
-      prefix = "[#{time}#{thread}] #{severity.ljust(5)} -- "
-      msg = "#{message}\n"
+      prefix = DependabotLogger.message_prefix(time, thread, severity)
 
-      Rainbow(prefix).send(LOG_COLORS.fetch(severity, :silver)) + msg
+      Rainbow(prefix).send(LOG_COLORS.fetch(severity, :silver)) + "#{message}\n"
     end
 
     def thread
@@ -27,21 +26,63 @@ class DependabotLogger
     end
   end
 
-  # :reek:ControlParameter
+  class DbLogFormatter < Sidekiq::Logger::Formatters::Base
+    # :reek:LongParameterList
+    def call(severity, time, _program_name, message)
+      prefix = DependabotLogger.message_prefix(time, thread, severity)
 
-  # Common tagged logger
-  #
-  # @param [String] source
-  # @param [Boolean] stdout
-  # @return [ActiveSupport::TaggedLogging]
-  def self.logger(source:, stdout: AppConfig.log_stdout)
-    logdev = stdout ? $stdout : "log/#{source}.out"
-    ActiveSupport::TaggedLogging.new(
-      Logger.new(logdev).tap do |log|
-        log.formatter = SimpleLogFormatter.new
-        log.datetime_format = DATETIME_FORMAT
-        log.level = AppConfig.log_level
-      end
-    )
+      UpdateLog.add("#{prefix}#{message}")
+    end
+
+    def thread
+      tid ? " tid=#{tid}" : ""
+    end
+  end
+
+  class << self
+    # Common tagged logger
+    #
+    # @param [String] source
+    # @param [Object] logdev
+    # @return [ActiveSupport::TaggedLogging]
+    def logger(source:, logdev: nil)
+      ActiveSupport::TaggedLogging.new(
+        ActiveSupport::Logger.new(log_device(source, logdev)).tap do |log|
+          log.formatter = SimpleLogFormatter.new
+          log.datetime_format = DATETIME_FORMAT
+          log.level = AppConfig.log_level
+        end
+      )
+    end
+
+    def db_logger
+      ActiveSupport::TaggedLogging.new(
+        ActiveSupport::Logger.new(IO::NULL).tap do |log|
+          log.formatter = DbLogFormatter
+          log.datetime_format = DATETIME_FORMAT
+          log.level = AppConfig.log_level
+        end
+      )
+    end
+
+    def message_prefix(time, thread, severity)
+      "[#{time}#{thread}] #{severity.ljust(5)} -- "
+    end
+
+    private
+
+    # Log device
+    #
+    # @param [String] source
+    # @return [Object]
+    def log_device(source, logdev)
+      logfile = "log/#{source}.out"
+
+      return logfile if logdev == :file
+      return logdev unless logdev.nil?
+      return $stdout if AppConfig.log_stdout
+
+      logfile
+    end
   end
 end
