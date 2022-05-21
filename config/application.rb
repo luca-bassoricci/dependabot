@@ -21,13 +21,14 @@ module DependabotGitlab
     config.load_defaults 7.0
     config.active_job.queue_adapter = :sidekiq
 
-    logger = DependabotLogger
-             .logger(source: "dependabot")
-             .extend(ActiveSupport::Logger.broadcast(DependabotLogger.db_logger))
-
-    config.logger = logger
     config.log_level = AppConfig.log_level
+    config.logger = ActiveSupport::TaggedLogging.new(DependabotLogger.logger(source: "dependabot"))
+
     config.mongoid.logger = DependabotLogger.logger(source: "mongodb", logdev: :file)
+
+    config.lograge.enabled = true
+    config.lograge.base_controller_class = ["ActionController::API", "ActionController::Base"]
+    config.lograge.ignore_actions = [Healthcheck::CONTROLLER_ACTION]
 
     config.after_initialize do
       if Sidekiq.server?

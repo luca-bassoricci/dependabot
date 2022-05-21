@@ -15,11 +15,8 @@ class DependencyUpdateJob < ApplicationJob
     @project, @package_ecosystem, @directory = symbolized_args
                                                .slice(:project_name, :package_ecosystem, :directory)
                                                .values
-    UpdateFailures.reset
-    set_execution_context(job_execution_context)
-    save_execution_time
 
-    Dependabot::UpdateService.call(symbolized_args)
+    execute { Dependabot::UpdateService.call(symbolized_args) }
 
     UpdateFailures.errors
   rescue StandardError => e
@@ -27,7 +24,6 @@ class DependencyUpdateJob < ApplicationJob
     raise
   ensure
     save_execution_details
-    clear_execution_context
   end
 
   private
@@ -44,6 +40,30 @@ class DependencyUpdateJob < ApplicationJob
                              package_ecosystem: package_ecosystem,
                              directory: directory
                            )
+  end
+
+  # Execute dependency updates
+  #
+  # @return [void]
+  def execute(&block)
+    unless AppConfig.standalone?
+      reset_execution_details
+      save_execution_time
+    end
+
+    run_within_context(job_execution_context, &block)
+  end
+
+  # Save last enqued time
+  #
+  # @return [void]
+  def save_execution_time
+    update_job.last_executed = DateTime.now.utc
+  end
+
+  def reset_execution_details
+    UpdateFailures.reset
+    UpdateLog.reset
   end
 
   # Persist execution errors
@@ -67,14 +87,5 @@ class DependencyUpdateJob < ApplicationJob
     context_values << directory unless directory == "/"
 
     "dependency-update: #{context_values.join('=>')}"
-  end
-
-  # Save last enqued time
-  #
-  # @return [void]
-  def save_execution_time
-    return if AppConfig.standalone?
-
-    update_job.last_executed = DateTime.now.utc
   end
 end

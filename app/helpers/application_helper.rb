@@ -53,22 +53,18 @@ module ApplicationHelper
     Thread.current[:context]
   end
 
-  # Set current job execution context
+  # Run block within execution context
   #
   # @param [String] context
   # @return [void]
-  def set_execution_context(context) # rubocop:disable Naming/AccessorMethodName
+  def run_within_context(context)
     Thread.current[:context] = context
-  end
 
-  # Clear current job execution context
-  # Sidekiq can reuse threads, should be cleared in case next job doesn't reset it
-  #
-  # @return [void]
-  def clear_execution_context
+    yield
+  ensure
+    # Clear current job execution context
+    # Sidekiq can reuse threads, should be cleared in case next job doesn't reset it
     Thread.current[:context] = nil
-    UpdateFailures.reset
-    UpdateLog.reset
   end
 
   module_function :gitlab,
