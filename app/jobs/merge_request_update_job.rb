@@ -13,13 +13,13 @@ class MergeRequestUpdateJob < ApplicationJob
   # @param [String] action
   # @return [void]
   def perform(project_name, mr_iid, action)
-    set_execution_context("mr-update: #{project_name}=>!#{mr_iid}")
-
-    Dependabot::MergeRequest::UpdateService.call(
-      project_name: project_name,
-      mr_iid: mr_iid,
-      action: action
-    )
+    run_within_context("mr-update: #{project_name}=>!#{mr_iid}") do
+      Dependabot::MergeRequest::UpdateService.call(
+        project_name: project_name,
+        mr_iid: mr_iid,
+        action: action
+      )
+    end
   rescue StandardError => e
     log_error(e)
     Gitlab::MergeRequest::Commenter.call(
@@ -27,7 +27,5 @@ class MergeRequestUpdateJob < ApplicationJob
       mr_iid,
       ":x: `dependabot` tried to update merge request but failed.\n\n```\n#{e}\n```"
     )
-  ensure
-    clear_execution_context
   end
 end

@@ -17,14 +17,10 @@ class MergeRequestRecreationJob < ApplicationJob
     @mr_iid = mr_iid
     @discussion_id = discussion_id
 
-    set_execution_context("mr-update: #{project_name}=>!#{mr_iid}")
-
-    recreate
+    run_within_context("mr-update: #{project_name}=>!#{mr_iid}") { recreate }
   rescue StandardError => e
     log_error(e)
     reply_status(":x: `dependabot` failed recreating merge request.\n\n```\n#{e}\n```")
-  ensure
-    clear_execution_context
   end
 
   private

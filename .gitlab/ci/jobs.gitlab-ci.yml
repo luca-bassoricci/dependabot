@@ -99,7 +99,7 @@ include:
     paths:
       - reports/allure-results
       - reports/coverage
-      - log/*.out
+      - log/*.log
     expire_in: 1 day
     when: always
 
