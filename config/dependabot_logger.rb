@@ -58,7 +58,7 @@ class DependabotLogger
     def db_logger
       ActiveSupport::TaggedLogging.new(
         ActiveSupport::Logger.new(IO::NULL).tap do |log|
-          log.formatter = DbLogFormatter
+          log.formatter = DbLogFormatter.new
           log.datetime_format = DATETIME_FORMAT
           log.level = AppConfig.log_level
         end
