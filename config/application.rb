@@ -21,7 +21,10 @@ module DependabotGitlab
     config.load_defaults 7.0
     config.active_job.queue_adapter = :sidekiq
 
-    logger = DependabotLogger.logger(source: "app")
+    logger = DependabotLogger
+             .logger(source: "dependabot")
+             .extend(ActiveSupport::Logger.broadcast(DependabotLogger.db_logger))
+
     config.logger = logger
     config.log_level = AppConfig.log_level
     config.mongoid.logger = DependabotLogger.logger(source: "mongodb", logdev: :file)

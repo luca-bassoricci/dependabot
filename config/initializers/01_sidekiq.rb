@@ -6,20 +6,17 @@ redis_conf = {
   reconnect_attempts: 3,
   logger: DependabotLogger.logger(source: "redis", logdev: :file)
 }
-logger = DependabotLogger
-         .logger(source: "sidekiq")
-         .extend(ActiveSupport::Logger.broadcast(DependabotLogger.db_logger))
 
 Sidekiq.configure_server do |config|
   Yabeda::Prometheus::Exporter.start_metrics_server! if AppConfig.metrics
 
-  config.logger = logger
+  config.logger = Rails.logger
   config.redis = redis_conf
   config.options[:queues].push("hooks", "project_registration", "vulnerability_update")
 end
 
 Sidekiq.configure_client do |config|
-  config.logger = logger
+  config.logger = Rails.logger
   config.redis = redis_conf
 end
 
