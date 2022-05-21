@@ -8,6 +8,7 @@ class UpdateJob
   field :cron, type: String
   field :last_executed, type: DateTime
   field :run_errors, type: Array, default: []
+  field :run_log, type: Array, default: []
 
   belongs_to :project
 end
