@@ -18,6 +18,43 @@ class Project
 
   embeds_one :configuration
 
+  # All open merge requests
+  #
+  # @param [String] package_ecosystem
+  # @param [String] directory
+  # @return [Array<MergeRequest>]
+  def open_merge_requests(package_ecosystem:, directory:)
+    merge_requests.where(
+      package_ecosystem: package_ecosystem,
+      directory: directory,
+      state: "opened"
+    )
+  end
+
+  # Project open merge requests
+  #
+  # @param [String] dependency_name
+  # @param [String] directory
+  # @return [Array<MergeRequest>]
+  def open_dependency_merge_requests(dependency_name, directory)
+    merge_requests
+      .where(main_dependency: dependency_name, directory: directory, state: "opened")
+      .compact
+  end
+
+  # Open superseded merge requests
+  #
+  # @param [String] directory
+  # @param [String] update_from
+  # @param [Integer] mr_iid
+  # @return [Array<MergeRequest>]
+  def superseded_mrs(directory:, update_from:, mr_iid:)
+    merge_requests
+      .where(update_from: update_from, directory: directory, state: "opened")
+      .not(iid: mr_iid)
+      .compact
+  end
+
   # Return projects hash representation
   #
   # @return [Hash]

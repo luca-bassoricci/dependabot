@@ -222,9 +222,7 @@ module Dependabot
     # @param [String] dependency_name
     # @return [void]
     def close_obsolete_mrs(dependency_name)
-      obsolete_mrs = project.merge_requests
-                            .where(main_dependency: dependency_name, directory: directory, state: "opened")
-                            .compact
+      obsolete_mrs = project.open_dependency_merge_requests(dependency_name, directory)
 
       return if obsolete_mrs.length.zero?
 
@@ -243,11 +241,10 @@ module Dependabot
     # @return [void]
     def close_obsolete_vulnerability_issues(dependency)
       VulnerabilityIssue
-        .where(
-          directory: directory,
-          package: dependency.name,
+        .open_vulnerability_issues(
           package_ecosystem: package_ecosystem,
-          status: "opened"
+          directory: directory,
+          package: dependency.name
         )
         .reject { |issue| issue.vulnerability.vulnerable?(dependency.version) }
         .each { |issue| Gitlab::Vulnerabilities::IssueCloser.call(issue) }

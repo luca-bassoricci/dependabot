@@ -133,13 +133,9 @@ module Webhooks
 
     # Merge requests to update
     #
-    # @return [Mongoid::Criteria]
+    # @return [Array<MergeRequest>]
     def updateable_mrs
-      @updateable_mrs ||= project.merge_requests.where(
-        state: "opened",
-        package_ecosystem: mr.package_ecosystem,
-        directory: mr.directory
-      )
+      @updateable_mrs ||= project.open_merge_requests(package_ecosystem: mr.package_ecosystem, directory: mr.directory)
     end
 
     # Trigger dependency updates for same package_ecosystem mrs
