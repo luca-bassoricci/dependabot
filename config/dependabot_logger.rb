@@ -5,7 +5,6 @@ require "rainbow/refinement"
 # Common logger class
 #
 class DependabotLogger
-  DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
   LOG_COLORS = {
     "DEBUG" => :magenta,
     "INFO" => :green,
@@ -24,6 +23,8 @@ class DependabotLogger
     end
 
     def thread
+      return "" if AppConfig.standalone?
+
       tid ? " tid=#{tid}" : ""
     end
   end
@@ -37,7 +38,6 @@ class DependabotLogger
     def logger(source:, logdev: :stdout)
       ActiveSupport::Logger.new(log_device(source, logdev)).tap do |log|
         log.formatter = SimpleLogFormatter.new
-        log.datetime_format = DATETIME_FORMAT
         log.level = AppConfig.log_level
       end
     end
