@@ -31,7 +31,7 @@ gem "yabeda-sidekiq", "~> 0.8.1"
 
 group :test do
   gem "airborne", "~> 0.3.7"
-  gem "allure-rspec", "~> 2.17.0"
+  gem "allure-rspec", "~> 2.18.0"
   gem "capybara", "~> 3.37"
   gem "factory_bot_rails", "~> 6.2"
   gem "faker", "~> 2.21"
