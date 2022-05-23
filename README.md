@@ -39,7 +39,8 @@ creation of this project. Standalone mode is limited to following features:
 
 Features not supported:
 
-- automatic closure of superseeded merge requests
+- security vulnerability detection
+- automatic closure of superseded merge requests
 - merge request commands
 - webhooks
 - UI with managed project list
