@@ -29,7 +29,6 @@ include:
     - bundle install
   cache:
     - *gem_cache
-  interruptible: true
 
 .buildkit_runner:
   image:
@@ -49,8 +48,6 @@ include:
       EOF
   script:
     - .gitlab/script/build-image.sh $IMAGE_TYPE
-  retry: 2
-  interruptible: true
 
 .docker_runner:
   image: ${CI_IMAGE}
@@ -67,7 +64,6 @@ include:
     DOCKER_REGISTRY: https://index.docker.io/v1/
   before_script:
     - while ! test -f "${DOCKER_CERT_PATH}/ca.pem"; do sleep 2; done
-  interruptible: true
 
 .rspec_runner:
   stage: test
