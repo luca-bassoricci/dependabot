@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+# Configuration object
+#
+# @!attribute updates
+#   @return [Array]
+# @!attribute registries
+#   @return [Registries]
 class Configuration
   include Mongoid::Document
 
@@ -28,7 +34,7 @@ class Configuration
     end
   end
 
-  # Allowd registries for config entry
+  # Allowed registries for config entry
   #
   # @param [Hash] find_by
   # @return [Array<Hash>]
@@ -37,9 +43,9 @@ class Configuration
     return unless config_entry
 
     allowed_registries = config_entry[:registries]
-    return registries.values if allowed_registries == "*"
+    filter = allowed_registries == "*" ? ".*" : allowed_registries.join("|")
 
-    registries.slice(*allowed_registries).values
+    registries.select(filter)
   end
 
   # Object comparator

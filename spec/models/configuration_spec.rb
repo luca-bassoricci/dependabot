@@ -25,14 +25,14 @@ describe Configuration, :integration, epic: :models do
   end
 
   let(:registries) do
-    {
-      "dockerhub" => {
+    [
+      {
         "type" => "docker_registry",
         "registry" => "registry.hub.docker.com",
         "username" => "octocat",
         "password" => parsed_password
       }
-    }
+    ]
   end
 
   describe "#updates", feature: "updates config" do
@@ -49,7 +49,7 @@ describe Configuration, :integration, epic: :models do
   describe "#registries", feature: "registries config" do
     context "without value from environment variable" do
       it "returns registries credentials" do
-        expect(persisted_project.configuration.registries.values).to eq(registries.values)
+        expect(persisted_project.configuration.registries.select(".*")).to eq(registries)
       end
     end
 
@@ -62,7 +62,7 @@ describe Configuration, :integration, epic: :models do
       end
 
       it "returns registries credentials with correct password" do
-        expect(persisted_project.configuration.registries.values).to eq(registries.values)
+        expect(persisted_project.configuration.registries.select(".*")).to eq(registries)
       end
     end
   end
