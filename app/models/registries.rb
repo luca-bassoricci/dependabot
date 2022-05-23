@@ -8,7 +8,18 @@ class Registries
     @registries = registries
   end
 
-  delegate :values, :slice, to: :parsed_registries
+  # @return [Hash]
+  attr_reader :registries
+
+  # Return registries matching filter
+  #
+  # @param [String] filter
+  # @return [Array<Hash>]
+  def select(filter)
+    registries
+      .select { |name, _registry| name.match?(filter) }
+      .map { |name, registry| registry.map { |key, value| [key, env_value(name, key, value)] }.to_h }
+  end
 
   # Convert object to database compatible form
   #
@@ -24,24 +35,7 @@ class Registries
     self.class == other.class && registries == other.registries
   end
 
-  protected
-
-  # @return [Hash]
-  attr_reader :registries
-
   private
-
-  # Registries hash with evaluated auth fields
-  #
-  # @return [Hash]
-  def parsed_registries
-    @parsed_registries ||= registries.map do |name, registry|
-      [
-        name,
-        registry.map { |key, value| [key, env_value(name, key, value)] }.to_h
-      ]
-    end.to_h
-  end
 
   # Fetch value from environment for auth field
   #
@@ -53,6 +47,7 @@ class Registries
     return value unless ["username", *AUTH_FIELDS].include?(key) && value.match?(SECRET_PATTERN)
 
     env_val = ENV[value.match(SECRET_PATTERN)[1]] || ""
+
     if env_val.blank?
       ApplicationHelper.log(:warn, "Detected empty value for '#{key}' in configuration of '#{registry_name}' registry")
     end

@@ -96,7 +96,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
         project_name: project.name,
         config_entry: config_entry,
         repo_contents_path: nil,
-        registries: registries.values
+        registries: registries.select(".*")
       )
       .and_return(fetcher)
     allow(Dependabot::Files::Parser).to receive(:call)
@@ -105,7 +105,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
         dependency_files: fetcher.files,
         repo_contents_path: nil,
         config_entry: config_entry,
-        registries: registries.values
+        registries: registries.select(".*")
       )
       .and_return(dependencies)
 
@@ -115,7 +115,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
         dependency_files: fetcher.files,
         config_entry: config_entry,
         repo_contents_path: nil,
-        registries: registries.values
+        registries: registries.select(".*")
       )
       .and_return(updated_dependency)
 
