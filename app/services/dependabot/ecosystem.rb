@@ -13,6 +13,7 @@ module Dependabot
     NUGET = "nuget"
     GIT = "gitsubmodule"
     MIX = "mix"
+    CARGO = "cargo"
 
     PACKAGE_ECOSYSTEM_MAPPING = {
       NPM => "npm_and_yarn",

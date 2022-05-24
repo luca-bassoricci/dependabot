@@ -12,7 +12,8 @@ module Github
         Dependabot::Ecosystem::MAVEN => "MAVEN",
         Dependabot::Ecosystem::NPM => "NPM",
         Dependabot::Ecosystem::PIP => "PIP",
-        Dependabot::Ecosystem::NUGET => "NUGET"
+        Dependabot::Ecosystem::NUGET => "NUGET",
+        Dependabot::Ecosystem::CARGO => "RUST"
       }.freeze
 
       GQL_QUERY = <<~GRAPHQL
