@@ -1,3 +1,31 @@
+## 0.20.2 (2022-05-24)
+
+### 🐞 Bug Fixes (2 changes)
+
+- [Add missing rust package mapping for security vulnerabilities](dependabot-gitlab/dependabot@fb9b6ba8051180fe15112e2bd8045d81ee4daa24) by @andrcuns. See merge request dependabot-gitlab/dependabot!1573
+- [Only evaluate explicitly allowed registries when fetching config](dependabot-gitlab/dependabot@62244bdeabca0641e1bd8c7335a35978a840814a) by @andrcuns. See merge request dependabot-gitlab/dependabot!1568
+
+### 📦 Dependency updates (4 changes)
+
+- [dep-dev: bump allure-rspec from 2.17.0 to 2.18.0](dependabot-gitlab/dependabot@3ad5dd6853c1d77a73a17a46cbd23b41d9ed83c5) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1571
+- [dep-dev: bump solargraph from 0.44.3 to 0.45.0](dependabot-gitlab/dependabot@e7aa89a9869f3b703c330f09d5549c9eca58f70b) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1572
+- [dep: bump dependabot-omnibus from 0.189.0 to 0.190.0](dependabot-gitlab/dependabot@ea0ca1f5ef4f8c34d23d2b9e1d507eea826a5ced) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1570
+- [dep-dev: bump rubocop-rspec from 2.10.0 to 2.11.1](dependabot-gitlab/dependabot@be5bc4707772d208d6c63fc4e87d9633e1000889) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1559
+
+### 🔧 CI changes (2 changes)
+
+- [Set all ci jobs as interruptible by default](dependabot-gitlab/dependabot@7e8276a4048723b70a6aedfd1f801238a5b292ce) by @andrcuns. See merge request dependabot-gitlab/dependabot!1567
+- [Build docker images with buildx docker plugin](dependabot-gitlab/dependabot@8efcc057b455bc630f4d40beea7efe7eeb39b353) by @andrcuns. See merge request dependabot-gitlab/dependabot!1562
+
+### 🛠️ Chore (6 changes)
+
+- [Remove thread from log message of standalone mode](dependabot-gitlab/dependabot@8b687b7a2457870684b339c913240f7cd1935fbe) by @andrcuns. See merge request dependabot-gitlab/dependabot!1569
+- [[BREAKING] Disable metrics endpoint by default](dependabot-gitlab/dependabot@9df5fc9d1d2aa38bd3051ef037ad004f53f91bfa) by @andrcuns. See merge request dependabot-gitlab/dependabot!1566
+- [Fix dependency update log message saving](dependabot-gitlab/dependabot@5ec98b84f889b598f62f479caa79e6c906e96eaf) by @andrcuns. See merge request dependabot-gitlab/dependabot!1565
+- [Reuse same logger instance for sidekiq](dependabot-gitlab/dependabot@0f822be11987627db75c005c847825a7b8cd2f79) by @andrcuns. See merge request dependabot-gitlab/dependabot!1564
+- [Persist dependency update job log in database](dependabot-gitlab/dependabot@3e08bec71b9750413313c25be1d6337b094e7c04) by @andrcuns. See merge request dependabot-gitlab/dependabot!1561
+- [Move db querries to model classes](dependabot-gitlab/dependabot@a932ba8ee93f98266c8ca0fe55ea5da37d547e8e) by @andrcuns. See merge request dependabot-gitlab/dependabot!1560
+
 ## 0.20.1 (2022-05-17)
 
 ### 🐞 Bug Fixes (1 change)
