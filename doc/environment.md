@@ -4,6 +4,8 @@
 
 ### MongoDb
 
+**Not applicable for standalone mode**
+
 Following environment variables are used for database connection configuration:
 
 `MONGODB_URI` - all configuration options in a single uri parameter
@@ -17,6 +19,8 @@ or
 `MONGODB_RETRY_WRITES` - retry writes parameter, `true` by default
 
 ### Redis
+
+**Not applicable for standalone mode**
 
 `REDIS_URL` - redis instance url
 `REDIS_PASSWORD` - redis password
@@ -37,6 +41,8 @@ token set in gitlab webhook configuration will be ignored
 
 ### Webhooks
 
+**Not applicable for standalone mode**
+
 * `SETTINGS__DEPENDABOT_URL` - url application can be reached on, example: `https://dependabot-gitlab.com`. This url will be used to automatically
 add necessary webhooks to project
 * `SETTINGS__CREATE_PROJECT_HOOK` - enable or disable automated hook creation, default `true`. This can be useful if the user associated with used access token, does not have maintainer role
@@ -51,9 +57,13 @@ add necessary webhooks to project
 
 ### Update jobs
 
+**Not applicable for standalone mode**
+
 * `SETTINGS__UPDATE_RETRY` - amount of retries for dependency update job or `false` to disable, default: 2. Applicable only to deployed mode
 
 ### Project registration
+
+**Not applicable for standalone mode**
 
 * `SETTINGS__PROJECT_REGISTRATION`
   * `manual` - default value which disables automated project registration
@@ -63,6 +73,8 @@ add necessary webhooks to project
 * `SETTINGS__PROJECT_REGISTRATION_NAMESPACE` - regex pattern of namespaces allowed to be registered automatically
 
 ### Metrics
+
+**Not applicable for standalone mode**
 
 * `SETTINGS__METRICS` - enable `/metrics` endpoint for prometheus compatible metrics
 
