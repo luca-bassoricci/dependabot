@@ -155,7 +155,7 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
   end
 
   context "with existing older mr", :aggregate_failures do
-    let(:superseeded_mr) { create_mr(2, 2, "opened", "superseeded-branch") }
+    let(:superseded_mr) { create_mr(2, 2, "opened", "superseded-branch") }
 
     before do
       allow(Gitlab::BranchRemover).to receive(:call)
@@ -164,17 +164,17 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
       create_mr(3, 3, "closed").save!
       create_mr(4, 4, "opened", "test1").save!
 
-      superseeded_mr.save!
+      superseded_mr.save!
     end
 
     it "closes old merge request and removes branch" do
       expect(creator_call).to eq(mr)
-      expect(superseeded_mr.reload.state).to eq("closed")
-      expect(Gitlab::BranchRemover).to have_received(:call).with(project.name, superseeded_mr.branch)
+      expect(superseded_mr.reload.state).to eq("closed")
+      expect(Gitlab::BranchRemover).to have_received(:call).with(project.name, superseded_mr.branch)
       expect(Gitlab::MergeRequest::Commenter).to have_received(:call).with(
         project.name,
-        superseeded_mr.iid,
-        "This merge request has been superseeded by #{mr.web_url}"
+        superseded_mr.iid,
+        "This merge request has been superseded by #{mr.web_url}"
       ).once
     end
   end

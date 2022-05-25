@@ -33,7 +33,7 @@ module Gitlab
 
         if mr && !AppConfig.standalone?
           persist_mr
-          close_superseeded_mrs
+          close_superseded_mrs
         end
 
         mr
@@ -89,17 +89,17 @@ module Gitlab
         )
       end
 
-      # Close superseeded merge requests
+      # Close superseded merge requests
       #
       # @return [void]
-      def close_superseeded_mrs
-        superseeded_mrs.each do |superseeded_mr|
-          superseeded_mr.close
-          BranchRemover.call(project.name, superseeded_mr.branch)
+      def close_superseded_mrs
+        superseded_mrs.each do |superseded_mr|
+          superseded_mr.close
+          BranchRemover.call(project.name, superseded_mr.branch)
           Commenter.call(
             target_project_id || project.name,
-            superseeded_mr.iid,
-            "This merge request has been superseeded by #{mr.web_url}"
+            superseded_mr.iid,
+            "This merge request has been superseded by #{mr.web_url}"
           )
         end
       end
@@ -142,11 +142,11 @@ module Gitlab
         }
       end
 
-      # List of open superseeded merge requests
+      # List of open superseded merge requests
       #
       # @return [Mongoid::Criteria]
-      def superseeded_mrs
-        @superseeded_mrs ||= project.superseded_mrs(
+      def superseded_mrs
+        @superseded_mrs ||= project.superseded_mrs(
           update_from: updated_dependency.previous_versions,
           directory: config_entry[:directory],
           mr_iid: mr.iid
