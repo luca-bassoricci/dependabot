@@ -196,7 +196,7 @@ include:
     name: andrcuns/allure-report-publisher:0.8.0
     entrypoint: [""]
   variables:
-    GITLAB_AUTH_TOKEN: $GITLAB_ACCESS_TOKEN
+    GITLAB_AUTH_TOKEN: $ALLURE_ACCESS_TOKEN
     ALLURE_JOB_NAME: rspec
     GOOGLE_CLOUD_KEYFILE_JSON: $KEYFILE_TEST_REPORTS
   script:
