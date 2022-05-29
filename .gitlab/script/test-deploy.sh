@@ -4,7 +4,7 @@ set -euo pipefail
 
 source "$(dirname "$0")/utils.sh"
 
-log "Registering project 'deploy-test'"
+log_with_header "Registering project 'deploy-test'"
 expected_response=\
 '{
   "id": 1,

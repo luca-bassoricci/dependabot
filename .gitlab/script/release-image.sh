@@ -21,11 +21,11 @@ function tag_and_push() {
 
 release_version="$(echo $CI_COMMIT_TAG | grep -oP 'v\K[0-9.]+')"
 
-log "Pulling '${APP_IMAGE}'"
+log_with_header "Pulling '${APP_IMAGE}'"
 docker pull "$APP_IMAGE" -q
 
-log "Tagging and pushing release to dockerhub"
+log_with_header "Tagging and pushing release to dockerhub"
 tag_and_push "$DOCKERHUB" "$release_version"
 
-log "Tagging and pushing release to gitlab registry"
+log_with_header "Tagging and pushing release to gitlab registry"
 tag_and_push "$GITLAB" "$release_version"

@@ -118,14 +118,3 @@
       variables:
         LATEST_TAG: latest
     - *mr
-
-.rules:build-ci-image:
-  rules:
-    - <<: *mr
-      changes:
-        - .gitlab/docker/Dockerfile
-    - <<: *master
-      changes:
-        - .gitlab/docker/Dockerfile
-      variables:
-        LATEST_TAG: latest
