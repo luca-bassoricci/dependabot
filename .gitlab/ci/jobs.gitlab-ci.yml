@@ -193,7 +193,7 @@ include:
 .allure_report:
   stage: report
   image:
-    name: andrcuns/allure-report-publisher:0.7.0
+    name: andrcuns/allure-report-publisher:0.8.0
     entrypoint: [""]
   variables:
     GITLAB_AUTH_TOKEN: $GITLAB_ACCESS_TOKEN
