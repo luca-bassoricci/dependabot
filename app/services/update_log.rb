@@ -9,17 +9,17 @@ class UpdateLog
       Thread.current[:log] = []
     end
 
-    # Capture log message
+    # Capture log entry
     #
-    # @param [String] message
+    # @param [Hash] entry
     # @return [void]
-    def add(message)
-      log << message
+    def add(entry)
+      log << entry
     end
 
     # Current run log
     #
-    # @return [Array]
+    # @return [Array<Hash>]
     def log
       return reset unless Thread.current[:log]
 
