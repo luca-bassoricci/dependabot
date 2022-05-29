@@ -2,7 +2,7 @@
 
 **This software is Work in Progress: features will appear and disappear, API will be changed, your feedback is always welcome!**
 
-# Supported
+# Support
 
 ## Supported by
 
