@@ -6,3 +6,15 @@
 require_relative "config/application"
 
 Rails.application.load_tasks
+
+task default: :test
+
+desc "Run unit tests"
+task test: :environment do
+  sh("bundle exec rspec --tag ~system")
+end
+
+desc "Run system tests"
+task system_test: :environment do
+  sh("bundle exec rspec --tag system")
+end
