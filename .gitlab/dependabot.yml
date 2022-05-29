@@ -15,16 +15,3 @@ updates:
     ignore:
       - dependency-name: sentry-ruby
       - dependency-name: sentry-sidekiq
-  - package-ecosystem: docker
-    directory: /.gitlab/docker
-    schedule:
-      interval: daily
-    commit-message:
-      prefix: dep-dev
-      trailers:
-        - changelog: dependency
-    reviewers:
-      - andrcuns
-    ignore:
-      - dependency-name: ruby
-        update-types: ["version-update:semver-major"]

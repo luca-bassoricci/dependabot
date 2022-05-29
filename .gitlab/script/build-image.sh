@@ -6,11 +6,7 @@ set -e
 
 source "$(dirname "$0")/utils.sh"
 
-image_type="$1"
-
-image="$CI_REGISTRY_IMAGE/dev/$image_type"
-context="${DOCKER_CONTEXT:-.}"
-dockerfile="${DOCKER_FILE:-$context}"
+image="$CI_REGISTRY_IMAGE/dev"
 latest_tag="${LATEST_TAG:-$CI_COMMIT_REF_SLUG-latest}"
 core_version="$(dependabot_version)"
 
@@ -20,12 +16,12 @@ else
   images="${image}:${CURRENT_TAG}"
 fi
 
-log "Building image '${image}:${CURRENT_TAG}'"
+log_with_header "Building image '${image}:${CURRENT_TAG}'"
 
 buildctl-daemonless.sh build \
   --frontend=dockerfile.v0 \
-  --local context="$context" \
-  --local dockerfile="$dockerfile" \
+  --local context=. \
+  --local dockerfile=. \
   --opt build-arg:COMMIT_SHA="$CI_COMMIT_SHA" \
   --opt build-arg:PROJECT_URL="$CI_PROJECT_URL" \
   --opt build-arg:VERSION="${CI_COMMIT_TAG:-$CURRENT_TAG}" \

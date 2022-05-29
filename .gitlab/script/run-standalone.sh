@@ -6,14 +6,14 @@ source "$(dirname "$0")/utils.sh"
 
 network="dependabot"
 
-log "Setup gitlab mock"
-log_info "** Createing '${network}' network **"
+log_with_header "Setup gitlab mock"
+log "** Creating '${network}' network **"
 docker network create $network
 
-log_info "** Pulling image '${MOCK_IMAGE}' **"
+log "** Pulling image '${MOCK_IMAGE}' **"
 docker pull --quiet $MOCK_IMAGE
 
-log_info "** Starting gitlab mock service **"
+log "** Starting gitlab mock service **"
 docker run -d \
   --network $network \
   --name gitlab \
@@ -21,14 +21,14 @@ docker run -d \
   -p 8081:8081 \
   ${MOCK_IMAGE}
 
-log_info "** Setting mock expectations **"
+log "** Setting mock expectations **"
 script/set-mock.sh standalone docker
 
-log "Running standalone dependency updates"
-log_info "** Pulling image '${APP_IMAGE}' **"
+log_with_header "Running standalone dependency updates"
+log "** Pulling image '${APP_IMAGE}' **"
 docker pull --quiet $APP_IMAGE
 
-log_info "** Running rake task 'dependabot:update[dependabot-gitlab/testing,bundler,/]' **"
+log "** Running rake task 'dependabot:update[dependabot-gitlab/testing,bundler,/]' **"
 docker run --rm -i \
   -e RAILS_ENV=production \
   -e SETTINGS__GITLAB_URL=http://gitlab:8080 \

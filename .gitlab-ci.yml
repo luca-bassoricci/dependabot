@@ -11,18 +11,17 @@ stages:
   - triage
 
 default:
+  image: registry.gitlab.com/dependabot-gitlab/ci-images:ruby
   interruptible: true
 
 variables:
   # App tags
   CURRENT_TAG: ${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}
   # Docker images
-  APP_IMAGE: ${CI_REGISTRY_IMAGE}/dev/app:${CURRENT_TAG}
+  APP_IMAGE: ${CI_REGISTRY_IMAGE}/dev:${CURRENT_TAG}
   MOCK_IMAGE: thiht/smocker:0.18.0
-  CI_IMAGE: registry.gitlab.com/dependabot-gitlab/dependabot/dev/ci:latest
   # Misc
   CODACY_VERSION: "13.5.3"
-  BUNDLER_VERSION: "2.3.10"
   DEPENDENCY_SCANNING_DISABLED: "true"
   SAST_DISABLED: "true"
   CONTAINER_SCANNING_DISABLED: "true"
@@ -47,11 +46,6 @@ build-app-image:
   extends:
     - .build_app_image
     - .rules:build-image
-
-build-ci-image:
-  extends:
-    - .build_ci_image
-    - .rules:build-ci-image
 
 # ======================================================================================================================
 # Static analysis stage
