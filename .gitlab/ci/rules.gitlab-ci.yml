@@ -1,7 +1,7 @@
 # Reusable rules
 .mr: &mr
   if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-.master: &master
+.main: &main
   if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "web")'
 .release: &release
   if: '$CI_COMMIT_TAG =~ /^v[0-9.]+$/ && $CI_PIPELINE_SOURCE == "push"'
@@ -28,7 +28,7 @@
   rules:
     - *mr
     - *release
-    - *master
+    - *main
 
 .rules:main:standalone-test:
   rules:
@@ -41,7 +41,7 @@
     - <<: *mr
       when: manual
       allow_failure: true
-    - *master
+    - *main
     - *release
 
 .rules:main:deploy-test:
@@ -56,13 +56,13 @@
     - <<: *mr
       when: manual
       allow_failure: true
-    - *master
+    - *main
     - *release
 
 .rules:main:system-test:
   rules:
     - *mr
-    - *master
+    - *main
     - *release
 
 .rules:release:
@@ -75,12 +75,12 @@
   rules:
     - <<: *fork
       when: never
-    - <<: *master
+    - <<: *main
       changes: *deploy_changes
 
 .rules:dependency-scan:
   rules:
-    - *master
+    - *main
     - <<: *mr
       changes:
         - Gemfile
@@ -88,7 +88,7 @@
 
 .rules:container-scan:
   rules:
-    - *master
+    - *main
     - <<: *mr
       changes:
         - Dockerfile
@@ -98,7 +98,7 @@
     - <<: *fork
       when: never
     - *mr
-    - *master
+    - *main
 
 .rules:coverage:
   rules:
@@ -106,12 +106,12 @@
       when: never
     - <<: *mr
       when: always
-    - <<: *master
+    - <<: *main
       when: always
 
 .rules:build-image:
   rules:
-    - <<: *master
+    - <<: *main
       variables:
         LATEST_TAG: latest
     - <<: *release

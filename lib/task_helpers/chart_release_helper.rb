@@ -23,7 +23,7 @@ class ChartReleaseHelper
     logger.info("Updating app version to #{app_version}")
     gitlab.create_commit(
       chart_repo,
-      "master",
+      "main",
       "Update app version to #{app_version}\n\nchangelog: dependency",
       commit_actions
     )
