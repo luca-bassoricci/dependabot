@@ -52,6 +52,7 @@ module Dependabot
       cmd = allow_unsafe_shell_command ? command : escape_command(command)
 
       env_cmd = [env, cmd].compact
+      ApplicationHelper.log(:debug, "Performing native helper command: '#{cmd}'", "core")
       stdout, stderr, process = Open3.capture3(*env_cmd, stdin_data: stdin_data)
       time_taken = Time.zone.now - start
 
@@ -104,12 +105,12 @@ module Dependabot
     def self.log_helper_result(level, error_context, response)
       msg = lambda do
         debug_message = error_context.merge({ response: response, args: sanitize_args(error_context[:args]) })
-        (level == :error ? "core helpers failure: " : "core helpers output: ") + debug_message.to_json
+        (level == :error ? "Helpers failure: " : "Helpers output: ") + debug_message.to_json
       end
 
-      ApplicationHelper.log(level, msg)
+      ApplicationHelper.log(level, msg, "core")
     rescue StandardError => e
-      ApplicationHelper.log(:debug, "Failed to log core helper result: #{e}")
+      ApplicationHelper.log(:debug, "Failed to log helper result: #{e}", "core")
     end
 
     # Remove credentials from arguments
