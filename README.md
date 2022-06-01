@@ -1,6 +1,6 @@
 **This project is not affiliated with, funded by, or associated with the Dependabot team or GitHub**
 
-**This software is Work in Progress: features will appear and disappear, API will be changed, your feedback is always welcome!**
+**This software is Work in Progress: features will appear and disappear, API will be changed, bugs will be introduced, your feedback is always welcome!**
 
 # Support
 
