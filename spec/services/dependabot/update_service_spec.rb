@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "octokit/rate_limit"
+
 describe Dependabot::UpdateService, :integration, epic: :services, feature: :dependabot do
   subject(:update_dependencies) do
     described_class.call(
