@@ -21,10 +21,21 @@ FROM core as production
 
 USER root
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-    libjemalloc-dev=5.2.1-1ubuntu1 \
-    && rm -rf /var/lib/apt/lists/*
+ARG JEMALLOC_VERSION=5.3.0
+ARG JEMALLOC_DOWNLOAD_URL="https://github.com/jemalloc/jemalloc/releases/download/${JEMALLOC_VERSION}/jemalloc-${JEMALLOC_VERSION}.tar.bz2"
+RUN set -eux; \
+    apt-get update \
+    && apt-get install -y --no-install-recommends autoconf \
+    && rm -rf /var/lib/apt/lists/*; \
+    \
+    mkdir -p /usr/src/jemalloc \
+    && cd /usr/src/jemalloc \
+    && curl --fail --location --output jemalloc.tar.bz2 ${JEMALLOC_DOWNLOAD_URL}; \
+    \
+    tar -xjf jemalloc.tar.bz2 && cd jemalloc-${JEMALLOC_VERSION}; \
+    ./autogen.sh --prefix=/usr && make -j "$(nproc)" install; \
+    \
+    rm -rf jemalloc.tar.bz2
 
 USER dependabot
 
@@ -32,7 +43,7 @@ WORKDIR /home/dependabot/app
 
 ENV BUNDLE_PATH=vendor/bundle \
     BUNDLE_WITHOUT="development:test" \
-    LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so
+    LD_PRELOAD=/usr/lib/libjemalloc.so
 
 # Copy gemfile first so cache can be reused
 COPY --chown=dependabot:dependabot Gemfile Gemfile.lock ./
