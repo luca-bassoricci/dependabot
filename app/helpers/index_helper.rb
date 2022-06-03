@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "cgi"
+
 module IndexHelper
   LANGUAGE_LABELS = {
     "nuget" => ".NET",
@@ -42,7 +44,8 @@ module IndexHelper
     base_url = "#{AppConfig.gitlab_url}/#{project_name}/-/merge_requests"
     base_args = "scope=all&state=opened"
     label_args = "label_name[]=#{labels.join('&label_name[]=')}"
+    search_arg = "search=#{CGI.escape("in #{directory}")}"
 
-    "#{base_url}?#{base_args}&#{label_args}"
+    "#{base_url}?#{base_args}&#{label_args}&#{search_arg}"
   end
 end
