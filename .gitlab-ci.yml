@@ -8,7 +8,6 @@ stages:
   - report
   - release
   - deploy
-  - triage
 
 default:
   image: registry.gitlab.com/dependabot-gitlab/ci-images:ruby
