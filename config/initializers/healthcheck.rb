@@ -12,7 +12,7 @@ Healthcheck.configure do |config|
     begin
       Mongoid.default_client.database_names.present?
     rescue StandardError => e
-      Rails.logger.error { "Database healthcheck failed - #{e.message}" }
+      ApplicationHelper.log(:error, "MongoDB healthcheck failed - #{e.message}", tags: ["Healthcheck"])
       raise e
     end
   }
@@ -23,7 +23,7 @@ Healthcheck.configure do |config|
         redis.close
       end
     rescue StandardError => e
-      Rails.logger.error { "[Healthcheck] #{e.message}" }
+      ApplicationHelper.log(:error, "Redis healthcheck failed - #{e.message}", tags: ["Healthcheck"])
       raise e
     end
   }

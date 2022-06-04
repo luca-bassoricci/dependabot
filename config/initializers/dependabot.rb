@@ -52,7 +52,7 @@ module Dependabot
       cmd = allow_unsafe_shell_command ? command : escape_command(command)
 
       env_cmd = [env, cmd].compact
-      ApplicationHelper.log(:debug, "Performing native helper command: '#{cmd}'", "core")
+      ApplicationHelper.log(:debug, "Performing native helper command: '#{cmd}'", tags: ["core"])
       stdout, stderr, process = Open3.capture3(*env_cmd, stdin_data: stdin_data)
       time_taken = Time.zone.now - start
 
@@ -103,15 +103,13 @@ module Dependabot
     # @param [Hash] args
     # @return [void]
     def self.log_helper_result(level, error_context, response)
-      msg = lambda do
+      ApplicationHelper.log(level, tags: ["core"]) do
         debug_message = error_context.merge({ response: response, args: sanitize_args(error_context[:args]) })
 
         "Helpers output:\n#{JSON.pretty_generate(debug_message)}"
       end
-
-      ApplicationHelper.log(level, msg, "core")
     rescue StandardError => e
-      ApplicationHelper.log(:debug, "Failed to log helper result: #{e}", "core")
+      ApplicationHelper.log(:debug, "Failed to log helper result: #{e}", tags: ["core"])
     end
 
     # Remove credentials from arguments
@@ -119,20 +117,31 @@ module Dependabot
     # @param [Object] args
     # @return [Object]
     def self.sanitize_args(args) # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
-      if args.is_a?(Hash) && args[:credentials]
-        args.merge({
-          credentials: args[:credentials].map { |cred| cred.except(*::Registries::AUTH_FIELDS) }
-        })
-      elsif args.is_a?(Array)
-        args.map do |arg|
-          next arg unless arg.is_a?(Array) && arg.any? do |item|
-            item.is_a?(Hash) && ::Registries::AUTH_FIELDS.any? { |key| item.key?(key) }
-          end
+      credentials_hash = args.is_a?(Hash) && args[:credentials]
 
-          arg.map { |cred| cred.except(*::Registries::AUTH_FIELDS) }
+      return args unless credentials_hash || args.is_a?(Array)
+      return args.merge({ credentials: sanitize_auth_fields(args[:credentials]) }) if credentials_hash
+
+      args.map do |arg|
+        next arg unless arg.is_a?(Array) && arg.any? do |item|
+          item.is_a?(Hash) && ::Registries::AUTH_FIELDS.any? { |key| item.key?(key) }
         end
-      else
-        args
+
+        sanitize_auth_fields(arg)
+      end
+    end
+
+    # Replace sensitive fields in credentials hash
+    #
+    # @param [Hash] credentials
+    # @return [Hash]
+    def self.sanitize_auth_fields(credentials)
+      credentials.map do |cred|
+        cred.each_with_object({}) do |(key, value), hsh|
+          next hsh[key] = value unless ::Registries::AUTH_FIELDS.any? { |name| name == key }
+
+          hsh[key] = "*****"
+        end
       end
     end
   end
