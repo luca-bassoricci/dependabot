@@ -91,21 +91,21 @@ unit-test:
 system-test:
   extends:
     - .system-test
-    - .rules:main:system-test
+    - .rules:main
   needs:
     - cache-dependencies
 
 standalone-test:
   extends:
     - .standalone-test
-    - .rules:main:standalone-test
+    - .rules:main
   needs:
     - build-app-image
 
 deploy-test:
   extends:
     - .deploy-test
-    - .rules:main:deploy-test
+    - .rules:main
   needs:
     - build-app-image
 
