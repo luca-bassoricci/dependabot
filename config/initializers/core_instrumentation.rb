@@ -1,16 +1,20 @@
 # frozen_string_literal: true
 
-ActiveSupport::Notifications.subscribe(/excon.request/) do |_name, _start, _finish, _id, payload|
+Dependabot.subscribe(/excon.request/) do |_name, _start, _finish, _id, payload|
   method = payload[:method]
   url = url_from_payload(payload)
 
   ApplicationHelper.log(:debug, "Performing http :#{method} request to '#{url}'", "core")
 end
 
-ActiveSupport::Notifications.subscribe(/excon.response/) do |_name, _start, _finish, _id, payload|
+Dependabot.subscribe(/excon.response/) do |_name, _start, _finish, _id, payload|
   url = url_from_payload(payload)
 
   ApplicationHelper.log(:debug, "Received response from '#{url}', status: #{payload[:status]}", "core")
+end
+
+Dependabot.subscribe(Dependabot::Notifications::FILE_PARSER_PACKAGE_MANAGER_VERSION_PARSED) do |*args|
+  ApplicationHelper.log(:debug, "Package manager parsed version: '#{args.last}'")
 end
 
 # Get url from payload
