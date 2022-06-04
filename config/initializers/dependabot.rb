@@ -117,20 +117,31 @@ module Dependabot
     # @param [Object] args
     # @return [Object]
     def self.sanitize_args(args) # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
-      if args.is_a?(Hash) && args[:credentials]
-        args.merge({
-          credentials: args[:credentials].map { |cred| cred.except(*::Registries::AUTH_FIELDS) }
-        })
-      elsif args.is_a?(Array)
-        args.map do |arg|
-          next arg unless arg.is_a?(Array) && arg.any? do |item|
-            item.is_a?(Hash) && ::Registries::AUTH_FIELDS.any? { |key| item.key?(key) }
-          end
+      credentials_hash = args.is_a?(Hash) && args[:credentials]
 
-          arg.map { |cred| cred.except(*::Registries::AUTH_FIELDS) }
+      return args unless credentials_hash || args.is_a?(Array)
+      return args.merge({ credentials: sanitize_auth_fields(args[:credentials]) }) if credentials_hash
+
+      args.map do |arg|
+        next arg unless arg.is_a?(Array) && arg.any? do |item|
+          item.is_a?(Hash) && ::Registries::AUTH_FIELDS.any? { |key| item.key?(key) }
         end
-      else
-        args
+
+        sanitize_auth_fields(arg)
+      end
+    end
+
+    # Replace sensitive fields in credentials hash
+    #
+    # @param [Hash] credentials
+    # @return [Hash]
+    def self.sanitize_auth_fields(credentials)
+      credentials.map do |cred|
+        cred.each_with_object({}) do |(key, value), hsh|
+          next hsh[key] = value unless ::Registries::AUTH_FIELDS.any? { |name| name == key }
+
+          hsh[key] = "*****"
+        end
       end
     end
   end
