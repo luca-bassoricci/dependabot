@@ -105,7 +105,8 @@ module Dependabot
     def self.log_helper_result(level, error_context, response)
       msg = lambda do
         debug_message = error_context.merge({ response: response, args: sanitize_args(error_context[:args]) })
-        (level == :error ? "Helpers failure: " : "Helpers output: ") + debug_message.to_json
+
+        "Helpers output:\n#{JSON.pretty_generate(debug_message)}"
       end
 
       ApplicationHelper.log(level, msg, "core")
