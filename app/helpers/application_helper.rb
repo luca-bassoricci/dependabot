@@ -29,13 +29,11 @@ module ApplicationHelper
   # Log tagged message with dependency context
   #
   # @param [Symbol] level
-  # @param [String, Proc] message
-  # @param [String] tag
+  # @param [String] message
+  # @param [Array] tags
   # @return [void]
-  def log(level, message, tag = nil)
-    logger = proc { Rails.logger.send(level, message.is_a?(Proc) ? message.call : message) }
-    tags = [execution_context, tag].compact
-    tags.empty? ? logger.call : Rails.logger.tagged(tags, &logger)
+  def log(level, message = nil, tags: [], &block)
+    Rails.logger.tagged([execution_context, *tags].compact).send(level, message, &block)
   end
 
   # All project cron jobs
