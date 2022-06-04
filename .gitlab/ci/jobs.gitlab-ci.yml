@@ -42,10 +42,6 @@ include:
     DOCKER_CERT_PATH: /certs/client
     DOCKER_TLS_VERIFY: 1
     DOCKER_BUILDKIT: 1
-    DOCKER_CREDENTIALS: $DOCKERHUB_USERNAME:$DOCKERHUB_PASSWORD
-    DOCKER_REGISTRY: https://index.docker.io/v1/
-  before_script:
-    - while ! test -f "${DOCKER_CERT_PATH}/ca.pem"; do sleep 2; done
 
 .rspec_runner:
   stage: test
@@ -180,7 +176,6 @@ include:
     SETTINGS__LOG_LEVEL: debug
     COMPOSE_PROJECT_NAME: dependabot
   before_script:
-    - !reference [.docker_runner, before_script]
     - .gitlab/script/run-deploy.sh
   script:
     - .gitlab/script/test-deploy.sh
@@ -241,7 +236,6 @@ include:
     DOCKERHUB: docker.io/andrcuns/dependabot-gitlab
     GITLAB: $CI_REGISTRY_IMAGE
   before_script:
-    - !reference [.docker_runner, before_script]
     - echo "$DOCKERHUB_PASSWORD" | docker login -u $DOCKERHUB_USERNAME --password-stdin
     - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
   script:
