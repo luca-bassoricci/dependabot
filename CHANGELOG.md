@@ -1,3 +1,46 @@
+## 0.21.0 (2022-06-06)
+
+### 🚀 New features (1 change)
+
+- [Add dependabot-core http request logging](dependabot-gitlab/dependabot@f9f12b32add92ee71aced982a3703fd3eea65b1f) by @andrcuns. See merge request dependabot-gitlab/dependabot!1585
+
+### 🔬 Improvements (2 changes)
+
+- [Pretty print helpers output](dependabot-gitlab/dependabot@6a2bafc2ce748d2ca95da0308d111abfb87b597d) by @andrcuns. See merge request dependabot-gitlab/dependabot!1591
+- [Log dependabot core parsed package manager version](dependabot-gitlab/dependabot@67cd250ea23db003050079d6156ee36c37aae4f2) by @andrcuns. See merge request dependabot-gitlab/dependabot!1590
+
+### 🐞 Bug Fixes (1 change)
+
+- [Correct open mr url for monorepos with multiple same package manager directories](dependabot-gitlab/dependabot@663d04dea95b1c3ff8e6017374732f7465b9952d) by @andrcuns. See merge request dependabot-gitlab/dependabot!1589
+
+### 📦 Dependency updates (8 changes)
+
+- [dep-dev: bump rubocop-performance from 1.14.0 to 1.14.1](dependabot-gitlab/dependabot@0e540defae724a4a5939de534aa58028432e7c9d) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1596
+- [Bump jemmaloc version to 5.3.0](dependabot-gitlab/dependabot@17ddc18c1d6caa0b126fec77b6f7bc81ea47d2c1) by @andrcuns. See merge request dependabot-gitlab/dependabot!1588
+- [dep: bump dependabot-omnibus from 0.190.0 to 0.190.1](dependabot-gitlab/dependabot@9056b9644d63640ad0be2c6526e8aba3c280535f) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1586
+- [dep: bump bootsnap from 1.11.1 to 1.12.0](dependabot-gitlab/dependabot@94ecb8526a57f5de4ccc43e598edcc388acd682e) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1584
+- [dep: [security] bump rack from 2.2.3 to 2.2.3.1](dependabot-gitlab/dependabot@2846bd65201d5d1016d2f94c19168c2c31a3f386) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1579
+- [dep: bump dry-validation from 1.8.0 to 1.8.1](dependabot-gitlab/dependabot@9473e81c5b20e7313f5f2396b24217ef34cf8902) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1578
+- [dep-dev: bump rubocop from 1.29.1 to 1.30.0](dependabot-gitlab/dependabot@708428779e2aeaef3f6fc11bd14d67857c53f9df) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1577
+- [dep-dev: bump rubocop-performance from 1.13.3 to 1.14.0](dependabot-gitlab/dependabot@3f34fd31d0eae1dbebd4525649a1d909588ad91e) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1575
+
+### 🔧 CI changes (6 changes)
+
+- [Simplify docker runner args](dependabot-gitlab/dependabot@b67b1c16e237d056d7bc138dc49e679f3a45abe8) by @andrcuns. See merge request dependabot-gitlab/dependabot!1594
+- [Move dependency cache to build stage](dependabot-gitlab/dependabot@ce7bdf4789169b0668cd0facc55cc3ad4f4ff52f) by @andrcuns. See merge request dependabot-gitlab/dependabot!1595
+- [Always run all tests](dependabot-gitlab/dependabot@cca5da11ff97888c5fc6d39dc56a02802e1a5577) by @andrcuns. See merge request dependabot-gitlab/dependabot!1593
+- [Use separate token for allure test reports](dependabot-gitlab/dependabot@3f8847012dcd96ea3cc39c282732f4a7dd07a9d3) by @andrcuns.
+- [dep-dev: Update dependency andrcuns/allure-report-publisher to v0.8.0](dependabot-gitlab/dependabot@f9dea4875674d49dc81cf97ab88078f406dd3f52) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1582
+- [Remove ci image build](dependabot-gitlab/dependabot@6d9b2aa128638d75c78eec0c127c0f90fa37df6d) by @andrcuns. See merge request dependabot-gitlab/dependabot!1580
+
+### 🛠️ Chore (5 changes)
+
+- [Replace credentials value in helper command output](dependabot-gitlab/dependabot@0d584a470d99e22b472f7788ee9ea8f9cbf06eb7) by @andrcuns. See merge request dependabot-gitlab/dependabot!1592
+- [Refactor log helper method](dependabot-gitlab/dependabot@62ea2b1a720dbace1f35d7a0d1b2c91b4afe9fba) by @andrcuns. See merge request dependabot-gitlab/dependabot!1592
+- [Add testing rake tasks](dependabot-gitlab/dependabot@51d0121c9d9da6d835b414706fc0736e2d468d94) by @andrcuns. See merge request dependabot-gitlab/dependabot!1583
+- [Store update job log entries in database as hash](dependabot-gitlab/dependabot@87d77ec33a4f98ca7a03a0c976541cecdd89689b) by @andrcuns. See merge request dependabot-gitlab/dependabot!1583
+- [Migrate to main branch](dependabot-gitlab/dependabot@c2e35a922f54d17f81a071ea4bab2700ad6250e8) by @andrcuns. See merge request dependabot-gitlab/dependabot!1581
+
 ## 0.20.2 (2022-05-24)
 
 ### 🐞 Bug Fixes (2 changes)
