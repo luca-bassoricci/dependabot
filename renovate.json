@@ -15,7 +15,6 @@
     ]
   },
   "gitlabci": {
-    "commitMessagePrefix": "dep-dev:",
     "commitBody": "changelog: ci",
     "addLabels": [
       "docker"
