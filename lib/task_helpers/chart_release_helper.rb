@@ -53,14 +53,14 @@ class ChartReleaseHelper
   #
   # @return [String]
   def chart
-    @chart ||= gitlab.file_contents(chart_repo, CHART)
+    @chart ||= gitlab.file_contents(chart_repo, CHART, "main")
   end
 
   # Readme file
   #
   # @return [String]
   def readme
-    @readme ||= gitlab.file_contents(chart_repo, README)
+    @readme ||= gitlab.file_contents(chart_repo, README, "main")
   end
 
   # Previous app version

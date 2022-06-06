@@ -39,7 +39,7 @@ class StandaloneReleaseHelper
   #
   # @return [String]
   def gitlab_ci
-    @gitlab_ci ||= gitlab.file_contents(PROJECT, CI_FILE)
+    @gitlab_ci ||= gitlab.file_contents(PROJECT, CI_FILE, "main")
   end
 
   # Version currently defined
