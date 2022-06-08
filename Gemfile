@@ -23,7 +23,7 @@ gem "sentry-ruby", "~> 5.3", require: false
 gem "sentry-sidekiq", "~> 5.3", require: false
 gem "sidekiq", "~> 6.4.2"
 gem "sidekiq_alive", "~> 2.1", require: false
-gem "sidekiq-cron", "~> 1.4"
+gem "sidekiq-cron", "~> 1.5"
 gem "terminal-table", "~> 3.0"
 gem "yabeda-prometheus-mmap", "~> 0.3.0"
 gem "yabeda-puma-plugin", "~> 0.6.0"
