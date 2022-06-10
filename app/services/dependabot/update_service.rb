@@ -243,7 +243,7 @@ module Dependabot
     # @param [Dependabot::Dependencies::UpdatedDependency] dependency
     # @return [void]
     def close_obsolete_vulnerability_issues(dependency)
-      VulnerabilityIssue
+      project
         .open_vulnerability_issues(
           package_ecosystem: package_ecosystem,
           directory: directory,

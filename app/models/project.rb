@@ -1,5 +1,27 @@
 # frozen_string_literal: true
 
+# Gitlab project
+#
+# @!attribute id
+#   @return [Integer]
+# @!attribute name
+#   @return [String]
+# @!attribute forked_from_id
+#   @return [Integer]
+# @!attribute forked_from_name
+#   @return [String]
+# @!attribute webhook_id
+#   @return [Integer]
+# @!attribute web_url
+#   @return [String]
+# @!attribute merge_requests
+#   @return [Array<MergeRequest>]
+# @!attribute vulnerability_issues
+#   @return [Array<VulnerabilityIssue>]
+# @!attribute update_jobs
+#   @return [Array<UpdateJob>]
+# @!attribute configuration
+#   @return [Configuration]
 class Project
   include Mongoid::Document
 
@@ -53,6 +75,22 @@ class Project
       .where(update_from: update_from, directory: directory, state: "opened")
       .not(iid: mr_iid)
       .compact
+  end
+
+  # Open vulnerability issues
+  #
+  # @param [String] package_ecosystem
+  # @param [String] directory
+  # @param [String] package
+  # @return [Array<VulnerabilityIssue>]
+  def open_vulnerability_issues(package_ecosystem:, directory:, package:)
+    vulnerability_issues
+      .where(
+        directory: directory,
+        package: package,
+        package_ecosystem: package_ecosystem,
+        status: "opened"
+      )
   end
 
   # Return projects hash representation
