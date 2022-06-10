@@ -160,9 +160,12 @@ module Dependabot
         next update_dependency(updated_dep, count) if updated_dep.updates?
         next if standalone?
 
-        create_vulnerability_issues(updated_dep) if updated_dep.vulnerable?
+        if config_entry.dig(:vulnerability_alerts, :enabled)
+          create_vulnerability_issues(updated_dep) if updated_dep.vulnerable?
+          close_obsolete_vulnerability_issues(updated_dep)
+        end
+
         close_obsolete_mrs(updated_dep.name)
-        close_obsolete_vulnerability_issues(updated_dep)
       end
     end
 
@@ -202,21 +205,6 @@ module Dependabot
       mrs[type] << iid if iid
     end
 
-    # Create security vulnerability alert issues
-    #
-    # @param [Dependabot::Dependencies::UpdatedDependency] dependency
-    # @return [void]
-    def create_vulnerability_issues(dependency)
-      dependency.actual_vulnerabilities.each do |vulnerability|
-        Gitlab::Vulnerabilities::IssueCreator.call(
-          project: project,
-          vulnerability: vulnerability,
-          dependency_file: dependency.dependency_files.reject(&:support_file).first,
-          assignees: config_entry.dig(:vulnerability_alerts, :assignees)
-        )
-      end
-    end
-
     # Close obsolete merge requests
     #
     # @param [String] dependency_name
@@ -232,6 +220,21 @@ module Dependabot
         Gitlab::BranchRemover.call(project_name, mr.branch)
       rescue StandardError => e
         log_error(e)
+      end
+    end
+
+    # Create security vulnerability alert issues
+    #
+    # @param [Dependabot::Dependencies::UpdatedDependency] dependency
+    # @return [void]
+    def create_vulnerability_issues(dependency)
+      dependency.actual_vulnerabilities.each do |vulnerability|
+        Gitlab::Vulnerabilities::IssueCreator.call(
+          project: project,
+          vulnerability: vulnerability,
+          dependency_file: dependency.dependency_files.reject(&:support_file).first,
+          assignees: config_entry.dig(:vulnerability_alerts, :assignees)
+        )
       end
     end
 

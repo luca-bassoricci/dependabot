@@ -7,5 +7,10 @@ class DependabotConfigContract < Dry::Validation::Contract
 
     optional(:registries).hash
     optional(:fork).filled(:bool?)
+
+    optional(:"vulnerability-alerts").hash do
+      required(:enabled).filled(:bool?)
+      optional(:assignees).array(:str?)
+    end
   end
 end

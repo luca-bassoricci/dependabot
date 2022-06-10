@@ -100,6 +100,7 @@ RSpec.shared_context("with dependabot helper") do
         reject_external_code: true,
         auto_merge: auto_merge_rules,
         registries: "*",
+        vulnerability_alerts: { enabled: true },
         updater_options: {},
         commit_message_options: {
           prefix: "dep",

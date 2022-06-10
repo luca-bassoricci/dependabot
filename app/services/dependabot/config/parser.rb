@@ -34,7 +34,7 @@ module Dependabot
       # @return [Array<Hash>]
       def call
         validate_dependabot_config(DependabotConfigContract, yml)
-        validate_dependabot_config(UpdatesConfigContract, { updates: yml[:updates] })
+        validate_dependabot_config(UpdatesConfigContract, yml.slice(:updates))
 
         {
           registries: RegistriesParser.call(registries: yml[:registries]),
@@ -47,7 +47,8 @@ module Dependabot
               **filter_options(configuration),
               **schedule_options(configuration),
               **auto_merge_options(configuration),
-              **rebase_options(configuration)
+              **rebase_options(configuration),
+              **vulnerability_alert_options(configuration)
             }.compact
           end
         }
@@ -127,11 +128,14 @@ module Dependabot
           registries: opts[:registries] || "*",
           versioning_strategy: versioning_strategy(opts[:"versioning-strategy"]),
           open_merge_requests_limit: opts[:"open-pull-requests-limit"] || DependabotConfig.open_pull_request_limit,
-          updater_options: opts[:"updater-options"] || {},
-          vulnerability_alerts: opts[:"vulnerability-alerts"]
+          updater_options: opts[:"updater-options"] || {}
         }
       end
 
+      # Rebase options
+      #
+      # @param [Hash<Symbol, Object>] opts
+      # @return [Hash<Symbol, Object>]
       def rebase_options(opts)
         strategy = opts[:"rebase-strategy"] || "auto"
         return { rebase_strategy: { strategy: strategy } } if strategy.is_a?(String)
@@ -208,6 +212,19 @@ module Dependabot
             entry: "#{project}-#{opts[:"package-ecosystem"]}-#{opts[:directory]}",
             **opts[:schedule]
           )
+        }
+      end
+
+      # Vulnerability alert options
+      #
+      # @param [Hash<Symbol, Object>] opts
+      # @return [Hash<Symbol, Object>]
+      def vulnerability_alert_options(opts)
+        global_option = yml[:"vulnerability-alerts"].nil? ? { enabled: true } : yml[:"vulnerability-alerts"]
+        entry_option = opts[:"vulnerability-alerts"] || {}
+
+        {
+          vulnerability_alerts: global_option.merge(entry_option)
         }
       end
 
