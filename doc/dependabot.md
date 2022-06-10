@@ -9,6 +9,7 @@ Some of the options have default values. Other options without a default value s
 ```yml
 version: 2
 registries: 'default: none'
+vulnerability-alerts: 'default: { enabled: true }'
 updates:
   - package-ecosystem: 'required'
     directory: 'required'
@@ -232,10 +233,25 @@ updater-options:
 
 ## vulnerability alerts
 
-Optional assignees for security vulnerability issue which is created for vulnerable dependencies that could not be updated
+Top level option allows to configure [vulnerability alerts](../README.md#vulnerability-alerts) for all configured package ecosystems.
 
 ```yml
+version: 2
 vulnerability-alerts:
+  enabled: true
   assignees:
     - john_doe
+updates:
+  - package-ecosystem: ...
+  - package-ecosystem: ...
+```
+
+Options under specific package ecosystem override global option.
+
+```yml
+version: 2
+updates:
+  - package-ecosystem: ...
+    vulnerability-alerts:
+      enabled: false
 ```

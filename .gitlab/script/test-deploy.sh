@@ -33,6 +33,9 @@ expected_response=\
       "cron": "29 15 * * * UTC",
       "rebase_strategy": {
         "strategy": "auto"
+      },
+      "vulnerability_alerts": {
+        "enabled": true
       }
     }
   ]

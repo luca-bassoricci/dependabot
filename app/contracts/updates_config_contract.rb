@@ -49,6 +49,7 @@ class UpdatesConfigContract < Dry::Validation::Contract
       end
 
       optional(:"vulnerability-alerts").hash do
+        optional(:enabled).filled(:bool?)
         optional(:assignees).array(:str?)
       end
 

@@ -60,6 +60,25 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
     end
   end
 
+  context "with disabled vulnerabilities alerts" do
+    let(:config_yml) do
+      <<~YAML
+        version: 2
+        vulnerability-alerts:
+          enabled: false
+        updates:
+          - package-ecosystem: bundler
+            directory: "/"
+            schedule:
+              interval: weekly
+      YAML
+    end
+
+    it "sets vulnerability alerts to disabled" do
+      expect(parser[:updates].first.dig(:vulnerability_alerts, :enabled)).to eq(false)
+    end
+  end
+
   context "with valid config and rebase on approvals" do
     let(:config_yml) do
       <<~YAML
