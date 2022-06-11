@@ -1,3 +1,27 @@
+## 0.21.1 (2022-06-11)
+
+### 🔬 Improvements (1 change)
+
+- [Add option to disable vulnerability alerts](dependabot-gitlab/dependabot@837c796e2a0f74a092b47f2625e700f2d143caaf) by @andrcuns. See merge request dependabot-gitlab/dependabot!1604
+
+### 🐞 Bug Fixes (1 change)
+
+- [Fetch correct obsolete vulnerability issues](dependabot-gitlab/dependabot@8c5448f20fcea45692076ed04377bbfffca54278) by @andrcuns. See merge request dependabot-gitlab/dependabot!1605
+
+### 📦 Dependency updates (6 changes)
+
+- [dep: bump sidekiq-cron from 1.5.0 to 1.5.1](dependabot-gitlab/dependabot@c34466fad311c95d67d9bcae4a4acbf38dff7a5f) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1606
+- [dep: bump sidekiq from 6.4.2 to 6.5.0](dependabot-gitlab/dependabot@a865fa06ec452d92664fc581c0b7a1d418c23073) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1600
+- [dep: bump sidekiq-cron from 1.4.0 to 1.5.0](dependabot-gitlab/dependabot@1853b0c35558008e18c9910cb4a0ced95cfe7a64) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1602
+- [dep-dev: bump rubocop-performance from 1.14.1 to 1.14.2](dependabot-gitlab/dependabot@f23ff1735357adbec8a1ec3e9a965781d48f3e38) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1601
+- [dep: bump dependabot-omnibus from 0.190.1 to 0.191.0](dependabot-gitlab/dependabot@c6ffede174b97b86a3ace4264e1bdf3394862273) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1599
+- [dep-dev: bump rubocop from 1.30.0 to 1.30.1](dependabot-gitlab/dependabot@2817a34317208235a3e9bc8e961cf4df452d7766) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1597
+
+### 🔧 CI changes (2 changes)
+
+- [Pin minor docker version in CI](dependabot-gitlab/dependabot@35744dfc674897b54ddcb45ec2a9c1784eb82d8d) by @andrcuns. See merge request dependabot-gitlab/dependabot!1603
+- [Update dependency docker to v20.10.17](dependabot-gitlab/dependabot@5417a0727a44a750a933c82df1f08d8b5f06b5bb) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1598
+
 ## 0.21.0 (2022-06-06)
 
 ### 🚀 New features (1 change)
