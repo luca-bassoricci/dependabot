@@ -29,16 +29,23 @@ module Dependabot
         @project = project
       end
 
+      delegate :config_base_template, to: "DependabotConfig"
+
       # Parse dependabot configuration
       #
       # @return [Array<Hash>]
       def call
-        validate_dependabot_config(DependabotConfigContract, yml)
-        validate_dependabot_config(UpdatesConfigContract, yml.slice(:updates))
+        merged_config = base_config.deep_merge({
+          **yml,
+          updates: yml[:updates].map { |entry| (base_config[:updates] || {}).deep_merge(entry) }
+        })
+
+        validate_dependabot_config(DependabotConfigContract, merged_config)
+        validate_dependabot_config(UpdatesConfigContract, merged_config.slice(:updates))
 
         {
-          registries: RegistriesParser.call(registries: yml[:registries]),
-          updates: yml[:updates].map do |configuration|
+          registries: RegistriesParser.call(registries: merged_config[:registries]),
+          updates: merged_config[:updates].map do |configuration|
             {
               **general_options(configuration),
               **insecure_code_execution_options(configuration),
@@ -78,6 +85,22 @@ module Dependabot
       # @return [Hash<Symbol, Object>]
       def yml
         @yml ||= YAML.safe_load(config, symbolize_names: true)
+      end
+
+      # Base configuration
+      #
+      # @return [Hash]
+      def base_config
+        @base_config ||= begin
+          return {} unless config_base_template && File.exist?(config_base_template)
+
+          base = YAML.load_file(config_base_template, symbolize_names: true)
+          return {} unless base
+          return base if base[:updates].nil? || base[:updates].is_a?(Hash)
+
+          log(:error, "`updates` key in base configuration `#{config_base_template}` must be a map!")
+          {}
+        end
       end
 
       # Insecure code execution options

@@ -82,6 +82,11 @@ Some of the options can have slightly different behavior which is described in t
 - Github documentation: [configuration options](https://docs.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates)
 - Additional `dependabot-gitlab` specific options: [configuration options](doc/dependabot.md)
 
+### base template
+
+App supports setting a base configuration template via [config_base_template](doc/environment.md#configuration) configuration option.
+Base template supports same values as the project specific `dependabot.yml` with one difference that `updates` key must define a map and not an array. Project specific configuration would be merged on top of base configuration and options defined in `updates` of base template are added to each entry of `updates` in project specific configuration.
+
 Following configuration options are currently supported:
 
 | option                             | dependabot         | dependabot-standalone |

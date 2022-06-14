@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
+require "tempfile"
+
 describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
-  subject(:parser) { described_class.call(config_yml, project_name) }
+  subject(:parsed_config) { described_class.call(config_yml, project_name) }
 
   include_context "with dependabot helper"
 
@@ -9,7 +11,51 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
     let(:config_yml) { File.read("spec/fixture/gitlab/responses/dependabot.yml") }
 
     it "returns parsed configuration" do
-      expect(parser).to eq({ updates: updates_config, registries: registries })
+      expect(parsed_config).to eq({ updates: updates_config, registries: registries })
+    end
+  end
+
+  context "with base config template" do
+    let(:config_yml) do
+      <<~YAML
+        version: 2
+        registries:
+          npm:
+            type: npm-registry
+            url: https://npm.pkg.github.com
+            token: test_token
+        updates:
+          - package-ecosystem: bundler
+            directory: "/"
+            schedule:
+              interval: daily
+      YAML
+    end
+
+    let(:base_template) do
+      Tempfile.new("template.yml").tap do |f|
+        f.write(<<~YML)
+          updates:
+            milestone: "4"
+            rebase-strategy:
+              on-approval: true
+        YML
+        f.close
+      end
+    end
+
+    before do
+      allow(DependabotConfig).to receive(:config_base_template).and_return(base_template.path)
+    end
+
+    it "merges base configuration" do
+      expect(parsed_config[:registries]).to eq({
+        "npm" => { "registry" => "npm.pkg.github.com", "token" => "test_token", "type" => "npm_registry" }
+      })
+      expect(parsed_config[:updates].first).to include({
+        milestone: "4",
+        rebase_strategy: { strategy: "auto", on_approval: true, with_assignee: nil }
+      })
     end
   end
 
@@ -39,7 +85,7 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
     end
 
     it "sets reject_external_code: true" do
-      expect(parser[:updates].first[:reject_external_code]).to eq(true)
+      expect(parsed_config[:updates].first[:reject_external_code]).to eq(true)
     end
   end
 
@@ -56,7 +102,7 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
     end
 
     it "sets reject_external_code: false by default" do
-      expect(parser[:updates].first[:reject_external_code]).to eq(false)
+      expect(parsed_config[:updates].first[:reject_external_code]).to eq(false)
     end
   end
 
@@ -75,7 +121,7 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
     end
 
     it "sets vulnerability alerts to disabled" do
-      expect(parser[:updates].first.dig(:vulnerability_alerts, :enabled)).to eq(false)
+      expect(parsed_config[:updates].first.dig(:vulnerability_alerts, :enabled)).to eq(false)
     end
   end
 
@@ -94,7 +140,7 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
     end
 
     it "sets 'auto' strategy by default" do
-      expect(parser[:updates].first[:rebase_strategy]).to eq({
+      expect(parsed_config[:updates].first[:rebase_strategy]).to eq({
         strategy: "auto",
         on_approval: true,
         with_assignee: nil
@@ -132,7 +178,7 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
     end
 
     it "throws invalid configuration error" do
-      expect { parser }.to raise_error(
+      expect { parsed_config }.to raise_error(
         Dependabot::Config::InvalidConfigurationError, /#{invalid_config_error}/
       )
     end
@@ -152,7 +198,7 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
     end
 
     it "throws invalid format error" do
-      expect { parser }.to raise_error(
+      expect { parsed_config }.to raise_error(
         Dependabot::Config::InvalidConfigurationError,
         "key 'schedule.hours.0' has invalid format, must match pattern '^\\d{1,2}-\\d{1,2}$'"
       )
@@ -173,7 +219,7 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
     end
 
     it "throws invalid format error" do
-      expect { parser }.to raise_error(
+      expect { parsed_config }.to raise_error(
         Dependabot::Config::InvalidConfigurationError,
         "key 'schedule.hours.0' has invalid format, first number in range must be smaller or equal than second"
       )
@@ -195,7 +241,7 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
     end
 
     it "sets reject_external_code: false by default" do
-      expect { parser }.to raise_error(
+      expect { parsed_config }.to raise_error(
         Dependabot::Config::InvalidConfigurationError,
         "key 'rebase-strategy.approval' is not allowed"
       )
