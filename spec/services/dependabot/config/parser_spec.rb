@@ -32,7 +32,7 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
       YAML
     end
 
-    let(:base_template) do
+    let(:base_config) do
       Tempfile.new("template.yml").tap do |f|
         f.write(<<~YML)
           updates:
@@ -45,7 +45,7 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
     end
 
     before do
-      allow(DependabotConfig).to receive(:config_base_template).and_return(base_template.path)
+      allow(DependabotConfig).to receive(:config_base_filename).and_return(base_config.path)
     end
 
     it "merges base configuration" do
