@@ -34,12 +34,7 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
 
     let(:base_config) do
       Tempfile.new("template.yml").tap do |f|
-        f.write(<<~YML)
-          updates:
-            milestone: "4"
-            rebase-strategy:
-              on-approval: true
-        YML
+        f.write(base_yml)
         f.close
       end
     end
@@ -48,14 +43,43 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
       allow(DependabotConfig).to receive(:config_base_filename).and_return(base_config.path)
     end
 
-    it "merges base configuration" do
-      expect(parsed_config[:registries]).to eq({
-        "npm" => { "registry" => "npm.pkg.github.com", "token" => "test_token", "type" => "npm_registry" }
-      })
-      expect(parsed_config[:updates].first).to include({
-        milestone: "4",
-        rebase_strategy: { strategy: "auto", on_approval: true, with_assignee: nil }
-      })
+    context "with valid base config" do
+      let(:base_yml) do
+        <<~YML
+          updates:
+            milestone: "4"
+            rebase-strategy:
+              on-approval: true
+        YML
+      end
+
+      it "merges base configuration" do
+        expect(parsed_config[:registries]).to eq({
+          "npm" => { "registry" => "npm.pkg.github.com", "token" => "test_token", "type" => "npm_registry" }
+        })
+        expect(parsed_config[:updates].first).to include({
+          milestone: "4",
+          rebase_strategy: { strategy: "auto", on_approval: true, with_assignee: nil }
+        })
+      end
+    end
+
+    context "with invalid updates base config" do
+      let(:base_yml) do
+        <<~YML
+          updates:
+            - milestone: "4"
+              rebase-strategy:
+                on-approval: true
+        YML
+      end
+
+      it "raises invalid updates key error" do
+        expect { parsed_config }.to raise_error(
+          Dependabot::Config::InvalidConfigurationError,
+          "`updates` key in base configuration `#{base_config.path}` must be a map!"
+        )
+      end
     end
   end
 
