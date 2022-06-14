@@ -98,8 +98,10 @@ module Dependabot
           return {} unless base
           return base if base[:updates].nil? || base[:updates].is_a?(Hash)
 
-          log(:error, "`updates` key in base configuration `#{config_base_filename}` must be a map!")
-          {}
+          raise(
+            InvalidConfigurationError,
+            "`updates` key in base configuration `#{config_base_filename}` must be a map!"
+          )
         end
       end
 
