@@ -1,3 +1,18 @@
+## 0.22.0 (2022-06-14)
+
+### 🚀 New features (1 change)
+
+- [Support for optional base configuration template](dependabot-gitlab/dependabot@06a642060f5274f96865f685eaad5243d1cf92a0) by @andrcuns. See merge request dependabot-gitlab/dependabot!1608
+
+### 📦 Dependency updates (1 change)
+
+- [dep: bump dependabot-omnibus from 0.191.0 to 0.192.0](dependabot-gitlab/dependabot@8ba1a2aa1df57224de444b44cc418554f27dee28) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1607
+
+### 🛠️ Chore (2 changes)
+
+- [Raise error on incorrect base config updates definition](dependabot-gitlab/dependabot@c41c5de4d655def2178dbc48c8ed7f08a1ef222e) by @andrcuns. See merge request dependabot-gitlab/dependabot!1610
+- [Rename base configuration file option](dependabot-gitlab/dependabot@cd1a9f18acd54289941b9113550aa6ba0805dc98) by @andrcuns. See merge request dependabot-gitlab/dependabot!1609
+
 ## 0.21.1 (2022-06-11)
 
 ### 🔬 Improvements (1 change)
