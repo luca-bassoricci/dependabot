@@ -50,6 +50,7 @@ add necessary webhooks to project
 
 ### Configuration
 
+* `SETTINGS__CONFIG_BASE_TEMPLATE` - base configuration that will be merged with project specific `dependabot.yml` configuration file
 * `SETTINGS__CONFIG_FILENAME` - custom configuration file location, default: `.gitlab/dependabot.yml`
 * `SETTINGS__CONFIG_BRANCH` - custom branch to fetch `dependabot.yml`. This option does not affect target branch where dependabot checks for manifest files and raises merge requests against. For that, [target-branch](https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#target-branch) option in configuration file itself must be used
 * `SETTINGS__BRANCH_NAME_SEPARATOR` - override default value of branch name separator
