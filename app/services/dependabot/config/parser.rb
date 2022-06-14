@@ -29,7 +29,7 @@ module Dependabot
         @project = project
       end
 
-      delegate :config_base_template, to: "DependabotConfig"
+      delegate :config_base_filename, to: "DependabotConfig"
 
       # Parse dependabot configuration
       #
@@ -92,13 +92,13 @@ module Dependabot
       # @return [Hash]
       def base_config
         @base_config ||= begin
-          return {} unless config_base_template && File.exist?(config_base_template)
+          return {} unless config_base_filename && File.exist?(config_base_filename)
 
-          base = YAML.load_file(config_base_template, symbolize_names: true)
+          base = YAML.load_file(config_base_filename, symbolize_names: true)
           return {} unless base
           return base if base[:updates].nil? || base[:updates].is_a?(Hash)
 
-          log(:error, "`updates` key in base configuration `#{config_base_template}` must be a map!")
+          log(:error, "`updates` key in base configuration `#{config_base_filename}` must be a map!")
           {}
         end
       end
