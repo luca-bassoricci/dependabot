@@ -11,6 +11,7 @@ class MergeRequest
   field :directory, type: String
   field :state, type: String
   field :auto_merge, type: Boolean
+  field :squash, type: Boolean
   field :update_from, type: String
   field :update_to, type: String
   field :main_dependency, type: String

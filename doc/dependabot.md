@@ -170,6 +170,15 @@ Automatically accept merge request and set it to merge when pipeline succeeds. I
 auto-merge: true
 ```
 
+### squash
+
+Because gitlab does not automatically set squash option to `true` for merge requests when squashing is required in project settings, it has to be set manually in order to avoid error `This project requires squashing commits when merge requests are accepted. Try again.` when performing auto merging.
+
+```yml
+auto-merge:
+  squash: true
+```
+
 ### allow/ignore
 
 `auto-merge` key can be configured with optional `allow` or `ignore` rules that function same way as global [ignore](https://docs.github.com/en/code-security/supply-chain-security/keeping-your-dependencies-updated-automatically/configuration-options-for-dependency-updates#ignore). Both `allow` and `ignore` support `dependency-name`, `versions` and `update-types` parameters.\

@@ -5,6 +5,7 @@ class AutoMergeConfigContract < Dry::Validation::Contract
     config.validate_keys = true
 
     required(:"auto-merge").hash do
+      optional(:squash).filled(:bool?)
       optional(:allow).array(:hash) do
         required(:"dependency-name").filled(:string)
         optional(:versions).array(:str?)

@@ -52,8 +52,8 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
   let(:reviewers) { [11] }
   let(:approvers) { [12] }
 
-  let(:mr) { Gitlab::ObjectifiedHash.new(id: 1, iid: 1, web_url: "mr-url") }
-  let(:mr_db) { create_mr(mr.id, mr.iid, "opened") }
+  let(:mr_db) { create_mr(:build, "opened") }
+  let(:mr) { Gitlab::ObjectifiedHash.new(id: mr_db.id, iid: mr_db.iid, web_url: "mr-url") }
 
   let(:updated_dependency) do
     Dependabot::Dependencies::UpdatedDependency.new(
@@ -118,22 +118,20 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
     MSG
   end
 
-  def create_mr(id, iid, state, branch = source_branch)
-    MergeRequest.new(
+  def create_mr(method, state, branch = source_branch)
+    send(
+      method,
+      :merge_request,
       project: project,
-      id: id,
-      iid: iid,
       package_ecosystem: config_entry[:package_ecosystem],
       directory: config_entry[:directory],
       state: state,
-      auto_merge: updated_dependency.auto_mergeable?,
       update_to: updated_dependency.current_versions,
       update_from: updated_dependency.previous_versions,
       branch: branch,
       target_branch: fetcher.source.branch,
-      commit_message: commit_message,
       main_dependency: updated_dependency.name,
-      target_project_id: nil
+      auto_merge: updated_dependency.auto_mergeable?
     )
   end
 
@@ -155,14 +153,14 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
   end
 
   context "with existing older mr", :aggregate_failures do
-    let(:superseded_mr) { create_mr(2, 2, "opened", "superseded-branch") }
+    let(:superseded_mr) { create_mr(:build, "opened", "superseded-branch") }
 
     before do
       allow(Gitlab::BranchRemover).to receive(:call)
       allow(Gitlab::MergeRequest::Commenter).to receive(:call)
 
-      create_mr(3, 3, "closed").save!
-      create_mr(4, 4, "opened", "test1").save!
+      create_mr(:create, "closed")
+      create_mr(:create, "opened", "test1")
 
       superseded_mr.save!
     end

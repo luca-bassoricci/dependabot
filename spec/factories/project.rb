@@ -62,6 +62,7 @@ FactoryBot.define do
         commit_message { "" }
         branch { "branch" }
         auto_merge { false }
+        squash { false }
       end
 
       after(:build) do |project, evaluator|
@@ -74,7 +75,8 @@ FactoryBot.define do
           state: evaluator.state,
           commit_message: evaluator.commit_message,
           branch: evaluator.branch,
-          auto_merge: evaluator.auto_merge
+          auto_merge: evaluator.auto_merge,
+          squash: evaluator.squash
         )
       end
 
@@ -88,7 +90,8 @@ FactoryBot.define do
           state: evaluator.state,
           commit_message: evaluator.commit_message,
           branch: evaluator.branch,
-          auto_merge: evaluator.auto_merge
+          auto_merge: evaluator.auto_merge,
+          squash: evaluator.squash
         )
 
         project.reload
