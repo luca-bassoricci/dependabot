@@ -45,7 +45,7 @@ describe Webhooks::PipelineEventHandler, integration: true, epic: :services, fea
   context "with actionable conditions" do
     it "accepts merge request" do
       expect(event_result).to eq({ merge_request_accepted: true })
-      expect(gitlab).to have_received(:accept_merge_request).with(project.name, merge_request.iid)
+      expect(gitlab).to have_received(:accept_merge_request).with(project.name, merge_request.iid, squash: false)
     end
   end
 

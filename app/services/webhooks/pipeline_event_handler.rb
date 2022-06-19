@@ -42,12 +42,12 @@ module Webhooks
     # @return [Hash]
     def accept
       log(:info, "Accepting merge request !#{mr_iid}")
-      gitlab.accept_merge_request(project_name, mr_iid)
+      g_mr = gitlab.accept_merge_request(project_name, mr_iid, squash: mr.squash).to_h
+      raise "Failed to accept merge request !#{mr_iid}. Error: #{g_mr['merge_error']}" if g_mr["merge_error"].present?
 
       { merge_request_accepted: true }
     rescue Gitlab::Error::MethodNotAllowed => e
-      log(:error, "Failed to accept merge requests !#{mr_iid}. Error: #{e.message}")
-      { merge_request_accepted: false }
+      raise "Failed to accept merge request !#{mr_iid}. Error: #{e.message}"
     end
 
     # Is event actionable

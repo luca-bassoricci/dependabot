@@ -79,6 +79,7 @@ module Gitlab
           directory: config_entry[:directory],
           state: "opened",
           auto_merge: updated_dependency.auto_mergeable?,
+          squash: config_entry.dig(:auto_merge, :squash),
           update_from: updated_dependency.previous_versions,
           update_to: updated_dependency.current_versions,
           main_dependency: updated_dependency.name,

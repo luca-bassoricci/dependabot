@@ -14,7 +14,7 @@ RSpec.shared_context("with dependabot helper") do
     ]
   end
 
-  let(:auto_merge_rules) { { allow: [{ dependency_name: "*" }] } }
+  let(:auto_merge_rules) { { squash: false, allow: [{ dependency_name: "*" }] } }
 
   let(:fetcher) do
     instance_double("Dependabot::FileFetcher", files: "files", source: source, commit: "commit")
