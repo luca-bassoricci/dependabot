@@ -1,3 +1,17 @@
+## 0.22.1 (2022-06-20)
+
+### 🐞 Bug Fixes (1 change)
+
+- [Correctly handle merge errors when auto merging dependency updates](dependabot-gitlab/dependabot@9a5b36ff078f42d1eefb17ce9b0c0036ad363d12) by @andrcuns. See merge request dependabot-gitlab/dependabot!1617
+
+### 📦 Dependency updates (5 changes)
+
+- [dep: bump dependabot-omnibus from 0.193.0 to 0.194.0](dependabot-gitlab/dependabot@53452c4e2fac43d85208ee13a06f97861041dc55) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1616
+- [dep: bump dependabot-omnibus from 0.192.1 to 0.193.0](dependabot-gitlab/dependabot@c4093853ccfc881e2995fbd1e1041a0f049f9bb1) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1614
+- [dep: bump sidekiq from 6.5.0 to 6.5.1](dependabot-gitlab/dependabot@cbbdd6136a89a729ab699e1cbcded6590ab86a7a) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1613
+- [dep: bump dependabot-omnibus from 0.192.0 to 0.192.1](dependabot-gitlab/dependabot@c2bed200ca6a252165ae64f2e1ffe41b7fdf4fa9) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1611
+- [dep-dev: bump rubocop-rails from 2.14.2 to 2.15.0](dependabot-gitlab/dependabot@22309a121334163ee0b7ff490abdd5b66a90ceb3) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1612
+
 ## 0.22.0 (2022-06-14)
 
 ### 🚀 New features (1 change)
