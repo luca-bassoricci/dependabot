@@ -1,3 +1,9 @@
+## 0.22.2 (2022-06-21)
+
+### 🐞 Bug Fixes (1 change)
+
+- [Do not set auto-merge to true by default](dependabot-gitlab/dependabot@da98d17d3000ee74a7bfd6c5d2b7a693348ebce3) by @andrcuns. See merge request dependabot-gitlab/dependabot!1620
+
 ## 0.22.1 (2022-06-20)
 
 ### 🐞 Bug Fixes (1 change)
