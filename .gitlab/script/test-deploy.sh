@@ -31,9 +31,6 @@ expected_response=\
       ],
       "ignore": [],
       "cron": "29 15 * * * UTC",
-      "auto_merge": {
-        "squash": false
-      },
       "rebase_strategy": {
         "strategy": "auto"
       },

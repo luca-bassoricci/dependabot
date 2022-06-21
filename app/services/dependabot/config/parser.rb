@@ -182,8 +182,8 @@ module Dependabot
       # @return [Hash]
       def auto_merge_options(opts)
         auto_merge = opts[:"auto-merge"]
-        return { auto_merge: { squash: false } } unless auto_merge
-        return { auto_merge: { squash: false, dependency_name: "*" } } if auto_merge == true
+        return {} unless auto_merge
+        return { auto_merge: { squash: false, allow: { dependency_name: "*" } } } if auto_merge == true
 
         validate_dependabot_config(AutoMergeConfigContract, { "auto-merge": auto_merge })
 
