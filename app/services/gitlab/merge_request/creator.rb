@@ -79,7 +79,7 @@ module Gitlab
           directory: config_entry[:directory],
           state: "opened",
           auto_merge: updated_dependency.auto_mergeable?,
-          squash: config_entry.dig(:auto_merge, :squash),
+          squash: squash?,
           update_from: updated_dependency.previous_versions,
           update_to: updated_dependency.current_versions,
           main_dependency: updated_dependency.name,
@@ -152,6 +152,15 @@ module Gitlab
           directory: config_entry[:directory],
           mr_iid: mr.iid
         )
+      end
+
+      # Squash merge request on auto-merge
+      #
+      # @return [Boolean]
+      def squash?
+        return false unless updated_dependency.auto_mergeable?
+
+        config_entry.dig(:auto_merge, :squash).nil? ? false : true
       end
 
       # MR message footer with available commands

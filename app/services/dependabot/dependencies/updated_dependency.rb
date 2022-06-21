@@ -85,7 +85,7 @@ module Dependabot
       #
       # @return [Boolean]
       def auto_mergeable?
-        @auto_mergeable ||= auto_merge_rules && (allow_automerge && !ignore_automerge)
+        @auto_mergeable ||= !auto_merge_rules.nil? && (allow_automerge && !ignore_automerge)
       end
 
       # Fixed vulnerabilities in format for pr creator
