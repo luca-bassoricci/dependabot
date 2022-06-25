@@ -15,6 +15,33 @@ describe Dependabot::Config::Parser, epic: :services, feature: :configuration do
     end
   end
 
+  context "with explicit auto-merge rules" do
+    let(:config_yml) do
+      <<~YAML
+        version: 2
+        updates:
+          - package-ecosystem: bundler
+            directory: "/"
+            schedule:
+              interval: daily
+            auto-merge:
+              squash: true
+              allow:
+                - dependency-name: test
+              ignore:
+                - dependency-name: test-2
+      YAML
+    end
+
+    it "sets auto-merge rules" do
+      expect(parsed_config[:updates].first[:auto_merge]).to eq({
+        squash: true,
+        allow: [{ dependency_name: "test" }],
+        ignore: [{ dependency_name: "test-2" }]
+      })
+    end
+  end
+
   context "with base config template" do
     let(:config_yml) do
       <<~YAML
