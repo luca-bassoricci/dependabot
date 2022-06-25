@@ -1,3 +1,14 @@
+## 0.22.3 (2022-06-25)
+
+### 🐞 Bug Fixes (1 change)
+
+- [Correctly set config for auto-merge: true option](dependabot-gitlab/dependabot@be8ac64bfadd6b2fd85a5ec0dbaf8080afd2e3a4) by @andrcuns. See merge request dependabot-gitlab/dependabot!1622
+
+### 📦 Dependency updates (2 changes)
+
+- [dep: bump dependabot-omnibus from 0.194.1 to 0.196.0](dependabot-gitlab/dependabot@707411f6d55dbdcb772c02355ed94693b0a7b48e) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1623
+- [dep: bump dependabot-omnibus from 0.194.0 to 0.194.1](dependabot-gitlab/dependabot@b42d54dd1462a385f5705a93decbf401f1f517eb) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1621
+
 ## 0.22.2 (2022-06-21)
 
 ### 🐞 Bug Fixes (1 change)
