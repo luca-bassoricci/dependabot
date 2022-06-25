@@ -37,6 +37,12 @@ describe "dependency updates", :system, type: :system, epic: :system, feature: "
               "john"
             ]
           },
+          "auto-merge" => {
+            "squash" => true,
+            "allow" => [
+              { "dependency-name" => "faker" }
+            ]
+          },
           "ignore" => ignored_deps,
           "rebase-strategy" => "all"
         }
@@ -93,6 +99,8 @@ describe "dependency updates", :system, type: :system, epic: :system, feature: "
     it "creates dependency update mrs" do
       expect(update_dependencies).to eq({ mr: Set[1, 2], security_mr: Set.new })
       expect(mrs.map(&:main_dependency)).to eq(%w[faker rubocop])
+      expect(mrs.find { |mr| mr.main_dependency == "faker" }.auto_merge).to eq(true)
+      expect(mrs.find { |mr| mr.main_dependency == "rubocop" }.auto_merge).to eq(false)
       expect_all_mocks_called
     end
   end

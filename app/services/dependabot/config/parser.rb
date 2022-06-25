@@ -183,7 +183,7 @@ module Dependabot
       def auto_merge_options(opts)
         auto_merge = opts[:"auto-merge"]
         return {} unless auto_merge
-        return { auto_merge: { squash: false, allow: { dependency_name: "*" } } } if auto_merge == true
+        return { auto_merge: { squash: false } } if auto_merge == true
 
         validate_dependabot_config(AutoMergeConfigContract, { "auto-merge": auto_merge })
 
