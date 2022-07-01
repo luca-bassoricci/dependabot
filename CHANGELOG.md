@@ -1,3 +1,12 @@
+## 0.22.4 (2022-07-01)
+
+### 📦 Dependency updates (4 changes)
+
+- [dep: bump sidekiq-cron from 1.5.1 to 1.6.0](dependabot-gitlab/dependabot@8a7505141b519b34b91f1badd1ad585ed77335c2) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1629
+- [dep: bump dependabot-omnibus from 0.196.0 to 0.196.2](dependabot-gitlab/dependabot@49025cdb2298d5af41cee6e3d09d0eefb56c71e9) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1628
+- [dep-dev: bump rubocop from 1.30.1 to 1.31.1](dependabot-gitlab/dependabot@7c0c0f266f0a7f532f2ec7088292d3c6f926e3a2) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1627
+- [dep-dev: bump rubocop-rails from 2.15.0 to 2.15.1](dependabot-gitlab/dependabot@eb2a27780ad615d69c9829aaf5d0d930ed8caa11) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1624
+
 ## 0.22.3 (2022-06-25)
 
 ### 🐞 Bug Fixes (1 change)
