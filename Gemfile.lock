@@ -393,7 +393,7 @@ GEM
     rails-healthcheck (1.4.0)
       actionpack
       railties
-    rails-html-sanitizer (1.4.2)
+    rails-html-sanitizer (1.4.3)
       loofah (~> 2.3)
     railties (7.0.3)
       actionpack (= 7.0.3)
