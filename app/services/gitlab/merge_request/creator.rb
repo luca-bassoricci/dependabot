@@ -5,12 +5,9 @@ module Gitlab
     class Creator < ApplicationService # rubocop:disable Metrics/ClassLength
       MR_OPTIONS = %i[
         custom_labels
-        commit_message_options
         branch_name_separator
         branch_name_prefix
       ].freeze
-
-      delegate :commit_message, :branch_name, to: :gitlab_creator
 
       # @param [Project] project
       # @param [Dependabot::Files::Fetchers::Base] fetcher
@@ -40,6 +37,9 @@ module Gitlab
       end
 
       private
+
+      delegate :commit_message, :branch_name, to: :gitlab_creator
+      delegate :vulnerable?, to: :updated_dependency
 
       attr_reader :project,
                   :fetcher,
@@ -109,45 +109,58 @@ module Gitlab
       #
       # @return [Array<Number>]
       def assignees
-        @assignees ||= UserFinder.call(config_entry[:assignees])
+        UserFinder.call(config_entry[:assignees])
       end
 
       # Get reviewer ids
       #
       # @return [Array<Number>]
       def reviewers
-        @reviewers ||= UserFinder.call(config_entry[:reviewers])
+        UserFinder.call(config_entry[:reviewers])
       end
 
       # Get approver ids
       #
       # @return [Array<Number>]
       def approvers
-        @approvers ||= UserFinder.call(config_entry[:approvers])
+        UserFinder.call(config_entry[:approvers])
       end
 
       def milestone_id
-        @milestone_id ||= MilestoneFinder.call(fetcher.source.repo, config_entry[:milestone])
+        MilestoneFinder.call(fetcher.source.repo, config_entry[:milestone])
       end
 
       # Merge request specific options from config
       #
       # @return [Hash]
       def mr_options
-        @mr_options ||= {
+        {
           label_language: true,
           assignees: assignees,
           reviewers: { approvers: approvers, reviewers: reviewers }.compact,
           milestone: milestone_id,
-          **config_entry.select { |key, _value| MR_OPTIONS.include?(key) }
+          commit_message_options: commit_message_options,
+          **config_entry.slice(*MR_OPTIONS)
         }
+      end
+
+      # Commit message options
+      #
+      # @return [Hash]
+      def commit_message_options
+        opts = config_entry[:commit_message_options]
+
+        return {} unless opts
+        return opts.merge({ trailers: opts[:trailers_security] }) if vulnerable? && opts[:trailers_security]
+
+        opts
       end
 
       # List of open superseded merge requests
       #
       # @return [Mongoid::Criteria]
       def superseded_mrs
-        @superseded_mrs ||= project.superseded_mrs(
+        project.superseded_mrs(
           update_from: updated_dependency.previous_versions,
           directory: config_entry[:directory],
           mr_iid: mr.iid
