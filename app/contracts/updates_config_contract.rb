@@ -30,6 +30,7 @@ class UpdatesConfigContract < Dry::Validation::Contract
         optional(:"prefix-development").filled(:string)
         optional(:include).filled(:string)
         optional(:trailers).array(:hash)
+        optional(:"trailers-security").array(:hash)
       end
 
       optional(:allow).array(:hash) do

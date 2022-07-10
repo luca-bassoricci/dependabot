@@ -70,7 +70,6 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
   let(:mr_opt_keys) do
     %i[
       custom_labels
-      commit_message_options
       branch_name_separator
       branch_name_prefix
     ]
@@ -82,7 +81,8 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
       reviewers: { reviewers: reviewers, approvers: approvers },
       milestone: milestone_id,
       label_language: true,
-      **config_entry.select { |key, _value| mr_opt_keys.include?(key) }
+      commit_message_options: {},
+      **config_entry.slice(*mr_opt_keys)
     }
   end
 

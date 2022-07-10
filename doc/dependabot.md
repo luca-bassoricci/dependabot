@@ -214,7 +214,7 @@ approvers:
   - dependabot-gitlab
 ```
 
-## git trailers
+## commit-message
 
 It is possible to add custom git trailers to commit messages. For example to include commits in Gitlab built in [changelog](https://docs.gitlab.com/ee/api/repositories.html#add-changelog-data-to-a-changelog-file) generation functionality. Multiple git trailers can be added as array of key value pairs.
 
@@ -223,6 +223,14 @@ commit-message:
   trailers:
     - changelog: "dependency"
     - approved-by: "someone"
+```
+
+It is possible to pass different changelog trailers for security merge requests.
+
+```yml
+commit-message:
+  trailers-security:
+    - changelog: "security"
 ```
 
 ## updater-options
