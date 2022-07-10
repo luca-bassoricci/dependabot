@@ -9,6 +9,8 @@ updates:
       prefix-development: dep-dev
       trailers:
         - changelog: dependency
+      trailers-security:
+        - changelog: security
     reviewers:
       - andrcuns
     auto-merge: true
