@@ -225,12 +225,24 @@ commit-message:
     - approved-by: "someone"
 ```
 
+### security commit trailers
+
 It is possible to pass different changelog trailers for security merge requests.
 
 ```yml
 commit-message:
   trailers-security:
     - changelog: "security"
+```
+
+### development dependency commit trailers
+
+Similar to development dependency commit message prefix, it is possible to pass different commit trailers to development dependencies.
+
+```yml
+commit-message:
+  trailers-development:
+    - changelog: "development-dependencies"
 ```
 
 ## updater-options

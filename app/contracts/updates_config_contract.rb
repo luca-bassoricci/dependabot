@@ -26,11 +26,12 @@ class UpdatesConfigContract < Dry::Validation::Contract
       end
 
       optional(:"commit-message").hash do
+        optional(:include).filled(:string)
         optional(:prefix).filled(:string)
         optional(:"prefix-development").filled(:string)
-        optional(:include).filled(:string)
         optional(:trailers).array(:hash)
         optional(:"trailers-security").array(:hash)
+        optional(:"trailers-development").array(:hash)
       end
 
       optional(:allow).array(:hash) do
