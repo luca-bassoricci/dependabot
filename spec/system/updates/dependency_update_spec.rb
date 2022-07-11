@@ -25,8 +25,12 @@ describe "dependency updates", :system, type: :system, epic: :system, feature: "
           },
           "commit-message" => {
             "prefix" => "dep",
-            "prefix-development" => "bundler-dev",
-            "include" => "scope"
+            "trailers-development" => [
+              { "changelog" => "dev-dependencies" }
+            ],
+            "trailers-security" => [
+              { "changelog" => "security" }
+            ]
           },
           "assignees" => %w[
             john

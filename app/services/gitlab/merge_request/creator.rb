@@ -22,6 +22,8 @@ module Gitlab
         @target_project_id = target_project_id
       end
 
+      delegate :commit_message, :branch_name, to: :gitlab_creator
+
       # Create merge request
       #
       # @return [Gitlab::ObjectifiedHash]
@@ -38,8 +40,7 @@ module Gitlab
 
       private
 
-      delegate :commit_message, :branch_name, to: :gitlab_creator
-      delegate :vulnerable?, to: :updated_dependency
+      delegate :vulnerable?, :production?, to: :updated_dependency
 
       attr_reader :project,
                   :fetcher,
@@ -151,7 +152,11 @@ module Gitlab
         opts = config_entry[:commit_message_options]
 
         return {} unless opts
-        return opts.merge({ trailers: opts[:trailers_security] }) if vulnerable? && opts[:trailers_security]
+
+        trailers_security = opts.delete(:trailers_security)
+        trailers_development = opts.delete(:trailers_development)
+        return opts.merge({ trailers: trailers_security }) if vulnerable? && trailers_security
+        return opts.merge({ trailers: trailers_development }) if !production? && trailers_development
 
         opts
       end

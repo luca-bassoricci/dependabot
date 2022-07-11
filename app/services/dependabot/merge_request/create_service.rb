@@ -158,7 +158,7 @@ module Dependabot
 
       # MR creator service
       #
-      # @return [Dependabot::PullRequestCreator::Gitlab]
+      # @return [Gitlab::MergeRequest::Creator]
       def mr_creator
         @mr_creator ||= Gitlab::MergeRequest::Creator.new(
           project: project,

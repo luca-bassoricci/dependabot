@@ -54,7 +54,7 @@ module Dependabot
       # @return [Hash] merge rules
       attr_reader :auto_merge_rules
 
-      delegate :name, to: :dependency
+      delegate :name, :production?, to: :dependency
 
       alias_method :vulnerable?, :vulnerable
 

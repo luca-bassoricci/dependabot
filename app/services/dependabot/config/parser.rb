@@ -210,7 +210,8 @@ module Dependabot
             prefix_development: message_options[:"prefix-development"],
             include_scope: message_options[:include],
             trailers: message_options[:trailers]&.reduce({}, :merge),
-            trailers_security: message_options[:"trailers-security"]&.reduce({}, :merge)
+            trailers_security: message_options[:"trailers-security"]&.reduce({}, :merge),
+            trailers_development: message_options[:"trailers-development"]&.reduce({}, :merge)
           }.compact
         }
       end
