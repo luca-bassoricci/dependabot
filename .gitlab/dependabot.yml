@@ -6,9 +6,10 @@ updates:
       interval: daily
     commit-message:
       prefix: dep
-      prefix-development: dep-dev
       trailers:
         - changelog: dependency
+      trailers-development:
+        - changelog: dev-dependency
       trailers-security:
         - changelog: security
     reviewers:
