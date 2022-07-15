@@ -20,6 +20,7 @@ class ReleaseCreator
     creator = new(version)
     creator.update_version
     creator.commit_and_tag
+    creator.print_changelog
   end
 
   # Update changelog
@@ -41,6 +42,14 @@ class ReleaseCreator
     git.add("VERSION")
     git.commit("Update app version to #{ref_to}", no_verify: true)
     git.add_tag(ref_to.to_s)
+  end
+
+  # Log changes in new release
+  #
+  # @return [void]
+  def print_changelog
+    changelog = gitlab.get_changelog("dependabot-gitlab/dependabot", ref_to, trailer: "changelog", from: ref_from).notes
+    logger.info("Release contains following changes:\n#{changelog}")
   end
 
   private
