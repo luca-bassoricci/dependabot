@@ -27,7 +27,8 @@ class ReleaseCreator
   #
   # @return [void]
   def update_version
-    logger.info("Updating VERSION")
+    logger.info("Updating version to #{ref_to}")
+    logger.info("Updating VERSION file")
 
     File.write("VERSION", ref_to, mode: "w")
   end
@@ -36,11 +37,13 @@ class ReleaseCreator
   #
   # @return [void]
   def commit_and_tag
-    logger.info("Comitting VERSION")
+    logger.info("Comitting VERSION file")
 
     git = Git.init
     git.add("VERSION")
     git.commit("Update app version to #{ref_to}", no_verify: true)
+
+    logger.info("Creating release tag")
     git.add_tag(ref_to.to_s)
   end
 
