@@ -47,7 +47,7 @@ include:
   stage: test
   extends: .ruby_runner
   services:
-    - name: bitnami/redis:6.2-debian-10
+    - name: bitnami/redis:7.0-debian-10
       alias: redis
     - name: bitnami/mongodb:5.0-debian-10
       alias: mongodb
@@ -138,7 +138,7 @@ include:
   services:
     - name: ${MOCK_IMAGE}
       alias: smocker
-    - name: bitnami/redis:6.2-debian-10
+    - name: bitnami/redis:7.0-debian-10
       alias: redis
     - name: bitnami/mongodb:5.0-debian-10
       alias: mongodb
@@ -171,6 +171,7 @@ include:
     SETTINGS__PROJECT_REGISTRATION: automatic
     SETTINGS__LOG_LEVEL: debug
     COMPOSE_PROJECT_NAME: dependabot
+    REDIS_EXTRA_FLAGS: "--protected-mode no"
   before_script:
     - .gitlab/script/run-deploy.sh
   script:

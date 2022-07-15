@@ -30,13 +30,14 @@ x-volumes: &service_volumes
 
 services:
   redis:
-    image: ${REDIS_IMAGE:-bitnami/redis:6.2-debian-10}
+    image: ${REDIS_IMAGE:-bitnami/redis:7.0-debian-10}
     ports:
       - 6379:6379
     volumes:
       - redis-data:/bitnami/redis/data
     environment:
-      ALLOW_EMPTY_PASSWORD: "yes"
+      ALLOW_EMPTY_PASSWORD: ${REDIS_ALLOW_EMPTY_PASSWORD:-yes}
+      REDIS_EXTRA_FLAGS: ${REDIS_EXTRA_FLAGS}
   mongodb:
     image: ${MONGODB_IMAGE:-bitnami/mongodb:5.0-debian-10}
     ports:
@@ -44,7 +45,8 @@ services:
     volumes:
       - mongodb-data:/bitnami/mongodb
     environment:
-      ALLOW_EMPTY_PASSWORD: "yes"
+      ALLOW_EMPTY_PASSWORD: ${MONGODB_ALLOW_EMPTY_PASSWORD:-yes}
+      MONGODB_EXTRA_FLAGS: ${MONGODB_EXTRA_FLAGS}
 
   migration:
     image: ${APP_IMAGE:-andrcuns/dependabot-gitlab:latest}
