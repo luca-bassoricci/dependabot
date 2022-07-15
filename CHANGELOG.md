@@ -1,3 +1,29 @@
+## 0.23.0 (2022-07-15)
+
+### 🚀 New features (2 changes)
+
+- [Add option to set different commit trailers for dev dependency mrs](dependabot-gitlab/dependabot@71b365dc5100630a0ebbab807119e774f6effe45) by @andrcuns. See merge request dependabot-gitlab/dependabot!1638
+- [Add option to set different commit trailers for security mrs](dependabot-gitlab/dependabot@77aeac540edaf9aead636bada8ebc59a1f2f1f83) by @andrcuns. See merge request dependabot-gitlab/dependabot!1637
+
+### 📦 Dependency updates (11 changes)
+
+- [dep: bump dependabot-omnibus from 0.196.4 to 0.197.0](dependabot-gitlab/dependabot@3a511f78342dfc2a3b15b7a5016437c89a0a4411) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1645
+- [Bump debian version for redis and mongodb](dependabot-gitlab/dependabot@cdc263621c3173880f10fdca24828d8fbf9367f8) by @andrcuns. See merge request dependabot-gitlab/dependabot!1644
+- [dep: Update dependency bitnami/redis to v7](dependabot-gitlab/dependabot@702836e8652a71dfc598d9d0fbe417250ca074bb) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1587
+- [dep: bump dependabot-omnibus from 0.196.3 to 0.196.4](dependabot-gitlab/dependabot@b4d1b4a1649f3c705f6766a4d0ba1be9f2ede1d5) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1643
+- [dep: bump dependabot-omnibus and gitlab](dependabot-gitlab/dependabot@d06e67af21f2f6e617d91175c1d90520d8c45db8) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1640
+- [dep: bump rails from 7.0.3 to 7.0.3.1](dependabot-gitlab/dependabot@f1f491584d8aa3e58980dc6da0bbb619d35a950a) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1642
+- [dep-dev: bump rubocop-rails from 2.15.1 to 2.15.2](dependabot-gitlab/dependabot@d2fc4ea1ee5e40afa4fb9efcd35653a2de5f5f15) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1636
+- [dep-dev: bump rubocop from 1.31.1 to 1.31.2](dependabot-gitlab/dependabot@ef081ed22f1912fa774736f9d178a83d67533f17) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1635
+- [dep: [security] bump rails-html-sanitizer from 1.4.2 to 1.4.3](dependabot-gitlab/dependabot@27533e075249b79260eb88bed52969ec82260d06) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1634
+- [dep-dev: bump rubocop-rspec from 2.12.0 to 2.12.1](dependabot-gitlab/dependabot@951e7378d79b628f8b4ef6a04919d87e127ac875) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1632
+- [dep-dev: bump rubocop-rspec from 2.11.1 to 2.12.0](dependabot-gitlab/dependabot@edd2b50370fae8185fe5701cf0d1def704de0a7d) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1631
+
+### 🛠️ Chore (2 changes)
+
+- [Print changelog data when bumping version](dependabot-gitlab/dependabot@b0a4742f750e1ef891cb91698b5fd78e54d2c8fb) by @andrcuns. See merge request dependabot-gitlab/dependabot!1646
+- [Deprecate branch name configurations via environment variables](dependabot-gitlab/dependabot@6288dfe781d4c7f5bd1658eccdd9f7c24af0a2e5) by @andrcuns. See merge request dependabot-gitlab/dependabot!1633
+
 ## 0.22.4 (2022-07-01)
 
 ### 📦 Dependency updates (4 changes)
