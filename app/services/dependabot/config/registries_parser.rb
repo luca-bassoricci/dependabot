@@ -41,84 +41,52 @@ module Dependabot
       # @return [Array]
       attr_reader :registries
 
-      # Schema for private regstry with no credentials
-      #
-      # @return [Dry::Schema::Params]
-      def no_auth_private
-        @no_auth_private ||= Dry::Schema.Params do
-          config.validate_keys = true
-
-          required(:type).filled(:string)
-          required(:url).filled(:string)
-        end
-      end
-
-      # Schema for private registry with username/password
-      #
-      # @return [Dry::Schema::Params]
-      def auth_private_password
-        @auth_private_password ||= Dry::Schema.Params do
-          config.validate_keys = true
-
-          required(:type).filled(:string)
-          required(:url).filled(:string)
-          required(:username).filled(:string)
-          required(:password).filled(:string)
-          optional(:"replaces-base").filled(:bool?) # used in python-index
-        end
-      end
-
-      # Schema for private registry with token authentication
-      #
-      # @return [Dry::Schema::Params]
-      def auth_private_token
-        @auth_private_token ||= Dry::Schema.Params do
-          config.validate_keys = true
-
-          required(:type).filled(:string)
-          required(:url).filled(:string)
-          required(:token).filled(:string)
-          optional(:"replaces-base").filled(:bool?) # used in python-index
-        end
-      end
-
-      # Schema for private hex registry
-      #
-      # @return [void]
-      def auth_hex
-        @auth_hex ||= Dry::Schema.Params do
-          config.validate_keys = true
-
-          required(:type).filled(:string)
-          required(:organization).filled(:string)
-          required(:key).filled(:string)
-        end
-      end
-
       # Update registry hash
       #
       # dependabot-core uses specific credentials hash depending on registry types with keys as strings
       #
       # @param [Hash] registry
       # @return [Hash]
-      def transform_registry_values(registry)
+      def transform_registry_values(registry) # rubocop:disable Metrics/CyclomaticComplexity
         type = registry[:type]
         mapped_type = TYPE_MAPPING[type]
         return warn_unsupported_registry(type) unless mapped_type
         return warn_incorrect_registry(type) unless registry_config_valid?(registry)
 
-        if type == "hex-organizaton"
-          return {
-            "type" => mapped_type[:type],
-            "organization" => registry[:organization],
-            "token" => registry[:key]
-          }
-        end
+        return hex(mapped_type, registry) if type == "hex-organizaton"
+        return python(mapped_type, registry) if type == "python-index" && registry[:username] && registry[:password]
 
         {
           "type" => mapped_type[:type],
           mapped_type[:url] => strip_protocol(type, registry[:url]),
           **registry.except(:type, :url).transform_keys(&:to_s)
+        }
+      end
+
+      # Hex organization
+      #
+      # @param [Hash] mapped_type
+      # @param [Hash] registry
+      # @return [Hash]
+      def hex(mapped_type, registry)
+        {
+          "type" => mapped_type[:type],
+          "organization" => registry[:organization],
+          "token" => registry[:key]
+        }
+      end
+
+      # Python index
+      #
+      # @param [Hash] mapped_type
+      # @param [Hash] registry
+      # @return [Hash]
+      def python(mapped_type, registry)
+        {
+          "type" => mapped_type[:type],
+          "token" => "#{registry[:username]}:#{registry[:password]}",
+          "replaces-base" => registry[:"replaces-base"] || false,
+          mapped_type[:url] => registry[:url]
         }
       end
 
@@ -145,10 +113,10 @@ module Dependabot
       # @param [Hash] registry
       # @return [Boolean]
       def registry_config_valid?(registry)
-        no_auth_private.call(registry).success? ||
-          auth_private_token.call(registry).success? ||
-          auth_private_password.call(registry).success? ||
-          auth_hex.call(registry).success?
+        PrivateRegistries::NoAuthContract.new.call(registry).success? ||
+          PrivateRegistries::TokenContract.new.call(registry).success? ||
+          PrivateRegistries::PasswordContract.new.call(registry).success? ||
+          PrivateRegistries::KeyContract.new.call(registry).success?
       end
 
       # Fetch value from environment
