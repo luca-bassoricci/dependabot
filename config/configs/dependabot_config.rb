@@ -7,7 +7,8 @@ class DependabotConfig < ApplicationConfig
               :config_base_filename,
               branch_name_separator: "-",
               open_pull_request_limit: 5,
-              config_filename: ".gitlab/dependabot.yml"
+              config_filename: ".gitlab/dependabot.yml",
+              dry_run: false
 
   def branch_name_separator
     if ENV["SETTINGS__BRANCH_NAME_SEPARATOR"]

@@ -3,6 +3,7 @@
 module Dependabot
   # :reek:InstanceVariableAssumption
   # :reek:RepeatedConditional
+  # rubocop:disable Metrics/ClassLength
   module MergeRequest
     class CreateService < ApplicationService
       using Rainbow
@@ -26,6 +27,11 @@ module Dependabot
       def call
         if find_mr("closed")
           log(:warn, "  closed mr exists, skipping!")
+          return
+        end
+
+        if DependabotConfig.dry_run?
+          log(:info, "  dependabot is running in dry-run mode, skipping merge request creation!")
           return
         end
 
@@ -168,6 +174,7 @@ module Dependabot
           target_project_id: target_project_id
         )
       end
+      # rubocop:enable Metrics/ClassLength
     end
   end
 end
