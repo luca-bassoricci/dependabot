@@ -148,7 +148,7 @@ include:
     RSPEC_TAGS: system
   before_script:
     - !reference [.ruby_runner, before_script]
-    - .gitlab/script/build-bundler-helpers.sh
+    - .gitlab/script/build-core-helpers.sh bundler
 
 .standalone-test:
   stage: test
