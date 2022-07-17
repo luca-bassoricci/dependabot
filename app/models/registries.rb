@@ -2,7 +2,7 @@
 
 class Registries
   AUTH_FIELDS = %w[token key password].freeze
-  SECRET_PATTERN = /\${{(\S+)}}/.freeze
+  SECRET_PATTERN = /\${{([^{}]+)}}/.freeze
 
   def initialize(registries)
     @registries = registries
@@ -46,7 +46,9 @@ class Registries
   def env_value(registry_name, key, value)
     return value unless ["username", *AUTH_FIELDS].include?(key) && value.match?(SECRET_PATTERN)
 
-    env_val = ENV[value.match(SECRET_PATTERN)[1]] || ""
+    env_val = value.scan(SECRET_PATTERN).flatten.reduce(value) do |val, env_key|
+      val.gsub("${{#{env_key}}}", ENV[env_key] || "")
+    end
 
     if env_val.blank?
       ApplicationHelper.log(:warn, "Detected empty value for '#{key}' in configuration of '#{registry_name}' registry")
