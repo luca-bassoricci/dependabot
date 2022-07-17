@@ -12,7 +12,7 @@ Sidekiq.configure_server do |config|
 
   config.logger = Rails.logger
   config.redis = redis_conf
-  config.options[:queues].push("hooks", "project_registration", "vulnerability_update")
+  config[:queues].push("hooks", "project_registration", "vulnerability_update")
 end
 
 Sidekiq.configure_client do |config|
