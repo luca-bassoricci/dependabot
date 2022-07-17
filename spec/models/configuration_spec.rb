@@ -4,8 +4,14 @@ describe Configuration, :integration, epic: :models do
   let!(:project) { create(:project, config_yaml: config_yaml) }
 
   let(:persisted_project) { Project.find_by(name: project.name) }
-  let(:password) { "docker-password" }
-  let(:parsed_password) { password }
+
+  let(:docker_password) { "docker-password" }
+  let(:docker_parsed_password) { docker_password }
+
+  let(:python_username) { "username" }
+  let(:python_password) { "password" }
+  let(:python_parsed_username) { python_username }
+  let(:python_parsed_password) { python_password }
 
   let(:config_yaml) do
     <<~YAML
@@ -15,7 +21,12 @@ describe Configuration, :integration, epic: :models do
           type: docker-registry
           url: registry.hub.docker.com
           username: octocat
-          password: #{password}
+          password: #{docker_password}
+        python:
+          type: python-index
+          url: https://python-index.com
+          username: #{python_username}
+          password: #{python_password}
       updates:
         - package-ecosystem: bundler
           directory: "/"
@@ -30,7 +41,13 @@ describe Configuration, :integration, epic: :models do
         "type" => "docker_registry",
         "registry" => "registry.hub.docker.com",
         "username" => "octocat",
-        "password" => parsed_password
+        "password" => docker_parsed_password
+      },
+      {
+        "type" => "python_index",
+        "token" => "#{python_parsed_username}:#{python_parsed_password}",
+        "replaces-base" => false,
+        "index-url" => "https://python-index.com"
       }
     ]
   end
@@ -54,11 +71,24 @@ describe Configuration, :integration, epic: :models do
     end
 
     context "with value from environment variable" do
-      let(:password) { "${{DOCKERHUB_PASSWORD}}" }
-      let(:parsed_password) { "docker-password" }
+      let(:docker_password) { "${{DOCKERHUB_PASSWORD}}" }
+      let(:docker_parsed_password) { "docker-password" }
+
+      let(:python_username) { "${{USERNAME}}" }
+      let(:python_password) { "${{PASSWORD}}" }
+      let(:python_parsed_username) { "username" }
+      let(:python_parsed_password) { "password" }
+
+      let(:env) do
+        {
+          "DOCKERHUB_PASSWORD" => docker_parsed_password,
+          "USERNAME" => python_parsed_username,
+          "PASSWORD" => python_parsed_password
+        }
+      end
 
       around do |example|
-        with_env("DOCKERHUB_PASSWORD" => parsed_password) { example.run }
+        with_env(env) { example.run }
       end
 
       it "returns registries credentials with correct password" do
