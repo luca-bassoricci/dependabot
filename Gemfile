@@ -6,7 +6,7 @@ ruby "~> 2.7"
 
 gem "anyway_config", "~> 2.3"
 gem "bootsnap", ">= 1.4.2", require: false
-gem "dependabot-omnibus", "~> 0.201.1"
+gem "dependabot-omnibus", "~> 0.202.0"
 gem "dry-validation", "~> 1.8"
 gem "gitlab", "~> 4.19"
 gem "graphql-client", "~> 0.18.0"
