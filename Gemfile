@@ -18,8 +18,8 @@ gem "rails", "~> 7.0.3"
 gem "rails-healthcheck", "~> 1.4"
 gem "rainbow", "~> 3.1"
 gem "semantic_range", "~> 3.0"
-gem "sentry-rails", "~> 5.3", require: false
-gem "sentry-ruby", "~> 5.3", require: false
+gem "sentry-rails", "~> 5.4", require: false
+gem "sentry-ruby", "~> 5.4", require: false
 gem "sentry-sidekiq", "~> 5.3", require: false
 gem "sidekiq", "~> 6.5.1"
 gem "sidekiq_alive", "~> 2.1", require: false
