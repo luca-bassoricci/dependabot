@@ -34,7 +34,7 @@ group :test do
   gem "allure-rspec", "~> 2.18.0"
   gem "capybara", "~> 3.37"
   gem "factory_bot_rails", "~> 6.2"
-  gem "faker", "~> 2.21"
+  gem "faker", "~> 2.22"
   gem "httparty", "~> 0.20.0"
   gem "pry-byebug", "~> 3.9"
   gem "reek", "~> 6.1", require: false
