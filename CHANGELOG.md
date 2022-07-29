@@ -1,3 +1,44 @@
+## 0.24.0 (2022-07-29)
+
+### 🚀 New features (1 change)
+
+- [Add dry-run option](dependabot-gitlab/dependabot@d60f078eb9031cabc80c8a8b6d2e7fa5392c7073) by @andrcuns. See merge request dependabot-gitlab/dependabot!1648
+
+### 🐞 Bug Fixes (2 changes)
+
+- [Correctly substitute multiple env var values in auth fields](dependabot-gitlab/dependabot@2a91e4e57655fc99a0d1b1f9f4a8beeaa1338296) by @andrcuns. See merge request dependabot-gitlab/dependabot!1652
+- [Convert python registry basic auth to token format](dependabot-gitlab/dependabot@5791c32e665665c65e97e0f49d9dfc24451487f2) by @andrcuns. See merge request dependabot-gitlab/dependabot!1650
+
+### 📦 Dependency updates (14 changes)
+
+- [dep: bump faker from 2.21.0 to 2.22.0](dependabot-gitlab/dependabot@edc7cb7f1d6dcbbd5475e7cd9a8771c42312ef0a) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1668
+- [dep: bump bootsnap from 1.12.0 to 1.13.0](dependabot-gitlab/dependabot@d9cf3ab46d09e6d53ded149c63c7fc699fb0d8be) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1667
+- [dep: bump sentry-rails and sentry-ruby](dependabot-gitlab/dependabot@ee6b10a74b28cdf6368273d616f67895465793bd) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1666
+- [dep: bump dependabot-omnibus from 0.201.1 to 0.202.0](dependabot-gitlab/dependabot@b598c4b80f1f95b1cd4da6795d373a39286b0abc) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1665
+- [dep: bump dependabot-omnibus from 0.201.0 to 0.201.1](dependabot-gitlab/dependabot@a1c1fe424e5b40ccca227bf6542600dc06c5f0a1) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1664
+- [dep: bump sidekiq-cron from 1.6.0 to 1.7.0](dependabot-gitlab/dependabot@2c8b753818893738a00050e0cbb912646b6fb6e0) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1663
+- [dep: bump mongoid from 8.0.1 to 8.0.2](dependabot-gitlab/dependabot@2caa2bfdb0bb4c038e9126ce9f61abc0eb366bdc) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1662
+- [dep: bump dependabot-omnibus from 0.200.0 to 0.201.0](dependabot-gitlab/dependabot@3dbc708f82a0b2bcd7406421be2549d6be1890ce) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1661
+- [dep: bump rubocop from 1.31.2 to 1.32.0](dependabot-gitlab/dependabot@f43a633e26ab6aa0e3013155d7a510989a40de67) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1660
+- [dep: bump dependabot-omnibus from 0.199.0 to 0.200.0](dependabot-gitlab/dependabot@91976a1e2cf4a3dab069062ba38c2bc9ad569480) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1659
+- [dep: bump mongoid from 7.4.0 to 8.0.1](dependabot-gitlab/dependabot@2fe99b487fb1d0ed80dfc82671513161f328634f) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1658
+- [dep: bump dependabot-omnibus from 0.198.0 to 0.199.0](dependabot-gitlab/dependabot@91044603ecbff502a357d0dee0bc322ebdba630b) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1656
+- [dep: Bump redis from 4.7.0 to 4.7.1](dependabot-gitlab/dependabot@e9520693dc49cd16f81723d36439b78b113c6a38) by @andrcuns. See merge request dependabot-gitlab/dependabot!1654
+- [dep: bump dependabot-omnibus from 0.197.0 to 0.198.0](dependabot-gitlab/dependabot@979cfb780fed65d72151082b1fb70ac5e734cdc9) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1647
+
+### 📦 Development dependency updates (1 change)
+
+- [dep: bump rubocop-performance from 1.14.2 to 1.14.3](dependabot-gitlab/dependabot@b7047f8a54cffe70edbf56bb13fdaf4f9742f511) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1655
+
+### 🔧 CI changes (1 change)
+
+- [chore(deps): update dependency andrcuns/allure-report-publisher to v0.9.0](dependabot-gitlab/dependabot@a02c764d7c8300759e7158d8b610e480ba24cd7b) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1651
+
+### 🛠️ Chore (2 changes)
+
+- [Remove deprecated method usage](dependabot-gitlab/dependabot@5b58dfc134603b0accd232cbb540ed6fca52e01c) by @andrcuns. See merge request dependabot-gitlab/dependabot!1653
+- [Add support for building multiple core helpers](dependabot-gitlab/dependabot@96fd5ee30966f3507608f763bc470068874bfadb) by @andrcuns. See merge request dependabot-gitlab/dependabot!1649
+
 ## 0.23.0 (2022-07-15)
 
 ### 🚀 New features (2 changes)
