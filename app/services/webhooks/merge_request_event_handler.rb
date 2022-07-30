@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
 module Webhooks
-  class MergeRequestEventHandler < ApplicationService
+  class MergeRequestEventHandler < HookHandler
     # @param [String] project
     # @param [String] mr_iid
     def initialize(project_name:, mr_iid:, action:, merge_status:)
-      @project_name = project_name
+      super(project_name)
+
       @mr_iid = mr_iid
       @action = action
       @merge_status = merge_status
@@ -25,7 +26,7 @@ module Webhooks
 
     private
 
-    attr_reader :project_name, :mr_iid, :action, :merge_status
+    attr_reader :mr_iid, :action, :merge_status
 
     # Reopen closed merge request
     #
@@ -106,13 +107,6 @@ module Webhooks
 
     def approved?
       action == "approved"
-    end
-
-    # Current project
-    #
-    # @return [Project]
-    def project
-      @project ||= Project.find_by(name: project_name)
     end
 
     # Merge request to close

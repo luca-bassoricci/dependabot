@@ -1,15 +1,16 @@
 # frozen_string_literal: true
 
 module Webhooks
-  class CommentEventHandler < ApplicationService
+  class CommentEventHandler < HookHandler
     # @param [String] discussion_id
     # @param [String] note
     # @param [String] project_name
     # @param [Number] mr_iid
-    def initialize(discussion_id:, note:, project_name:, mr_iid:)
+    def initialize(project_name:, discussion_id:, note:, mr_iid:)
+      super(project_name)
+
       @discussion_id = discussion_id
       @comment = note
-      @project_name = project_name
       @mr_iid = mr_iid
     end
 
@@ -23,7 +24,7 @@ module Webhooks
 
     private
 
-    attr_reader :comment, :project_name, :mr_iid, :discussion_id
+    attr_reader :comment, :mr_iid, :discussion_id
 
     # Comment action pattern
     #
