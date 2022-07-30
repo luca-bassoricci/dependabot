@@ -19,15 +19,15 @@ module Dependabot
       # @param [Array<Dependabot::DependencyFile>] dependency_files
       # @param [Hash] config_entry
       # @param [String] repo_contents_path
-      # @param [Array<Hash>] registries
-      def initialize(dependency:, dependency_files:, config_entry:, repo_contents_path:, registries:)
+      # @param [Array<Hash>] credentials
+      def initialize(dependency:, dependency_files:, config_entry:, repo_contents_path:, credentials:)
         @dependency = dependency
         @dependency_files = dependency_files
         @config_entry = config_entry
         @versioning_strategy = config_entry[:versioning_strategy]
         @package_manager = config_entry[:package_manager]
         @repo_contents_path = repo_contents_path
-        @registries = registries
+        @credentials = credentials
       end
 
       delegate :name, to: :dependency, prefix: :dependency
@@ -63,14 +63,7 @@ module Dependabot
                   :versioning_strategy,
                   :package_manager,
                   :repo_contents_path,
-                  :registries
-
-      # Fetch combined credentials
-      #
-      # @return [Array<Hash>]
-      def credentials
-        @credentials ||= [*Credentials.call, *registries]
-      end
+                  :credentials
 
       # Dependency name with version
       #

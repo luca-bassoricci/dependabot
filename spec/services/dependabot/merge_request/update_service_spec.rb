@@ -47,6 +47,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
   let(:mr) { project.merge_requests.first }
   let(:config_entry) { project.configuration.entry(package_ecosystem: "bundler") }
   let(:registries) { project.configuration.registries }
+  let(:credentials) { [*Dependabot::Credentials.call, *registries.select(".*")] }
   let(:update_to_versions) { updated_dependency.current_versions.gsub("config-", "") }
   let(:dependency_state) { Dependabot::Dependencies::UpdateChecker::HAS_UPDATES }
   let(:action) { Dependabot::MergeRequest::UpdateService::UPDATE }
@@ -79,7 +80,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
 
   let(:updater_args) do
     {
-      credentials: Dependabot::Credentials.call,
+      credentials: credentials,
       source: fetcher.source,
       base_commit: fetcher.commit,
       old_commit: mr.commit_message,
@@ -96,7 +97,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
         project_name: project.name,
         config_entry: config_entry,
         repo_contents_path: nil,
-        registries: registries.select(".*")
+        credentials: credentials
       )
       .and_return(fetcher)
     allow(Dependabot::Files::Parser).to receive(:call)
@@ -105,7 +106,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
         dependency_files: fetcher.files,
         repo_contents_path: nil,
         config_entry: config_entry,
-        registries: registries.select(".*")
+        credentials: credentials
       )
       .and_return(dependencies)
 
@@ -115,7 +116,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
         dependency_files: fetcher.files,
         config_entry: config_entry,
         repo_contents_path: nil,
-        registries: registries.select(".*")
+        credentials: credentials
       )
       .and_return(updated_dependency)
 

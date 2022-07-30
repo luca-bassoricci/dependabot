@@ -47,6 +47,7 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
 
   let(:config) { project.configuration }
   let(:config_entry) { config.entry(package_ecosystem: "bundler") }
+  let(:credentials) { [*Dependabot::Credentials.call, *registries.values] }
 
   let(:branch) { "master" }
   let(:dependency_name) { nil }
@@ -116,7 +117,7 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
         project_name: project.name,
         config_entry: config_entry,
         repo_contents_path: nil,
-        registries: registries.values
+        credentials: credentials
       )
       .and_return(fetcher)
 
@@ -126,7 +127,7 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
         dependency_files: fetcher.files,
         repo_contents_path: nil,
         config_entry: config_entry,
-        registries: registries.values
+        credentials: credentials
       )
       .and_return(dependencies)
 
@@ -136,7 +137,7 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
         dependency_files: fetcher.files,
         config_entry: config_entry,
         repo_contents_path: nil,
-        registries: registries.values
+        credentials: credentials
       )
       .and_return(updated_rspec)
 
@@ -146,7 +147,7 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
         dependency_files: fetcher.files,
         config_entry: config_entry,
         repo_contents_path: nil,
-        registries: registries.values
+        credentials: credentials
       )
       .and_return(updated_config)
 
@@ -325,7 +326,7 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
             dependency_files: fetcher.files,
             config_entry: config_entry,
             repo_contents_path: nil,
-            registries: registries.values
+            credentials: [*Dependabot::Credentials.call, *registries.values]
           )
           .and_return(updated_puma)
 
@@ -335,7 +336,7 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
             dependency_files: fetcher.files,
             config_entry: config_entry,
             repo_contents_path: nil,
-            registries: registries.values
+            credentials: [*Dependabot::Credentials.call, *registries.values]
           )
           .and_return(updated_rails)
       end

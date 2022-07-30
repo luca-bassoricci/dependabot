@@ -2,6 +2,7 @@
 
 module Dependabot
   # :reek:InstanceVariableAssumption
+  # :reek:TooManyMethods
   module MergeRequest
     class UpdateService < ApplicationService # rubocop:disable Metrics/ClassLength
       RECREATE = "recreate"
@@ -83,7 +84,7 @@ module Dependabot
         raise("Newer version for update exists, new merge request will be created!") unless same_version?
 
         Dependabot::PullRequestUpdater.new(
-          credentials: Dependabot::Credentials.call,
+          credentials: credentials,
           source: fetcher.source,
           base_commit: fetcher.commit,
           old_commit: mr.commit_message,
@@ -103,7 +104,7 @@ module Dependabot
           dependency_files: fetcher.files,
           repo_contents_path: repo_contents_path,
           config_entry: config_entry,
-          registries: registries
+          credentials: credentials
         ).find { |dep| dep.name == mr.main_dependency }
         return unless dependency
 
@@ -112,7 +113,7 @@ module Dependabot
           dependency_files: fetcher.files,
           config_entry: config_entry,
           repo_contents_path: repo_contents_path,
-          registries: registries
+          credentials: credentials
         )
       end
 
@@ -139,7 +140,7 @@ module Dependabot
           project_name: project_name,
           config_entry: config_entry,
           repo_contents_path: repo_contents_path,
-          registries: registries
+          credentials: credentials
         )
       end
 
@@ -171,6 +172,13 @@ module Dependabot
       # @return [Hash]
       def config_entry
         @config_entry ||= project_configuration.entry(package_ecosystem: mr.package_ecosystem, directory: mr.directory)
+      end
+
+      # Fetch combined credentials
+      #
+      # @return [Array<Hash>]
+      def credentials
+        @credentials ||= [*Credentials.call, *registries]
       end
 
       # Private registries configuration

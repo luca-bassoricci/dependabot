@@ -5,6 +5,7 @@ describe Dependabot::Files::Parser, epic: :services, feature: :dependabot do
 
   let(:parser) { instance_double("Dependabot::Bundler::FileParser", parse: nil) }
   let(:config_entry) { updates_config.first }
+  let(:credentials) { [*Dependabot::Credentials.call, *registries.values] }
 
   let(:args) do
     {
@@ -22,10 +23,10 @@ describe Dependabot::Files::Parser, epic: :services, feature: :dependabot do
   end
 
   it "parses dependecy files", :aggregate_failures do
-    described_class.call(config_entry: config_entry, registries: registries.values, **args)
+    described_class.call(config_entry: config_entry, credentials: credentials, **args)
 
     expect(Dependabot::Bundler::FileParser).to have_received(:new).with(
-      credentials: [*Dependabot::Credentials.call, *registries.values],
+      credentials: credentials,
       reject_external_code: config_entry[:reject_external_code],
       options: config_entry[:updater_options],
       **args

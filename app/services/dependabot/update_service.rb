@@ -104,6 +104,13 @@ module Dependabot
                         .tap { |entry| raise_missing_entry_error unless entry }
     end
 
+    # Combined credentials
+    #
+    # @return [Array<Hash>]
+    def credentials
+      @credentials ||= [*Credentials.call, *registries]
+    end
+
     # Allowed private registries
     #
     # @return [Array<Hash>]
@@ -121,7 +128,7 @@ module Dependabot
       @fetcher ||= Files::Fetcher.call(
         project_name: project_name,
         config_entry: config_entry,
-        registries: registries,
+        credentials: credentials,
         repo_contents_path: repo_contents_path
       )
     end
@@ -145,7 +152,7 @@ module Dependabot
           dependency_files: fetcher.files,
           repo_contents_path: repo_contents_path,
           config_entry: config_entry,
-          registries: registries
+          credentials: credentials
         )
         dependency_name ? deps.select { |dep| dep.name == dependency_name } : deps
       end
@@ -178,7 +185,7 @@ module Dependabot
         dependency_files: fetcher.files,
         config_entry: config_entry,
         repo_contents_path: repo_contents_path,
-        registries: registries
+        credentials: credentials
       )
     end
 
