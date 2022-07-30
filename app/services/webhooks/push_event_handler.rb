@@ -2,11 +2,12 @@
 
 module Webhooks
   # :reek:InstanceVariableAssumption
-  class PushEventHandler < ApplicationService
+  class PushEventHandler < HookHandler
     # @param [String] project
     # @param [Array] commits
     def initialize(project_name:, commits:)
-      @project_name = project_name
+      super(project_name)
+
       @commits = commits
       @config_filename = DependabotConfig.config_filename
     end
@@ -25,7 +26,7 @@ module Webhooks
 
     private
 
-    attr_reader :project_name, :commits, :config_filename
+    attr_reader :commits, :config_filename
 
     # Has dependabot config been modified
     #

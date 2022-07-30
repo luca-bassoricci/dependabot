@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 module Webhooks
-  class SystemHookHandler < ApplicationService
-    def initialize(event_name:, project_name:, old_project_name: nil)
+  class SystemHookHandler < HookHandler
+    def initialize(project_name:, event_name:, old_project_name: nil)
+      super(project_name)
+
       @event_name = event_name
-      @project_name = project_name
       @old_project_name = old_project_name
     end
 
@@ -14,9 +15,7 @@ module Webhooks
 
     private
 
-    attr_reader :event_name,
-                :project_name,
-                :old_project_name
+    attr_reader :event_name, :old_project_name
 
     # Add project on project_create event
     #
@@ -31,11 +30,11 @@ module Webhooks
     #
     # @return [nil]
     def project_destroy
-      Project.find_by(name: project_name)
       Dependabot::Projects::Remover.call(project_name)
 
       "project removed successfully"
     rescue Mongoid::Errors::DocumentNotFound
+      log(:error, "Project #{project_name} not found!")
       nil
     end
 
@@ -43,15 +42,16 @@ module Webhooks
     #
     # @return [nil]
     def project_rename
-      project = Project.find_by(name: old_project_name)
+      old_project = Project.find_by(name: old_project_name)
 
-      project.update_attributes!(name: project_name)
+      old_project.update_attributes!(name: project_name)
 
       Cron::JobRemover.call(old_project_name)
-      Cron::JobSync.call(project)
+      Cron::JobSync.call(old_project)
 
       "project updated to #{project_name}"
     rescue Mongoid::Errors::DocumentNotFound
+      log(:error, "Project #{old_project_name} not found!")
       nil
     end
 

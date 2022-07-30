@@ -1,13 +1,15 @@
 # frozen_string_literal: true
 
 module Webhooks
-  class IssueEventHandler < ApplicationService
+  class IssueEventHandler < HookHandler
     # Close existing vulnerability issue
     #
     # @param [String] project_name
     # @param [Integer] issue_iid
     # @param [String] action
     def initialize(project_name:, issue_iid:)
+      super(project_name)
+
       @project_name = project_name
       @issue_iid = issue_iid
     end
@@ -20,18 +22,18 @@ module Webhooks
 
     private
 
-    attr_reader :project_name, :issue_iid
+    attr_reader :issue_iid
 
     # Open vulnerability issue
     #
     # @return [VulnerabilityIssue]
     def vulnerability_issue
-      @vulnerability_issue ||= Project.find_by(name: project_name)
-                                      .vulnerability_issues
-                                      .find_by(
-                                        iid: issue_iid,
-                                        status: "opened"
-                                      )
+      @vulnerability_issue ||= project
+                               .vulnerability_issues
+                               .find_by(
+                                 iid: issue_iid,
+                                 status: "opened"
+                               )
     rescue Mongoid::Errors::DocumentNotFound
       false
     end

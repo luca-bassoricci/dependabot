@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Webhooks
-  class PipelineEventHandler < ApplicationService
+  class PipelineEventHandler < HookHandler
     # Handle pipeline event
     #
     # @param [String] source
@@ -10,9 +10,10 @@ module Webhooks
     # @param [Number] mr_iid
     # @param [String] merge_status
     def initialize(**args)
+      super(args[:project_name])
+
       @source = args[:source]
       @status = args[:status]
-      @project_name = args[:project_name]
       @mr_iid = args[:mr_iid]
       @merge_status = args[:merge_status]
       @source_project_id = args[:source_project_id]
@@ -29,8 +30,7 @@ module Webhooks
 
     private
 
-    attr_reader :project_name,
-                :mr_iid,
+    attr_reader :mr_iid,
                 :source,
                 :status,
                 :merge_status,
@@ -90,13 +90,6 @@ module Webhooks
     # @return [MergeRequest]
     def mr
       @mr ||= project.merge_requests.find_by(iid: mr_iid, state: "opened")
-    end
-
-    # Current project
-    #
-    # @return [Project]
-    def project
-      @project ||= Project.find_by(name: project_name)
     end
   end
 end
