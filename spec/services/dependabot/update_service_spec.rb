@@ -424,7 +424,7 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
       it "raises missing config entry error" do
         expect { update_dependencies }.to raise_error(
           error,
-          "Configuration missing entry with package-ecosystem: #{package_manager}, directory: /"
+          "Configuration is missing entry with package-ecosystem: #{package_manager}, directory: /"
         )
       end
     end

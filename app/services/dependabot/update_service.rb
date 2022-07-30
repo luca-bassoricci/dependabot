@@ -18,13 +18,12 @@ module Dependabot
     end
   end
 
-  # :reek:InstanceVariableAssumption
-
   # Main entrypoint class for updating dependencies and creating merge requests
   #
-  class UpdateService < ApplicationService # rubocop:disable Metrics/ClassLength
+  class UpdateService < UpdateBase
     def initialize(args)
-      @project_name = args[:project_name]
+      super(args[:project_name])
+
       @package_ecosystem = args[:package_ecosystem]
       @directory = args[:directory]
       @dependency_name = args[:dependency_name]
@@ -45,25 +44,17 @@ module Dependabot
 
     private
 
-    delegate :configuration, to: :project, prefix: :project
-    delegate :standalone?, to: "AppConfig"
-
-    attr_reader :project_name,
-                :package_ecosystem,
-                :directory,
-                :dependency_name
+    attr_reader :package_ecosystem, :directory, :dependency_name
 
     # Project
     #
     # @return [Project]
     def project
       @project ||= begin
-        return standalone_project if standalone?
+        return standalone_project if AppConfig.standalone?
 
-        # Fetch config from Gitlab if deployment is not integrated with webhooks to make sure it is up to date
-        Project.find_by(name: project_name).tap do |existing_project|
-          existing_project.configuration = config unless AppConfig.integrated?
-        end
+        # Fetch config from Gitlab if deployment is not integrated with webhooks to make sure config is up to date
+        super.tap { |existing_project| existing_project.configuration = fetch_config unless AppConfig.integrated? }
       end
     end
 
@@ -71,10 +62,9 @@ module Dependabot
     #
     # @return [Project]
     def standalone_project
-      @config_entry = config.entry(package_ecosystem: package_ecosystem, directory: directory)
-      raise_missing_entry_error unless @config_entry
+      config = fetch_config
 
-      fork_id = config_entry[:fork] ? gitlab.project(project_name).to_h.dig("forked_from_project", "id") : nil
+      fork_id = config_entry(config)[:fork] ? gitlab.project(project_name).to_h.dig("forked_from_project", "id") : nil
       Project.new(name: project_name, configuration: config, forked_from_id: fork_id)
     end
 
@@ -91,71 +81,8 @@ module Dependabot
     # Project configuration fetched from gitlab
     #
     # @return [Config]
-    def config
-      @config ||= Config::Fetcher.call(project_name)
-    end
-
-    # Config entry for specific package ecosystem and directory
-    #
-    # @return [Hash]
-    def config_entry
-      @config_entry ||= project_configuration
-                        .entry(package_ecosystem: package_ecosystem, directory: directory)
-                        .tap { |entry| raise_missing_entry_error unless entry }
-    end
-
-    # Combined credentials
-    #
-    # @return [Array<Hash>]
-    def credentials
-      @credentials ||= [*Credentials.call, *registries]
-    end
-
-    # Allowed private registries
-    #
-    # @return [Array<Hash>]
-    def registries
-      @registries ||= project_configuration.allowed_registries(
-        package_ecosystem: package_ecosystem,
-        directory: directory
-      )
-    end
-
-    # Get file fetcher
-    #
-    # @return [Dependabot::FileFetcher]
-    def fetcher
-      @fetcher ||= Files::Fetcher.call(
-        project_name: project_name,
-        config_entry: config_entry,
-        credentials: credentials,
-        repo_contents_path: repo_contents_path
-      )
-    end
-
-    # Get cloned repository path
-    #
-    # @return [String]
-    def repo_contents_path
-      return @repo_contents_path if defined?(@repo_contents_path)
-
-      @repo_contents_path = DependabotCoreHelper.repo_contents_path(project_name, config_entry)
-    end
-
-    # All project dependencies
-    #
-    # @return [Array<Dependabot::Dependency>]
-    def dependencies
-      @dependencies ||= begin
-        deps = Files::Parser.call(
-          source: fetcher.source,
-          dependency_files: fetcher.files,
-          repo_contents_path: repo_contents_path,
-          config_entry: config_entry,
-          credentials: credentials
-        )
-        dependency_name ? deps.select { |dep| dep.name == dependency_name } : deps
-      end
+    def fetch_config
+      Config::Fetcher.call(project_name)
     end
 
     # Update project dependencies
@@ -165,7 +92,7 @@ module Dependabot
       dependencies.each_with_object({ mr: Set.new, security_mr: Set.new }) do |dep, count|
         updated_dep = updated_dependency(dep)
         next update_dependency(updated_dep, count) if updated_dep.updates?
-        next if standalone?
+        next if AppConfig.standalone?
 
         if config_entry.dig(:vulnerability_alerts, :enabled)
           create_vulnerability_issues(updated_dep) if updated_dep.vulnerable?
@@ -174,19 +101,6 @@ module Dependabot
 
         close_obsolete_mrs(updated_dep.name)
       end
-    end
-
-    # Array of dependencies to update
-    #
-    # @return [Dependabot::Dependencies::UpdatedDependency]
-    def updated_dependency(dependency)
-      Dependencies::UpdateChecker.call(
-        dependency: dependency,
-        dependency_files: fetcher.files,
-        config_entry: config_entry,
-        repo_contents_path: repo_contents_path,
-        credentials: credentials
-      )
     end
 
     # Create dependency update merge request
@@ -258,13 +172,6 @@ module Dependabot
         )
         .reject { |issue| issue.vulnerability.vulnerable?(dependency.version) }
         .each { |issue| Gitlab::Vulnerabilities::IssueCloser.call(issue) }
-    end
-
-    # Raise config missing specific entry error
-    #
-    # @return [void]
-    def raise_missing_entry_error
-      raise("Configuration missing entry with package-ecosystem: #{package_ecosystem}, directory: #{directory}")
     end
   end
 end
