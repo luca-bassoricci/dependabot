@@ -1,16 +1,15 @@
 # frozen_string_literal: true
 
 module Dependabot
-  # :reek:InstanceVariableAssumption
-  # :reek:TooManyMethods
   module MergeRequest
-    class UpdateService < ApplicationService # rubocop:disable Metrics/ClassLength
+    class UpdateService < UpdateBase
       RECREATE = "recreate"
       UPDATE = "update"
       AUTO_REBASE = "auto_rebase"
 
       def initialize(project_name:, mr_iid:, action:)
-        @project_name = project_name
+        super(project_name)
+
         @mr_iid = mr_iid
         @action = action
       end
@@ -30,9 +29,16 @@ module Dependabot
 
       private
 
-      delegate :configuration, to: :project, prefix: :project
+      delegate :package_ecosystem, :directory, to: :mr
 
       attr_reader :project_name, :mr_iid, :action
+
+      # Main dependency name
+      #
+      # @return [String]
+      def dependency_name
+        mr.main_dependency
+      end
 
       # Performing recreate action
       #
@@ -78,10 +84,11 @@ module Dependabot
       #
       # @return [void]
       def update
-        return close_mr if updated_dependency.up_to_date?
-
-        raise("Dependency update is impossible!") if updated_dependency.update_impossible?
+        raise("Dependency '#{dependency_name}' not found in manifest file!") unless updated_dep
+        raise("Dependency update is impossible!") if updated_dep.update_impossible?
         raise("Newer version for update exists, new merge request will be created!") unless same_version?
+
+        return close_mr if updated_dep.up_to_date?
 
         Dependabot::PullRequestUpdater.new(
           credentials: credentials,
@@ -89,7 +96,7 @@ module Dependabot
           base_commit: fetcher.commit,
           old_commit: mr.commit_message,
           pull_request_number: mr.iid,
-          files: updated_dependency.updated_files,
+          files: updated_dep.updated_files,
           provider_metadata: { target_project_id: mr.target_project_id }
         ).update
         log(:info, "  recreated merge request #{gitlab_mr.web_url}")
@@ -98,23 +105,8 @@ module Dependabot
       # Updated dependency
       #
       # @return [Dependabot::Dependencies::UpdatedDependency]
-      def updated_dependency
-        dependency = Dependabot::Files::Parser.call(
-          source: fetcher.source,
-          dependency_files: fetcher.files,
-          repo_contents_path: repo_contents_path,
-          config_entry: config_entry,
-          credentials: credentials
-        ).find { |dep| dep.name == mr.main_dependency }
-        return unless dependency
-
-        Dependabot::Dependencies::UpdateChecker.call(
-          dependency: dependency,
-          dependency_files: fetcher.files,
-          config_entry: config_entry,
-          repo_contents_path: repo_contents_path,
-          credentials: credentials
-        )
+      def updated_dep
+        @updated_dep ||= updated_dependency(dependencies.first)
       end
 
       # Close obsolete merge request
@@ -123,34 +115,6 @@ module Dependabot
       def close_mr
         log(:info, "  dependency is already up to date, closing mr!")
         Gitlab::BranchRemover.call(project_name, mr.branch) && mr.close
-      end
-
-      # Find project
-      #
-      # @return [Project]
-      def project
-        @project ||= Project.find_by(name: project_name)
-      end
-
-      # Get file fetcher
-      #
-      # @return [Dependabot::Files::Fetcher]
-      def fetcher
-        @fetcher ||= Dependabot::Files::Fetcher.call(
-          project_name: project_name,
-          config_entry: config_entry,
-          repo_contents_path: repo_contents_path,
-          credentials: credentials
-        )
-      end
-
-      # Get cloned repository path
-      #
-      # @return [String]
-      def repo_contents_path
-        return @repo_contents_path if defined?(@repo_contents_path)
-
-        @repo_contents_path = DependabotCoreHelper.repo_contents_path(project_name, config_entry)
       end
 
       # Auto-rebase assignee option
@@ -167,35 +131,18 @@ module Dependabot
         @mr_assignee ||= gitlab_mr.to_h.dig("assignee", "username")
       end
 
-      # Fetch config entry for update
-      #
-      # @return [Hash]
-      def config_entry
-        @config_entry ||= project_configuration.entry(package_ecosystem: mr.package_ecosystem, directory: mr.directory)
-      end
-
-      # Fetch combined credentials
-      #
-      # @return [Array<Hash>]
-      def credentials
-        @credentials ||= [*Credentials.call, *registries]
-      end
-
-      # Private registries configuration
-      #
-      # @return [Array<Hash>]
-      def registries
-        @registries ||= project_configuration.allowed_registries(
-          package_ecosystem: mr.package_ecosystem,
-          directory: mr.directory
-        )
-      end
-
       # Find merge request
       #
       # @return [MergeRequest]
       def mr
         @mr ||= project.merge_requests.find_by(iid: mr_iid)
+      end
+
+      # Project
+      #
+      # @return [Project]
+      def project
+        @project ||= super
       end
 
       # Gitlab merge request
@@ -209,7 +156,7 @@ module Dependabot
       #
       # @return [Boolean]
       def same_version?
-        mr.update_to == updated_dependency.current_versions
+        mr.update_to == updated_dep.current_versions
       end
     end
   end
