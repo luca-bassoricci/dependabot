@@ -7,13 +7,13 @@ module Dependabot
       # @param [Dependabot::Source] source
       # @param [String] repo_contents_path
       # @param [Hash] config_entry
-      # @param [Array<Hash>] registries
-      def initialize(dependency_files:, source:, repo_contents_path:, config_entry:, registries:)
+      # @param [Array<Hash>] credentials
+      def initialize(dependency_files:, source:, repo_contents_path:, config_entry:, credentials:)
         @dependency_files = dependency_files
         @source = source
         @repo_contents_path = repo_contents_path
         @config_entry = config_entry
-        @registries = registries
+        @credentials = credentials
       end
 
       # Get parsed dependencies from files
@@ -23,7 +23,7 @@ module Dependabot
         Dependabot::FileParsers.for_package_manager(config_entry[:package_manager]).new(
           dependency_files: dependency_files,
           source: source,
-          credentials: [*Credentials.call, *registries],
+          credentials: credentials,
           repo_contents_path: repo_contents_path,
           reject_external_code: config_entry[:reject_external_code],
           options: config_entry[:updater_options]
@@ -36,7 +36,7 @@ module Dependabot
                   :source,
                   :repo_contents_path,
                   :config_entry,
-                  :registries
+                  :credentials
     end
   end
 end

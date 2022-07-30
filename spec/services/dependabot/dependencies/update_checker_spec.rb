@@ -7,7 +7,7 @@ describe Dependabot::Dependencies::UpdateChecker, :integration, epic: :services,
       dependency_files: fetcher.files,
       config_entry: config_entry,
       repo_contents_path: nil,
-      registries: registries.values
+      credentials: credentials
     )
   end
 

@@ -6,7 +6,7 @@ describe Dependabot::Files::Fetcher, epic: :services, feature: :dependabot do
       project_name: project.name,
       config_entry: project.configuration.entry(package_ecosystem: "bundler"),
       repo_contents_path: nil,
-      registries: project.configuration.registries.select(".*")
+      credentials: project.configuration.registries.select(".*")
     )
   end
 
