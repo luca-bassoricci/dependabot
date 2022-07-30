@@ -139,7 +139,13 @@ If `env.dependabotUrl` in helm values or `SETTINGS__DEPENDABOT_URL` is not set, 
 - `Comments`
 - `Pipeline events`
 
-It is possible to set up system hooks on Gitlab instance level as well. Make sure `SETTINGS__CREATE_PROJECT_HOOK` is set to `false` so project specific hooks are not created automatically.
+### Authentication
+
+To use `Secret token` for payload validation, token needs to be configured using `SETTINGS__GITLAB_AUTH_TOKEN` environment variable.
+
+### System hook
+
+It is possible to set up system hooks on Gitlab instance level. Make sure `SETTINGS__CREATE_PROJECT_HOOK` is set to `false` so project specific hooks are not created automatically.
 
 # Security updates
 
