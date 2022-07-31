@@ -17,6 +17,8 @@ gem "puma", "~> 5.6"
 gem "rails", "~> 7.0.3"
 gem "rails-healthcheck", "~> 1.4"
 gem "rainbow", "~> 3.1"
+gem "request_store", "~> 1.5"
+gem "request_store-sidekiq", "~> 0.1.0"
 gem "semantic_range", "~> 3.0"
 gem "sentry-rails", "~> 5.4", require: false
 gem "sentry-ruby", "~> 5.4", require: false

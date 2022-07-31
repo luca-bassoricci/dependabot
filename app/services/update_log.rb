@@ -2,13 +2,6 @@
 
 class UpdateLog
   class << self
-    # Reset run logs
-    #
-    # @return [void]
-    def reset
-      Thread.current[:log] = []
-    end
-
     # Capture log entry
     #
     # @param [Hash] entry
@@ -21,9 +14,7 @@ class UpdateLog
     #
     # @return [Array<Hash>]
     def log
-      return reset unless Thread.current[:log]
-
-      Thread.current[:log]
+      RequestStore.fetch(:log) { [] }
     end
   end
 end
