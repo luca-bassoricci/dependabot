@@ -48,7 +48,7 @@ module ApplicationHelper
   #
   # @return [String]
   def execution_context
-    Thread.current[:context]
+    RequestStore.store[:context]
   end
 
   # Run block within execution context
@@ -56,13 +56,12 @@ module ApplicationHelper
   # @param [String] context
   # @return [void]
   def run_within_context(context)
-    Thread.current[:context] = context
+    RequestStore.store[:context] = context
 
     yield
   ensure
     # Clear current job execution context
-    # Sidekiq can reuse threads, should be cleared in case next job doesn't reset it
-    Thread.current[:context] = nil
+    RequestStore.clear!
   end
 
   module_function :gitlab,

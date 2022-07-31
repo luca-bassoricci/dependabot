@@ -46,10 +46,7 @@ class DependencyUpdateJob < ApplicationJob
   #
   # @return [void]
   def execute(&block)
-    unless AppConfig.standalone?
-      reset_execution_details
-      save_execution_time
-    end
+    save_execution_time unless AppConfig.standalone?
 
     run_within_context(job_execution_context, &block)
   end
@@ -59,11 +56,6 @@ class DependencyUpdateJob < ApplicationJob
   # @return [void]
   def save_execution_time
     update_job.last_executed = DateTime.now.utc
-  end
-
-  def reset_execution_details
-    UpdateFailures.reset
-    UpdateLog.reset
   end
 
   # Persist execution errors
