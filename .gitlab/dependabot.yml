@@ -17,4 +17,3 @@ updates:
     auto-merge: true
     ignore:
       - dependency-name: sentry-ruby
-      - dependency-name: sentry-sidekiq
