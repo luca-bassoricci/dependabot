@@ -52,6 +52,10 @@ group :test do
   gem "simplecov-console", "~> 0.9.1", require: false
 end
 
+group :test, :ci do
+  gem "license_finder", "~> 7.0"
+end
+
 group :development do
   gem "git", "~> 1.11", require: false
   gem "pry-rails", "~> 0.3.9"
