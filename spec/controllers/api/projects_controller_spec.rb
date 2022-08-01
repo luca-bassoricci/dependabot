@@ -36,17 +36,19 @@ describe Api::ProjectsController, :aggregate_failures, {
   end
 
   describe "#create" do
+    let(:project_access_token) { "test-token" }
+
     before do
       allow(Dependabot::Projects::Creator).to receive(:call) { project }
       allow(Cron::JobSync).to receive(:call).with(project)
     end
 
     it "creates project and jobs" do
-      post_json(path, { project: project.name })
+      post_json(path, { project: project.name, gitlab_access_token: project_access_token })
 
       expect_status(200)
       expect(response.body).to eq(project.to_hash.to_json)
-      expect(Dependabot::Projects::Creator).to have_received(:call).with(project.name)
+      expect(Dependabot::Projects::Creator).to have_received(:call).with(project.name, project_access_token)
       expect(Cron::JobSync).to have_received(:call).with(project)
     end
 

@@ -4,17 +4,14 @@ module Dependabot
   # Gitlab and Github credentials
   #
   class Credentials < ApplicationService
-    # Fetch credentials object
-    #
-    # @return [Array<Hash>]
-    def self.call
-      @credentials ||= new.credentials # rubocop:disable Naming/MemoizedInstanceVariableName
+    def initialize(gitlab_access_token)
+      @gitlab_access_token = gitlab_access_token
     end
 
     # Get credentials
     #
     # @return [Array<Hash>]
-    def credentials
+    def call
       [
         github_credentials,
         gitlab_credentials
@@ -22,6 +19,8 @@ module Dependabot
     end
 
     private
+
+    attr_reader :gitlab_access_token
 
     # Get github credentials
     #
@@ -49,7 +48,7 @@ module Dependabot
         "type" => "git_source",
         "host" => URI(AppConfig.gitlab_url).host,
         "username" => "x-access-token",
-        "password" => CredentialsConfig.gitlab_access_token
+        "password" => gitlab_access_token || CredentialsConfig.gitlab_access_token
       }
     end
   end

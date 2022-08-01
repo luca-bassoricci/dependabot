@@ -41,13 +41,9 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
     )
   end
 
-  let(:fetcher) do
-    instance_double("Dependabot::FileFetcher", files: "files", source: "source")
-  end
-
   let(:config) { project.configuration }
   let(:config_entry) { config.entry(package_ecosystem: "bundler") }
-  let(:credentials) { [*Dependabot::Credentials.call, *registries.values] }
+  let(:credentials) { [*Dependabot::Credentials.call(nil), *registries.values] }
 
   let(:branch) { "master" }
   let(:dependency_name) { nil }
@@ -98,7 +94,8 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
       project: project,
       fetcher: fetcher,
       config_entry: config_entry,
-      updated_dependency: updated_config
+      updated_dependency: updated_config,
+      credentials: credentials
     }
   end
 
@@ -107,7 +104,8 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
       project: project,
       fetcher: fetcher,
       config_entry: config_entry,
-      updated_dependency: updated_rspec
+      updated_dependency: updated_rspec,
+      credentials: credentials
     }
   end
 
@@ -151,7 +149,7 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
       )
       .and_return(updated_config)
 
-    allow(Gitlab).to receive(:client) { gitlab }
+    allow(Gitlab::ClientWithRetry).to receive(:current) { gitlab }
     allow(Gitlab::Vulnerabilities::IssueCreator).to receive(:call)
     allow(Dependabot::MergeRequest::CreateService).to receive(:call).and_return(mr)
   end
@@ -326,7 +324,7 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
             dependency_files: fetcher.files,
             config_entry: config_entry,
             repo_contents_path: nil,
-            credentials: [*Dependabot::Credentials.call, *registries.values]
+            credentials: credentials
           )
           .and_return(updated_puma)
 
@@ -336,7 +334,7 @@ describe Dependabot::UpdateService, :integration, epic: :services, feature: :dep
             dependency_files: fetcher.files,
             config_entry: config_entry,
             repo_contents_path: nil,
-            credentials: [*Dependabot::Credentials.call, *registries.values]
+            credentials: credentials
           )
           .and_return(updated_rails)
       end

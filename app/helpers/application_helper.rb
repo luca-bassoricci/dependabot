@@ -5,7 +5,17 @@ module ApplicationHelper
   #
   # @return [Gitlab::Client]
   def gitlab
-    @gitlab ||= Gitlab::ClientWithRetry.new
+    Gitlab::ClientWithRetry.current
+  end
+
+  # Find project by name
+  #
+  # @param [String] name
+  # @return [Project]
+  def find_project(name)
+    Project.find_by(name: name)
+  rescue Mongoid::Errors::DocumentNotFound
+    nil
   end
 
   # Log error message and backtrace

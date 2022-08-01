@@ -9,7 +9,7 @@ describe Gitlab::ConfigFile::Checker, epic: :services, feature: :gitlab do
   let(:file) { { file: "dependabot" } }
 
   before do
-    allow(Gitlab).to receive(:client) { gitlab }
+    allow(Gitlab::ClientWithRetry).to receive(:current) { gitlab }
     allow(gitlab).to receive(:get_file).with(project_name, DependabotConfig.config_filename, branch) { file }
   end
 

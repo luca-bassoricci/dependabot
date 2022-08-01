@@ -44,7 +44,7 @@ describe Dependabot::Projects::Registration::Service, integration: true, epic: :
   end
 
   before do
-    allow(Gitlab::Client).to receive(:new) { gitlab }
+    allow(Gitlab::ClientWithRetry).to receive(:current) { gitlab }
     allow(projects_response).to receive(:auto_paginate).and_yield(gitlab_project)
     allow(Dependabot::Projects::Creator).to receive(:call).with(gitlab_project.path_with_namespace) { project }
     allow(Cron::JobSync).to receive(:call).with(project)

@@ -33,6 +33,8 @@ module Dependabot
     #
     # @return [void]
     def call
+      init_gitlab
+
       Semaphore.synchronize { update }
     rescue Octokit::TooManyRequests
       raise TooManyRequestsError
@@ -120,7 +122,8 @@ module Dependabot
         project: project,
         fetcher: fetcher,
         config_entry: config_entry,
-        updated_dependency: dependency
+        updated_dependency: dependency,
+        credentials: credentials
       )&.iid
 
       mrs[type] << iid if iid

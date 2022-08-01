@@ -12,7 +12,6 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
   include_context "with dependabot helper"
 
   let(:gitlab) { instance_double("Gitlab::Client", merge_request: gitlab_mr, rebase_merge_request: nil) }
-  let(:fetcher) { instance_double("Dependabot::FileFetcher", files: "files", source: "source", commit: "commit") }
   let(:pr_updater) { instance_double("Dependabot::PullRequestUpdater", update: nil) }
   let(:dependencies) { [instance_double("Dependabot::Dependency", name: "config")] }
 
@@ -47,7 +46,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
   let(:mr) { project.merge_requests.first }
   let(:config_entry) { project.configuration.entry(package_ecosystem: "bundler") }
   let(:registries) { project.configuration.registries }
-  let(:credentials) { [*Dependabot::Credentials.call, *registries.select(".*")] }
+  let(:credentials) { [*Dependabot::Credentials.call(nil), *registries.select(".*")] }
   let(:update_to_versions) { updated_dependency.current_versions.gsub("config-", "") }
   let(:dependency_state) { Dependabot::Dependencies::UpdateChecker::HAS_UPDATES }
   let(:action) { Dependabot::MergeRequest::UpdateService::UPDATE }
@@ -91,7 +90,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
   end
 
   before do
-    allow(Gitlab).to receive(:client) { gitlab }
+    allow(Gitlab::ClientWithRetry).to receive(:current) { gitlab }
     allow(Dependabot::Files::Fetcher).to receive(:call)
       .with(
         project_name: project.name,

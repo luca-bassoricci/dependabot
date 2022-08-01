@@ -143,10 +143,6 @@ If `env.dependabotUrl` in helm values or `SETTINGS__DEPENDABOT_URL` is not set, 
 
 To use `Secret token` for payload validation, token needs to be configured using `SETTINGS__GITLAB_AUTH_TOKEN` environment variable.
 
-### System hook
-
-It is possible to set up system hooks on Gitlab instance level. Make sure `SETTINGS__CREATE_PROJECT_HOOK` is set to `false` so project specific hooks are not created automatically.
-
 # Security updates
 
 Application supports syncing with [GitHub Advisory Database](https://github.com/advisories) for security vulnerability data retrieval when performing dependency updates.
@@ -176,7 +172,7 @@ Since the job tries to register all of the projects where user associated with t
 
 Additionally option `SETTINGS__PROJECT_REGISTRATION_NAMESPACE` can restrict namespaces allowed to automatically register projects.
 
-### System hook
+### System webhook
 
 If [project registration option](doc/environment.md#project_registration) is set to `system_hook`, endpoint `api/project/registration` endpoint is enabled which listens for following [system hook](https://docs.gitlab.com/ee/system_hooks/system_hooks.html) events to automatically register projects:
 
@@ -186,6 +182,8 @@ If [project registration option](doc/environment.md#project_registration) is set
 - `project_transfer`
 
 Additionally option `SETTINGS__PROJECT_REGISTRATION_NAMESPACE` can restrict namespaces allowed to automatically register projects.
+
+If projects are registered using system webhook, `SETTINGS__CREATE_PROJECT_HOOK` should be set to `false` to disable project specific webhook automatic creation
 
 ## Manually
 
@@ -202,6 +200,10 @@ Project is removed from dependabot instance if dependabot.yml file is deleted fr
 ### Rake task
 
 [register](#register) rake task
+
+### Project access tokens
+
+Both `API` and `rake task` registration methods support registering project with specific gitlab access tokens.
 
 # Api endpoints
 
@@ -352,11 +354,15 @@ POST `/api/projects`
 
 Add new project or update existing one and sync jobs
 
+- `project` - full project path
+- `gitlab_access_token` - optional project specific gitlab access token
+
 Request:
 
 ```json
 {
-  "project": "dependabot-gitlab/dependabot"
+  "project": "dependabot-gitlab/dependabot",
+  "gitlab_access_token": "custom-project-access-token"
 }
 ```
 
@@ -426,7 +432,18 @@ Manually register project for updates. Repository must have valid dependabot con
 /home/dependabot/app$ bundle exec rake 'dependabot:register[project]'
 ```
 
-`project` - project full path, example: `dependabot-gitlab/dependabot`
+`project_name` - project full path or multiple space separated project full paths, example: `dependabot-gitlab/dependabot`
+
+## register with specific access token
+
+Manually register project for updates with specific gitlab access token
+
+```shell
+/home/dependabot/app$ bundle exec rake 'rake dependabot:register_project[project_name,access_token]'
+```
+
+- `project_name` - project full path, example: `dependabot-gitlab/dependabot`
+- `access_token` - project access token, example: [project access token](https://docs.gitlab.com/ee/user/project/settings/project_access_tokens.html)
 
 ## bulk register
 

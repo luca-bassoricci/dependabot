@@ -2,7 +2,10 @@
 
 module Gitlab
   module MergeRequest
-    class Creator < ApplicationService # rubocop:disable Metrics/ClassLength
+    # :reek:LongParameterList
+    # rubocop:disable Metrics/ClassLength, Metrics/ParameterLists
+
+    class Creator < ApplicationService
       MR_OPTIONS = %i[
         custom_labels
         branch_name_separator
@@ -14,11 +17,12 @@ module Gitlab
       # @param [Hash] config_entry
       # @param [Dependabot::UpdatedDependency] updated_dependency
       # @param [Number] target_project_id
-      def initialize(project:, fetcher:, config_entry:, updated_dependency:, target_project_id:)
+      def initialize(project:, fetcher:, config_entry:, updated_dependency:, credentials:, target_project_id:)
         @project = project
         @fetcher = fetcher
         @config_entry = config_entry
         @updated_dependency = updated_dependency
+        @credentials = credentials
         @target_project_id = target_project_id
       end
 
@@ -46,6 +50,7 @@ module Gitlab
                   :fetcher,
                   :updated_dependency,
                   :config_entry,
+                  :credentials,
                   :target_project_id,
                   :mr
 
@@ -58,7 +63,7 @@ module Gitlab
           base_commit: fetcher.commit,
           dependencies: updated_dependency.updated_dependencies,
           files: updated_dependency.updated_files,
-          credentials: Dependabot::Credentials.call,
+          credentials: credentials,
           github_redirection_service: "github.com",
           pr_message_footer: AppConfig.standalone ? nil : message_footer,
           automerge_candidate: updated_dependency.auto_mergeable?,
@@ -201,4 +206,5 @@ module Gitlab
       end
     end
   end
+  # rubocop:enable Metrics/ClassLength, Metrics/ParameterLists
 end

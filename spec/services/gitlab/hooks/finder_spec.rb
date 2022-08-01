@@ -7,7 +7,7 @@ describe Gitlab::Hooks::Finder, epic: :services, feature: :gitlab do
   let(:id) { 1 }
 
   before do
-    allow(Gitlab).to receive(:client) { gitlab }
+    allow(Gitlab::ClientWithRetry).to receive(:current) { gitlab }
     allow(gitlab).to receive(:project_hooks).with(project_name).and_return(
       Gitlab::ObjectifiedHash.new(auto_paginate: [{ id: id, url: hook_url }])
     )

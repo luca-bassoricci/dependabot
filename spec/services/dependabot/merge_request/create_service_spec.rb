@@ -39,6 +39,7 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
   let(:target_project_id) { nil }
   let(:commit_message) { "update-commit" }
   let(:conflicts) { false }
+  let(:credentials) { Dependabot::Credentials.call(nil) }
 
   let(:existing_mr) { mr }
   let(:closed_mr) { nil }
@@ -74,13 +75,14 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
       fetcher: fetcher,
       updated_dependency: updated_dependency,
       config_entry: config_entry,
+      credentials: credentials,
       target_project_id: target_project_id
     }
   end
 
   let(:updater_args) do
     {
-      credentials: Dependabot::Credentials.call,
+      credentials: credentials,
       source: fetcher.source,
       base_commit: fetcher.commit,
       old_commit: commit_message,
@@ -96,12 +98,13 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
       fetcher: fetcher,
       config_entry: config_entry,
       recreate: recreate,
-      updated_dependency: updated_dependency
+      updated_dependency: updated_dependency,
+      credentials: credentials
     )
   end
 
   before do
-    allow(Gitlab).to receive(:client) { gitlab }
+    allow(Gitlab::ClientWithRetry).to receive(:current) { gitlab }
     allow(Gitlab::MergeRequest::Finder).to receive(:call).with(
       project: project.name,
       source_branch: source_branch,

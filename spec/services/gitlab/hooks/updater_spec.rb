@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe Gitlab::Hooks::Updater, epic: :services, feature: :gitlab do
-  let(:gitlab) { instance_double("Gitlab::Client") }
+  let(:gitlab) { instance_double("Gitlab::Client", edit_project_hook: Gitlab::ObjectifiedHash.new(id: id)) }
   let(:project_name) { "project name" }
   let(:branch) { "master" }
   let(:token) { "token" }
@@ -11,8 +11,7 @@ describe Gitlab::Hooks::Updater, epic: :services, feature: :gitlab do
 
   before do
     allow(CredentialsConfig).to receive(:gitlab_auth_token) { token }
-    allow(Gitlab).to receive(:client) { gitlab }
-    allow(gitlab).to receive(:edit_project_hook) { Gitlab::ObjectifiedHash.new(id: id) }
+    allow(Gitlab::ClientWithRetry).to receive(:current) { gitlab }
   end
 
   it "updates existing webhook" do

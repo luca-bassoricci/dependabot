@@ -8,7 +8,7 @@ describe Gitlab::UserFinder, epic: :services, feature: :gitlab do
   let(:user2) { Gitlab::ObjectifiedHash.new(id: 2, username: "test2") }
 
   before do
-    allow(Gitlab::Client).to receive(:new) { gitlab }
+    allow(Gitlab::ClientWithRetry).to receive(:current) { gitlab }
   end
 
   context "with existing user" do

@@ -24,7 +24,7 @@ describe Dependabot::Dependencies::UpdateChecker, :integration, epic: :services,
   let(:can_update_none_unlock) { true }
   let(:versioning_strategy) { :bump_versions }
   let(:can_update) { true }
-  let(:credentials) { [*Dependabot::Credentials.call, *registries.values] }
+  let(:credentials) { [*Dependabot::Credentials.call(nil), *registries.values] }
   let(:advisories) { [] }
 
   let(:skipped_dep) do

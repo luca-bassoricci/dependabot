@@ -10,11 +10,11 @@ describe Dependabot::Config::Fetcher, epic: :services, feature: :configuration d
   let(:config) { Configuration.new(updates: updates_config, registries: registries) }
 
   let(:gitlab) do
-    instance_double("Gitlab::client", project: Gitlab::ObjectifiedHash.new(default_branch: default_branch))
+    instance_double("Gitlab::Client", project: Gitlab::ObjectifiedHash.new(default_branch: default_branch))
   end
 
   before do
-    allow(Gitlab).to receive(:client) { gitlab }
+    allow(Gitlab::ClientWithRetry).to receive(:current) { gitlab }
     allow(Gitlab::ConfigFile::Fetcher).to receive(:call) { raw_config }
   end
 

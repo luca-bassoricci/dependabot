@@ -25,14 +25,21 @@ namespace :dependabot do # rubocop:disable Metrics/BlockLength
     exit(1)
   end
 
-  desc "Add dependency updates for project"
+  desc "Add dependency updates for projects"
   task(:register, [:projects] => :environment) do |_task, args|
     args[:projects].split(" ").each do |project_name|
       ApplicationHelper.log(:info, "Registering project '#{project_name}'")
-      Dependabot::Projects::Creator.call(project_name).tap do |project|
-        Cron::JobSync.call(project)
-      end
+      Dependabot::Projects::Creator.call(project_name).tap { |project| Cron::JobSync.call(project) }
     end
+  end
+
+  desc "Register project for dependency updates with specific gitlab access token"
+  task(:register_project, %i[project_name access_token] => :environment) do |_task, args|
+    project_name = args[:project_name]
+    access_token = args[:access_token]
+
+    ApplicationHelper.log(:info, "Registering project '#{project_name}'")
+    Dependabot::Projects::Creator.call(project_name, access_token).tap { |project| Cron::JobSync.call(project) }
   end
 
   desc "Run automatic project registration"

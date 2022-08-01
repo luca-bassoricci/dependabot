@@ -19,6 +19,8 @@ module Dependabot
       # @return [void]
       def call
         log(:info, "Running update for merge request !#{mr_iid}")
+        init_gitlab
+
         return skip_mr unless updateable?
         return rebase_mr unless recreate? || gitlab_mr["has_conflicts"]
 
