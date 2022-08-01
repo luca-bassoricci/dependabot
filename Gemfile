@@ -21,7 +21,6 @@ gem "request_store", "~> 1.5"
 gem "request_store-sidekiq", "~> 0.1.0"
 gem "semantic_range", "~> 3.0"
 gem "sentry-rails", "~> 5.4", require: false
-gem "sentry-ruby", "~> 5.4", require: false
 gem "sentry-sidekiq", "~> 5.4", require: false
 gem "sidekiq", "~> 6.5.1"
 gem "sidekiq_alive", "~> 2.1", require: false
