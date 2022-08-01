@@ -8,7 +8,7 @@ describe Gitlab::MilestoneFinder, epic: :services, feature: :gitlab do
   let(:milestone) { Gitlab::ObjectifiedHash.new(id: 1) }
 
   before do
-    allow(Gitlab::Client).to receive(:new) { gitlab }
+    allow(Gitlab::ClientWithRetry).to receive(:current) { gitlab }
     allow(gitlab).to receive(:milestones)
       .with(project_name, title: title, include_parent_milestones: true)
       .and_return(milestones)

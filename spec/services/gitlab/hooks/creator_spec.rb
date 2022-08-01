@@ -20,7 +20,7 @@ describe Gitlab::Hooks::Creator, epic: :services, feature: :gitlab do
   end
 
   before do
-    allow(Gitlab).to receive(:client) { gitlab }
+    allow(Gitlab::ClientWithRetry).to receive(:current) { gitlab }
     allow(gitlab).to receive(:add_project_hook) { Gitlab::ObjectifiedHash.new(id: id) }
   end
 

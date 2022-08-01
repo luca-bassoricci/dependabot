@@ -6,14 +6,17 @@ module Dependabot
     #
     class Creator < ApplicationService
       # @param [String] project_name
-      def initialize(project_name)
+      def initialize(project_name, access_token = nil)
         @project_name = project_name
+        @access_token = access_token
       end
 
       # Create or update existing project
       #
       # @return [Project] response info
       def call
+        Gitlab::ClientWithRetry.client_access_token = access_token if access_token
+
         validate_project_exists
 
         save_webhook
@@ -22,7 +25,7 @@ module Dependabot
 
       private
 
-      attr_reader :project_name
+      attr_reader :project_name, :access_token
 
       # Save webhook if dependabot url is configured
       #
@@ -46,6 +49,7 @@ module Dependabot
         project.id = gitlab_project.id
         project.web_url = gitlab_project.web_url
         project.configuration = config if config
+        project.gitlab_access_token = access_token if access_token
         project.forked_from_id = forked_from[:forked_from_id]
         project.forked_from_name = forked_from[:forked_from_name]
         project.save!
@@ -57,11 +61,7 @@ module Dependabot
       #
       # @return [Project]
       def project
-        @project ||= begin
-          Project.find_by(name: project_name)
-        rescue Mongoid::Errors::DocumentNotFound
-          Project.new(name: project_name)
-        end
+        @project ||= Project.find_or_initialize_by(name: project_name)
       end
 
       # Dependabot configuration

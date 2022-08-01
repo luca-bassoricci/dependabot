@@ -5,7 +5,7 @@ describe Dependabot::Files::Parser, epic: :services, feature: :dependabot do
 
   let(:parser) { instance_double("Dependabot::Bundler::FileParser", parse: nil) }
   let(:config_entry) { updates_config.first }
-  let(:credentials) { [*Dependabot::Credentials.call, *registries.values] }
+  let(:credentials) { [*Dependabot::Credentials.call(nil), *registries.values] }
 
   let(:args) do
     {

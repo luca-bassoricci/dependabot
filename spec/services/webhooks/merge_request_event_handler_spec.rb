@@ -83,7 +83,7 @@ describe Webhooks::MergeRequestEventHandler, integration: true, epic: :services,
   end
 
   before do
-    allow(Gitlab).to receive(:client) { gitlab }
+    allow(Gitlab::ClientWithRetry).to receive(:current) { gitlab }
     allow(MergeRequestUpdateJob).to receive(:perform_later)
   end
 

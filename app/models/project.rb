@@ -14,6 +14,8 @@
 #   @return [Integer]
 # @!attribute web_url
 #   @return [String]
+# @!attribute gitlab_access_token
+#   @return [String]
 # @!attribute merge_requests
 #   @return [Array<MergeRequest>]
 # @!attribute vulnerability_issues
@@ -33,6 +35,7 @@ class Project
   field :forked_from_name, type: String
   field :webhook_id, type: Integer
   field :web_url, type: String
+  field :gitlab_access_token, type: EncryptedString
 
   has_many :merge_requests, dependent: :destroy
   has_many :vulnerability_issues, dependent: :destroy

@@ -39,7 +39,7 @@ describe Webhooks::PipelineEventHandler, integration: true, epic: :services, fea
   # rubocop:enable Metrics/ParameterLists
 
   before do
-    allow(Gitlab::Client).to receive(:new) { gitlab }
+    allow(Gitlab::ClientWithRetry).to receive(:current) { gitlab }
   end
 
   context "with actionable conditions" do

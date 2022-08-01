@@ -8,7 +8,7 @@ describe Gitlab::MergeRequest::DiscussionReplier, epic: :services, feature: :git
   let(:note) { "test" }
 
   before do
-    allow(Gitlab::Client).to receive(:new) { gitlab }
+    allow(Gitlab::ClientWithRetry).to receive(:current) { gitlab }
   end
 
   it "adds reply to merge request note" do

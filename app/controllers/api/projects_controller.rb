@@ -21,7 +21,7 @@ module Api
     # @return [String]
     def create
       log(:info, "Registering project '#{project_name}'")
-      project = Dependabot::Projects::Creator.call(project_name)
+      project = Dependabot::Projects::Creator.call(project_name, params[:gitlab_access_token])
       Cron::JobSync.call(project)
       json_response(body: project.to_hash)
     rescue ActionController::ParameterMissing

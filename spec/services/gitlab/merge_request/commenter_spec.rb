@@ -7,7 +7,7 @@ describe Gitlab::MergeRequest::Commenter, epic: :services, feature: :gitlab do
   let(:comment) { "This is a comment!" }
 
   before do
-    allow(Gitlab::Client).to receive(:new) { gitlab }
+    allow(Gitlab::ClientWithRetry).to receive(:current) { gitlab }
   end
 
   it "adds note to merge request" do

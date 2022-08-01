@@ -2,48 +2,35 @@
 
 module Gitlab
   class ClientWithRetry
-    RETRYABLE_ERRORS = [
-      # gitlab might often fail to accept mr due to pipeline not starting fast enough
-      Gitlab::Error::MethodNotAllowed,
-      Gitlab::Error::NotAcceptable,
-      Gitlab::Error::BadGateway
-    ].freeze
-
-    delegate :log, to: :ApplicationHelper
-
-    def initialize
-      @max_retries = 2
-      @client = Gitlab.client(
-        endpoint: "#{AppConfig.gitlab_url}/api/v4",
-        private_token: CredentialsConfig.gitlab_access_token
-      )
-    end
-
-    private
-
-    # :reek:ManualDispatch
-    def method_missing(method_name, *args, &block)
-      retry_connection_failures do
-        @client.respond_to?(method_name) ? @client.public_send(method_name, *args, &block) : super
+    class << self
+      # Fetch currently stored gitlab client or return client with globally configured token
+      #
+      # @return [Gitlab::Client]
+      def current
+        RequestStore.fetch(:gitlab_client) { client(CredentialsConfig.gitlab_access_token) }
       end
-    end
 
-    # :reek:ManualDispatch
-    def respond_to_missing?(method_name, *)
-      @client.respond_to?(method_name) || super
-    end
+      # :reek:ControlParameter
 
-    def retry_connection_failures
-      retry_attempt = 0
+      # Store gitlab client with specific access token
+      #
+      # @param [String] access_token
+      # @return [Gitlab::Client]
+      def client_access_token=(access_token)
+        RequestStore.store[:gitlab_client] ||= client(access_token || CredentialsConfig.gitlab_access_token)
+      end
 
-      begin
-        yield
-      rescue *RETRYABLE_ERRORS => e
-        retry_attempt += 1
-        raise unless retry_attempt <= @max_retries
+      private
 
-        log(:warn, "Gitlab request failed with: '#{e}'. Retrying...")
-        retry
+      # Gitlab client with retries
+      #
+      # @param [String] access_token
+      # @return [Gitlab::Client]
+      def client(access_token)
+        Dependabot::Clients::GitlabWithRetries.new(
+          endpoint: "#{AppConfig.gitlab_url}/api/v4",
+          private_token: access_token
+        )
       end
     end
   end

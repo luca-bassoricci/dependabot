@@ -21,7 +21,7 @@ describe Dependabot::Projects::Creator, integration: true, epic: :services, feat
     YAML
   end
 
-  let(:gitlab) { instance_double("Gitlab::client") }
+  let(:gitlab) { instance_double("Gitlab::Client") }
   let(:project) { build(:project, config_yaml: config_yaml) }
   let(:branch) { "master" }
   let(:hook_id) { Faker::Number.number(digits: 10) }
@@ -44,7 +44,7 @@ describe Dependabot::Projects::Creator, integration: true, epic: :services, feat
   end
 
   before do
-    allow(Gitlab).to receive(:client) { gitlab }
+    allow(Gitlab::ClientWithRetry).to receive(:current) { gitlab }
     allow(gitlab).to receive(:project).with(project.name) { gitlab_project }
     allow(Gitlab::ConfigFile::Checker).to receive(:call).with(project.name, branch) { config_exists? }
     allow(Gitlab::ConfigFile::Fetcher).to receive(:call).with(project.name, branch) { config_yaml }

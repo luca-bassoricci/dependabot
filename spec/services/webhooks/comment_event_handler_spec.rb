@@ -19,7 +19,7 @@ describe Webhooks::CommentEventHandler, :integration, epic: :services, feature: 
   let(:discussion_id) { "11r4" }
 
   before do
-    allow(Gitlab::Client).to receive(:new) { gitlab }
+    allow(Gitlab::ClientWithRetry).to receive(:current) { gitlab }
     allow(Gitlab::MergeRequest::DiscussionReplier).to receive(:call)
   end
 

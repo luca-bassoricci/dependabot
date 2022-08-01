@@ -58,6 +58,24 @@ describe "rake", epic: :tasks do # rubocop:disable RSpec/DescribeClass
     end
   end
 
+  describe "dependabot:register_project", integration: true do
+    let(:project_name) { "test-project" }
+    let(:project_access_token) { "test-token" }
+    let(:project) { Project.new(name: project_name) }
+
+    before do
+      allow(Dependabot::Projects::Creator).to receive(:call) { project }
+      allow(Cron::JobSync).to receive(:call).with(project).and_call_original
+    end
+
+    it "registers new project" do
+      task.invoke(project_name, project_access_token)
+
+      expect(Dependabot::Projects::Creator).to have_received(:call).with(project_name, project_access_token)
+      expect(Cron::JobSync).to have_received(:call).with(project)
+    end
+  end
+
   describe "dependabot:automatic_registration" do
     before do
       allow(ProjectRegistrationJob).to receive(:perform_now)

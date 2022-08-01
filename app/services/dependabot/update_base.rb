@@ -23,6 +23,13 @@ module Dependabot
       Project.find_by(name: project_name)
     end
 
+    # Set gitlab client token
+    #
+    # @return [void]
+    def init_gitlab
+      Gitlab::ClientWithRetry.client_access_token = project.gitlab_access_token
+    end
+
     # All project dependencies
     #
     # @return [Array<Dependabot::Dependency>]
@@ -86,7 +93,10 @@ module Dependabot
     #
     # @return [Array<Hash>]
     def credentials
-      @credentials ||= [*Credentials.call, *registries]
+      @credentials ||= [
+        *Credentials.call(project.gitlab_access_token),
+        *registries
+      ]
     end
 
     # Allowed private registries

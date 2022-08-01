@@ -1,27 +1,37 @@
 # frozen_string_literal: true
 
 describe Gitlab::ClientWithRetry, epic: :services, feature: :gitlab do
-  subject(:client) { described_class.new }
+  subject(:client) { described_class }
 
-  let(:gitlab) { instance_double("Gitlab::client") }
+  include_context "with dependabot helper"
+
+  let(:gitlab) { "gitlab_client" }
+  let(:store) { {} }
 
   before do
-    allow(Gitlab).to receive(:client) { gitlab }
-    allow(gitlab).to receive(:get_file).and_raise(
-      Gitlab::Error::BadGateway.new(
-        Gitlab::ObjectifiedHash.new(
-          code: 500,
-          parsed_response: "Failure",
-          request: { base_uri: "gitlab.com", path: "/get_file" }
-        )
-      )
-    )
+    allow(RequestStore).to receive(:store) { store }
+    allow(Dependabot::Clients::GitlabWithRetries).to receive(:new) { gitlab }
   end
 
-  it "retries gitlab request" do
-    aggregate_failures do
-      expect { client.get_file }.to raise_error(Gitlab::Error::BadGateway)
-      expect(gitlab).to have_received(:get_file).exactly(3).times
+  context "with default client" do
+    it "fetches current gitlab client" do
+      expect(client.current).to eq(gitlab)
+    end
+  end
+
+  context "with stored gitlab client" do
+    let(:token) { "test-token" }
+
+    before do
+      client.client_access_token = token
+    end
+
+    it "fetches stored client" do
+      expect(client.current).to eq(gitlab)
+      expect(Dependabot::Clients::GitlabWithRetries).to have_received(:new).with(
+        endpoint: "#{AppConfig.gitlab_url}/api/v4",
+        private_token: token
+      )
     end
   end
 end

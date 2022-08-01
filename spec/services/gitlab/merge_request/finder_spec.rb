@@ -18,7 +18,7 @@ describe Gitlab::MergeRequest::Finder, epic: :services, feature: :gitlab do
   end
 
   before do
-    allow(Gitlab::Client).to receive(:new) { gitlab }
+    allow(Gitlab::ClientWithRetry).to receive(:current) { gitlab }
   end
 
   it "returns merge request" do

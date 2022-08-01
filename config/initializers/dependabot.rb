@@ -4,10 +4,12 @@ require "dependabot/pull_request_updater"
 
 Dependabot::Utils.register_always_clone("go_modules")
 
-# Patch dependabot mention sanitizer so it removes direct mentions
-# Core implementation does this for github only
+# Dependabot patches
 #
 module Dependabot
+  # Patch dependabot mention sanitizer so it removes direct mentions
+  # Core implementation does this for github only
+  #
   class PullRequestCreator
     class MessageBuilder
       class MetadataPresenter
@@ -19,11 +21,7 @@ module Dependabot
       end
     end
   end
-end
 
-# PR updater patch
-#
-module Dependabot
   class PullRequestUpdater
     class Gitlab
       # Hacky method override to be able to pass old commit message directly to pr updater
@@ -141,6 +139,28 @@ module Dependabot
           next hsh[key] = value unless ::Registries::AUTH_FIELDS.any? { |name| name == key }
 
           hsh[key] = "*****"
+        end
+      end
+    end
+  end
+
+  module Clients
+    # Add additional logging and retryable errors
+    #
+    class GitlabWithRetries
+      delegate :log, to: :ApplicationHelper
+
+      def retry_connection_failures
+        retry_attempt = 0
+
+        begin
+          yield
+        rescue Gitlab::Error::MethodNotAllowed, Gitlab::Error::NotAcceptable, *RETRYABLE_ERRORS => e
+          retry_attempt += 1
+          raise unless retry_attempt <= @max_retries
+
+          log(:warn, "Gitlab request failed with: '#{e}'. Retrying...")
+          retry
         end
       end
     end

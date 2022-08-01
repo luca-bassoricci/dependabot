@@ -6,7 +6,7 @@ describe Gitlab::BranchRemover, epic: :services, feature: :gitlab do
   let(:branch) { "branch-name" }
 
   before do
-    allow(Gitlab::Client).to receive(:new) { gitlab }
+    allow(Gitlab::ClientWithRetry).to receive(:current) { gitlab }
   end
 
   context "when branch exists" do

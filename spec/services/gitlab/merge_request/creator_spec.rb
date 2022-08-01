@@ -7,6 +7,7 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
       fetcher: fetcher,
       config_entry: config_entry,
       updated_dependency: updated_dependency,
+      credentials: credentials,
       target_project_id: nil
     )
   end
@@ -44,6 +45,7 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
 
   let(:project) { create(:project, config_yaml: config_yaml, name: project_name, forked_from_id: 1) }
 
+  let(:credentials) { Dependabot::Credentials.call(nil) }
   let(:config_entry) { project.configuration.entry(package_ecosystem: "bundler") }
   let(:commit_message) { "commit-message" }
   let(:source_branch) { "dependabot-bundler-.-master-config-2.2.1" }
@@ -92,7 +94,7 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
       base_commit: fetcher.commit,
       dependencies: updated_dependencies,
       files: updated_files,
-      credentials: Dependabot::Credentials.call,
+      credentials: credentials,
       github_redirection_service: "github.com",
       pr_message_footer: footer,
       provider_metadata: { target_project_id: nil },

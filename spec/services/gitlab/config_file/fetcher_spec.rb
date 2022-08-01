@@ -9,7 +9,7 @@ describe Gitlab::ConfigFile::Fetcher, epic: :services, feature: :gitlab do
   let(:raw_config) { "dependabot.yml contents" }
 
   before do
-    allow(Gitlab).to receive(:client) { gitlab }
+    allow(Gitlab::ClientWithRetry).to receive(:current) { gitlab }
     allow(gitlab).to receive(:file_contents).with(project_name, DependabotConfig.config_filename, branch) { raw_config }
   end
 

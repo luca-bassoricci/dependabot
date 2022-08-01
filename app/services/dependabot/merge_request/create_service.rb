@@ -3,7 +3,9 @@
 module Dependabot
   # :reek:InstanceVariableAssumption
   # :reek:RepeatedConditional
-  # rubocop:disable Metrics/ClassLength
+  # :reek:LongParameterList
+
+  # rubocop:disable Metrics/ClassLength, Metrics/ParameterLists
   module MergeRequest
     class CreateService < ApplicationService
       using Rainbow
@@ -12,12 +14,14 @@ module Dependabot
       # @param [Project] project
       # @param [Hash] config_entry
       # @param [Dependabot::Dependencies::UpdatedDependency] updated_dependency
+      # @param [Array] credentials
       # @param [Boolean] recreate
-      def initialize(fetcher:, project:, config_entry:, updated_dependency:, recreate: false)
+      def initialize(fetcher:, project:, config_entry:, updated_dependency:, credentials:, recreate: false)
         @fetcher = fetcher
         @project = project
         @config_entry = config_entry
         @updated_dependency = updated_dependency
+        @credentials = credentials
         @recreate = recreate
       end
 
@@ -48,6 +52,7 @@ module Dependabot
                   :fetcher,
                   :updated_dependency,
                   :config_entry,
+                  :credentials,
                   :recreate
 
       # Create mr
@@ -77,7 +82,7 @@ module Dependabot
         return rebase_mr unless recreate || mr["has_conflicts"]
 
         Dependabot::PullRequestUpdater.new(
-          credentials: Dependabot::Credentials.call,
+          credentials: credentials,
           source: fetcher.source,
           base_commit: fetcher.commit,
           old_commit: mr_creator.commit_message,
@@ -129,6 +134,20 @@ module Dependabot
         @mr ||= find_mr("opened")
       end
 
+      # MR creator service
+      #
+      # @return [Gitlab::MergeRequest::Creator]
+      def mr_creator
+        @mr_creator ||= Gitlab::MergeRequest::Creator.new(
+          project: project,
+          fetcher: fetcher,
+          updated_dependency: updated_dependency,
+          config_entry: config_entry,
+          credentials: credentials,
+          target_project_id: target_project_id
+        )
+      end
+
       # Automatically rebase MRs with conflicts only
       #
       # @return [Boolean]
@@ -161,20 +180,7 @@ module Dependabot
           state: state
         )
       end
-
-      # MR creator service
-      #
-      # @return [Gitlab::MergeRequest::Creator]
-      def mr_creator
-        @mr_creator ||= Gitlab::MergeRequest::Creator.new(
-          project: project,
-          fetcher: fetcher,
-          updated_dependency: updated_dependency,
-          config_entry: config_entry,
-          target_project_id: target_project_id
-        )
-      end
-      # rubocop:enable Metrics/ClassLength
+      # rubocop:enable Metrics/ClassLength, Metrics/ParameterLists
     end
   end
 end

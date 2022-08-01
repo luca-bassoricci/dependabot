@@ -12,9 +12,9 @@ class DependencyUpdateJob < ApplicationJob
   # @return [Array]
   def perform(args)
     symbolized_args = args.symbolize_keys
-    @project, @package_ecosystem, @directory = symbolized_args
-                                               .slice(:project_name, :package_ecosystem, :directory)
-                                               .values
+    @project_name, @package_ecosystem, @directory = symbolized_args
+                                                    .slice(:project_name, :package_ecosystem, :directory)
+                                                    .values
 
     execute { Dependabot::UpdateService.call(symbolized_args) }
 
@@ -28,13 +28,13 @@ class DependencyUpdateJob < ApplicationJob
 
   private
 
-  attr_reader :project, :package_ecosystem, :directory
+  attr_reader :project_name, :package_ecosystem, :directory
 
   # Update job
   #
   # @return [UpdateJob]
   def update_job
-    @update_job ||= Project.find_or_initialize_by(name: project)
+    @update_job ||= Project.find_or_initialize_by(name: project_name)
                            .update_jobs
                            .find_or_initialize_by(
                              package_ecosystem: package_ecosystem,
@@ -73,9 +73,9 @@ class DependencyUpdateJob < ApplicationJob
   #
   # @return [String]
   def job_execution_context
-    return unless project && package_ecosystem && directory
+    return unless project_name && package_ecosystem && directory
 
-    context_values = [project, package_ecosystem]
+    context_values = [project_name, package_ecosystem]
     context_values << directory unless directory == "/"
 
     "dependency-update: #{context_values.join('=>')}"

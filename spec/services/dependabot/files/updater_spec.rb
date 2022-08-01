@@ -14,7 +14,7 @@ describe Dependabot::Files::Updater, epic: :services, feature: :dependabot do
   include_context "with dependabot helper"
 
   let(:updater) { instance_double("Dependabot::Bundler::FileUpdater") }
-  let(:credentials) { Dependabot::Credentials.call }
+  let(:credentials) { Dependabot::Credentials.call(nil) }
   let(:files) { fetcher.files }
   let(:config_entry) { updates_config.first }
 
