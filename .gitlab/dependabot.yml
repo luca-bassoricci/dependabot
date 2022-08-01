@@ -15,5 +15,3 @@ updates:
     reviewers:
       - andrcuns
     auto-merge: true
-    ignore:
-      - dependency-name: sentry-ruby
