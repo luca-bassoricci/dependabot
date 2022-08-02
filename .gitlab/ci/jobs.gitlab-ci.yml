@@ -125,6 +125,18 @@ include:
   stage: static analysis
   extends: gemnasium-dependency_scanning
 
+.license_scan:
+  stage: static analysis
+  extends: .ruby_runner
+  script:
+    - bundle exec license_finder ignored_groups add ci
+    - bundle exec license_finder report --enabled-package-managers=bundler --format=json --save=gl-license-scanning-report.json
+  cache:
+    - *gem_cache
+  artifacts:
+    reports:
+      license_scanning: gl-license-scanning-report.json
+
 # ----------------------------------------------------------------------------------------------------------------------
 # test stage
 #

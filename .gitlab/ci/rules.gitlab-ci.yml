@@ -21,6 +21,9 @@
   - Gemfile.lock
   - Rakefile
 
+.dependency_changes: &dependency_changes
+  - Gemfile.lock
+
 # ======================================================================================================================
 # Rules
 # ======================================================================================================================
@@ -47,9 +50,13 @@
   rules:
     - *main
     - <<: *mr
-      changes:
-        - Gemfile
-        - Gemfile.lock
+      changes: *dependency_changes
+
+.rules:license-scan:
+  rules:
+    - *main
+    - <<: *mr
+      changes: *dependency_changes
 
 .rules:container-scan:
   rules:
