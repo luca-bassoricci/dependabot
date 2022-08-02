@@ -25,6 +25,7 @@ variables:
   SAST_DISABLED: "true"
   CONTAINER_SCANNING_DISABLED: "true"
   CODE_QUALITY_DISABLED: "true"
+  LICENSE_MANAGEMENT_DISABLED: "true"
 
 include:
   - local: .gitlab/ci/jobs.gitlab-ci.yml
@@ -67,22 +68,19 @@ brakeman:
   extends:
     - .brakeman
     - .rules:main
-  needs:
-    - cache-dependencies
+  needs: []
 
 dependency-scan:
   extends:
     - .dependency_scan
     - .rules:dependency-scan
-  needs:
-    - cache-dependencies
+  needs: []
 
 license-scan:
   extends:
     - .license_scan
     - .rules:license-scan
-  needs:
-    - cache-dependencies
+  needs: []
 
 # ======================================================================================================================
 # Test Stage
