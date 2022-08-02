@@ -1,6 +1,7 @@
 include:
   - template: Dependency-Scanning.gitlab-ci.yml
   - template: Security/SAST.gitlab-ci.yml
+  - template: Security/License-Scanning.gitlab-ci.yml
   - project: dependabot-gitlab/ci-images
     file: .gitlab/ci/runners.gitlab-ci.yml
 
@@ -127,15 +128,16 @@ include:
 
 .license_scan:
   stage: static analysis
-  extends: .ruby_runner
-  script:
-    - bundle exec license_finder ignored_groups add ci
-    - bundle exec license_finder report --enabled-package-managers=bundler --format=json --save=gl-license-scanning-report.json
+  extends: license_scanning
+  variables:
+    LICENSE_FINDER_CLI_OPTS: --enabled-package-managers=bundler
   cache:
-    - *gem_cache
-  artifacts:
-    reports:
-      license_scanning: gl-license-scanning-report.json
+    key:
+      prefix: license
+      files:
+        - Gemfile.lock
+    paths:
+      - .gitlab/cache
 
 # ----------------------------------------------------------------------------------------------------------------------
 # test stage
