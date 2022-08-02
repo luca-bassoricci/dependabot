@@ -42,8 +42,9 @@ module ApplicationHelper
   # @param [String] message
   # @param [Array] tags
   # @return [void]
-  def log(level, message = nil, tags: [], &block)
-    Rails.logger.tagged([execution_context, *tags].compact).send(level, message, &block)
+  def log(level, message, tags: [])
+    Rails.logger.tagged([execution_context, *tags].compact).send(level, message)
+    UpdateLog.add({ timestamp: Time.zone.now, level: level, message: message.strip.capitalize })
   end
 
   # All project cron jobs
@@ -69,9 +70,6 @@ module ApplicationHelper
     RequestStore.store[:context] = context
 
     yield
-  ensure
-    # Clear current job execution context
-    RequestStore.clear!
   end
 
   module_function :gitlab,

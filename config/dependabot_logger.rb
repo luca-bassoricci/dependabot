@@ -17,9 +17,6 @@ class DependabotLogger
     def call(severity, time, _program_name, message)
       prefix = "[#{time}#{thread}] #{severity.ljust(5)} -- "
 
-      # Save log messages in thread local variable to save in database
-      UpdateLog.add({ timestamp: time, severity: severity, message: message }) if ctx[:class] == "DependencyUpdateJob"
-
       Rainbow(prefix).send(LOG_COLORS.fetch(severity, :silver)) + "#{message}\n"
     end
 
