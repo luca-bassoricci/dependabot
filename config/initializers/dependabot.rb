@@ -101,11 +101,9 @@ module Dependabot
     # @param [Hash] args
     # @return [void]
     def self.log_helper_result(level, error_context, response)
-      ApplicationHelper.log(level, tags: ["core"]) do
-        debug_message = error_context.merge({ response: response, args: sanitize_args(error_context[:args]) })
+      debug_message = error_context.merge({ response: response, args: sanitize_args(error_context[:args]) })
 
-        "Helpers output:\n#{JSON.pretty_generate(debug_message)}"
-      end
+      ApplicationHelper.log(level, message: "Helpers output:\n#{JSON.pretty_generate(debug_message)}", tags: ["core"])
     rescue StandardError => e
       ApplicationHelper.log(:debug, "Failed to log helper result: #{e}", tags: ["core"])
     end
