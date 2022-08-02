@@ -113,7 +113,7 @@ describe "dependency updates", :system, type: :system, epic: :system, feature: "
         expect(mrs.map(&:main_dependency)).to eq(%w[faker rubocop])
         expect(mrs.find { |mr| mr.main_dependency == "faker" }.auto_merge).to eq(true)
         expect(mrs.find { |mr| mr.main_dependency == "rubocop" }.auto_merge).to eq(false)
-        # expect(update_job.run_log).not_to be_empty
+        expect(update_job.run_log).not_to be_empty
         expect_all_mocks_called
       end
     end
