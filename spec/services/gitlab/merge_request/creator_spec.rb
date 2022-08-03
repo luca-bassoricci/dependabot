@@ -34,6 +34,7 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
 
   let(:pr_creator) { instance_double("Dependabot::PullRequestCreator", gitlab_creator: gitlab_creator) }
 
+  let(:gitlab) { instance_double("Gitlab::Client") }
   let(:gitlab_creator) do
     instance_double(
       "Dependabot::PullRequestCreator::Gitlab",
@@ -141,8 +142,12 @@ describe Gitlab::MergeRequest::Creator, :integration, epic: :services, feature: 
     allow(Gitlab::UserFinder).to receive(:call).with(config_entry[:assignees]) { assignees }
     allow(Gitlab::UserFinder).to receive(:call).with(config_entry[:reviewers]) { reviewers }
     allow(Gitlab::UserFinder).to receive(:call).with(config_entry[:approvers]) { approvers }
-    allow(Gitlab::MilestoneFinder).to receive(:call).with(project.name, config_entry[:milestone]) { milestone_id }
     allow(Dependabot::PullRequestCreator).to receive(:new).with(**creator_args) { pr_creator }
+
+    allow(Gitlab::ClientWithRetry).to receive(:current) { gitlab }
+    allow(gitlab).to receive(:milestones)
+      .with(project.name, title: config_entry[:milestone], include_parent_milestones: true)
+      .and_return([Gitlab::ObjectifiedHash.new(id: milestone_id)])
   end
 
   context "without existing older mr", :aggregate_failures do

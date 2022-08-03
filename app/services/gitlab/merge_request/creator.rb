@@ -133,7 +133,16 @@ module Gitlab
       end
 
       def milestone_id
-        MilestoneFinder.call(fetcher.source.repo, config_entry[:milestone])
+        milestone_title = config_entry[:milestone]
+        return unless milestone_title
+
+        Rails.cache.fetch("milestone-#{project.name}-#{milestone_title}", expires_in: 1.week) do
+          log(:debug, "Running milestone search for #{milestone_title}")
+          milestones = gitlab.milestones(project.name, title: milestone_title, include_parent_milestones: true)
+          return log(:error, "Milestone with '#{milestone_title}' not found!") && nil if milestones.empty?
+
+          milestones.first.id
+        end
       end
 
       # Merge request specific options from config
