@@ -160,6 +160,14 @@ module Dependabot
         def config_file
           @config_file ||= DependabotConfig.config_filename
         end
+
+        # All project cron jobs
+        #
+        # @param [String] project_name
+        # @return [Array<Sidekiq::Cron::Job>]
+        def all_project_jobs(project_name)
+          Sidekiq::Cron::Job.all.select { |job| job.name.match?(/^#{project_name}:.*/) }
+        end
       end
     end
   end

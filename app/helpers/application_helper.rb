@@ -47,14 +47,6 @@ module ApplicationHelper
     UpdateLog.add(level: level, message: message)
   end
 
-  # All project cron jobs
-  #
-  # @param [String] project_name
-  # @return [Array<Sidekiq::Cron::Job>]
-  def all_project_jobs(project_name)
-    Sidekiq::Cron::Job.all.select { |job| job.name.match?(/^#{project_name}:.*/) }
-  end
-
   # Current job execution context
   #
   # @return [String]
