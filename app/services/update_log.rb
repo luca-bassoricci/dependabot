@@ -4,10 +4,17 @@ class UpdateLog
   class << self
     # Capture log entry
     #
-    # @param [Hash] entry
+    # @param [String] level
+    # @param [String] message
     # @return [void]
-    def add(entry)
-      log << entry
+    def add(level:, message:)
+      msg = message.strip.capitalize.gsub(/\e\[(\d+)(?:;\d+)*m/, "")
+
+      log.push({
+        timestamp: Time.zone.now,
+        level: level,
+        message: msg
+      })
     end
 
     # Current run log

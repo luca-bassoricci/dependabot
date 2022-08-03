@@ -44,7 +44,7 @@ module ApplicationHelper
   # @return [void]
   def log(level, message, tags: [])
     Rails.logger.tagged([execution_context, *tags].compact).send(level, message)
-    UpdateLog.add({ timestamp: Time.zone.now, level: level, message: message.strip.capitalize })
+    UpdateLog.add(level: level, message: message)
   end
 
   # All project cron jobs
