@@ -18,6 +18,8 @@ describe DependencyUpdateJob, :integration, type: :job, epic: :jobs, feature: "d
 
   before do
     allow(Dependabot::UpdateService).to receive(:call)
+
+    RequestStore.clear!
   end
 
   context "without errors" do
