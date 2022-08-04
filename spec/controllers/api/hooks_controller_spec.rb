@@ -6,14 +6,14 @@ describe Api::HooksController, :aggregate_failures, type: :request, epic: :contr
   include_context "with api helper"
 
   let(:auth_token) { "auth_token" }
+  let(:project) { build(:project, name: "dependabot-gitlab/test") }
 
   before do
+    allow(Project).to receive(:find_by).with(name: project.name) { project }
     allow(CredentialsConfig).to receive(:gitlab_auth_token) { auth_token }
   end
 
   context "with successful response" do
-    let(:project) { build(:project, name: "mike/diaspora") }
-
     before do
       allow(Webhooks::PushEventHandler).to receive(:call) { project.to_hash }
       allow(Webhooks::MergeRequestEventHandler).to receive(:call).and_return({ closed_merge_request: true })

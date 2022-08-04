@@ -6,12 +6,30 @@ module Api
     #
     # @return [void]
     def create
+      init_gitlab if project_name
+
       params[:object_kind].tap do |hook|
         respond_to?(hook || "", true) ? json_response(body: send(hook)) : bad_request
       end
     end
 
     private
+
+    # Initialize gitlab client with correct access token
+    #
+    # @return [void]
+    def init_gitlab
+      Gitlab::ClientWithRetry.client_access_token = find_project(project_name).gitlab_access_token
+    end
+
+    # Project name
+    #
+    # @return [String]
+    def project_name
+      @project_name ||= params
+                        .permit(project: [:path_with_namespace])
+                        .dig(:project, :path_with_namespace)
+    end
 
     # Handle bad request
     #
@@ -25,7 +43,6 @@ module Api
     # @return [void]
     def push
       args = params.permit(
-        project: [:path_with_namespace],
         commits: [
           added: [],
           modified: [],
@@ -34,7 +51,7 @@ module Api
       )
 
       Webhooks::PushEventHandler.call(
-        project_name: args.dig(:project, :path_with_namespace),
+        project_name: project_name,
         commits: args[:commits]
       )
     end
@@ -43,14 +60,11 @@ module Api
     #
     # @return [void]
     def merge_request
-      args = params.permit(
-        object_attributes: %i[iid action merge_status],
-        project: [:path_with_namespace]
-      )
+      args = params.permit(object_attributes: %i[iid action merge_status])
       return unless %w[close merge reopen approved].include?(args.dig(:object_attributes, :action))
 
       Webhooks::MergeRequestEventHandler.call(
-        project_name: args.dig(:project, :path_with_namespace),
+        project_name: project_name,
         mr_iid: args.dig(:object_attributes, :iid),
         action: args.dig(:object_attributes, :action),
         merge_status: args.dig(:object_attributes, :merge_status)
@@ -63,12 +77,11 @@ module Api
     def note
       args = params.permit(
         object_attributes: %i[discussion_id note],
-        project: [:path_with_namespace],
         merge_request: [:iid]
       )
 
       Webhooks::CommentEventHandler.call(
-        project_name: args.dig(:project, :path_with_namespace),
+        project_name: project_name,
         mr_iid: args.dig(:merge_request, :iid),
         discussion_id: args.dig(:object_attributes, :discussion_id),
         note: args.dig(:object_attributes, :note)
@@ -81,7 +94,6 @@ module Api
     def pipeline
       args = params.permit(
         object_attributes: %i[source status],
-        project: [:path_with_namespace],
         merge_request: %i[
           iid
           merge_status
@@ -91,9 +103,9 @@ module Api
       )
 
       Webhooks::PipelineEventHandler.call(
+        project_name: project_name,
         source: args.dig(:object_attributes, :source),
         status: args.dig(:object_attributes, :status),
-        project_name: args.dig(:project, :path_with_namespace),
         mr_iid: args.dig(:merge_request, :iid),
         merge_status: args.dig(:merge_request, :merge_status),
         source_project_id: args.dig(:merge_request, :source_project_id),
@@ -105,14 +117,11 @@ module Api
     #
     # @return [void]
     def issue
-      args = params.permit(
-        object_attributes: %i[iid action],
-        project: [:path_with_namespace]
-      )
+      args = params.permit(object_attributes: %i[iid action])
       return unless args.dig(:object_attributes, :action) == "close"
 
       Webhooks::IssueEventHandler.call(
-        project_name: args.dig(:project, :path_with_namespace),
+        project_name: project_name,
         issue_iid: args.dig(:object_attributes, :iid)
       )
     end

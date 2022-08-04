@@ -2,7 +2,7 @@
   "object_kind": "issue",
   "event_type": "issue",
   "project": {
-    "path_with_namespace":"gitlabhq/gitlab-test"
+    "path_with_namespace":"dependabot-gitlab/test"
   },
   "object_attributes": {
     "iid": 23,
