@@ -39,7 +39,7 @@ services:
       ALLOW_EMPTY_PASSWORD: ${REDIS_ALLOW_EMPTY_PASSWORD:-yes}
       REDIS_EXTRA_FLAGS: ${REDIS_EXTRA_FLAGS}
   mongodb:
-    image: ${MONGODB_IMAGE:-bitnami/mongodb:5.0-debian-11}
+    image: ${MONGODB_IMAGE:-bitnami/mongodb:6.0-debian-11}
     ports:
       - 27017:27017
     volumes:
