@@ -19,7 +19,7 @@ module Api
     #
     # @return [void]
     def init_gitlab
-      Gitlab::ClientWithRetry.client_access_token = find_project(project_name).gitlab_access_token
+      Gitlab::ClientWithRetry.client_access_token = find_project(project_name)&.gitlab_access_token
     end
 
     # Project name
