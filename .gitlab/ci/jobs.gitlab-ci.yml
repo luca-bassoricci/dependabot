@@ -50,7 +50,7 @@ include:
   services:
     - name: bitnami/redis:7.0-debian-11
       alias: redis
-    - name: bitnami/mongodb:5.0-debian-11
+    - name: bitnami/mongodb:6.0-debian-11
       alias: mongodb
   variables:
     REDIS_URL: redis://redis:6379
