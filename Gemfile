@@ -27,6 +27,7 @@ gem "sidekiq", "~> 6.5.3"
 gem "sidekiq_alive", "~> 2.1", require: false
 gem "sidekiq-cron", "~> 1.7"
 gem "terminal-table", "~> 3.0"
+gem "warning", "~> 1.3", require: false
 gem "yabeda-prometheus-mmap", "~> 0.3.0"
 gem "yabeda-puma-plugin", "~> 0.6.0"
 gem "yabeda-sidekiq", "~> 0.8.1"
