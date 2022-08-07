@@ -82,6 +82,14 @@ license-scan:
     - .rules:license-scan
   needs: []
 
+container-scan:
+  extends:
+    - .container_scan
+    - .rules:container-scan
+  needs:
+    - cache-dependencies
+    - build-app-image
+
 # ======================================================================================================================
 # Test Stage
 # ======================================================================================================================
