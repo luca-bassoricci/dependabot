@@ -23,6 +23,7 @@
 
 .dependency_changes: &dependency_changes
   - Gemfile.lock
+  - Dockerfile
 
 # ======================================================================================================================
 # Rules
@@ -60,10 +61,10 @@
 
 .rules:container-scan:
   rules:
-    - *main
+    - <<: *main
+      changes: *dependency_changes
     - <<: *mr
-      changes:
-        - Dockerfile
+      changes: *dependency_changes
 
 .rules:allure-reports:
   rules:

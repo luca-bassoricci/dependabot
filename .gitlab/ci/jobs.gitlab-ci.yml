@@ -38,10 +38,7 @@ include:
     - name: docker:20.10.17-dind
       alias: docker
   variables:
-    DOCKER_HOST: tcp://docker:2376
-    DOCKER_TLS_CERTDIR: /certs
-    DOCKER_CERT_PATH: /certs/client
-    DOCKER_TLS_VERIFY: 1
+    DOCKER_HOST: tcp://docker:2375
     DOCKER_BUILDKIT: 1
 
 .rspec_runner:
@@ -77,6 +74,12 @@ include:
       - log/*.log
     expire_in: 1 day
     when: always
+
+.snyk_runner:
+  stage: static analysis
+  image: registry.gitlab.com/dependabot-gitlab/ci-images:docker-20.10-snyk-1.9
+  extends:
+    - .docker_runner
 
 # ======================================================================================================================
 # Jobs
@@ -138,6 +141,14 @@ include:
         - Gemfile.lock
     paths:
       - .gitlab/cache
+
+.container_scan:
+  stage: static analysis
+  extends:
+    - .snyk_runner
+    - .ruby_runner
+  script:
+    - bundle exec rake "ci:container_scan"
 
 # ----------------------------------------------------------------------------------------------------------------------
 # test stage
@@ -225,7 +236,7 @@ include:
     NO_COLOR: 1
   coverage: /^COVERAGE:\s+(\d{1,3}\.\d{1,2})\%/
   script:
-    - bundle exec rake coverage:merge
+    - bundle exec rake "ci:merge_coverage"
   after_script:
     - ./codacy-coverage-reporter-$CODACY_VERSION report -r coverage/coverage.xml
   cache:
