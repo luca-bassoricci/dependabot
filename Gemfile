@@ -8,6 +8,7 @@ gem "anyway_config", "~> 2.3"
 gem "bootsnap", ">= 1.4.2", require: false
 gem "dependabot-omnibus", "~> 0.204.0"
 gem "dry-validation", "~> 1.8"
+gem "faraday-retry", "~> 2.0"
 gem "gitlab", "~> 4.19"
 gem "graphql-client", "~> 0.18.0"
 gem "lograge", "~> 0.12.0"
