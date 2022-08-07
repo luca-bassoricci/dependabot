@@ -115,6 +115,7 @@ class FullContainerScan
       #{colorize_severity(severity, vuln_message)}
         Description: #{vulnerability[:title]}
         Info: https://security.snyk.io/vuln/#{vulnerability[:id]}
+        Upgradable: #{vulnerability[:isUpgradable]}
     MSG
   end
 
