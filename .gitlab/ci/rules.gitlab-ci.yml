@@ -77,10 +77,8 @@
   rules:
     - <<: *fork
       when: never
-    - <<: *mr
-      when: always
-    - <<: *main
-      when: always
+    - *mr
+    - *main
 
 .rules:build-image:
   rules:

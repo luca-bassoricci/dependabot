@@ -242,7 +242,6 @@ include:
         --commit-uuid ${CI_MERGE_REQUEST_SOURCE_BRANCH_SHA:-$CI_COMMIT_SHA} \
         --coverage-reports coverage/coverage.xml \
         --language ruby
-
   cache:
     - *coverage_cache
     - *gem_cache
