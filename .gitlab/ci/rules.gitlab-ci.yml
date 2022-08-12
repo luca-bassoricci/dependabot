@@ -88,4 +88,5 @@
     - <<: *release
       variables:
         LATEST_TAG: latest
+        TARGET_PLATFORM: linux/amd64 # TODO: add arm64 platform once supported upstream
     - *mr
