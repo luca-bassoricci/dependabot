@@ -30,6 +30,8 @@ module DependabotGitlab
     config.lograge.base_controller_class = ["ActionController::API", "ActionController::Base"]
     config.lograge.ignore_actions = [Healthcheck::CONTROLLER_ACTION]
 
+    Warning.process { |warning| ApplicationHelper.log(:warn, warning) }
+
     config.after_initialize do
       if Sidekiq.server?
         require "sidekiq_alive"

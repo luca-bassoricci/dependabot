@@ -10,7 +10,7 @@ stages:
   - deploy
 
 default:
-  image: registry.gitlab.com/dependabot-gitlab/ci-images:ruby
+  image: registry.gitlab.com/dependabot-gitlab/ci-images:ruby@sha256:0f48ec7150d28e7742f5b041c151bcf410f26dc45dfdafaeec65674b7d0908ae
   interruptible: true
 
 variables:
@@ -23,7 +23,6 @@ variables:
   CODACY_VERSION: "13.10.7"
   DEPENDENCY_SCANNING_DISABLED: "true"
   SAST_DISABLED: "true"
-  CONTAINER_SCANNING_DISABLED: "true"
   CODE_QUALITY_DISABLED: "true"
   LICENSE_MANAGEMENT_DISABLED: "true"
 

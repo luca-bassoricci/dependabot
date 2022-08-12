@@ -9,4 +9,3 @@ require "bootsnap/setup" # Speed up boot time by caching expensive operations.
 require "warning"
 
 Warning.ignore(/Pattern matching is experimental/)
-Warning.process { |warning| ApplicationHelper.log(:warn, warning) }
