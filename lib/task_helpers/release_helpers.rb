@@ -17,10 +17,17 @@ class ReleaseCreator
   # @param [String] version
   # @return [void]
   def self.call(version)
-    creator = new(version)
-    creator.update_version
-    creator.commit_and_tag
-    creator.print_changelog
+    new(version).call
+  end
+
+  # Update changelog and create new tag
+  #
+  # @param [String] version
+  # @return [void]
+  def call
+    update_version
+    commit_and_tag
+    print_changelog
   end
 
   # Update changelog

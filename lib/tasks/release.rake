@@ -12,8 +12,12 @@ require_relative "../task_helpers/standalone_release_helper"
 
 namespace :release do
   desc "Create new release tag"
-  task(:app, [:version]) do |_task, args|
-    ReleaseCreator.call(args[:version])
+  task(:app, %i[version dry_run]) do |_task, args|
+    version = args[:version]
+    release_creator = ReleaseCreator.new(version)
+    next release_creator.print_changelog if args[:dry_run]
+
+    release_creator.call
   end
 
   desc "Update helm chart version"
