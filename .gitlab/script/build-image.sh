@@ -9,6 +9,7 @@ source "$(dirname "$0")/utils.sh"
 image="$CI_REGISTRY_IMAGE/dev"
 latest_tag="${LATEST_TAG:-$CI_COMMIT_REF_SLUG-latest}"
 core_version="$(dependabot_version)"
+platform="${TARGET_PLATFORM:-linux/amd64}"
 
 if [ -z "$CI_COMMIT_TAG" ]; then
   images="${image}:${CURRENT_TAG},${image}:${latest_tag}"
@@ -22,6 +23,7 @@ buildctl-daemonless.sh build \
   --frontend=dockerfile.v0 \
   --local context=. \
   --local dockerfile=. \
+  --opt platform="$platform" \
   --opt build-arg:COMMIT_SHA="$CI_COMMIT_SHA" \
   --opt build-arg:PROJECT_URL="$CI_PROJECT_URL" \
   --opt build-arg:VERSION="${CI_COMMIT_TAG:-$CURRENT_TAG}" \
