@@ -39,7 +39,7 @@ group :test do
   gem "factory_bot_rails", "~> 6.2"
   gem "faker", "~> 2.22"
   gem "httparty", "~> 0.20.0"
-  gem "pry-byebug", "~> 3.9"
+  gem "pry-byebug", "~> 3.10"
   gem "reek", "~> 6.1", require: false
   gem "rspec", "~> 3.11"
   gem "rspec_junit_formatter", "~> 0.5.1"
