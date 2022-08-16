@@ -6,7 +6,7 @@ ruby "~> 2.7"
 
 gem "anyway_config", "~> 2.3"
 gem "bootsnap", ">= 1.4.2", require: false
-gem "dependabot-omnibus", "~> 0.207.0"
+gem "dependabot-omnibus", "~> 0.208.0"
 gem "dry-validation", "~> 1.8"
 gem "faraday-retry", "~> 2.0"
 gem "gitlab", "~> 4.19"
