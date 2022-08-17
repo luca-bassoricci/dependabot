@@ -88,6 +88,8 @@ module Dependabot
       # @return [String]
       def default_branch
         @default_branch ||= gitlab_project.default_branch
+      rescue NoMethodError
+        raise "Project '#{project_name}' is missing default branch"
       end
 
       # Parent project id if exists
