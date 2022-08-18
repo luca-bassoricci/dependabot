@@ -1,3 +1,78 @@
+## 0.25.0 (2022-08-18)
+
+### 🚀 New features (1 change)
+
+- [Support for project specific gitlab access tokens](dependabot-gitlab/dependabot@81affd260497ac472de946e0c30cf30f79a8b7f9) by @andrcuns. See merge request dependabot-gitlab/dependabot!1676
+
+### 🔬 Improvements (3 changes)
+
+- [Add improved error message if project is missing default branch or repository](dependabot-gitlab/dependabot@4faecf9458355e7588dd8d3b74484100e678d213) by @andrcuns. See merge request dependabot-gitlab/dependabot!1713
+- [Add custom ruby warning processing](dependabot-gitlab/dependabot@b4e36fdecf8ddc786860c40173c0498b852db023) by @andrcuns. See merge request dependabot-gitlab/dependabot!1696
+- [Normalize log messages saved in database](dependabot-gitlab/dependabot@b6b5c2cb7b7bcbb229a18c890a20244a6646d99b) by @andrcuns. See merge request dependabot-gitlab/dependabot!1681
+
+### 🐞 Bug Fixes (5 changes)
+
+- [Correctly handle non existing project when processing webhooks](dependabot-gitlab/dependabot@e5082990288da3fe83c2d6abeda1771532bcc73b) by @andrcuns. See merge request dependabot-gitlab/dependabot!1690
+- [Use project specific gitlab access token when processing webhooks](dependabot-gitlab/dependabot@99407ea3c4c97a77bb74b0231051e0ab89d08553) by @andrcuns. See merge request dependabot-gitlab/dependabot!1685
+- [Fixup logging message saving](dependabot-gitlab/dependabot@c205a8eeff3fa17b795c53ceb3c3cbe9485b5cc2) by @andrcuns.
+- [Correctly persist dependency update job log in database](dependabot-gitlab/dependabot@0e8865c7495eaca279dcc4dd6c6c5321b2deb4b4) by @andrcuns. See merge request dependabot-gitlab/dependabot!1679
+- [Use correct gitlab access token for project sync in UI](dependabot-gitlab/dependabot@a8f1127d8db82bb234e4f22051739f3ee865e3b7) by @andrcuns. See merge request dependabot-gitlab/dependabot!1678
+
+### 📦 Dependency updates (12 changes)
+
+- [dep: bump sentry-sidekiq from 5.4.1 to 5.4.2](dependabot-gitlab/dependabot@b36be124c74dfb59fe3c232c28cfb4ba19f2ba25) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1716
+- [dep: bump sentry-rails from 5.4.1 to 5.4.2](dependabot-gitlab/dependabot@57df4584c8b916ef8dd01f315455a9bd13ede283) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1715
+- [dep: bump dependabot-omnibus from 0.208.0 to 0.209.0](dependabot-gitlab/dependabot@3f09d20110d9a42f4057e1d7982e7bb09e2be0c9) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1714
+- [dep: bump dependabot-omnibus from 0.207.0 to 0.208.0](dependabot-gitlab/dependabot@c70d25aecfd2c2935dd8d21cc93a24e053f9d8f5) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1711
+- [dep: bump pry-byebug from 3.10.0 to 3.10.1](dependabot-gitlab/dependabot@94f371444ac40df900cccbb63bd3cad745c58d80) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1712
+- [dep: bump dependabot-omnibus from 0.204.0 to 0.207.0](dependabot-gitlab/dependabot@fcf91dfd5a22965d45cf61b44353e395620b2e9a) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1704
+- [dep: bump rubocop from 1.33.0 to 1.34.1](dependabot-gitlab/dependabot@217d7bf3450a11c29390a54805fca7e83d205620) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1700
+- [dep: bump sidekiq from 6.5.3 to 6.5.4](dependabot-gitlab/dependabot@be509cbc9d869fa27296c94cc58005407da59836) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1699
+- [dep: bump rubocop from 1.32.0 to 1.33.0](dependabot-gitlab/dependabot@3176f4d66c2f3508281f6663891f1dbce6feea00) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1689
+- [dep: bump sidekiq from 6.5.1 to 6.5.3](dependabot-gitlab/dependabot@1e6954c7a7351eda64af29ce3a925820ab124d25) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1688
+- [dep: bump dependabot-omnibus from 0.202.0 to 0.204.0](dependabot-gitlab/dependabot@afffa2056eb65c11d9d713090a4aa4b6835e3efe) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1683
+- [dep: bump sentry-sidekiq from 5.3.1 to 5.4.1](dependabot-gitlab/dependabot@59d84fb334fb3b8621b48629d65835cd669226c7) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1674
+
+### 📦 Development dependency updates (2 changes)
+
+- [dep: bump pry-byebug from 3.9.0 to 3.10.0](dependabot-gitlab/dependabot@dca728d42c9b68e34006b3e4020238ae792284c5) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1710
+- [dep: bump rubocop from 1.34.1 to 1.35.0](dependabot-gitlab/dependabot@2828dfaa735f90148e93eaef3ddda10c612eeed0) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1707
+
+### 🔧 CI changes (11 changes)
+
+- [chore(deps): update andrcuns/allure-report-publisher docker tag to v0.10.0](dependabot-gitlab/dependabot@0f9515f14c47340ba5a2d602e9c378ef03e59f72) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1709
+- [chore(deps): update registry.gitlab.com/dependabot-gitlab/ci-images:ruby docker digest to 82a0fce](dependabot-gitlab/dependabot@d1ec173d5af18b95ac2d71bc979bc606f3a7bee6) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1708
+- [Add initial support for multi-platform image building](dependabot-gitlab/dependabot@fc4b5ab91bd794221c05146d55403facc2e2375a) by @andrcuns. See merge request dependabot-gitlab/dependabot!1706
+- [Remove unused container scanning variable](dependabot-gitlab/dependabot@cda826b8fd25203286eb7da29a5a06f58c6b18fe) by @andrcuns. See merge request dependabot-gitlab/dependabot!1703
+- [Use specific sha-id for default ci image](dependabot-gitlab/dependabot@3f9f69237ea304bcb459741b5c7c766e7617c4e0) by @andrcuns. See merge request dependabot-gitlab/dependabot!1703
+- [Skip coverage upload on failed pipeline](dependabot-gitlab/dependabot@467fb8825a347c4d3d0bce4119e276585ce28d88) by @andrcuns.
+- [Update codacy reporter version and caching](dependabot-gitlab/dependabot@8b32907d17549fbac520fa06a6946b46f3f09d3c) by @andrcuns. See merge request dependabot-gitlab/dependabot!1695
+- [Add docker image container scan job](dependabot-gitlab/dependabot@437fc4a4f4623f208ba85d85832c897f52fdf93a) by @andrcuns. See merge request dependabot-gitlab/dependabot!1694
+- [chore(deps): update dependency bitnami/mongodb to v6](dependabot-gitlab/dependabot@0b71d16d3126cece1fc186e360602ae53ec6880c) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1686
+- [Use gitlab license scanner job](dependabot-gitlab/dependabot@c800f0d1b0e7409efb152f11f98f3ab42d0580cf) by @andrcuns. See merge request dependabot-gitlab/dependabot!1680
+- [Add license scanning job](dependabot-gitlab/dependabot@7fa7b49faa07fb4c8bc32f049be865159e42b502) by @andrcuns. See merge request dependabot-gitlab/dependabot!1677
+
+### 🛠️ Chore (10 changes)
+
+- [Add option to print next changelog](dependabot-gitlab/dependabot@f7b2e47ea15ec787ddca28036fe92040db7d967b) by @andrcuns. See merge request dependabot-gitlab/dependabot!1705
+- [Set warning processing after logger is set up](dependabot-gitlab/dependabot@22dcbd9e5279ffa94d001a47cb6ebc3a567ae147) by @andrcuns. See merge request dependabot-gitlab/dependabot!1703
+- [Add upgradable info to container scan output](dependabot-gitlab/dependabot@dc3e9aacff15622831142e0ac97c244aceb685d5) by @andrcuns. See merge request dependabot-gitlab/dependabot!1697
+- [Fix order dependant spec](dependabot-gitlab/dependabot@6fb9a01879ab6771678da16587f27c67946d241b) by @andrcuns. See merge request dependabot-gitlab/dependabot!1684
+- [Remove redundant methods and wrappers](dependabot-gitlab/dependabot@dcc1e389bf595300bec3b0f39c8052e21e7b857d) by @andrcuns. See merge request dependabot-gitlab/dependabot!1682
+- [Remove sentry-ruby top level dependency](dependabot-gitlab/dependabot@e33a9271b59b02eed51b6e03856cdd82fd9b2c8a) by @andrcuns. See merge request dependabot-gitlab/dependabot!1675
+- [Add request store for global stores](dependabot-gitlab/dependabot@83f8014b3717331ba5a50df4bb00deb76be9a816) by @andrcuns. See merge request dependabot-gitlab/dependabot!1673
+- [Extract common dependency update logic to common class](dependabot-gitlab/dependabot@3c7f5f5eec3d06f6fedbb27471ac2d7e76183ac9) by @andrcuns. See merge request dependabot-gitlab/dependabot!1672
+- [Extract credentials passing](dependabot-gitlab/dependabot@41b11d5d56242db46c4ca7ed5837eaa9d460c3ce) by @andrcuns. See merge request dependabot-gitlab/dependabot!1671
+- [Extract common webhook handling logic](dependabot-gitlab/dependabot@120234dfdfb1fb45a6b3e6f69cbdb900b865471e) by @andrcuns. See merge request dependabot-gitlab/dependabot!1670
+
+### 📄 Documentation updates (1 change)
+
+- [Document gitlab webhook token configuration](dependabot-gitlab/dependabot@fea429600f55ff3046e501a052b5799165f8e311) by @andrcuns. See merge request dependabot-gitlab/dependabot!1669
+
+### dependencies (1 change)
+
+- [Add faraday-retry gem](dependabot-gitlab/dependabot@73f1927bdaf67db514eafd0e362d8e82e88a0bc3) by @andrcuns.
+
 ## 0.24.0 (2022-07-29)
 
 ### 🚀 New features (1 change)
