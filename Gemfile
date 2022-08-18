@@ -55,7 +55,7 @@ group :test do
 end
 
 group :development do
-  gem "git", "~> 1.11", require: false
+  gem "git", "~> 1.12", require: false
   gem "pry-rails", "~> 0.3.9"
   gem "semver2", "~> 3.4", require: false
   gem "solargraph", "~> 0.45.0", require: false
