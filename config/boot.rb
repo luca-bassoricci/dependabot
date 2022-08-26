@@ -9,3 +9,5 @@ require "bootsnap/setup" # Speed up boot time by caching expensive operations.
 require "warning"
 
 Warning.ignore(/Pattern matching is experimental/)
+Warning.ignore(/Passing the timeout as a positional argument is deprecated/)
+Warning.ignore(/sadd will always return an Integer in Redis 5\.0\.0/)
