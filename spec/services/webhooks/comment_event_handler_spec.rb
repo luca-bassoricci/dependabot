@@ -87,7 +87,7 @@ describe Webhooks::CommentEventHandler, :integration, epic: :services, feature: 
       ActiveJob::Base.queue_adapter = :test
 
       expect { action }.to have_enqueued_job(job)
-        .with(project.name, mr_iid, discussion_id)
+        .with({ project_name: project.name, mr_iid: mr_iid, discussion_id: discussion_id })
         .on_queue("hooks")
     end
   end
