@@ -87,10 +87,10 @@ module Dependabot
       # @return [void]
       def update
         raise("Dependency '#{dependency_name}' not found in manifest file!") unless updated_dep
+        return close_mr if updated_dep.up_to_date?
+
         raise("Dependency update is impossible!") if updated_dep.update_impossible?
         raise("Newer version for update exists, new merge request will be created!") unless same_version?
-
-        return close_mr if updated_dep.up_to_date?
 
         Dependabot::PullRequestUpdater.new(
           credentials: credentials,
