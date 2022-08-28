@@ -33,13 +33,13 @@ class MergeRequestRecreationJob < ApplicationJob
   def recreate
     reply_status(":warning: `dependabot` is recreating merge request. All changes will be overwritten! :warning:")
 
-    Dependabot::MergeRequest::UpdateService.call(
+    status = Dependabot::MergeRequest::UpdateService.call(
       project_name: project_name,
       mr_iid: mr_iid,
       action: Dependabot::MergeRequest::UpdateService::RECREATE
     )
 
-    reply_status(":white_check_mark: `dependabot` successfuly recreated merge request!")
+    reply_status(":white_check_mark: `dependabot` successfuly #{status} merge request!")
     resolve_discussion
   end
 
