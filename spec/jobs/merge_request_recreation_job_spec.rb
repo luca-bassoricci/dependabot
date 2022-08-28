@@ -20,9 +20,11 @@ describe MergeRequestRecreationJob, epic: :jobs, feature: "mr recreate", type: :
   end
 
   before do
-    allow(Gitlab::ClientWithRetry).to receive(:current).and_return(gitlab)
-    allow(Dependabot::MergeRequest::UpdateService).to receive(:call)
     allow(Gitlab::MergeRequest::DiscussionReplier).to receive(:call)
+    allow(Gitlab::ClientWithRetry).to receive(:current)
+      .and_return(gitlab)
+    allow(Dependabot::MergeRequest::UpdateService).to receive(:call)
+      .and_return(Dependabot::MergeRequest::UpdateService::RECREATED)
   end
 
   context "with successful trigger" do

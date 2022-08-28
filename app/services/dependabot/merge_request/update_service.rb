@@ -2,10 +2,16 @@
 
 module Dependabot
   module MergeRequest
+    # :reek:TooManyConstants
     class UpdateService < UpdateBase
       RECREATE = "recreate"
       UPDATE = "update"
       AUTO_REBASE = "auto_rebase"
+
+      RECREATED = "recreated"
+      REBASED = "rebased"
+      SKIPPED = "skipped"
+      CLOSED = "closed"
 
       def initialize(project_name:, mr_iid:, action:)
         super(project_name)
@@ -21,10 +27,10 @@ module Dependabot
         log(:info, "Running update for merge request !#{mr_iid}")
         init_gitlab
 
-        return skip_mr unless updateable?
+        return skip_mr unless recreate? || updateable? # skip updateable check for explicit recreate
         return rebase_mr unless recreate? || gitlab_mr["has_conflicts"]
 
-        Semaphore.synchronize { update }
+        (Semaphore.synchronize { update }).tap { |status| log_result(status) }
       ensure
         FileUtils.rm_r(repo_contents_path, force: true, secure: true) if repo_contents_path
       end
@@ -69,9 +75,13 @@ module Dependabot
       #
       # @return [void]
       def skip_mr
-        return log(:info, " merge request not in opened state, skipping") unless gitlab_mr.state == "opened"
+        msg = if gitlab_mr.state != "opened"
+                "Merge request is not in opened state!"
+              else
+                "Merge request assignee doesn't match configured one!"
+              end
 
-        log(:info, "  merge request assignee doesn't match configured, skipping")
+        log_result(SKIPPED, msg)
       end
 
       # Rebase merge request
@@ -79,7 +89,7 @@ module Dependabot
       # @return [void]
       def rebase_mr
         gitlab.rebase_merge_request(project_name, mr_iid)
-        log(:info, "  rebased merge request #{gitlab_mr.web_url}")
+        log_result(REBASED)
       end
 
       # Recreate merge request
@@ -101,7 +111,8 @@ module Dependabot
           files: updated_dep.updated_files,
           provider_metadata: { target_project_id: mr.target_project_id }
         ).update
-        log(:info, "  recreated merge request #{gitlab_mr.web_url}")
+
+        RECREATED
       end
 
       # Updated dependency
@@ -115,8 +126,8 @@ module Dependabot
       #
       # @return [void]
       def close_mr
-        log(:info, "  dependency is already up to date, closing mr!")
         Gitlab::BranchRemover.call(project_name, mr.branch) && mr.close
+        CLOSED
       end
 
       # Auto-rebase assignee option
@@ -159,6 +170,17 @@ module Dependabot
       # @return [Boolean]
       def same_version?
         mr.update_to == updated_dep.current_versions
+      end
+
+      # Log update result
+      #
+      # @param [String] status
+      # @param [String] details
+      # @return [void]
+      def log_result(status, details = "")
+        log(:info, "  #{status} merge request #{gitlab_mr.web_url}! #{details}".strip)
+
+        status
       end
     end
   end

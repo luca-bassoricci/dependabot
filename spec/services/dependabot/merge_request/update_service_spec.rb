@@ -125,8 +125,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
   context "with successfull update", :aggregate_failures do
     context "without recreate and conflicts" do
       it "rebases merge request" do
-        update
-
+        expect(update).to eq(described_class::REBASED)
         expect(gitlab).to have_received(:rebase_merge_request).with(project.name, mr.iid)
         expect(pr_updater).not_to have_received(:update)
       end
@@ -136,8 +135,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
       let(:action) { Dependabot::MergeRequest::UpdateService::RECREATE }
 
       it "recreates merge request" do
-        update
-
+        expect(update).to eq(described_class::RECREATED)
         expect(pr_updater).to have_received(:update)
         expect(gitlab).not_to have_received(:rebase_merge_request)
       end
@@ -147,8 +145,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
       let(:conflicts) { true }
 
       it "recreates merge request" do
-        update
-
+        expect(update).to eq(described_class::RECREATED)
         expect(pr_updater).to have_received(:update)
         expect(gitlab).not_to have_received(:rebase_merge_request)
       end
@@ -171,8 +168,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
       end
 
       it "rebases merge request" do
-        update
-
+        expect(update).to eq(described_class::REBASED)
         expect(gitlab).to have_received(:rebase_merge_request).with(project.name, mr.iid)
         expect(pr_updater).not_to have_received(:update)
       end
@@ -202,8 +198,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
       let(:state) { "merged" }
 
       it "skips update" do
-        update
-
+        expect(update).to eq(described_class::SKIPPED)
         expect(pr_updater).not_to have_received(:update)
       end
     end
@@ -216,8 +211,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
       end
 
       it "closes existing merge request" do
-        update
-
+        expect(update).to eq(described_class::CLOSED)
         expect(Gitlab::BranchRemover).to have_received(:call).with(project.name, branch)
         expect(mr.reload.state).to eq("closed")
       end
@@ -240,8 +234,7 @@ describe Dependabot::MergeRequest::UpdateService, epic: :services, feature: :dep
       end
 
       it "skips update" do
-        update
-
+        expect(update).to eq(described_class::SKIPPED)
         expect(pr_updater).not_to have_received(:update)
       end
     end
