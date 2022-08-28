@@ -12,7 +12,7 @@ class MergeRequestRecreationJob < ApplicationJob
   # @param [Number] mr_iid
   # @param [String] discussion_id
   # @return [void]
-  def perform(project_name, mr_iid, discussion_id)
+  def perform(project_name:, mr_iid:, discussion_id:)
     @project_name = project_name
     @mr_iid = mr_iid
     @discussion_id = discussion_id

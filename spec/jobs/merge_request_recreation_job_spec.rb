@@ -3,7 +3,9 @@
 describe MergeRequestRecreationJob, epic: :jobs, feature: "mr recreate", type: :job do
   include ActiveJob::TestHelper
 
-  subject(:job) { described_class }
+  subject(:job) do
+    described_class.perform_later(project_name: project_name, mr_iid: mr_iid, discussion_id: discussion_id)
+  end
 
   let(:gitlab) { instance_double("Gitlab::Client", resolve_merge_request_discussion: nil) }
   let(:project_name) { "project" }
@@ -25,7 +27,7 @@ describe MergeRequestRecreationJob, epic: :jobs, feature: "mr recreate", type: :
 
   context "with successful trigger" do
     it "performs enqued job" do
-      perform_enqueued_jobs { job.perform_later(project_name, mr_iid, discussion_id) }
+      perform_enqueued_jobs { job }
 
       expect(Dependabot::MergeRequest::UpdateService).to have_received(:call).with(
         project_name: project_name,
@@ -35,7 +37,7 @@ describe MergeRequestRecreationJob, epic: :jobs, feature: "mr recreate", type: :
     end
 
     it "notifies on recreate", :aggregate_failures do
-      perform_enqueued_jobs { job.perform_later(project_name, mr_iid, discussion_id) }
+      perform_enqueued_jobs { job }
 
       expect(Gitlab::MergeRequest::DiscussionReplier).to have_received(:call).with(
         **replier_args,
@@ -58,7 +60,7 @@ describe MergeRequestRecreationJob, epic: :jobs, feature: "mr recreate", type: :
     it "notifies recreate failed" do
       allow(Dependabot::MergeRequest::UpdateService).to receive(:call).and_raise("error message")
 
-      perform_enqueued_jobs { job.perform_later(project_name, mr_iid, discussion_id) }
+      perform_enqueued_jobs { job }
 
       expect(Gitlab::MergeRequest::DiscussionReplier).to have_received(:call).with(
         **replier_args,
