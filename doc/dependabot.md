@@ -76,6 +76,70 @@ To [authenticate](https://docs.gitlab.com/ee/user/packages/maven_repository/#aut
 
 If it is required to use packages from different project package registries, make sure that gitlab access token has access to these projects as well.
 
+```yml
+maven-gitlab:
+  type: maven-repository
+  url: https://gitlab.com/api/v4/projects/:project_id/packages/maven
+```
+
+* `project_id` - id number of project
+
+### Gitlab npm package registry
+
+For npm gitlab registry to work, 2 entries have to be present in configuration
+
+```yml
+npm-gitlab:
+  type: npm-registry
+  url: https://gitlab.com/api/v4/projects/:project_id/packages/npm
+  token: ${{GITLAB_NPM_REGISTRY_TOKEN}}
+npm-gitlab-instance:
+  type: npm-registry
+  url: https://gitlab.com/api/v4/packages/npm
+  token: ${{GITLAB_NPM_REGISTRY_TOKEN}}
+```
+
+* `project_id` - id number of project
+* `GITLAB_NPM_REGISTRY_TOKEN` - environment variable name with token injected within `dependabot-gitlab` container
+
+### Gitlab python package registry
+
+```yml
+python-gitlab:
+  type: python-index
+  url: https://gitlab.com/api/v4/projects/:project_id/packages/pypi/simple
+  username: :token_name
+  password: ${{GITLAB_PYPI_TOKEN}}
+  replaces-base: false
+```
+
+* `project_id` - id number of project
+* `token_name` - name of created private access token
+* `GITLAB_PYPI_TOKEN` - environment variable name with token injected within `dependabot-gitlab` container
+
+Additionally, dependency file of whatever python tool is used, will have to define url with credentials in order for native
+helpers to be able to authenticate.
+
+Example with pipfile:
+
+```
+[[source]]
+name = "gitlab"
+url = "https://token_name:${GITLAB_PYPI_TOKEN}@gitlab.com/api/v4/projects/:project_id/packages/pypi/simple"
+verify_ssl = true
+```
+
+### Gitlab terraform registry
+
+```yml
+terraform-gitlab:
+  type: terraform-registry
+  url: https://gitlab.com
+  token: ${{GITLAB_TF_REGISTRY_TOKEN}}
+```
+
+* `GITLAB_TF_REGISTRY_TOKEN` - environment variable name with token injected within `dependabot-gitlab` container
+
 ## schedule
 
 ### Random schedule
