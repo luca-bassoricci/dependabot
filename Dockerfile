@@ -43,7 +43,8 @@ WORKDIR /home/dependabot/app
 
 ENV BUNDLE_PATH=vendor/bundle \
     BUNDLE_WITHOUT="development:test" \
-    LD_PRELOAD=/usr/lib/libjemalloc.so
+    LD_PRELOAD=/usr/lib/libjemalloc.so \
+    RAILS_ENV=production
 
 # Copy gemfile first so cache can be reused
 COPY --chown=dependabot:dependabot Gemfile Gemfile.lock ./
@@ -52,9 +53,7 @@ RUN bundle install
 COPY --chown=dependabot:dependabot ./ ./
 
 # Smoke test image
-RUN SETTINGS__GITLAB_ACCESS_TOKEN=token \
-    RAILS_ENV=production \
-    bundle exec rake about
+RUN SETTINGS__GITLAB_ACCESS_TOKEN=token bundle exec rake about
 
 ARG COMMIT_SHA
 ARG PROJECT_URL
