@@ -1,3 +1,9 @@
+## 0.25.2 (2022-08-29)
+
+### 🐞 Bug Fixes (1 change)
+
+- [Set rails env to production by default](dependabot-gitlab/dependabot@299674778fa82b9c2764736165229b248d0cdcd5) by @andrcuns. See merge request dependabot-gitlab/dependabot!1729
+
 ## 0.25.1 (2022-08-28)
 
 ### 🐞 Bug Fixes (3 changes)
