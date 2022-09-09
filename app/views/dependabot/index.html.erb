@@ -5,7 +5,7 @@
   </head>
 
   <style>
-  a {
+  a.version {
     position: absolute;
     top: 0;
     right: 0;
@@ -46,7 +46,7 @@
   </style>
 
   <body>
-    <a><%= "v#{version}"%></a>
+    <a class="version"><%= "v#{version}"%></a>
     <h1>Projects</h1>
     <% @projects.each do |project| %>
       <h2><%= link_to_if project.web_url, project.name, project.web_url %></h2>
