@@ -48,4 +48,11 @@ module IndexHelper
 
     "#{base_url}?#{base_args}&#{label_args}&#{search_arg}"
   end
+
+  # App version
+  #
+  # @return [String]
+  def version
+    Version::VERSION
+  end
 end

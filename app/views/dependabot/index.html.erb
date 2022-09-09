@@ -5,6 +5,11 @@
   </head>
 
   <style>
+  a {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
   table.blueTable {
     border: 1px solid #1C6EA4;
     background-color: #EEEEEE;
@@ -41,6 +46,7 @@
   </style>
 
   <body>
+    <a><%= "v#{version}"%></a>
     <h1>Projects</h1>
     <% @projects.each do |project| %>
       <h2><%= link_to_if project.web_url, project.name, project.web_url %></h2>
