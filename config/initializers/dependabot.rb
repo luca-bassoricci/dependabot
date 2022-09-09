@@ -157,7 +157,7 @@ module Dependabot
           retry_attempt += 1
           raise unless retry_attempt <= @max_retries
 
-          log(:warn, "Gitlab request failed with: '#{e}'. Retrying...")
+          log(:warn, "Gitlab request failed with: '#{e}'. Retrying...") && sleep(1)
           retry
         end
       end
