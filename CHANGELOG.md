@@ -1,3 +1,31 @@
+## 0.26.0 (2022-09-09)
+
+### 🚀 New features (1 change)
+
+- [Add app version number to top right corner of UI](dependabot-gitlab/dependabot@c241a2c2ae2f5529a426dd39b858ad36e6d41a3a) by @andrcuns. See merge request dependabot-gitlab/dependabot!1736
+
+### 🔬 Improvements (1 change)
+
+- [Add delay when retrying gitlab api requests](dependabot-gitlab/dependabot@b49690b3acfa690aa5b71802b4a15fffbcc0544a) by @andrcuns. See merge request dependabot-gitlab/dependabot!1737
+
+### 🐞 Bug Fixes (1 change)
+
+- [Respect squash option when auto-merging in standalone mode](dependabot-gitlab/dependabot@f6533501724a20d373280f5733b3e3d026c730c0) by @andrcuns. See merge request dependabot-gitlab/dependabot!1738
+
+### 📦 Dependency updates (3 changes)
+
+- [dep: bump dependabot-omnibus from 0.211.0 to 0.212.0](dependabot-gitlab/dependabot@767a32de00222f96e78a5cc89d24d6adbd2262d1) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1735
+- [dep: bump rubocop from 1.35.1 to 1.36.0](dependabot-gitlab/dependabot@a497ffd9897eebe82255c744c85bfa077c33bda2) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1734
+- [dep: bump sidekiq from 6.5.5 to 6.5.6](dependabot-gitlab/dependabot@4fe8db178713aab3438f2ef665b6a381c4648e7c) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1732
+
+### 📦 Development dependency updates (1 change)
+
+- [dep: bump faker from 2.22.0 to 2.23.0](dependabot-gitlab/dependabot@6d129c4c7fb3a2cfda6dd6a6fa6132bba94119a9) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1733
+
+### 📄 Documentation updates (1 change)
+
+- [Add various private gitlab registries usage examples](dependabot-gitlab/dependabot@6d5667c5a537d6490345635f358aabf17470edfd) by @andrcuns. See merge request dependabot-gitlab/dependabot!1730
+
 ## 0.25.2 (2022-08-29)
 
 ### 🐞 Bug Fixes (1 change)
