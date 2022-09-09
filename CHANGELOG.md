@@ -1,3 +1,9 @@
+## 0.26.1 (2022-09-09)
+
+### 🐞 Bug Fixes (1 change)
+
+- [Fix ui page styles](dependabot-gitlab/dependabot@3786c35655216e828d89a6c83c01acb55bbf51fc) by @andrcuns. See merge request dependabot-gitlab/dependabot!1739
+
 ## 0.26.0 (2022-09-09)
 
 ### 🚀 New features (1 change)
