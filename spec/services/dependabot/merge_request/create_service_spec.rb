@@ -31,7 +31,21 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
     )
   end
 
-  let(:project) { create(:project, forked_from_id: target_project_id) }
+  let(:config_yaml) do
+    {
+      "version" => 2,
+      "updates" => [{
+        "package-ecosystem" => "bundler",
+        "directory" => "/",
+        "schedule" => {
+          "interval" => "weekly"
+        },
+        "auto-merge" => auto_merge
+      }]
+    }.to_yaml
+  end
+
+  let(:project) { create(:project, forked_from_id: target_project_id, config_yaml: config_yaml) }
   let(:source_branch) { "dependabot-bundler-.-master-config-2.2.1" }
   let(:target_branch) { "master" }
   let(:config_entry) { project.configuration.entry(package_ecosystem: "bundler") }
@@ -40,6 +54,7 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
   let(:commit_message) { "update-commit" }
   let(:conflicts) { false }
   let(:credentials) { Dependabot::Credentials.call(nil) }
+  let(:auto_merge) { true }
 
   let(:existing_mr) { mr }
   let(:closed_mr) { nil }
@@ -65,7 +80,7 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
       updated_dependencies: updated_dependencies,
       updated_files: updated_files,
       vulnerable: false,
-      auto_merge_rules: auto_merge_rules
+      auto_merge_rules: config_entry[:auto_merge]
     )
   end
 
@@ -137,13 +152,14 @@ describe Dependabot::MergeRequest::CreateService, integration: true, epic: :serv
         expect(gitlab).to have_received(:accept_merge_request).with(
           mr.project_id,
           mr.iid,
-          merge_when_pipeline_succeeds: true
+          merge_when_pipeline_succeeds: true,
+          squash: false
         )
       end
     end
 
     context "without auto-merge" do
-      let(:auto_merge_rules) { nil }
+      let(:auto_merge) { false }
 
       it "creates merge request and doesn't set to be merged automatically" do
         expect(create_mr).to eq(mr)
