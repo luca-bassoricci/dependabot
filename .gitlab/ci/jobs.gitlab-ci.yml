@@ -35,7 +35,7 @@ include:
 .docker_runner:
   image: registry.gitlab.com/dependabot-gitlab/ci-images:docker-20.10
   services:
-    - name: docker:20.10.17-dind
+    - name: docker:20.10.18-dind
       alias: docker
   variables:
     DOCKER_HOST: tcp://docker:2375
