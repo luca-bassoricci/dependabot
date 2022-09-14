@@ -30,7 +30,7 @@ gem "terminal-table", "~> 3.0"
 gem "warning", "~> 1.3", require: false
 gem "yabeda-prometheus-mmap", "~> 0.3.0"
 gem "yabeda-puma-plugin", "~> 0.6.0"
-gem "yabeda-sidekiq", "~> 0.8.1"
+gem "yabeda-sidekiq", "~> 0.8.2"
 
 group :test do
   gem "airborne", "~> 0.3.7"
