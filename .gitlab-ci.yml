@@ -10,7 +10,7 @@ stages:
   - deploy
 
 default:
-  image: registry.gitlab.com/dependabot-gitlab/ci-images:ruby@sha256:cec6af76cfdf3d04b437f07c02afd220dafdd3cc470866a52b63d6b29e394f10
+  image: registry.gitlab.com/dependabot-gitlab/ci-images:ruby@sha256:12a9f5ab37e70d8b8a653108aee5285efc002a38a361df32d037e433a6ff9669
   interruptible: true
 
 variables:
