@@ -65,7 +65,6 @@ class DependencyUpdateJob < ApplicationJob
     return if AppConfig.standalone?
 
     update_job.run_errors = UpdateFailures.errors
-    update_job.run_log = UpdateLog.log
     update_job.save!
   end
 
