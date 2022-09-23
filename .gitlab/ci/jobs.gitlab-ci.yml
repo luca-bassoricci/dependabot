@@ -112,10 +112,10 @@ include:
     - saas-linux-medium-amd64
   before_script:
     - !reference [.docker_runner, before_script]
+    - setup_buildx
     - |
       if [ ! -z "$CI_COMMIT_TAG" ]; then
         install_qemu
-        setup_buildx
       fi
   script: .gitlab/script/build-image.sh
 
@@ -127,8 +127,8 @@ include:
     - saas-linux-medium-amd64
   before_script:
     - !reference [.docker_runner, before_script]
-    - regctl_login "$CI_REGISTRY" "$CI_REGISTRY_USER" "$CI_REGISTRY_PASSWORD"
     - install_qemu
+    - setup_buildx
   script:
     - .gitlab/script/build-core-image.sh
 
