@@ -30,14 +30,12 @@ function dependabot_version() {
 }
 
 function install_qemu() {
-  log_info "Reinstall qemu"
   docker pull -q ${QEMU_IMAGE}
   docker run --rm --privileged ${QEMU_IMAGE} --uninstall qemu-*
   docker run --rm --privileged ${QEMU_IMAGE} --install all
 }
 
 function setup_buildx() {
-  log_info "Setup buildx builder"
   docker buildx create --use
 }
 
