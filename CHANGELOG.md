@@ -1,3 +1,38 @@
+## 0.27.0 (2022-09-23)
+
+### 🔬 Improvements (1 change)
+
+- [Add limited support for arm docker images](dependabot-gitlab/dependabot@dd07bea3ce645ded4f44ef2eeb77024282ad6b6c) by @andrcuns. See merge request dependabot-gitlab/dependabot!1749
+
+### 🐞 Bug Fixes (1 change)
+
+- [Do not save execution log as single document](dependabot-gitlab/dependabot@58dae320ec916f00ed475f401c8a0a45de2ef79e) by @andrcuns. See merge request dependabot-gitlab/dependabot!1756
+
+### 📦 Dependency updates (5 changes)
+
+- [dep: [security] bump commonmarker from 0.23.5 to 0.23.6](dependabot-gitlab/dependabot@fccdd1cabcfbc3612f9db0447fe4397efc70c2f1) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1755
+- [dep: bump sidekiq from 6.5.6 to 6.5.7](dependabot-gitlab/dependabot@9fb68c757a0de2fdc253308bb61b33131d8ba69c) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1748
+- [dep: bump yabeda-sidekiq from 0.8.1 to 0.8.2](dependabot-gitlab/dependabot@e3a2a7ccd911cc6ffb4535f9c7dfef6fd3a8c740) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1745
+- [dep: bump rubocop-rails from 2.15.2 to 2.16.0](dependabot-gitlab/dependabot@fb6e2ea9e6b2ed102ed766cd50519aa4711ee9b4) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1741
+- [dep: bump rails from 7.0.3.1 to 7.0.4](dependabot-gitlab/dependabot@cec21b9ef20b41cc13e72f1379024b946340c5ae) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1740
+
+### 📦 Development dependency updates (5 changes)
+
+- [dep: bump rubocop-rspec from 2.13.1 to 2.13.2](dependabot-gitlab/dependabot@4d91a65a0dec697d0902fdd71bf4e45d837fdb13) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1754
+- [dep: bump spring from 4.0.0 to 4.1.0](dependabot-gitlab/dependabot@2217d726fdc4dfcbafd7ea37033496452c2b2c73) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1751
+- [dep: bump rubocop-rails from 2.16.0 to 2.16.1](dependabot-gitlab/dependabot@5fcfba79075616c4c78b06527e21952024844499) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1747
+- [dep: bump rubocop-rspec from 2.12.1 to 2.13.1](dependabot-gitlab/dependabot@4fc6e83ce50ae1b53eb16801fcb6342e61c1a10f) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1743
+- [dep: bump rubocop-performance from 1.14.3 to 1.15.0](dependabot-gitlab/dependabot@d201c1041a623afde12ab7a81e4431424c7fb27e) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1742
+
+### 🔧 CI changes (6 changes)
+
+- [Always use buildkit builder for image builds](dependabot-gitlab/dependabot@cb76ba2961a16722e32ab44d5f2bcefee4597110) by @andrcuns. See merge request dependabot-gitlab/dependabot!1758
+- [Always generate test report and coverage](dependabot-gitlab/dependabot@951a631ec596609c4f4406c9a51d83797f5496fe) by @andrcuns. See merge request dependabot-gitlab/dependabot!1757
+- [chore(deps): update registry.gitlab.com/dependabot-gitlab/ci-images:ruby docker digest to 0ff5817](dependabot-gitlab/dependabot@6586619c1c9d32db731a908e02d73294c7e4227e) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1753
+- [chore(deps): update registry.gitlab.com/dependabot-gitlab/ci-images:ruby docker digest to 12a9f5a](dependabot-gitlab/dependabot@00710d894a5cddc0855bedaea36397d522e3dc07) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1750
+- [Update andrcuns/allure-report-publisher docker tag to v0.11.0](dependabot-gitlab/dependabot@d49397649c0306e76000cc64dfc49b97ef72725a) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1746
+- [dep: update docker docker tag to v20.10.18](dependabot-gitlab/dependabot@6ef8ff76387097edcd90b48a0da49cc71cd429ff) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1744
+
 ## 0.26.1 (2022-09-09)
 
 ### 🐞 Bug Fixes (1 change)
