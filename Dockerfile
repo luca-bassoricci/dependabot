@@ -1,6 +1,6 @@
-ARG CORE_VERSION=latest
+ARG CORE_IMAGE=dependabot/dependabot-core:latest
 
-FROM dependabot/dependabot-core:${CORE_VERSION} as core
+FROM ${CORE_IMAGE} as core
 
 FROM core as development
 

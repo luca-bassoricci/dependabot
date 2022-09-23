@@ -2,8 +2,6 @@ include:
   - template: Dependency-Scanning.gitlab-ci.yml
   - template: Security/SAST.gitlab-ci.yml
   - template: Security/License-Scanning.gitlab-ci.yml
-  - project: dependabot-gitlab/ci-images
-    file: .gitlab/ci/runners.gitlab-ci.yml
 
 # ======================================================================================================================
 # Runners
@@ -37,9 +35,14 @@ include:
   services:
     - name: docker:20.10.18-dind
       alias: docker
+  tags:
+    - docker
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_BUILDKIT: 1
+  before_script:
+    - source .gitlab/script/utils.sh
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
 
 .rspec_runner:
   stage: test
@@ -103,8 +106,31 @@ include:
 
 .build_app_image:
   stage: build
-  extends: .buildkit_runner
+  extends: .docker_runner
+  timeout: 180m
+  tags:
+    - saas-linux-medium-amd64
+  before_script:
+    - !reference [.docker_runner, before_script]
+    - |
+      if [ ! -z "$CI_COMMIT_TAG" ]; then
+        install_qemu
+        setup_buildx
+      fi
   script: .gitlab/script/build-image.sh
+
+.build_core_image:
+  stage: build
+  extends: .docker_runner
+  timeout: 180m
+  tags:
+    - saas-linux-medium-amd64
+  before_script:
+    - !reference [.docker_runner, before_script]
+    - regctl_login "$CI_REGISTRY" "$CI_REGISTRY_USER" "$CI_REGISTRY_PASSWORD"
+    - install_qemu
+  script:
+    - .gitlab/script/build-core-image.sh
 
 # ----------------------------------------------------------------------------------------------------------------------
 # 'static analysis' stage
@@ -260,9 +286,7 @@ include:
   variables:
     DOCKERHUB: docker.io/andrcuns/dependabot-gitlab
     GITLAB: $CI_REGISTRY_IMAGE
-  before_script:
-    - echo "$DOCKERHUB_PASSWORD" | docker login -u $DOCKERHUB_USERNAME --password-stdin
-    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+  before_script: []
   script:
     - .gitlab/script/release-image.sh
   interruptible: false

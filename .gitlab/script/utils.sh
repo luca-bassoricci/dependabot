@@ -28,3 +28,23 @@ function log_with_header() {
 function dependabot_version() {
   echo "$(awk '/dependabot-omnibus \([0-9.]+\)/ {print $2}' Gemfile.lock | sed 's/[()]//g')"
 }
+
+function install_qemu() {
+  log_info "Reinstall qemu"
+  docker pull -q ${QEMU_IMAGE}
+  docker run --rm --privileged ${QEMU_IMAGE} --uninstall qemu-*
+  docker run --rm --privileged ${QEMU_IMAGE} --install all
+}
+
+function setup_buildx() {
+  log_info "Setup buildx builder"
+  docker buildx create --use
+}
+
+function copy_image() {
+  regctl image copy "${1}" "${2}" --verbosity info
+}
+
+function regctl_login() {
+  regctl registry login "${1}" -u "${2}" -p "${3}" --verbosity info
+}

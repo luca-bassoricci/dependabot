@@ -6,26 +6,16 @@ set -e
 
 source "$(dirname "$0")/utils.sh"
 
-function tag_and_push() {
-  registry=$1
-  version=$2
-
-  release_tag="$registry:$release_version"
-  latest_tag="$registry:latest"
-
-  docker tag "$APP_IMAGE" "$release_tag"
-  docker tag "$APP_IMAGE" "$latest_tag"
-  docker push "$release_tag"
-  docker push "$latest_tag"
-}
-
 release_version="$(echo $CI_COMMIT_TAG | grep -oP 'v\K[0-9.]+')"
 
-log_with_header "Pulling '${APP_IMAGE}'"
-docker pull "$APP_IMAGE" -q
+log_info "Authenticate to docker registries"
+regctl_login "$CI_REGISTRY" "$CI_REGISTRY_USER" "$CI_REGISTRY_PASSWORD"
+regctl_login "docker.io" "$DOCKERHUB_USERNAME" "$DOCKERHUB_PASSWORD"
 
-log_with_header "Tagging and pushing release to dockerhub"
-tag_and_push "$DOCKERHUB" "$release_version"
+log_info "Tagging and pushing release to dockerhub"
+copy_image "${APP_IMAGE}" "${DOCKERHUB}:${release_version}"
+copy_image "${APP_IMAGE}" "${DOCKERHUB}:latest"
 
-log_with_header "Tagging and pushing release to gitlab registry"
-tag_and_push "$GITLAB" "$release_version"
+log_info "Tagging and pushing release to gitlab registry"
+copy_image "${APP_IMAGE}" "${GITLAB}:${release_version}"
+copy_image "${APP_IMAGE}" "${GITLAB}:latest"

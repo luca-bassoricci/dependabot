@@ -1,6 +1,8 @@
 # Reusable rules
 .mr: &mr
   if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+.core_update: &core_update
+  if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_COMMIT_REF_NAME =~ /^dependabot-bundler-dependabot-omnibus/'
 .main: &main
   if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_PIPELINE_SOURCE == "push" || $CI_PIPELINE_SOURCE == "web")'
 .release: &release
@@ -87,8 +89,9 @@
     - <<: *main
       variables:
         LATEST_TAG: latest
-    - <<: *release
-      variables:
-        LATEST_TAG: latest
-        TARGET_PLATFORM: linux/amd64 # TODO: add arm64 platform once supported upstream
+    - *release
     - *mr
+
+.rules:build-core-image:
+  rules:
+    - *core_update
