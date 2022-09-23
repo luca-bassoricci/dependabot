@@ -286,9 +286,11 @@ include:
   stage: release
   extends: .docker_runner
   variables:
-    DOCKERHUB: docker.io/andrcuns/dependabot-gitlab
-    GITLAB: $CI_REGISTRY_IMAGE
-  before_script: []
+    DOCKERHUB_IMAGE: docker.io/andrcuns/dependabot-gitlab
+    GITLAB_IMAGE: $CI_REGISTRY_IMAGE
+  before_script:
+    - !reference [.docker_runner, before_script]
+    - echo "$DOCKERHUB_PASSWORD" | docker login "docker.io" -u $DOCKERHUB_USER --password-stdin
   script:
     - .gitlab/script/release-image.sh
   interruptible: false

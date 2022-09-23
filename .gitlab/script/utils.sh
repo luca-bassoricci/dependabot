@@ -30,19 +30,11 @@ function dependabot_version() {
 }
 
 function install_qemu() {
-  docker pull -q ${QEMU_IMAGE}
-  docker run --rm --privileged ${QEMU_IMAGE} --uninstall qemu-*
-  docker run --rm --privileged ${QEMU_IMAGE} --install all
+  docker pull -q "${QEMU_IMAGE}"
+  docker run --rm --privileged "${QEMU_IMAGE}" --uninstall qemu-*
+  docker run --rm --privileged "${QEMU_IMAGE}" --install all
 }
 
 function setup_buildx() {
   docker buildx create --use
-}
-
-function copy_image() {
-  regctl image copy "${1}" "${2}" --verbosity info
-}
-
-function regctl_login() {
-  regctl registry login "${1}" -u "${2}" -p "${3}" --verbosity info
 }
