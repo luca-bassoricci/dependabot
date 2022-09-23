@@ -33,5 +33,4 @@ docker buildx build \
 
 log_info "Create multi-arch core image"
 docker buildx imagetools create -t "$multi_arch_image" "$arm_image" "$core_image"
-regctl_login "$CI_REGISTRY" "$CI_REGISTRY_USER" "$CI_REGISTRY_PASSWORD"
-copy_image "$multi_arch_image" "$latest_multi_arch_image" # tag with latest
+docker buildx imagetools create -t "$latest_multi_arch_image" "$multi_arch_image" # tag with latest
