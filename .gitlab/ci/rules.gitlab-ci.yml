@@ -84,14 +84,22 @@
     - *mr
     - *main
 
-.rules:build-image:
-  rules:
-    - <<: *main
-      variables:
-        LATEST_TAG: latest
-    - *release
-    - *mr
-
 .rules:build-core-image:
   rules:
     - *core_update
+
+.rules:build-image:
+  rules:
+    - <<: *mr
+      changes: *dependency_changes
+      variables:
+        BUILD_PLATFORM: linux/amd64,linux/arm64 # build arm image on dependency updates
+    - <<: *mr
+      variables:
+        BUILD_PLATFORM: linux/amd64
+    - <<: *main
+      variables:
+        LATEST_TAG: latest
+    - <<: *release
+      variables:
+        LATEST_TAG: latest

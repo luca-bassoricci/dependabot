@@ -26,6 +26,7 @@ variables:
   SAST_DISABLED: "true"
   CODE_QUALITY_DISABLED: "true"
   LICENSE_MANAGEMENT_DISABLED: "true"
+  BUILD_PLATFORM: linux/amd64,linux/arm64
 
 include:
   - local: .gitlab/ci/jobs.gitlab-ci.yml
@@ -51,6 +52,9 @@ build-app-image:
   extends:
     - .build_app_image
     - .rules:build-image
+  needs:
+    - job: build-core-image
+      optional: true
 
 # ======================================================================================================================
 # Static analysis stage

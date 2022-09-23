@@ -114,10 +114,11 @@ include:
     - !reference [.docker_runner, before_script]
     - setup_buildx
     - |
-      if [ ! -z "$CI_COMMIT_TAG" ]; then
+      if [[ "$BUILD_PLATFORM" =~ arm64 ]]; then
         install_qemu
       fi
-  script: .gitlab/script/build-image.sh
+  script:
+    - .gitlab/script/build-image.sh
 
 .build_core_image:
   stage: build
