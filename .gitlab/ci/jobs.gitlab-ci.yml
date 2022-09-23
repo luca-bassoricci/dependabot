@@ -6,6 +6,10 @@ include:
 # ======================================================================================================================
 # Runners
 # ======================================================================================================================
+.large_runner:
+  tags:
+    - saas-linux-large-amd64
+
 .gem_cache: &gem_cache
   key:
     files:
@@ -106,10 +110,10 @@ include:
 
 .build_app_image:
   stage: build
-  extends: .docker_runner
+  extends:
+    - .docker_runner
+    - .large_runner
   timeout: 180m
-  tags:
-    - saas-linux-medium-amd64
   before_script:
     - !reference [.docker_runner, before_script]
     - setup_buildx
@@ -121,10 +125,10 @@ include:
 
 .build_core_image:
   stage: build
-  extends: .docker_runner
+  extends:
+    - .docker_runner
+    - .large_runner
   timeout: 180m
-  tags:
-    - saas-linux-medium-amd64
   before_script:
     - !reference [.docker_runner, before_script]
     - install_qemu
@@ -203,7 +207,9 @@ include:
 
 .standalone-test:
   stage: test
-  extends: .docker_runner
+  extends:
+    - .docker_runner
+    - .large_runner
   variables:
     COMPOSE_PROJECT_NAME: dependabot
   script:
@@ -213,7 +219,9 @@ include:
 
 .deploy-test:
   stage: test
-  extends: .docker_runner
+  extends:
+    - .docker_runner
+    - .large_runner
   variables:
     SETTINGS__GITLAB_URL: http://gitlab:8080
     SETTINGS__DEPENDABOT_URL: http://ci-test.com
