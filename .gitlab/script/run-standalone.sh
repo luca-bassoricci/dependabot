@@ -29,7 +29,7 @@ log "** Pulling image '${APP_IMAGE}' **"
 docker pull --quiet $APP_IMAGE
 
 log "** Running rake task 'dependabot:update[dependabot-gitlab/testing,bundler,/]' **"
-docker run --rm -i \
+command time -o time.txt -f "%e" docker run --rm -i \
   -e SETTINGS__GITLAB_URL=http://gitlab:8080 \
   -e SETTINGS__GITLAB_ACCESS_TOKEN=e2e-test \
   -e SETTINGS__GITHUB_ACCESS_TOKEN="${GITHUB_ACCESS_TOKEN_TEST:-}" \

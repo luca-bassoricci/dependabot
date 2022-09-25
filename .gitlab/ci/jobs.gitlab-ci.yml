@@ -213,10 +213,19 @@ include:
     - .large_runner
   variables:
     COMPOSE_PROJECT_NAME: dependabot
+    METRICS_REPORT: metrics.txt
   script:
     - .gitlab/script/run-standalone.sh
   after_script:
     - curl -X POST -s "http://docker:8081/sessions/verify" | jq
+    - |
+      echo "# TYPE update_duration_seconds_sum summary" > $METRICS_REPORT
+      echo "update_duration_seconds_sum $(cat time.txt)" >> $METRICS_REPORT
+  artifacts:
+    expire_in: 1 day
+    when: always
+    reports:
+      metrics: $METRICS_REPORT
 
 .deploy-test:
   stage: test
