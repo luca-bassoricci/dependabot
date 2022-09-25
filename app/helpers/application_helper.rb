@@ -36,15 +36,21 @@ module ApplicationHelper
     UpdateFailures.save_error(error)
   end
 
-  # Log tagged message with dependency context
+  # Log tagged message with execution context
   #
   # @param [Symbol] level
   # @param [String] message
   # @param [Array] tags
   # @return [void]
   def log(level, message, tags: [])
-    Rails.logger.tagged([execution_context, *tags].compact).send(level, message)
-    UpdateLog.add(level: level, message: message)
+    context_tag = execution_context.then do |context|
+      next unless context
+
+      "#{context[:job]}: #{context.except(:job).values.join('=>')}"
+    end
+
+    Rails.logger.tagged([context_tag, *tags].compact).send(level, message)
+    UpdateLog.add(level: level, message: message) if context_tag
   end
 
   # Current job execution context
@@ -56,7 +62,7 @@ module ApplicationHelper
 
   # Run block within execution context
   #
-  # @param [String] context
+  # @param [Hash] context
   # @return [void]
   def run_within_context(context)
     RequestStore.store[:context] = context

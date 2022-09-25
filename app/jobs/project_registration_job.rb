@@ -7,6 +7,6 @@ class ProjectRegistrationJob < ApplicationJob
 
   def perform
     log(:info, "Checking for projects to register or update")
-    run_within_context("project-registration") { Dependabot::Projects::Registration::Service.call }
+    run_within_context({ job: "project-registration" }) { Dependabot::Projects::Registration::Service.call }
   end
 end

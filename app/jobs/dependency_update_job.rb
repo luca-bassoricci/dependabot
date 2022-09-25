@@ -66,6 +66,8 @@ class DependencyUpdateJob < ApplicationJob
 
     update_job.run_errors = UpdateFailures.errors
     update_job.save!
+
+    update_job.save_log_entries(UpdateLog.log)
   end
 
   # Dependency update execution context
@@ -74,9 +76,11 @@ class DependencyUpdateJob < ApplicationJob
   def job_execution_context
     return unless project_name && package_ecosystem && directory
 
-    context_values = [project_name, package_ecosystem]
-    context_values << directory unless directory == "/"
-
-    "dependency-update: #{context_values.join('=>')}"
+    {
+      job: "dep-update",
+      project: project_name,
+      ecosystem: package_ecosystem,
+      directory: directory == "/" ? nil : directory
+    }.compact
   end
 end
