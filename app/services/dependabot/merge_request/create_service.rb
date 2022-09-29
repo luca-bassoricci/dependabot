@@ -27,7 +27,7 @@ module Dependabot
 
       # Create or update MR
       #
-      # @return [void]
+      # @return [<Gitlab::ObjectifiedHash, nil>]
       def call
         if find_mr("closed")
           log(:warn, "  closed mr exists, skipping!")
@@ -55,14 +55,14 @@ module Dependabot
                   :credentials,
                   :recreate
 
-      # Create mr
+      # Create mr and return true if created
       #
-      # @return [void]
+      # @return [Boolean]
       def create_mr
-        @mr = mr_creator.call || return # dependabot-core returns nil if branch && mr exists and nothing was created
+        # dependabot-core returns nil if branch && mr exists and nothing was created
+        @mr = mr_creator.call || return
 
         log(:info, "  created merge request: #{mr.web_url.bright}")
-        mr
       rescue Gitlab::Error::ResponseError => e
         # dependabot-core will try to create mr in the edge case when mr exists without the branch
         return if e.is_a?(Gitlab::Error::Conflict)
@@ -71,7 +71,7 @@ module Dependabot
 
         log_error(e)
         capture_error(e)
-        mr
+        true
       end
 
       # Update existing merge request
@@ -94,7 +94,6 @@ module Dependabot
       rescue Gitlab::Error::ResponseError => e
         log_error(e)
         capture_error(e)
-        mr
       end
 
       # Rebase merge request

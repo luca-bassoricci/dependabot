@@ -20,7 +20,7 @@ module Dependabot
 
   # Main entrypoint class for updating dependencies and creating merge requests
   #
-  class UpdateService < UpdateBase
+  class UpdateService < UpdateBase # rubocop:disable Metrics/ClassLength
     def initialize(args)
       super(args[:project_name])
 
@@ -93,14 +93,14 @@ module Dependabot
     def update
       dependencies.each_with_object({ mr: Set.new, security_mr: Set.new }) do |dep, count|
         updated_dep = updated_dependency(dep)
-        next update_dependency(updated_dep, count) if updated_dep.updates?
-        next if AppConfig.standalone?
 
-        if config_entry.dig(:vulnerability_alerts, :enabled)
-          create_vulnerability_issues(updated_dep) if updated_dep.vulnerable?
-          close_obsolete_vulnerability_issues(updated_dep)
+        if updated_dep.updates?
+          iid = update_dependency(updated_dep, count)
+          next if iid # go to next dep if mr was created or updated
         end
+        next if AppConfig.standalone? || DependabotConfig.dry_run?
 
+        handle_vulnerability_issues(updated_dep) if vulnerability_alerts?
         close_obsolete_mrs(updated_dep.name)
       end
     end
@@ -127,6 +127,15 @@ module Dependabot
       )&.iid
 
       mrs[type] << iid if iid
+    end
+
+    # Handle vulnerability issues
+    #
+    # @param [Dependabot::Dependencies::UpdatedDependency] updated_dep
+    # @return [void]
+    def handle_vulnerability_issues(updated_dep)
+      create_vulnerability_issues(updated_dep) if updated_dep.vulnerable?
+      close_obsolete_vulnerability_issues(updated_dep)
     end
 
     # Close obsolete merge requests
@@ -175,6 +184,13 @@ module Dependabot
         )
         .reject { |issue| issue.vulnerability.vulnerable?(dependency.version) }
         .each { |issue| Gitlab::Vulnerabilities::IssueCloser.call(issue) }
+    end
+
+    # Vulnerability alerts enabled
+    #
+    # @return [Boolean]
+    def vulnerability_alerts?
+      config_entry.dig(:vulnerability_alerts, :enabled)
     end
   end
 end
