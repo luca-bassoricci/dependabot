@@ -308,7 +308,7 @@ include:
     GITLAB_IMAGE: $CI_REGISTRY_IMAGE
   before_script:
     - !reference [.docker_runner, before_script]
-    - echo "$DOCKERHUB_PASSWORD" | docker login "docker.io" -u $DOCKERHUB_USER --password-stdin
+    - echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
   script:
     - .gitlab/script/release-image.sh
   interruptible: false

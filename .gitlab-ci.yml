@@ -163,7 +163,7 @@ create-gitlab-release:
   extends:
     - .gitlab_release
     - .rules:release
-  dependencies: []
+  needs: [release-image]
 
 update-helm-chart:
   extends:
