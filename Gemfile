@@ -42,7 +42,7 @@ group :test do
   gem "pry-byebug", "~> 3.10"
   gem "reek", "~> 6.1", require: false
   gem "rspec", "~> 3.11"
-  gem "rspec_junit_formatter", "~> 0.5.1"
+  gem "rspec_junit_formatter", "~> 0.6.0"
   gem "rspec-rails", "~> 5.1.2"
   gem "rspec-sidekiq", "~> 3.1", require: false
   gem "rubocop", "~> 1.36.0", require: false
