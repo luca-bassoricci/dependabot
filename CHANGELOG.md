@@ -1,3 +1,33 @@
+## 0.27.1 (2022-09-29)
+
+### 🐞 Bug Fixes (1 change)
+
+- [Remove global milestone cache](dependabot-gitlab/dependabot@e06096ebde7ef3e7ac04cfdec4a95c5c45df8b80) by @andrcuns. See merge request dependabot-gitlab/dependabot!1771
+
+### 📦 Dependency updates (1 change)
+
+- [dep: bump yabeda-sidekiq from 0.8.2 to 0.9.0](dependabot-gitlab/dependabot@af818afcb07a7daed35ac06971b1f680bd4c59c4) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1769
+
+### 📦 Development dependency updates (2 changes)
+
+- [dep: bump solargraph from 0.47.0 to 0.47.1](dependabot-gitlab/dependabot@6619249aa573b2beb26b53b6202b24d025267b35) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1770
+- [dep: bump solargraph from 0.46.0 to 0.47.0](dependabot-gitlab/dependabot@caad51faa3b8f12c62f7703285adc14058412708) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1767
+
+### 🔧 CI changes (8 changes)
+
+- [Fix release jobs and image publishing](dependabot-gitlab/dependabot@beafca15b52f296f76a9281f11e898309a5cd5d3) by @andrcuns.
+- [chore(deps): update andrcuns/allure-report-publisher docker tag to v1](dependabot-gitlab/dependabot@e8e198bf7331ce578cfa7c69a15d89bf5db51eda) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1768
+- [Add metrics report for standalone test runtime](dependabot-gitlab/dependabot@05efb9f0ef89cf7f2248ffafb3321d7fecc16aad) by @andrcuns. See merge request dependabot-gitlab/dependabot!1765
+- [Update registry.gitlab.com/dependabot-gitlab/ci-images:ruby Docker digest to d8d532b](dependabot-gitlab/dependabot@f3fd55540497321749de9953461e11c50c8d44ef) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1766
+- [Update registry.gitlab.com/dependabot-gitlab/ci-images:ruby Docker digest to c523584](dependabot-gitlab/dependabot@188249d8125af8af6398d15240f62801cf2c109c) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1763
+- [Run docker workflows on large runner](dependabot-gitlab/dependabot@8c1ebc4d01bc89b8c197a262b5ef52ba9fb2f670) by @andrcuns. See merge request dependabot-gitlab/dependabot!1762
+- [Build multi-arch images on dep changes and master runs](dependabot-gitlab/dependabot@7a466620276f4f7782a9db87414b6fa4fa7796d9) by @andrcuns. See merge request dependabot-gitlab/dependabot!1760
+- [Replace regctl with buildx imagetools](dependabot-gitlab/dependabot@90b3a01db982d9b12353369c0405bc3b59b07eee) by @andrcuns. See merge request dependabot-gitlab/dependabot!1761
+
+### 🛠️ Chore (1 change)
+
+- [Add more information to log context](dependabot-gitlab/dependabot@f936c2ade081b7504cf6f3705bc0f309f86af70f) by @andrcuns. See merge request dependabot-gitlab/dependabot!1764
+
 ## 0.27.0 (2022-09-23)
 
 ### 🔬 Improvements (1 change)
