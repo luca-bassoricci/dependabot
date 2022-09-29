@@ -24,6 +24,7 @@ Application providing automated dependency updates based on [dependabot-core](ht
 # Docker image
 
 - [Dockerhub](https://hub.docker.com/r/andrcuns/dependabot-gitlab/tags) - `docker.io/andrcuns/dependabot-gitlab:latest`
+- [Gitlab](https://gitlab.com/dependabot-gitlab/dependabot/container_registry/1286335) - `registry.gitlab.com/dependabot-gitlab/dependabot:latest`
 
 # Usage
 
