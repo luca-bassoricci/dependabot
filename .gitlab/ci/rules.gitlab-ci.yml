@@ -27,6 +27,9 @@
   - Gemfile.lock
   - Dockerfile
 
+.db_changes: &db_changes
+  - db/**/*.rb
+
 # ======================================================================================================================
 # Rules
 # ======================================================================================================================
@@ -69,6 +72,13 @@
       changes: *dependency_changes
     - <<: *mr
       changes: *dependency_changes
+
+.rules:migration-test:
+  rules:
+    - <<: *main
+      changes: *db_changes
+    - <<: *mr
+      changes: *db_changes
 
 .rules:allure-reports:
   rules:

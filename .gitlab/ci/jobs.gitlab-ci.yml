@@ -248,6 +248,13 @@ include:
   after_script:
     - .gitlab/script/log-deploy.sh
 
+.migration-test:
+  extends: .deploy-test
+  before_script: []
+  after_script: []
+  script:
+    - .gitlab/script/test-migration.sh
+
 # ----------------------------------------------------------------------------------------------------------------------
 # test report stage
 #

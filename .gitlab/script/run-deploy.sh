@@ -8,9 +8,6 @@ log_with_header "Setting up dependabot app"
 log "** Pulling docker images **"
 docker compose pull --quiet --include-deps
 
-log "** Running migrations **"
-docker compose run --rm migration
-
 log "** Starting app **"
 docker compose up --wait redis mongodb web worker
 
