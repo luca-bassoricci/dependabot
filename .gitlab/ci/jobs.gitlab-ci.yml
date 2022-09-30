@@ -238,7 +238,7 @@ include:
     SETTINGS__GITLAB_ACCESS_TOKEN: e2e-test
     SETTINGS__GITHUB_ACCESS_TOKEN: e2e-test
     SETTINGS__PROJECT_REGISTRATION: automatic
-    SETTINGS__LOG_LEVEL: debug
+    SETTINGS__LOG_COLOR: "true"
     COMPOSE_PROJECT_NAME: dependabot
     REDIS_EXTRA_FLAGS: "--protected-mode no"
   before_script:
@@ -246,7 +246,7 @@ include:
   script:
     - .gitlab/script/test-deploy.sh
   after_script:
-    - docker compose --ansi always logs migration web worker
+    - .gitlab/script/log-deploy.sh
 
 # ----------------------------------------------------------------------------------------------------------------------
 # test report stage
