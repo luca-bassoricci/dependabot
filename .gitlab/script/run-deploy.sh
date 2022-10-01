@@ -6,10 +6,12 @@ source "$(dirname "$0")/utils.sh"
 
 log_with_header "Setting up dependabot app"
 log "** Pulling docker images **"
-docker compose pull --quiet --include-deps
+docker compose pull --quiet --include-deps 2>/dev/null
+log_success "done!"
 
 log "** Starting app **"
-docker compose up --wait redis mongodb web worker
+docker compose up --wait redis mongodb web worker 2>/dev/null
+log_success "done!"
 
 log_with_header "Setting up gitlab mock"
 log "** Pulling image '${MOCK_IMAGE}' **"
