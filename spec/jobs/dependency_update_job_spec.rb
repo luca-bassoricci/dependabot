@@ -44,7 +44,7 @@ describe DependencyUpdateJob, :integration, type: :job, epic: :jobs, feature: "d
 
     it "saves run errors", :aggregate_failures do
       expect { job.perform_now(args) }.to raise_error(StandardError, "Some error!")
-      expect(update_job.reload.run_errors).to eq(["Some error!"])
+      expect(update_job.reload.failures.map(&:message)).to eq(["Some error!"])
     end
   end
 end

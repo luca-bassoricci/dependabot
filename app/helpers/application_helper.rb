@@ -33,7 +33,7 @@ module ApplicationHelper
   # @param [StandardError] error
   # @return [void]
   def capture_error(error)
-    UpdateFailures.save_error(error)
+    UpdateFailures.add(error)
   end
 
   # Log tagged message with execution context
@@ -50,7 +50,7 @@ module ApplicationHelper
     end
 
     Rails.logger.tagged([context_tag, *tags].compact).send(level, message)
-    UpdateLog.add(level: level, message: message) if context_tag
+    UpdateLogs.add(level: level, message: message) if context_tag
   end
 
   # Current job execution context

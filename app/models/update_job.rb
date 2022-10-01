@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# :reek:MissingSafeMethod
+
 # Dependency update job
 #
 # @!attribute package_ecosystem
@@ -16,6 +18,8 @@
 #   @return [Project]
 # @!attribute log_entries
 #   @return [Array<LogEntry>]
+# @!attribute failures
+#   @return [Array<Failure>]
 #
 class UpdateJob
   include Mongoid::Document
@@ -24,16 +28,25 @@ class UpdateJob
   field :directory, type: String
   field :cron, type: String
   field :last_executed, type: DateTime
-  field :run_errors, type: Array, default: []
 
   belongs_to :project
+
   embeds_many :log_entries
+  embeds_many :failures
 
   # Persist log entries
   #
   # @param [Array<Hash>] logs
   # @return [void]
-  def save_log_entries(logs)
-    logs.map { |entry| LogEntry.new(**entry, update_job: self) }.each(&:save!)
+  def save_log_entries!(logs)
+    LogEntry.create!(logs.map { |entry| { **entry, update_job: self } })
+  end
+
+  # Persist job errors
+  #
+  # @param [Array<Hash>] errors
+  # @return [void]
+  def save_errors!(errors)
+    Failure.create!(errors.map { |entry| { **entry, update_job: self } })
   end
 end
