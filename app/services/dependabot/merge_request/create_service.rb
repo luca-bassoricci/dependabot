@@ -63,6 +63,7 @@ module Dependabot
         @mr = mr_creator.call || return
 
         log(:info, "  created merge request: #{mr.web_url.bright}")
+        true
       rescue Gitlab::Error::ResponseError => e
         # dependabot-core will try to create mr in the edge case when mr exists without the branch
         return if e.is_a?(Gitlab::Error::Conflict)
