@@ -18,7 +18,7 @@ class DependencyUpdateJob < ApplicationJob
 
     execute { Dependabot::UpdateService.call(symbolized_args) }
 
-    UpdateFailures.errors
+    UpdateFailures.fetch
   rescue StandardError => e
     capture_error(e)
     raise
@@ -64,10 +64,9 @@ class DependencyUpdateJob < ApplicationJob
   def save_execution_details
     return if AppConfig.standalone?
 
-    update_job.run_errors = UpdateFailures.errors
     update_job.save!
-
-    update_job.save_log_entries(UpdateLog.log)
+    update_job.save_errors!(UpdateFailures.fetch)
+    update_job.save_log_entries!(UpdateLogs.fetch)
   end
 
   # Dependency update execution context

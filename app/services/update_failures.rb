@@ -6,14 +6,17 @@ class UpdateFailures
     #
     # @param [Error] error
     # @return [void]
-    def save_error(error)
-      errors << error.message
+    def add(error)
+      fetch.push({
+        message: error.message,
+        backtrace: error.backtrace
+      })
     end
 
     # Current failures
     #
     # @return [Array]
-    def errors
+    def fetch
       RequestStore.fetch(:errors) { [] }
     end
   end

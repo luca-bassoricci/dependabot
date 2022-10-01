@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class UpdateLog
+class UpdateLogs
   class << self
     # Capture log entry
     #
@@ -10,7 +10,7 @@ class UpdateLog
     def add(level:, message:)
       msg = message.strip.capitalize.gsub(/\e\[(\d+)(?:;\d+)*m/, "")
 
-      log.push({
+      fetch.push({
         timestamp: Time.zone.now,
         level: level,
         message: msg
@@ -20,7 +20,7 @@ class UpdateLog
     # Current run log
     #
     # @return [Array<Hash>]
-    def log
+    def fetch
       RequestStore.fetch(:log) { [] }
     end
   end
