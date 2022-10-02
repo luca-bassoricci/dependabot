@@ -3,7 +3,6 @@
 ### 🐞 Bug Fixes (4 changes)
 
 - [Store update job failures in separate model](dependabot-gitlab/dependabot@edf4432a88261dfaa570d954dda90a38ffb9e777) by @andrcuns. See merge request dependabot-gitlab/dependabot!1780
-- [Restore deleted migration](dependabot-gitlab/dependabot@1b2a157724ef7f32bb771ea6398e608ec823d8c8) by @andrcuns. See merge request dependabot-gitlab/dependabot!1781
 - [Fix incorrect return value on mr creation in some cases](dependabot-gitlab/dependabot@ab2e4818b05bc3fd968c8fe034f91df3b6ec2429) by @andrcuns. See merge request dependabot-gitlab/dependabot!1779
 - [Do not stop obsolete mr closing and vulnerability issue creation when open mr limit reached](dependabot-gitlab/dependabot@9ef60a0914c45e5db9ddcf89584d486a21db9b07) by @andrcuns. See merge request dependabot-gitlab/dependabot!1773
 
@@ -19,6 +18,7 @@
 
 ### 🛠️ Chore (7 changes)
 
+- [Restore deleted migration](dependabot-gitlab/dependabot@1b2a157724ef7f32bb771ea6398e608ec823d8c8) by @andrcuns. See merge request dependabot-gitlab/dependabot!1781
 - [Update github graphql schema](dependabot-gitlab/dependabot@69c811786eb2d6d3f8202f35f832e46192fa4353) by @andrcuns. See merge request dependabot-gitlab/dependabot!1784
 - [Correctly unset removed attributes](dependabot-gitlab/dependabot@18194548508709d4203c07bb06c4bc14816c9f6b) by @andrcuns. See merge request dependabot-gitlab/dependabot!1783
 - [Update seeded test data](dependabot-gitlab/dependabot@e1f89c5aef900f32ea69c5ebac7b9b3c8a8559b8) by @andrcuns. See merge request dependabot-gitlab/dependabot!1782
