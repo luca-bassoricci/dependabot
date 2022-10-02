@@ -5,9 +5,16 @@ module Gitlab
     class IssueCreator < ApplicationService
       using Rainbow
 
+      VULNERABILITY_SEVERITY_LABELS = {
+        "severity:low" => "#00b140",
+        "severity:moderate" => "#eee600",
+        "severity:high" => "#ed9121",
+        "severity:critical" => "#ff0000"
+      }.freeze
+
       # Vulnerability issue creator
       #
-      # @param [Project] project_name
+      # @param [Project] project
       # @param [Vulnerability] vulnerability
       # @param [Dependabot::DependencyFile] dependency_file
       # @param [Array] assignees
@@ -25,7 +32,7 @@ module Gitlab
           project.name,
           vulnerability.summary,
           description: issue_body,
-          labels: "security",
+          labels: "security,#{severity_label}",
           **assignees_option
         )
         log(:info, "  created security vulnerability issue: #{issue.web_url.bright}")
@@ -73,6 +80,19 @@ module Gitlab
         return {} unless assignees
 
         assignees.size == 1 ? { assignee_id: assignees.first } : { assignee_ids: assignees }
+      end
+
+      # Severity label
+      #
+      # @return [String]
+      def severity_label
+        "severity:#{vulnerability.severity.downcase}".tap do |label|
+          LabelCreator.call(
+            project_name: project.name,
+            name: label,
+            color: VULNERABILITY_SEVERITY_LABELS[label]
+          )
+        end
       end
     end
   end

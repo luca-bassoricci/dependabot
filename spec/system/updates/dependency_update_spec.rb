@@ -269,7 +269,9 @@ describe "dependency updates", :system, type: :system, epic: :system, feature: "
             branch_head_mock,
             file_tree_mock,
             dep_file_mock,
+            labels_mock,
             users_mock(["john"]),
+            create_severity_label_mock("high", "ed9121"),
             vulnerability_issue_mock
           ]
         end
