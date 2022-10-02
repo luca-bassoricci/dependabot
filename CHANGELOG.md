@@ -1,3 +1,36 @@
+## 0.27.2 (2022-10-02)
+
+### 🐞 Bug Fixes (4 changes)
+
+- [Store update job failures in separate model](dependabot-gitlab/dependabot@edf4432a88261dfaa570d954dda90a38ffb9e777) by @andrcuns. See merge request dependabot-gitlab/dependabot!1780
+- [Restore deleted migration](dependabot-gitlab/dependabot@1b2a157724ef7f32bb771ea6398e608ec823d8c8) by @andrcuns. See merge request dependabot-gitlab/dependabot!1781
+- [Fix incorrect return value on mr creation in some cases](dependabot-gitlab/dependabot@ab2e4818b05bc3fd968c8fe034f91df3b6ec2429) by @andrcuns. See merge request dependabot-gitlab/dependabot!1779
+- [Do not stop obsolete mr closing and vulnerability issue creation when open mr limit reached](dependabot-gitlab/dependabot@9ef60a0914c45e5db9ddcf89584d486a21db9b07) by @andrcuns. See merge request dependabot-gitlab/dependabot!1773
+
+### 📦 Development dependency updates (2 changes)
+
+- [dep: bump solargraph from 0.47.1 to 0.47.2](dependabot-gitlab/dependabot@2b926726d407c1b487f37432ebea2428b0a36b68) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1778
+- [dep: bump rspec_junit_formatter from 0.5.1 to 0.6.0](dependabot-gitlab/dependabot@cb9a269067ce7c5c4436805ef82d91e6059eeffd) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1775
+
+### 🔧 CI changes (2 changes)
+
+- [chore(deps): update registry.gitlab.com/dependabot-gitlab/ci-images:ruby docker digest to 61e257f](dependabot-gitlab/dependabot@7188da379e9a0198c0cc008fef39da72157f7d6c) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1776
+- [Make sure migration runs successfully in deploy test job](dependabot-gitlab/dependabot@1f1354ab7b45c5e48ef5a757e4196e1d7752119a) by @andrcuns. See merge request dependabot-gitlab/dependabot!1774
+
+### 🛠️ Chore (7 changes)
+
+- [Update github graphql schema](dependabot-gitlab/dependabot@69c811786eb2d6d3f8202f35f832e46192fa4353) by @andrcuns. See merge request dependabot-gitlab/dependabot!1784
+- [Correctly unset removed attributes](dependabot-gitlab/dependabot@18194548508709d4203c07bb06c4bc14816c9f6b) by @andrcuns. See merge request dependabot-gitlab/dependabot!1783
+- [Update seeded test data](dependabot-gitlab/dependabot@e1f89c5aef900f32ea69c5ebac7b9b3c8a8559b8) by @andrcuns. See merge request dependabot-gitlab/dependabot!1782
+- [Clean up old run log and error array objects](dependabot-gitlab/dependabot@fc6cc3d2047bb69e3be80bfb74fe3f11a5cf6e3b) by @andrcuns. See merge request dependabot-gitlab/dependabot!1782
+- [Remove old migration for non existing model](dependabot-gitlab/dependabot@5fedd8f929df3debfca89b041526ec35b1d55826) by @andrcuns. See merge request dependabot-gitlab/dependabot!1782
+- [Add validation for migrations completed successfully](dependabot-gitlab/dependabot@ca81f2451bcea64a86546a0dbd448db3e272f519) by @andrcuns. See merge request dependabot-gitlab/dependabot!1781
+- [Add migration testing](dependabot-gitlab/dependabot@74f24485c2a68ff30120b5c4771e1275f7e02ff8) by @andrcuns. See merge request dependabot-gitlab/dependabot!1777
+
+### 📄 Documentation updates (1 change)
+
+- [Add link to releases in Gitlab container registry](dependabot-gitlab/dependabot@e26c4517548afdcdc648655f60cfe2bfdd2b9563) by @andrcuns.
+
 ## 0.27.1 (2022-09-29)
 
 ### 🐞 Bug Fixes (1 change)
