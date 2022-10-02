@@ -284,6 +284,21 @@ module Support
         YAML
       end
 
+      def create_severity_label_mock(name, color)
+        <<~YAML
+          - request:
+              method: POST
+              path: /api/v4/projects/#{project_name}/labels
+              body: name=severity%3A#{name}&color=%23#{color}
+            response:
+              status: 200
+              headers:
+                Content-Type: application/json
+              body: |
+                []
+        YAML
+      end
+
       def mr_check_mock
         <<~YAML
           - request:
