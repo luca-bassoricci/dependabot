@@ -1,3 +1,9 @@
+## 0.27.3 (2022-10-02)
+
+### 🐞 Bug Fixes (1 change)
+
+- [Correctly handle migration on initial installation](dependabot-gitlab/dependabot@819b0aab9458984cab3b3ecbe2699105dff3036d) by @andrcuns. See merge request dependabot-gitlab/dependabot!1785
+
 ## 0.27.2 (2022-10-02)
 
 ### 🐞 Bug Fixes (4 changes)
