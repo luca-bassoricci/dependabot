@@ -25,7 +25,7 @@ gem "sentry-rails", "~> 5.4", require: false
 gem "sentry-sidekiq", "~> 5.4", require: false
 gem "sidekiq", "~> 6.5.7"
 gem "sidekiq_alive", "~> 2.1", require: false
-gem "sidekiq-cron", "~> 1.7"
+gem "sidekiq-cron", "~> 1.8"
 gem "terminal-table", "~> 3.0"
 gem "warning", "~> 1.3", require: false
 gem "yabeda-prometheus-mmap", "~> 0.3.0"
