@@ -1,3 +1,9 @@
+## 0.27.5 (2022-10-05)
+
+### 🐞 Bug Fixes (1 change)
+
+- [Correctly handle projects without configuration in migration](dependabot-gitlab/dependabot@fba27090add140e7b90fa73c07e04e01b98efeb1) by @andrcuns. See merge request dependabot-gitlab/dependabot!1791
+
 ## 0.27.4 (2022-10-05)
 
 ### 🔬 Improvements (1 change)
