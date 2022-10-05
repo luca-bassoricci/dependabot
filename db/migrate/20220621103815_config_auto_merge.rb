@@ -3,6 +3,8 @@
 class ConfigAutoMerge < Mongoid::Migration
   def self.up
     Project.each do |project|
+      next unless project.configuration
+
       project.configuration.updates.each do |entry|
         auto_merge = entry[:auto_merge]
 
