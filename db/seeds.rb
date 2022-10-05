@@ -21,6 +21,12 @@ project = Project.find_or_initialize_by(
   webhook_id: 1,
   forked_from_id: nil
 )
+project_no_config = Project.find_or_initialize_by(
+  name: "test-project-no-config",
+  id: 2,
+  webhook_id: 1,
+  forked_from_id: nil
+)
 project.configuration = Configuration.new(**config)
 
 mr = MergeRequest.find_or_initialize_by(
@@ -44,6 +50,7 @@ update_job = UpdateJob.new(
 )
 
 project.save!
+project_no_config.save!
 mr.save!
 update_job.save!
 
