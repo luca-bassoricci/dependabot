@@ -67,15 +67,23 @@ class Project
       .compact
   end
 
+  # :reek:LongParameterList
+
   # Open superseded merge requests
   #
+  # @param [String] package_ecosystem
   # @param [String] directory
   # @param [String] update_from
   # @param [Integer] mr_iid
   # @return [Array<MergeRequest>]
-  def superseded_mrs(directory:, update_from:, mr_iid:)
+  def superseded_mrs(package_ecosystem:, directory:, update_from:, mr_iid:)
     merge_requests
-      .where(update_from: update_from, directory: directory, state: "opened")
+      .where(
+        update_from: update_from,
+        package_ecosystem: package_ecosystem,
+        directory: directory,
+        state: "opened"
+      )
       .not(iid: mr_iid)
       .compact
   end
