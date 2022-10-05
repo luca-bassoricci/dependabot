@@ -1,3 +1,22 @@
+## 0.27.4 (2022-10-05)
+
+### 🔬 Improvements (1 change)
+
+- [Add severity label to vulnerability issues](dependabot-gitlab/dependabot@835cbe3d61f1488da28a5111681dd09900d2afd8) by @andrcuns. See merge request dependabot-gitlab/dependabot!1787
+
+### 🐞 Bug Fixes (1 change)
+
+- [Correctly handle dependencies of same name in different ecosystems](dependabot-gitlab/dependabot@0c6312f206a04121cd7d5c38e46bd9f67c4b5fc1) by @andrcuns. See merge request dependabot-gitlab/dependabot!1790
+
+### 📦 Dependency updates (2 changes)
+
+- [dep: bump sentry-sidekiq and sentry-rails](dependabot-gitlab/dependabot@9381f87783841c60fad979baeb1f6d03952484e8) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1789
+- [dep: bump sidekiq-cron from 1.7.0 to 1.8.0](dependabot-gitlab/dependabot@99049e12e60c2988d2238c1cb0685dd0535b1ad3) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1788
+
+### 🛠️ Chore (1 change)
+
+- [Improve name mismatch handling when matching security advisories](dependabot-gitlab/dependabot@de0777e13083a93ee7884fc5ef83e0da048343ab) by @andrcuns. See merge request dependabot-gitlab/dependabot!1786
+
 ## 0.27.3 (2022-10-02)
 
 ### 🐞 Bug Fixes (1 change)
