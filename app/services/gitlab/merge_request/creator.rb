@@ -175,6 +175,7 @@ module Gitlab
       def superseded_mrs
         project.superseded_mrs(
           update_from: updated_dependency.previous_versions,
+          package_ecosystem: config_entry[:package_ecosystem],
           directory: config_entry[:directory],
           mr_iid: mr.iid
         )
