@@ -321,14 +321,15 @@ include:
   interruptible: false
 
 .gitlab_release:
+  extends: .ruby_runner
   stage: release
   variables:
-    RELEASE_NOTES_FILE: release_notes.md
+    CHANGELOG_FILE: release_notes.md
   script:
-    - .gitlab/script/changelog.sh
+    - bundle exec rake "release:changelog[$CI_COMMIT_TAG,$CHANGELOG_FILE]"
   release:
     tag_name: $CI_COMMIT_TAG
-    description: $RELEASE_NOTES_FILE
+    description: $CHANGELOG_FILE
   interruptible: false
 
 .update_chart:

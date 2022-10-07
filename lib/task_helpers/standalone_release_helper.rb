@@ -6,10 +6,9 @@ class StandaloneReleaseHelper
   IMAGE = "docker.io/andrcuns/dependabot-gitlab"
   CI_FILE = ".gitlab-ci.yml"
   PROJECT = "dependabot-gitlab/dependabot-standalone"
-  VERSION_PATTERN = "%M.%m.%p"
 
   def initialize(version)
-    @version = SemVer.parse(version).format(VERSION_PATTERN)
+    @version = SemVer.parse(version).format(Util::VERSION_PATTERN)
   end
 
   def self.call(version)
