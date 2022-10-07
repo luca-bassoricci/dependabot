@@ -24,6 +24,8 @@ module Update
 
     belongs_to :job, class_name: "Update::Job"
 
+    index({ created_at: 1 }, { expire_after_seconds: AppConfig.expire_run_data })
+
     # Persist log entries
     #
     # @param [Array<Hash>] logs

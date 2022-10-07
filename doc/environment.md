@@ -61,7 +61,8 @@ add necessary webhooks to project
 
 **Not applicable for standalone mode**
 
-* `SETTINGS__UPDATE_RETRY` - amount of retries for dependency update job or `false` to disable, default: 2. Applicable only to deployed mode
+* `SETTINGS__UPDATE_RETRY` - amount of retries for dependency update job or `false` to disable, default: 2
+* `SETTINGS__EXPIRE_RUN_DATA` - purge dependency update run data (logs, failures) from database after period of time in seconds, default 1 month
 
 ### Project registration
 
