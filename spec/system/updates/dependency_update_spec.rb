@@ -86,7 +86,7 @@ describe "dependency updates", :system, type: :system, epic: :system, feature: "
         }
       end
 
-      let(:update_job) { project.update_jobs.first }
+      let(:update_run) { Update::Run.where(job: project.update_jobs.first).last }
 
       let(:mock_definitions) do
         [
@@ -113,7 +113,7 @@ describe "dependency updates", :system, type: :system, epic: :system, feature: "
         expect(mrs.map(&:main_dependency)).to eq(%w[faker rubocop])
         expect(mrs.find { |mr| mr.main_dependency == "faker" }.auto_merge).to eq(true)
         expect(mrs.find { |mr| mr.main_dependency == "rubocop" }.auto_merge).to eq(false)
-        expect(update_job.log_entries).not_to be_empty
+        expect(update_run.log_entries).not_to be_empty
         expect_all_mocks_called
       end
     end

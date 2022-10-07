@@ -2,7 +2,7 @@
 
 class JobController < ApplicationController
   def execute
-    job = UpdateJob.find(params.require(:id))
+    job = Update::Job.find(params.require(:id))
     project = Project.find(job.project_id)
 
     DependencyUpdateJob.perform_later(

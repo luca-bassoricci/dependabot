@@ -7,6 +7,7 @@ describe DependencyUpdateJob, :integration, type: :job, epic: :jobs, feature: "d
 
   let(:project) { create(:project) }
   let(:update_job) { project.update_jobs.first }
+  let(:update_run) { update_job.reload.runs.last }
 
   let(:args) do
     {
@@ -33,7 +34,7 @@ describe DependencyUpdateJob, :integration, type: :job, epic: :jobs, feature: "d
       perform_enqueued_jobs { job.perform_later(args) }
 
       expect(Dependabot::UpdateService).to have_received(:call).with(args.symbolize_keys)
-      expect(update_job.reload.last_executed).not_to be_nil
+      expect(update_run.created_at).not_to be_nil
     end
   end
 
@@ -44,7 +45,7 @@ describe DependencyUpdateJob, :integration, type: :job, epic: :jobs, feature: "d
 
     it "saves run errors", :aggregate_failures do
       expect { job.perform_now(args) }.to raise_error(StandardError, "Some error!")
-      expect(update_job.reload.failures.map(&:message)).to eq(["Some error!"])
+      expect(update_run.failures.map(&:message)).to eq(["Some error!"])
     end
   end
 end

@@ -9,7 +9,7 @@ module Cron
 
     # Sync cron jobs and return array
     #
-    # @return [Array<UpdateJob>]
+    # @return [Array<Update::Job>]
     def call
       return unless config
 
@@ -45,7 +45,7 @@ module Cron
 
     # Persist project jobs
     #
-    # @return [UpdateJob]
+    # @return [Update::Job]
     def saved_project_jobs
       @saved_project_jobs ||= config.updates.map { |opts| save_project_job(opts) }
     end
@@ -67,7 +67,7 @@ module Cron
         description: "Update #{package_ecosystem} dependencies for #{project.name} in #{directory}"
       ).tap(&:save)
 
-      UpdateJob.find_or_create_by(
+      Update::Job.find_or_create_by(
         project: project,
         package_ecosystem: package_ecosystem,
         directory: directory
