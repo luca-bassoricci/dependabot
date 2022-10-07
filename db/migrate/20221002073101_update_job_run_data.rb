@@ -2,8 +2,8 @@
 
 class UpdateJobRunData < Mongoid::Migration
   def self.up
-    UpdateJob.all.unset(:run_errors)
-    UpdateJob.all.unset(:run_log)
+    Update::Job.all.unset(:run_errors)
+    Update::Job.all.unset(:run_log)
   end
 
   def self.down; end

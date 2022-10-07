@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-# :reek:TooManyStatements
+# Dependency update job
+#
 class DependencyUpdateJob < ApplicationJob
   queue_as :default
 
@@ -32,7 +33,7 @@ class DependencyUpdateJob < ApplicationJob
 
   # Update job
   #
-  # @return [UpdateJob]
+  # @return [Update::Job]
   def update_job
     @update_job ||= Project.find_or_initialize_by(name: project_name)
                            .update_jobs
@@ -42,20 +43,23 @@ class DependencyUpdateJob < ApplicationJob
                            )
   end
 
+  # Dependency update run
+  #
+  # @return [Update::Run]
+  def update_run
+    @update_run ||= Update::Run.create!(
+      job: update_job
+    )
+  end
+  alias_method :create_update_run, :update_run
+
   # Execute dependency updates
   #
   # @return [void]
   def execute(&block)
-    save_execution_time unless AppConfig.standalone?
+    create_update_run unless AppConfig.standalone?
 
     run_within_context(job_execution_context, &block)
-  end
-
-  # Save last enqued time
-  #
-  # @return [void]
-  def save_execution_time
-    update_job.last_executed = DateTime.now.utc
   end
 
   # Persist execution errors
@@ -64,9 +68,8 @@ class DependencyUpdateJob < ApplicationJob
   def save_execution_details
     return if AppConfig.standalone?
 
-    update_job.save!
-    update_job.save_errors!(UpdateFailures.fetch)
-    update_job.save_log_entries!(UpdateLogs.fetch)
+    update_run.save_errors!(UpdateFailures.fetch)
+    update_run.save_log_entries!(UpdateLogs.fetch)
   end
 
   # Dependency update execution context

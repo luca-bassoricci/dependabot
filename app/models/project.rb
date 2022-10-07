@@ -21,7 +21,7 @@
 # @!attribute vulnerability_issues
 #   @return [Array<VulnerabilityIssue>]
 # @!attribute update_jobs
-#   @return [Array<UpdateJob>]
+#   @return [Array<Update::Job>]
 # @!attribute configuration
 #   @return [Configuration]
 class Project
@@ -39,7 +39,7 @@ class Project
 
   has_many :merge_requests, dependent: :destroy
   has_many :vulnerability_issues, dependent: :destroy
-  has_many :update_jobs, dependent: :destroy
+  has_many :update_jobs, class_name: "Update::Job", dependent: :destroy
 
   embeds_one :configuration
 

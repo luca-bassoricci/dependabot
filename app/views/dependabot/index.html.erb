@@ -72,7 +72,7 @@
               <td><%= job.directory %></td>
               <td><%= job.cron %></td>
               <td><%= job.last_executed&.to_formatted_s(:long) %>
-              <td><%= job.failures.map(&:message).join("\n") %></td>
+              <td><%= job.runs.last&.failures&.map(&:message)&.join("\n") %></td>
               <td>
                 <%=
                   mrs = open_merge_requests(project, job.package_ecosystem, job.directory).length

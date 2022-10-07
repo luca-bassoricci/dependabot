@@ -41,12 +41,14 @@ mr = MergeRequest.find_or_initialize_by(
   squash: false
 )
 
-update_job = UpdateJob.new(
+update_job = Update::Job.new(
   project: project,
   package_ecosystem: "bundler",
   directory: "/",
-  cron: "35 22 * * * UTC",
-  last_executed: Time.zone.now
+  cron: "35 22 * * * UTC"
+)
+update_run = Update::Run.new(
+  job: update_job
 )
 
 project.save!
@@ -54,12 +56,12 @@ project_no_config.save!
 mr.save!
 update_job.save!
 
-update_job.save_log_entries!([{
+update_run.save_log_entries!([{
   timestamp: Time.zone.now,
   level: "debug",
   message: "test log message"
 }])
-update_job.save_errors!([{
+update_run.save_errors!([{
   message: "error message",
   backtrace: "error backtrace"
 }])
