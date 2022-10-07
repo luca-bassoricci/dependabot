@@ -14,8 +14,9 @@ class AppConfig < ApplicationConfig
               create_project_hook: true,
               # mr command prefix
               commands_prefix: "$dependabot",
-              # update job retry amount
+              # update job configuration
               update_retry: 2,
+              expire_run_data: 1.month.to_i,
               # /metrics endpoint
               metrics: false,
               # project registration
