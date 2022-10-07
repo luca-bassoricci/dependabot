@@ -16,5 +16,5 @@ class LogEntry
   field :level, type: String
   field :message, type: String
 
-  embedded_in :update_job
+  belongs_to :update_job
 end

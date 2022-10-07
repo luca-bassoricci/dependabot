@@ -31,8 +31,8 @@ class UpdateJob
 
   belongs_to :project
 
-  embeds_many :log_entries
-  embeds_many :failures
+  has_many :log_entries
+  has_many :failures
 
   # Persist log entries
   #
