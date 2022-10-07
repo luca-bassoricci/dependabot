@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module Util
+  VERSION_PATTERN = "%M.%m.%p"
+
   # Gitlab client
   #
   # @return [Gitlab::Client]

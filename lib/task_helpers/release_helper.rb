@@ -4,7 +4,7 @@ require_relative "util"
 
 # Create release tag and update VERSION file
 #
-class ReleaseCreator
+class ReleaseHelper
   private_instance_methods :new
 
   def initialize(version)
