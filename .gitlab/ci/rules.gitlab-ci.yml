@@ -35,9 +35,9 @@
 # ======================================================================================================================
 .rules:main:
   rules:
-    - *mr
-    - *release
     - *main
+    - *release
+    - *mr
 
 .rules:release:
   rules:
@@ -54,8 +54,7 @@
 
 .rules:dependency-scan:
   rules:
-    - <<: *main
-      changes: *dependency_changes
+    - *main
     - <<: *mr
       changes: *dependency_changes
 
@@ -84,15 +83,15 @@
   rules:
     - <<: *fork
       when: never
-    - *mr
     - *main
+    - *mr
 
 .rules:coverage:
   rules:
     - <<: *fork
       when: never
-    - *mr
     - *main
+    - *mr
 
 .rules:build-core-image:
   rules:
@@ -100,6 +99,12 @@
 
 .rules:build-image:
   rules:
+    - <<: *main
+      variables:
+        LATEST_TAG: latest
+    - <<: *release
+      variables:
+        LATEST_TAG: latest
     - <<: *mr
       changes: *dependency_changes
       variables:
@@ -107,9 +112,3 @@
     - <<: *mr
       variables:
         BUILD_PLATFORM: linux/amd64
-    - <<: *main
-      variables:
-        LATEST_TAG: latest
-    - <<: *release
-      variables:
-        LATEST_TAG: latest
