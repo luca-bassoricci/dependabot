@@ -1,3 +1,18 @@
+## 0.28.0 (2022-10-08)
+
+### 🔬 Improvements (1 change)
+
+- [Extract storage of update run data to separate models](dependabot-gitlab/dependabot@9c9f2accef42f29a62a48b6ac5a8491e1c40e488) by @andrcuns. See merge request dependabot-gitlab/dependabot!1797
+
+### 🔧 CI changes (1 change)
+
+- [chore(deps): update registry.gitlab.com/dependabot-gitlab/ci-images:ruby docker digest to 01d99fc](dependabot-gitlab/dependabot@b163d4650963bb8554205d8791159cc7da1d7f6e) by @dependabot-bot. See merge request dependabot-gitlab/dependabot!1792
+
+### 🛠️ Chore (2 changes)
+
+- [Improve release creation automation](dependabot-gitlab/dependabot@6d9174645500312992e84855617113e5f0988c71) by @andrcuns. See merge request dependabot-gitlab/dependabot!1799
+- [Add index to purge dependency update execution data after a period of time](dependabot-gitlab/dependabot@2f5f2162c026e9720a6dfe05b798f58ee584cf6e) by @andrcuns. See merge request dependabot-gitlab/dependabot!1798
+
 ## 0.27.5 (2022-10-05)
 
 ### 🐞 Bug Fixes (1 change)
