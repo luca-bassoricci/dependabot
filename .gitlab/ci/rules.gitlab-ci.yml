@@ -67,8 +67,7 @@
 
 .rules:container-scan:
   rules:
-    - <<: *main
-      changes: *dependency_changes
+    - *main
     - <<: *mr
       changes: *dependency_changes
 
